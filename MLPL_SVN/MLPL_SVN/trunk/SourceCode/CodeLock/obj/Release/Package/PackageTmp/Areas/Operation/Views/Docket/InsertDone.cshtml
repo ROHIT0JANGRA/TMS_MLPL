@@ -1,0 +1,153 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("InsertDone", "Docket", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+{
+<div class="widget-wrap" style="height:300px">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.Label(SessionUtility.DocketNomenClature, new { @class = "label-bold" })
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return ViewReport();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+            <button onclick="return PrintReport(this);" class="btn btn-primary" title="consignor/consignee Copy">
+                <i class="glyphicon glyphicon-print"></i>
+            </button>
+            <button onclick="return PrintReport2(this);" class="btn btn-primary" id="btnOfficePODCopy" style="display:none" title="Office Copy">
+                <i class="glyphicon glyphicon-print"></i>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div id="dvTripsheetInfo">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("Tripsheet No", new { @class = "label-bold" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @id = "lblDocumentNo2", @for = "DocumentNo2", @class = "label-bold" })
+                    @Html.Hidden("hdnDocumentId2")
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button onclick="return PrintTripsheetView();" class="btn btn-primary">
+                    <i class="glyphicon glyphicon-print"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="dvUploadFile">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    File 
+                    <div class="input prepend-big-btn">
+                        <label class="icon-right" for="prepend-big-btn">
+                            <i class="fa fa-download"></i>
+                        </label>
+                        <div class="file-button">
+                            Browse
+                            @Html.TextBox("fuFileName", null, new { @class = "form-control", @id = "fuFileName", @type = "file", @onchange = "$('#prepend-big-btn').val($(this).val())" })
+                            @Html.Hidden("hdnFileName", new { @id = "hdnFileName" })
+                            @Html.Hidden("hdnDocumentType", new { @id = "hdnDocumentType" })
+                        </div>
+                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                    </div>
+
+                </div>
+            </div>
+            </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <button type="submit" class="btn btn-success primary-btn" tabindex="3">Upload</button>
+            </div>
+
+        </div>
+
+        </div>
+
+
+</div>
+}
+<script>
+    $(document).ready(function () {
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        spnMassage = $('#spnMassage');
+        lblDocumentNo2 = $('#lblDocumentNo2');
+        hdnDocumentId2 = $('#hdnDocumentId2');
+        dvTripsheetInfo = $('#dvTripsheetInfo');
+        dvUploadFile = $('#dvUploadFile');
+        hdnDocumentType = $('#hdnDocumentType');
+        hdnDocumentType.val('Docket');
+        //
+        OnPageLoad();
+        var request = { moduleId: 1, ruleId: 68 };
+        AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(request), function (result) {
+            if (result == "Y") { $("#btnOfficePODCopy").css('display', 'block'); }
+            else { $("#btnOfficePODCopy").css('display', 'none'); }
+        }, ErrorFunction, false);
+
+        var request1 = { moduleId: 1, ruleId: 74 };
+        AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(request1), function (result) {
+            if (result == "N") { dvUploadFile.hide(); }
+        }, ErrorFunction, false);
+
+    });
+
+    function OnPageLoad() {
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+        lblDocumentNo2.html(GetUrlValue()["documentNo2"]);
+        hdnDocumentId2.val(GetUrlValue()["documentId2"]);
+        dvTripsheetInfo.showHide(hdnDocumentId2.val() > 0);
+        var status = GetUrlValue()["status"];
+        if (status == "EntryDone") {
+            spnMassage.text("The " + docketNomenclature + " is Generated Successfully");
+            SetPageLoad(docketNomenclature, 'Done', '', 'Go To Create', '@Url.Action("Insert")');
+
+        }
+        else if (status == "EditDone") {
+            spnMassage.text("The " + docketNomenclature + " is Updated Successfully");
+            SetPageLoad(docketNomenclature, 'Done', '', 'Go To Operational Edit', '@Url.Action("Update","Docket")' + '?isFinancialUpdate=false', 'Go To Financial Edit', '@Url.Action("Update","Docket")' + '?isFinancialUpdate=true');
+        }
+    }
+
+    function ViewReport() {
+        return ShowViewPrint('@ModuleHelper.Docket', hdnDocumentId.val());
+    }
+
+    function PrintReport() {
+        var prmList = [{ Name: "DocketId", Value: hdnDocumentId.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'DocketView', Description: 'Docket View' };
+        return ShowReport(reportInfo);
+    }
+
+    function PrintReport2() {
+        var prmList = [{ Name: "DocketId", Value: hdnDocumentId.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'DocketView2', Description: 'Docket View' };
+        return ShowReport(reportInfo);
+    }
+
+    function PrintTripsheetView() {
+        var prmList = [{ Name: "TripsheetId", Value: hdnDocumentId2.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'TripsheetView', Description: 'Tripsheet View' };
+        return ShowReport(reportInfo);
+    }
+</script>
+

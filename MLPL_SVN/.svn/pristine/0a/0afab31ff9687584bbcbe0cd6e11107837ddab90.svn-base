@@ -1,0 +1,450 @@
+﻿@model CodeLock.Models.VendorContract
+@using Secure_Coding.MvcSecurityExtensions;
+@using CodeLock.Models
+@{
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "VendorContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.ContractId, new { @id = "hdnContractId" })
+    @Html.AntiModelInjectionFor(m => m.ContractId)
+    @Html.HiddenFor(m => m.VendorTypeId, new { @id = "hdnVendorTypeId" })
+    @Html.HiddenFor(m => m.VendorId, new { @id = "hdnVendorId" })
+    @Html.HiddenFor(m => m.VendorContractBasicInfo.ManualContractId)
+    @Html.HiddenFor(m => m.VendorContractBasicInfo.ContractId)
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorTypeId, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.VendorType, Model.VendorType, new { @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorId, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.VendorName, Model.VendorName, new { @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.ManualContractId, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.VendorContractBasicInfo.ManualContractId, Model.VendorContractBasicInfo.ManualContractId, new { @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "StartDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.StartDate), DefaultDate = Model.StartDate, IsRequired = true, AllowFutureDate = true, AllowPastDate = true, SetBlank = false, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "EndDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.EndDate), DefaultDate = Model.EndDate, IsRequired = true, AllowFutureDate = true, AllowPastDate = true, SetBlank = false, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label", @for = "chkVolumetric" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive, new { @id = "chkIsActive" })
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "VendorContractBasicInfo.ContractDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.VendorContractBasicInfo.ContractDate), DefaultDate = Model.VendorContractBasicInfo.ContractDate, IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = false, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.LocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorContractBasicInfo.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorContractBasicInfo.LocationId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.VendorCategory, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorContractBasicInfo.VendorCategory, new SelectList(ViewBag.VendorCategoryList, "Value", "Name"), "Select Vendor Category", new { @class = "form-control" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorContractBasicInfo.VendorCategory)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.ContractCategory, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorContractBasicInfo.ContractCategory, new SelectList(ViewBag.ContractCategoryList, "Value", "Name"), "Select Contract Category", new { @class = "form-control" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorContractBasicInfo.ContractCategory)
+                </div>
+            </div>
+            @*<div class="col-sm-4">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.VendorContractBasicInfo.IsTDSApplicable, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.VendorContractBasicInfo.IsTDSApplicable, true, new { @id = "rdTDSYes", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.VendorContractBasicInfo.IsTDSApplicable, "Yes", new { @for = "rdTDSYes" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.VendorContractBasicInfo.IsTDSApplicable, false, new { @id = "rdTDSNo" })
+                            <i></i>
+                            @Html.LabelFor(model => model.VendorContractBasicInfo.IsTDSApplicable, "No", new { @for = "rdTDSNo" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.TDSRate, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.VendorContractBasicInfo.TDSRate, new { @class = "form-control numeric", @id = "txtTDS" })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorContractBasicInfo.TDSRate)
+                </div>
+            </div>*@
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.SecurityDepositCheque, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.VendorContractBasicInfo.SecurityDepositCheque, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorContractBasicInfo.SecurityDepositCheque)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "VendorContractBasicInfo.SecurityDepositDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.VendorContractBasicInfo.SecurityDepositDate), DefaultDate = Model.VendorContractBasicInfo.SecurityDepositDate.ConvertToDateTime(), IsRequired = false, AllowFutureDate = false, AllowPastDate = true, SetBlank = Model.VendorContractBasicInfo.SecurityDepositDate == null ? true : false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.SecurityDepositAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.VendorContractBasicInfo.SecurityDepositAmount, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorContractBasicInfo.SecurityDepositAmount)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.PaymentInterval, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorContractBasicInfo.PaymentInterval, new SelectList(ViewBag.PaymentIntervalList, "Value", "Name"), "Select Payment Interval", new { @class = "form-control" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorContractBasicInfo.PaymentInterval)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.PaymentBasis, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorContractBasicInfo.PaymentBasis, new SelectList(ViewBag.PaymentBasisList, "Value", "Name"), "Select Payment Basis", new { @class = "form-control" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorContractBasicInfo.PaymentBasis)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.PaymentLocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorContractBasicInfo.PaymentLocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Payment Location", new { @class = "form-control" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorContractBasicInfo.PaymentLocationId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.ThcMatrixTypeId, new { @class = "label" })
+                    <div class="select">
+                        @*@Html.DropDownListFor(model => model.VendorContractBasicInfo.ThcMatrixTypeId, Enumerable.Empty<SelectListItem>(), "Select THC Matrix Type", new { @class = "form-control", @id = "ddlThcMatrixTypeId" })*@
+                        @Html.DropDownListFor(model => model.VendorContractBasicInfo.ThcMatrixTypeId, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Select THC Matrix Type", Value = "0" },
+                                                                            new SelectListItem{ Text="Route Based", Value = "1" },
+                                                                            new SelectListItem{ Text="City Based", Value = "2" },
+                                                                            new SelectListItem{ Text="Distance Based", Value = "3" }
+                                                                         }, new { @class = "form-control", @id = "ddlThcMatrixTypeId" })
+                        
+                        
+                        
+                        
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+            <div id="dvMatrix">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VendorContractBasicInfo.PrsMatrixTypeId, new { @class = "label" })
+                        <div class="select">
+                            @*@Html.DropDownListFor(model => model.VendorContractBasicInfo.PrsMatrixTypeId, Enumerable.Empty<SelectListItem>(), "Select PRS Matrix Type", new { @class = "form-control", @id = "ddlPrsMatrixTypeId" })*@
+                            @Html.DropDownListFor(model => model.VendorContractBasicInfo.PrsMatrixTypeId, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Select PRS Matrix Type", Value = "0" },
+                                                                            new SelectListItem{ Text="City Based", Value = "2" },
+                                                                            new SelectListItem{ Text="Distance Based", Value = "3" }
+                                                                         }, new { @class = "form-control", @id = "ddlPrsMatrixTypeId" })
+
+
+
+
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.VendorContractBasicInfo.PrsMatrixTypeId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VendorContractBasicInfo.DrsMatrixTypeId, new { @class = "label" })
+                        <div class="select">
+                            @*@Html.DropDownListFor(model => model.VendorContractBasicInfo.DrsMatrixTypeId, Enumerable.Empty<SelectListItem>(), "Select DRS Matrix Type", new { @class = "form-control", @id = "ddlDrsMatrixTypeId" })*@
+                            @Html.DropDownListFor(model => model.VendorContractBasicInfo.DrsMatrixTypeId, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Select DRS Matrix Type", Value = "0" },
+                                                                            new SelectListItem{ Text="City Based", Value = "2" },
+                                                                            new SelectListItem{ Text="Distance Based", Value = "3" }
+                                                                         }, new { @class = "form-control", @id = "ddlDrsMatrixTypeId" })
+
+
+
+
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.VendorContractBasicInfo.DrsMatrixTypeId)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.CreditDays, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.VendorContractBasicInfo.CreditDays, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorContractBasicInfo.CreditDays)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn">Update</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vendor Contract', 'Update', 'txtStartDate', 'Add New', '@Url.Action("Insert")', 'Details', '@Url.Action("Details", new { id = Model.ContractId })', 'Go To List', '@Url.Action("Index")');
+
+        hdnVendorTypeId = $('#hdnVendorTypeId');
+        hdnVendorId = $('#hdnVendorId');
+        //rdTDSYes = $('#rdTDSYes');
+        //txtTDS = $('#txtTDS');
+        var txtStartDate = $('#txtStartDate');
+        var txtEndDate = $('#txtEndDate');
+
+
+        ddlDrsMatrixTypeId = $('#ddlDrsMatrixTypeId');
+        ddlPrsMatrixTypeId = $('#ddlPrsMatrixTypeId');
+        ddlThcMatrixTypeId = $('#ddlThcMatrixTypeId');
+        //$('#rdTDSYes, #rdTDSNo').change(OnIsTDSChange);
+        $('#txtEndDate, #txtStartDate, #txtContractDate').blur(CheckContractDateRange);
+        txtStartDate.blur(function () { return CheckDateIsValid(txtStartDate); });
+        txtEndDate.blur(function () { return CheckDateIsValid(txtEndDate); });
+        hdnVendorTypeId.change(OnVendoTypeChange);
+
+        hdnVendorId.change(OnVendoChange);
+        txtStartDate.blur(function () { return CheckDate(); });
+        txtEndDate.blur(function () { return CheckDate(); });
+        OnIsTDSChange();
+        SetMatrixType();
+
+        $("#btnSubmit").click(function () {
+            ValidateOnStep1();
+        });
+
+    });
+
+    function OnVendoChange() {
+        $('#txtStartDate').val('');
+        $('#txtEndDate').val('');
+        $('#txtContractDate').val('');
+    }
+
+    function OnVendoTypeChange() {
+        $('#hdnVendorId').val('');
+        $('#txtStartDate').val('');
+        $('#txtEndDate').val('');
+        $('#txtContractDate').val('');
+        var requestData = { vendorTypeId: hdnVendorTypeId.val() != '' ? hdnVendorTypeId.val() : 0 };
+        AjaxRequestWithPostAndJson('@Url.Action("GetVendorNameByVendorTypeId", "Vendor",new {@Area = "Master" })', JSON.stringify(requestData), GetVendorNameListSuccess, ErrorFunction, false);
+      //  SetMatrixType();
+    }
+
+    function GetVendorNameListSuccess(responseData) {
+        BindDropDownList('hdnVendorId', responseData, 'Value', 'Name', '', 'Select Vendor Name');
+    }
+
+    //function OnIsTDSChange() {
+    //    txtTDS.readOnly(!rdTDSYes.IsChecked);
+    //    if (!rdTDSYes.IsChecked) { txtTDS.val(0); }
+    //}
+
+    function CheckContractDateRange() {
+        var txtStartDate = $('#txtStartDate');
+        var txtEndDate = $('#txtEndDate');
+
+        if (txtStartDate.val() != "" && txtEndDate.val() != "") {
+            if (txtEndDate.toDate() <= txtStartDate.toDate()) {
+                ShowMessage("End Date must be greater than Start Date");
+                txtEndDate.val('');
+                obj.focus();
+                return false;
+            }
+        }
+    }
+
+    function SetMatrixType() {
+        //var thcMatrixTypeJson = '[ { "Name": "Route Based","Value": "1"},{"Name":"City Based","Value":"2"},{"Name":"Distance Based","Value":"3" }]';
+        //var prsMatrixTypeJson = '[ {"Name":"City Based","Value":"2"},{"Name":"Distance Based","Value":"3" }]';
+        //var drsMatrixTypeJson = '[ {"Name":"City Based","Value":"2"},{"Name":"Distance Based","Value":"3" }]';
+
+        @*BindDropDownList('ddlThcMatrixTypeId', $.parseJSON(thcMatrixTypeJson), 'Value', 'Name', '', '', '@Model.VendorContractBasicInfo.ThcMatrixTypeId');
+        BindDropDownList('ddlPrsMatrixTypeId', $.parseJSON(prsMatrixTypeJson), 'Value', 'Name', '', '', '@Model.VendorContractBasicInfo.PrsMatrixTypeId');
+        BindDropDownList('ddlDrsMatrixTypeId', $.parseJSON(drsMatrixTypeJson), 'Value', 'Name', '', '', '@Model.VendorContractBasicInfo.DrsMatrixTypeId');*@
+
+        //ddlThcMatrixTypeId.refresh();
+        //ddlPrsMatrixTypeId.refresh();
+        //ddlDrsMatrixTypeId.refresh();
+
+        @*if (hdnVendorTypeId.val() == '2' || hdnVendorTypeId.val() == '3') {
+            $('#dvMatrix').show();
+            BindDropDownList('ddlThcMatrixTypeId', $.parseJSON(thcMatrixTypeJson), 'Value', 'Name','','','@Model.VendorContractBasicInfo.ThcMatrixTypeId');
+            BindDropDownList('ddlPrsMatrixTypeId', $.parseJSON(prsMatrixTypeJson), 'Value', 'Name', '', '', '@Model.VendorContractBasicInfo.PrsMatrixTypeId');
+            BindDropDownList('ddlDrsMatrixTypeId', $.parseJSON(drsMatrixTypeJson), 'Value', 'Name', '', '', '@Model.VendorContractBasicInfo.DrsMatrixTypeId');
+        }
+        else if (hdnVendorTypeId.val() == '4') {
+            ddlThcMatrixTypeId.empty();
+            $('#dvMatrix').showHide();
+            $('#dvMatrix').disable();
+            ddlThcMatrixTypeId.append($('<option></option>').val('4').html('Docket Based'));
+        }
+        else {
+            ddlThcMatrixTypeId.empty();
+            $('#dvMatrix').showHide();
+            $('#dvMatrix').disable();
+            ddlThcMatrixTypeId.append($('<option></option>').val('0').html('Select THC Matrix'));
+        }*@
+
+    }
+
+    function CheckDate() {
+        if ($('#hdnVendorTypeId').val() != "" && $('#hdnVendorId').val() != "" && $('#txtStartDate').val() != "" && $('#txtEndDate').val() != "") {
+            var requestData = { contractId: $('#hdnContractId').val(), vendorId: $('#hdnVendorId').val(), startDate: $('#txtStartDate').val(), endDate: $('#txtEndDate').val() };
+            AjaxRequestWithPostAndJson('@Url.Action( "CheckDate")', JSON.stringify(requestData), function (result) {
+                if (!result > 0) {
+                    ShowMessage("Contract is already exist on this Date");
+                    $('#txtStartDate').val('');
+                    $('#txtEndDate').val('');
+                }
+            });
+        }
+        else if ($('#hdnVendorTypeId').val() != "" && $('#hdnVendorId').val() != "" && $('#txtStartDate').val() != "") {
+            var requestData = { contractId: $('#hdnContractId').val(), vendorId: $('#hdnVendorId').val(), contractDate: $('#txtStartDate').val() };
+            AjaxRequestWithPostAndJson('@Url.Action( "CheckDateIsValid")', JSON.stringify(requestData), function (result) {
+                if (!result) {
+                    ShowMessage("Contract is already exist on this Date");
+                    $('#txtStartDate').val('');
+                }
+            });
+        }
+
+        else if ($('#hdnVendorTypeId').val() != "" && $('#hdnVendorId').val() != "" && $('#txtEndDate').val() != "") {
+            var requestData = { contractId: $('#hdnContractId').val(), vendorId: $('#hdnVendorId').val(), contractDate: $('#txtEndDate').val() };
+            AjaxRequestWithPostAndJson('@Url.Action( "CheckDateIsValid")', JSON.stringify(requestData), function (result) {
+                if (!result) {
+                    ShowMessage("Contract is already exist on this Date");
+                    $('#txtEndDate').val('');
+                }
+            });
+        } else {
+            return false;
+        }
+    }
+
+    function CheckDateIsValid(objDate) {
+        if ($('#hdnVendorTypeId').val() != "" && $('#hdnVendorId').val() != "" && (objDate.val() != "")) {
+            var requestData = { contractId: $('#hdnContractId').val(), vendorId: $('#hdnVendorId').val(), contractDate: objDate.val() };
+            AjaxRequestWithPostAndJson('@Url.Action( "CheckDateIsValid")', JSON.stringify(requestData), function (result) {
+                if (!result) {
+                    ShowMessage("Contract is already exist on this Date");
+                    $('#txtStartDate').val('');
+                    $('#txtEndDate').val('');
+                    objDate.focus();
+                }
+            }, ErrorFunction, false);
+        }
+        return false;
+    }
+
+    function ValidateMultiCheckBox(partialId, entityName) {
+        var selected = false, firstCheckBox = null;
+        $('[id*="' + partialId + '"]').each(function () {
+            if (firstCheckBox == null)
+                firstCheckBox = $(this);
+            if ($(this).is(':checked'))
+                selected = true;
+        });
+        if (!selected) {
+            ShowMessage("Please select at-least one " + entityName);
+            firstCheckBox.focus();
+            return false;
+        }
+        return true;
+    }
+
+    function ValidateOnStep1() {
+        if (!ValidateMultiCheckBox('chkPayBas', 'PayBas')) {
+            isStepValid = false;
+            return false;
+        }
+        else {
+            isStepValid = true;
+        }
+        return true;
+    }
+
+</script>

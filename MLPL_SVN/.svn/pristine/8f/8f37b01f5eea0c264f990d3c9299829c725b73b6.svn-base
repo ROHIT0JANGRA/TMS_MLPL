@@ -1,0 +1,94 @@
+﻿//  
+// Type: CodeLock.Areas.WMS.Repository.PutAwayRepository
+//  
+//  
+//  
+
+using CodeLock.Helper;
+using CodeLock.Models;
+using CodeLock.Repository;
+using Dapper;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+
+namespace CodeLock.Areas.WMS.Repository
+{
+  public class PutAwayRepository : BaseRepository, IPutAwayRepository, IDisposable
+  {
+    public Response Insert(PutAway objPutAway)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@XmlPutAway", (object) XmlUtility.XmlSerializeToString((object) objPutAway), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return DataBaseFactory.QuerySP<Response>("Usp_PutAway_Insert", (object) dynamicParameters, "PutAway  - Insert").FirstOrDefault<Response>();
+    }
+
+    public IEnumerable<PutAway> GetPutAwayListForUpdate(
+      byte companyId,
+      short warehouseId,
+      string putAwayNo,
+      string grnNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate)
+    {
+      if (toDate > DateTime.Now)
+        toDate = DateTime.Now;
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@CompanyId", (object) companyId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@WarehouseId", (object) warehouseId, new DbType?(DbType.Int16), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@PutAwayNo", (object) putAwayNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@GrnNo", (object) grnNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FromDate", (object) fromDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@ToDate", (object) toDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinStartDate", (object) finStartDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinEndDate", (object) finEndDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return DataBaseFactory.QuerySP<PutAway>("Usp_PutAway_GetPutAwayListForUpdate", (object) dynamicParameters, "PutAway - GetPutAwayListForUpdate");
+    }
+
+    public IEnumerable<PutAwayDetail> GetPutAwayDetailsForUpdate(
+      byte companyId,
+      short warehouseId,
+      long putAwayId)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@CompanyId", (object) companyId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@WarehouseId", (object) warehouseId, new DbType?(DbType.Int16), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@PutAwayId", (object) putAwayId, new DbType?(DbType.Int64), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return DataBaseFactory.QuerySP<PutAwayDetail>("Usp_PutAway_GetPutAwayDetailsForUpdate", (object) dynamicParameters, "PutAway - GetPutAwayDetailsForUpdate");
+    }
+
+    public Response Update(PutAway objPutAway)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@XmlPutAwayUpdate", (object) XmlUtility.XmlSerializeToString((object) objPutAway), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return DataBaseFactory.QuerySP<Response>("Usp_PutAway_Update", (object) dynamicParameters, "PutAway  - Update").FirstOrDefault<Response>();
+    }
+
+    public IEnumerable<PutAwayRegister> GetRegisterPutAwayDetail(
+      string putAwayNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@PutAwayNo", (object) putAwayNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FromDate", (object) fromDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@ToDate", (object) toDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinStartDate", (object) finStartDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinEndDate", (object) finEndDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return (IEnumerable<PutAwayRegister>) DataBaseFactory.QuerySP<PutAwayRegister>("Usp_PutAway_GetRegisterPutAwayDetail", (object) dynamicParameters, "PutAway - GetRegisterPutAwayDetail").ToList<PutAwayRegister>();
+    }
+
+    public IEnumerable<Stock> GetStockDetail(string productCode, string location)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@ProductCode", (object) productCode, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@Location", (object) location, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return (IEnumerable<Stock>) DataBaseFactory.QuerySP<Stock>("Usp_PutAway_GetStockDetail", (object) dynamicParameters, "PutAway - GetStockDetail").ToList<Stock>();
+    }
+  }
+}

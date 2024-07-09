@@ -1,0 +1,65 @@
+﻿@model CodeLock.Models.MasterTyreManufacturer
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "TyreManufacturer Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "TyreManufacturer", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.ManufacturerId)
+    @Html.HiddenFor(model => model.ManufacturerId)
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ManufacturerName, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.ManufacturerName, new { @class = "form-control", @id = "txtManufacturerName" })
+                </div>
+                @Html.ValidationMessageFor(model => model.ManufacturerName)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ManufacturerAddress, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.ManufacturerAddress, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.ManufacturerAddress)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ManufacturerTelNo, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.ManufacturerTelNo, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.ManufacturerTelNo)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.IsActive)
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-footer">
+        <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+    </div>
+</div>
+
+     }
+<script>
+    $(document).ready(function () {
+        SetPageLoad('TyreManufacturer', 'Update', 'txtTyreManufacturer', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.ManufacturerId })');
+    });
+</script>
+

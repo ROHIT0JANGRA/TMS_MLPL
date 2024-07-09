@@ -1,0 +1,64 @@
+﻿@model CodeLock.Models.Docket
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap"> 
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.DocketNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.DocketNo)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+
+<script>
+    var docketId, docketFieldList, txtDocketNo, btnSubmit, isFinancialUpdate = false;
+
+    $(document).ready(function () {
+        docketFieldList = JSON.parse('@DisplayName.GetList("Docket")'.replace(/&quot;/g, '"'));
+        SetPageLoad(GetFieldCaptionByName(docketFieldList, 'Docket'), 'Update', '', '', '');
+        txtDocketNo = $('#txtDocketNo');
+        btnSubmit = $('#btnSubmit');
+        if (!IsObjectNullOrEmpty(GetUrlValue()["isFinancialUpdate"])) if (GetUrlValue()["isFinancialUpdate"].toBool()) isFinancialUpdate = true;
+        btnSubmit.click(OnSubmit);
+
+
+    });
+
+
+    function OnSubmit() {
+        if (!$("#j-forms").valid()) { return false; }
+
+        if (txtDocketNo.val() != "") {
+            var requestData = { docketNo: txtDocketNo.val(), isFinancialUpdate: isFinancialUpdate, searchType: "1" };
+            AjaxRequestWithPostAndJson('@Url.Action("CheckValidDocketNoForUpdate", "Docket")', JSON.stringify(requestData), function (result) {
+                docketId = result;
+                if (result == 0) {
+                    ShowMessage(GetFieldCaptionByName(docketFieldList, 'DocketNo') + ' is not valid for Update');
+                    txtDocketNo.val('').focus();
+                    return false;
+                }
+                return false;
+            }, ErrorFunction, false);
+        }
+        if (docketId != 0) {
+            var isUpdate = true;
+            var url = "@Url.Action("InsertMLPL", "Docket")/" + docketId + '?isFinancialUpdate=' + isFinancialUpdate ;
+            window.location.href = url;
+            return false;
+        }
+        return false;
+    }
+</script>
+

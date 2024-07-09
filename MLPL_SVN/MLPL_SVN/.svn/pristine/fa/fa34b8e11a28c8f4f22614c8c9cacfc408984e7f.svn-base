@@ -1,0 +1,187 @@
+﻿@model CodeLock.Models.ConsignmentTracking
+@{
+    ViewBag.Title = "Consignment";
+    Layout = "~/Views/Shared/_Empty.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        baseUrl = '@Url.Action("", "Tracking", new { Area = "Operation" })';
+        filePath = '';
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = "@ConfigHelper.LocalStoragePath";
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+    })
+</script>
+<script src="~/Areas/Operation/Views/Tracking/Consignment.js?v9"></script>
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.DocumentType, new { @class = "label" })
+                        <label class="radio" id="lblDocketNo">
+                            @Html.RadioButtonFor(model => model.DocumentType, "DKT", new { @id = "rdDocketNo", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DocumentType, "Shipment Number", new { @for = "rdDocketNo" })
+                        </label>
+                        <label class="radio" id="lblReferenceNo">
+                            @Html.RadioButtonFor(model => model.DocumentType, "RFN", new { @id = "rdReferenceNo" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DocumentType, "Reference Number", new { @for = "rdReferenceNo" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentNos, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocumentNos, new { @class = "form-control", @id = "txtDocumentNos" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocumentNos)
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <div class="form-group">
+                    @Html.Label("", " ", new { @class = "label" })
+                    <div class="input">
+                        <button id="btntrack" type="button" class="btn btn-primary primary-btn">Track</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvBackToSummary" style="display:none">
+            <div class="col-sm-9">
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("", " ", new { @class = "label" })
+                    <div class="input">
+                        <button id="btnBackToSummary" type="button" class="btn btn-primary primary-btn">Back To Summary</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvDocketDetail" style="display:none">
+            <div class="page-separator">Summary Results</div>
+            <div class="col-sm-12">
+                <table id="dtDocketDetails"></table>
+            </div>
+        </div>
+        <div id="dvTransitSummary" style="display:none">
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Label("Docket No", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @id = "lblDocket", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Label("Reference Number", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @id = "lblReferenceNumber", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Label("Origin", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @id = "lblOrigin", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Label("From City", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @id = "lblFromCity", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Label("Booking Date & Time", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @id = "lblBookingDateTime", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Label("Delivery Date & Time", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @id = "lblDeliveryDateTime", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Label("Status", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @id = "lblStatus", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Label("Destination", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @id = "lblDestination", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Label("To City", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @id = "lblToCity", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Label("Current Status Date & Time", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @id = "lblCurrentDateTime", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Label(" ")
+                        <div class="clearfix">
+                            @Html.Label(" ")
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Label("No. of Pieces", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @id = "lblPackages", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator" id="dvShipmentHistory" style="display:none">Shipment History</div>
+        <div class="row" id="dvTransitDetail" style="display:none">
+            <div class="col-sm-12">
+                <table id="dtTransitDetails"></table>
+            </div>
+        </div>
+    </div>
+}
+

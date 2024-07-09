@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "AdviceCancellationDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row example-buttons">
+    <div class="col-md-12">
+        <div class="note note-info note-right-striped">
+            <div class="page-separator">Advice Cancelled Successfully</div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Advice Cancellation', 'Done', '', 'Go To Advice Cancellation', '@Url.Action("AdviceCancellation")');
+    });
+</script>
+
+
+
+
+
+
+
+

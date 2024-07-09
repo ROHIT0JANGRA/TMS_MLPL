@@ -1,0 +1,56 @@
+﻿@model IEnumerable<CodeLock.Models.DocketHold>
+@{
+    ViewBag.Title = "Docket Hold List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtDocket">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DocketNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.HoldReason)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.HoldDate)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DocketNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HoldReason)
+                    </td>
+                    <td>
+                        @item.HoldDate.ToDisplayDateTime()
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("DocketUnhold", new { id = item.HoldId })"><span class="zmdi zmdi-edit"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Docket Hold', 'List', 'filter', 'Add New', '@Url.Action("DocketHold")');
+        LoadDataTable('dtDocket', true, true, true);
+    });
+</script>
+

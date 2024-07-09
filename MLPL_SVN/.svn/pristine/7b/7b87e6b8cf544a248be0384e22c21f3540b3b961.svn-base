@@ -1,0 +1,216 @@
+﻿@model CodeLock.Models.DispatchRegisterReport
+@using CodeLock.Models;
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Label("Select Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drDate"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vehicle", new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VehicleId, new SelectList(ViewBag.VehicleList, "Value", "Name"), "Select Vehicle", new { @class = "form-control select2", @id = "ddlVehicleId" })
+                        <i></i>
+                    </div>
+                    @*@Html.ValidationMessageFor(model => model.VehicleId)*@
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vehicle No", new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.VehicleNo, null, new { @class = "form-control", @id = "txtVehicleNo" })
+                    </div>
+                    @* @Html.ValidationMessageFor(model => model.VehicleNo)*@
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Consignor", new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.ConsignorId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Consignor", new { @class = "form-control select2", @id = "ddlConsignorId" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Consignee", new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.ConsigneeId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Consignee", new { @class = "form-control select2", @id = "ddlConsigneeId" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Billing Party", new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.BillingPartyId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Consignor", new { @class = "form-control select2", @id = "ddlBillingPartyId" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Invoice No", new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.InvoiceNo, new { @class = "form-control", @id = "txtInvoiceNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.FromLocationTypeId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.FromLocationTypeId, new List<SelectListItem> {
+                    new SelectListItem() {Text = "Current Location",Value="2"},
+                    new SelectListItem() {Text = "From Location",Value="1"},}, new { @class = "form-control", @id = "ddlFromLocationTypeId" })
+                    <i></i>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "FromLocationId", FieldCaption = "From Location" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "ToLocationId", FieldCaption = "To Location", AllowAll = true })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Part No", new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PartNo, new { @class = "form-control", @id = "txtPartNo" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Eway Bill No", new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.EwayBillNo, new { @class = "form-control", @id = "txtEwayBillNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(SessionUtility.DocketNomenClature + " No", new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label("(seperated by comma if multiple)", new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDate, ddlVehicleId, txtVehicleNo, ddlConsignorId,
+        ddlConsigneeId, ddlBillingPartyId, txtInvoiceNo, ddlFromLocationId, ddlToLocationId,
+        txtPartNo, txtEwayBillNo, txtDocketNo;
+
+
+    $(document).ready(function () {
+        SetPageLoad('Dispatch', 'Register', '', '', '');
+
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        ddlVehicleId = $('#ddlVehicleId');
+        txtVehicleNo = $('#txtVehicleNo');
+        ddlConsignorId = $('#ddlConsignorId');
+        ddlConsigneeId = $('#ddlConsigneeId');
+        ddlBillingPartyId = $('#ddlBillingPartyId');
+        txtInvoiceNo = $('#txtInvoiceNo');
+        ddlFromLocationId = $('#ddlFromLocationId');
+        ddlToLocationId = $('#ddlToLocationId');
+        txtPartNo = $('#txtPartNo');
+        txtEwayBillNo = $('#txtEwayBillNo');
+        txtDocketNo = $('#txtDocketNo');
+        btnSubmit = $('#btnSubmit');
+        ddlFromLocationTypeId = $('#ddlFromLocationTypeId');
+        ddlVehicleId.change(OnVehicleChange).change();
+        btnSubmit.click(ViewReport);
+        OnLocationTypeChange();
+        ddlFromLocationTypeId.change(OnLocationTypeChange);
+    });
+
+    function OnVehicleChange() {
+        if (ddlVehicleId.val() == "") {
+            txtVehicleNo.val('');
+            txtVehicleNo.disable();
+        }
+        else if (ddlVehicleId.val() == 1) {
+            txtVehicleNo.val('');
+            txtVehicleNo.enable();
+        }
+        else {
+            txtVehicleNo.disable();
+            txtVehicleNo.val($('#ddlVehicleId :selected').text());
+        }
+    }
+
+    function ViewReport() {
+        var prmList = [{ Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+        { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+        { Name: "VehicleNo", Value: txtVehicleNo.val() },
+        { Name: "ConsignorId", Value: ddlConsignorId.val() == '' ? '0' : ddlConsignorId.val() },
+        { Name: "ConsigneeId", Value: ddlConsigneeId.val() == '' ? '0' : ddlConsigneeId.val() },
+        { Name: "BillingPartyId", Value: ddlBillingPartyId.val() == '' ? '0' : ddlBillingPartyId.val() },
+        { Name: "InvoiceNo", Value: txtInvoiceNo.val() },
+        { Name: "FromLocationId", Value: ddlFromLocationId.val() },
+        { Name: "ToLocationId", Value: ddlToLocationId.val() },
+        { Name: "PartNo", Value: txtPartNo.val() },
+        { Name: "EwayBillNo", Value: txtEwayBillNo.val() },
+        { Name: "DocketNo", Value: txtDocketNo.val() },
+        { Name: "FromLocationType", Value: ddlFromLocationTypeId.val() }
+        ];
+
+        var reportInfo = { PrmList: prmList, Name: 'DispatchRegister', Description: 'Dispatch Register Report' };
+        return ShowReport(reportInfo);
+    }
+    function OnLocationTypeChange() {
+        if (ddlFromLocationTypeId.val() == 1) {
+            $('#lblFromLocationId').text('From Location');
+            $('#lblToLocationId').text('To Location');
+
+        }
+        else if (ddlFromLocationTypeId.val() == 2) {
+            $('#lblFromLocationId').text('Current Location');
+            $('#lblToLocationId').text('From Location');
+        }
+    }
+
+</script>
+
+

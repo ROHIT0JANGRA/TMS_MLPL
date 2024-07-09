@@ -1,0 +1,247 @@
+﻿@model CodeLock.Models.DocketStatus
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("DocketStatus", "Docket", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+   // @Html.HiddenFor(m => m.DocketId)
+        <div class="widget-wrap">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.DocketId, new { @id = "hdnDocketId" })
+                            @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control textlabel", @id = "txtDocketNo" })
+                            @Html.HiddenFor(model => model.DeliveryDate, new { @id = "hdnDeliveryDate" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocketDate, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.DocketDate, new { @class = "form-control textlabel", @id = "txtDocketDate" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Origin, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.Origin, new { @class = "form-control textlabel", @id = "txtOrigin" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Destination, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.Destination, new { @class = "form-control textlabel", @id = "txtDestination" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ConsigneeName, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.ConsigneeName,  new { @class = "form-control textlabel", @id = "txtConsigneeName" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ModeOfTransport, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.ModeOfTransport, new { @class = "form-control textlabel", @id = "txtModeOfTransport" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.InvoiceNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.InvoiceNo, new { @class = "form-control textlabel", @id = "txtInvoiceNo" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.EDD, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.EDD, new { @class = "form-control textlabel", @id = "txtEDD" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-separator">Status Log</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="dtStatusLog" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                   Status
+                                </th>
+                                <th>
+                                    Status Date
+                                </th>
+                                <th>
+                                    Remarks
+                                </th>
+                                <th data-hide="phone">
+                                    PODFile
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.StatusDetail)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Status)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.StatusDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Remarks)
+                                    </td>
+                                    <td>
+                                        @if (item.PODFile != "")
+                                        {
+                                            <a href="@Url.Action("DownloadFile", "Docket", new { filename = item.PODFile })" target="_blank">POD</a>
+                                        }
+                                        
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                </div>
+
+                <div class="page-separator">Status Details</div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Status, new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.Status, new SelectList(ViewBag.StatusList, "Value", "Name"), "Select Status", new { @class = "form-control", @id = "ddlStatus" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Status)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Partial("DateTimePicker", new DateTimePicker() { DefaultDate = Model.StatusDate, FieldName = "StatusDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.StatusDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true })
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txtRemarks" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3" id="dvPODFile" style="display:none;">
+                        <div class="unit">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PODFile, new { @class = "label" })
+                                <div class="input prepend-big-btn">
+                                    <label class="icon-right">
+                                        <i class="fa fa-download"></i>
+                                    </label>
+                                    <div class="file-button">
+                                        Browse
+                                        @Html.TextBox("file", "", new { type = "file", @onchange = "$('#PODFilePath').val($(this).val())" })
+                                    </div>
+                                    <input class="form-control" name="DebitNoteFilePath" type="text" id="PODFilePath" readonly="" placeholder="no file selected">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+                </div>
+            </div>
+}
+
+<script>
+    var companyId = '@SessionUtility.CompanyId';
+    var ddlStatus, txtStatusDate, btnSubmit, hdnDeliveryDate, txtRemarks;
+    $(document).ready(function () {
+        SetPageLoad('Docket', 'Status', 'txtStatusDate', 'Goto List', '@Url.Action("DocketStatusList")');
+        ddlStatus = $('#ddlStatus');
+        txtStatusDate = $('#txtStatusDate');
+        hdnDeliveryDate = $('#hdnDeliveryDate');
+        txtRemarks = $('#txtRemarks');
+
+        $('#btnSubmit').click(OnSubmit);
+
+        ddlStatus.change(OnStatusChange);
+
+    });
+    function OnSubmit() {
+
+        if (txtStatusDate.val() == "")
+        {
+            alert("Status Date can't be blank");
+            txtStatusDate.focus();
+            return false;
+        }
+
+        if (txtRemarks.val() == "") {
+            alert("Remarks can't be blank");
+            txtRemarks.focus();
+            return false;
+        }
+
+        var date1 = txtStatusDate.val();
+        var date2 = hdnDeliveryDate.val();
+
+        if (ConvertDateformat(date1) < ConvertDateformat(date2)) {
+            alert("Status date is grater than or equal to last status date");
+            txtStatusDate.focus();
+            return false;
+
+        }
+
+        return true;
+    }
+    function ConvertDateformat(date) {
+        var parts = date.split("/");
+        return new Date(parts[2], parts[1] - 1, parts[0]);
+    }
+
+    function OnStatusChange() {
+        
+        if (ddlStatus.val() == 4) {
+            $("#dvPODFile").show();
+            
+        }
+        else {
+            $("#dvPODFile").hide();
+        }
+    }
+
+</script>
+

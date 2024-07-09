@@ -1,0 +1,284 @@
+﻿@model CodeLock.Models.Unloading
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Unloading";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        ThcUrl = '@Url.Action("", "Thc", new { Area = "Operation" })';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Operation/Views/Thc/Unloading.js?v12")"></script>
+@using (Html.BeginForm("Unloading", "Thc", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div id="dvCriteria">
+            <div class="row">
+                <div class="col-sm-2" id="dvComputerized">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.UnloadingNo, new { @class = "label" })
+                        <div class="system-label">
+                            @Html.LabelFor(model => model.UnloadingNo, "<System Generated>")
+                            @Html.HiddenFor(m => m.UnloadingId, new { id = "hdnUnloadingId" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "UnloadingDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.UnloadingDateTime), IsRequired = true, IsDateOnly = false, AllowFutureDate = false, AllowPastDate = true })
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsMarketVehicle, new { @class = "label", @for = "chkIsMarketVehicle" })
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(model => model.IsMarketVehicle, new { @id = "chkIsMarketVehicle" })
+                            <i></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FromCityName, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.FromCityId, new { @id = "hdnFromCityId" })
+                            @Html.TextBoxFor(model => model.FromCityName, null, new { @class = "form-control", @id = "txtFromCityName" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.FromCityName)
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ToCityName, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.ToCityId, new { @id = "hdnToCityId" })
+                            @Html.TextBoxFor(model => model.ToCityName, null, new { @class = "form-control", @id = "txtToCityName" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ToCityName)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DriverName, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.DriverId, new { @id = "hdnDriverId" })
+                            @Html.TextBoxFor(model => model.DriverName, null, new { @class = "form-control", @id = "txtDriverName" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DriverName)
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                            @Html.TextBoxFor(model => model.VehicleNo, null, new { @class = "form-control", @id = "txtVehicleNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.VehicleNo)
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.WarehouseId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.WarehouseId, new SelectList(ViewBag.WarehouseList, "Value", "Name"), "Select Warehouse", new { @class = "form-control", @id = "ddlWarehouseId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.WarehouseId)
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.AccountId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.AccountId, new SelectList(ViewBag.AccountList, "Value", "Name"), "Select Account", new { @class = "form-control", @id = "ddlAccountId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.AccountId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Remark, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.Remark, null, new { @class = "form-control", @id = "txtRemark" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Remark)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ThcNos, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.ThcNos, null, new { @class = "form-control", @id = "txtThcNos" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ThcNos)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        @Html.Label("(seperated by comma if multiple)")
+                    </div>
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.UnloadingAttachment, new { @class = "label" })
+                        <div class="input prepend-big-btn">
+                            <label class="icon-right" for="prepend-big-btn">
+                                <i class="fa fa-download"></i>
+                            </label>
+                            <div class="file-button">
+                                Browse
+                                <input class="form-control" id="fuUnloadingAttachment" type="file" name="UnloadingAttachment" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                            </div>
+                            <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="button" class="btn btn-success primary-btn" tabindex="3" id="btnGetList">Get Docket</button>
+        </div>
+        <div id="dvUnloadingDocketList" style="display:none">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="dtUnloadingDocketList"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TotalPackages, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.TotalPackages, "0", new { @class = "form-control textlabel numeric", @id = "txtTotalPackages" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LoadingCharges, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.LoadingCharges, "0", new { @class = "form-control numeric2", @id = "txtLoadingCharges" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TotalFreight, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.TotalFreight, "0", new { @class = "form-control textlabel numeric2", @id = "txtTotalFreight" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TotalActualWeight, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.TotalActualWeight, "0", new { @class = "form-control textlabel numeric2", @id = "txtTotalActualWeight" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.UnLoadingCharges, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.UnLoadingCharges, "0", new { @class = "form-control numeric2", @id = "txtUnLoadingCharges" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.AdvanceFreight, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.AdvanceFreight, "0", new { @class = "form-control numeric2", @id = "txtAdvanceFreight" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TotalChargedWeight, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.TotalChargedWeight, new { @id = "hdnChargedWeight" })
+                            @Html.TextBoxFor(model => model.TotalChargedWeight, "0", new { @class = "form-control textlabel numeric2", @id = "txtTotalChargedWeight" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.TotalChargedWeight)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DeliveryCommission, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.DeliveryCommission, "0", new { @class = "form-control numeric2", @id = "txtDeliveryCommission" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BalanceFreight, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.BalanceFreight, "0", new { @class = "form-control textlabel numeric2", @id = "txtBalanceFreight" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TotalPaidAmount, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.TotalPaidAmount, "0", new { @class = "form-control textlabel numeric2", @id = "txtTotalPaidAmount" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DoorDelivery, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.DoorDelivery, "0", new { @class = "form-control numeric2", @id = "txtDoorDelivery" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TotalTopayAmount, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.TotalTopayAmount, "0", new { @class = "form-control textlabel numeric2", @id = "txtTotalTopayAmount" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.KartAmount, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.KartAmount, "0", new { @class = "form-control numeric2", @id = "txtKartAmount" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="submit" class="btn btn-success primary-btn" tabindex="3" id="btnGetList">Create</button>
+            </div>
+        </div>
+    </div>
+}
+
+

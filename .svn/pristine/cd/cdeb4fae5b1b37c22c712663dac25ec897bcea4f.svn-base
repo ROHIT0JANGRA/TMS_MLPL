@@ -1,0 +1,103 @@
+﻿@model IEnumerable<CodeLock.Models.Tracking_Details>
+@{
+    int index;
+    int total;
+    index = 0;
+    total = 0;
+
+}
+
+<div id="listSkuItems" style="width:100%">
+    <table class="table" style="width:100%">
+        <tr>
+            <th>
+                S. No.
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FromCity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ToCity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DatedDes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartKM)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndKM)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalRunKM)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LoadType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CustomerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LRDetails)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Remark)
+            </th>
+
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            index++;
+            total = total + @item.TotalRunKM;
+            <tr>
+                <td>
+                    @index
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FromCity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ToCity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DatedDes)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartKM)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndKM)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalRunKM)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LoadType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CustomerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LRDetails)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Remark)
+                </td>
+
+                <td>
+                    <button type="button" onclick="DeleteSku('@item.SNo', 1)" class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+        }
+        <tfoot>
+            <tr style="background-color:gainsboro">
+                <td colspan="6" align="center"><h5>Total</h5></td>
+                <td>@total</td>
+                <td colspan="4"></td>
+            </tr>
+
+        </tfoot>
+    </table>
+</div>

@@ -1,0 +1,154 @@
+﻿@using CodeLock.Models
+@model DocketTalk
+@{
+    ViewBag.Title = "DocketTalk";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    baseUrl = '@Url.Action("", "DocketTalk")';
+    docketNomenclature = '@SessionUtility.DocketNomenClature';
+    @*localStoragePath = '@ConfigHelper.LocalStoragePath';
+    cloudStoragePath = '@ConfigHelper.CloudStoragePath';*@
+</script>
+@using (Html.BeginForm("DocketTalk", "Docket", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        <div class="page-separator"><span class="page-separator" id="spnMassage">Docket Talk</span></div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                        @Html.HiddenFor(model => model.DocketId, new { @id = "hdnDocketId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocketNo)
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txRemarks" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Remarks)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentAttachment, new { @class = "label" })
+                    <div class="input prepend-big-btn">
+                        <label class="icon-right" for="prepend-big-btn">
+                            <i class="fa fa-download"></i>
+                        </label>
+                        <div class="file-button">
+                            Browse
+                            <input class="form-control" id="fuPhotoAttachment" type="file" name="DocumentAttachment" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                        </div>
+                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <div class="align-right">
+                    @Html.Label("btnsubmit", " ", new { @class = "label" })
+                    <div class="clearfix">
+                        <button type="submit" class="btn btn-primary m-" id="btnSubmit">Add New</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="widget-wrap material-table-widget">
+                <table id="dtDetails"></table>
+            </div>
+        </div>
+    </div>
+}
+<script>
+
+    $(document).ready(function () {
+        InitObjects();
+        @*currentDomain = '@Url.Content("~")';*@
+        AttachEvents();
+        OnDocketChange();
+    });
+
+    function AttachEvents() {
+        txtDocketNo.blur(function () { OnDocketChange(); });
+
+    }
+    function InitObjects() {
+        txtDocketNo = $("#txtDocketNo");
+        hdnDocketId = $("#hdnDocketId");
+
+        docketUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+        dtDetails = LoadDataTable('dtDetails', true, true, true, null, null, [],
+            [
+                { title: '@Html.DisplayNameFor(model => model.DocketNo)', data: "DocketNo" },
+                { title: '@Html.DisplayNameFor(model => model.Remarks)', data: "Remarks" },
+                { title: 'Document Attachment Date', data: "EntryDate" },
+                { title: 'Document', data: "View" }
+
+            ]);
+    }
+    function OnDocketChange() {
+        CheckValidDocketNo();
+        if (txtDocketNo.val() != "") {
+            dtDetails.fnClearTable();
+            var requestData = { docketId: hdnDocketId.val() };
+            AjaxRequestWithPostAndJson(docketUrl + '/GetDocketTalkData', JSON.stringify(requestData), OnDocketSuccess, ErrorFunction, false);
+        }
+    }
+
+    function OnDocketSuccess(responseData) {
+        dtDetails.fnClearTable()
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.View = item.DocumentName == null ? '' : '<a href="#" onclick="return ViewAttachment(\'hdnDocumentName' + i + '\');" class="btckn btn-default btn-sm">' +
+                                '<span class="fa fa-download"></span>' +
+                            '</a>' +
+                    "<input type='hidden' value='" + item.DocumentName + "' id='hdnDocumentName" + i + "'/>";
+                item.EntryDate = item.DocumentName == null ? '' : $.displayDateTime(item.EntryDate);
+            });
+            dtDetails.fnAddData(responseData);
+        }
+    }
+    function CheckValidDocketNo() {
+        if (txtDocketNo.val() != '') {
+            var requestData = { docketNo: txtDocketNo.val() };
+            AjaxRequestWithPostAndJson(docketUrl + '/CheckValidDocketNo', JSON.stringify(requestData), function (result) {
+                if (!IsObjectNullOrEmpty(result)) {
+                    hdnDocketId.val(result.Value);
+                    txtDocketNo.val(result.Name);
+                    return true;
+                }
+                else {
+                    ShowMessage(docketNomenclature + ' is not exist');
+                    txtDocketNo.val('');
+                    hdnDocketId.val('');
+                    txtDocketNo.focus();
+                    return false;
+                }
+            }, ErrorFunction, false);
+        }
+    }
+    function ViewAttachment(obj) {
+        var hdnDocumentName = $('#'+obj);
+        var filePath = '';
+        /*filePath = currentDomain + 'Storage/DocketTalk/';*/
+        //if (localStoragePath == 'True')
+        //    filePath = localStoragePath + "DocketTalk/";
+        //else
+        //    filePath = cloudStoragePath;
+
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = localStoragePath + "DocketTalk/";
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+
+        window.open(filePath + hdnDocumentName.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+        return false;
+    }
+</script>

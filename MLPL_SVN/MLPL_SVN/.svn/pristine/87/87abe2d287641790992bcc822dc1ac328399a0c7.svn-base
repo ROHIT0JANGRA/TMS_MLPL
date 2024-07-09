@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "InsertDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><h5><span id="spnMassage">Document Void Successfully Done</span></h5></div>
+    <div class="col-sm-3">
+        <h4>Document No</h4>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+            @Html.Hidden("hdnDocumentId")
+        </div>
+    </div>
+    @*<div class="col-sm-2">
+        <button onclick="return ViewReport();" class="btn btn-info">
+            <i class="fa fa-eye"></i>
+        </button>
+        <button onclick="return PrintReport(this);" class="btn btn-primary">
+            <i class="glyphicon glyphicon-print"></i>
+        </button>
+    </div>*@
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Document Void', 'Insert Done', '', 'Go To Insert', '@Url.Action("DocumentVoid")');
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        spnMassage = $('#spnMassage');
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+    });
+
+
+    function ViewReport() {
+        return ShowViewPrint('@ModuleHelper.Docket',hdnDocumentId.val());
+     }
+
+    function PrintReport() {
+        var prmList = [{ Name: "DocketId", Value: hdnDocumentId.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'DocketView', Description: 'Docket View' };
+        return ShowReport(reportInfo);
+    }
+</script>
+

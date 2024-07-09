@@ -1,0 +1,196 @@
+﻿@model CodeLock.Models.MasterBudgetCriteria
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "Criteria";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Index", "Budget", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="inline-group">
+                        <label></label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsLocationWise, true, new { @id = "rdLocationWise", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsLocationWise, "Location Wise", new { @for = "rdLocationWise" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsLocationWise, false, new { @id = "rdLedgerWise" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsLocationWise, "Ledger Wise", new { @for = "rdLedgerWise" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4" id="dvLocationWiseBranch" style="display : none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationWiseBranchId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.LocationWiseBranchId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Branch", new { @class = "form-control", @id = "ddlLocationWiseBranchCode" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationWiseBranchId)
+                </div>
+            </div>
+            <div class="col-sm-4" id="dvAccountWiseBranch" >
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AccountWiseAccountId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.AccountWiseAccountId, new SelectList(ViewBag.AllAccountList, "Value", "Name"), "Select Account", new { @class = "form-control", @id = "ddlAccountWiseAccountCode" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AccountWiseAccountId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.IsFinancialYear, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsFinancialYear, true, new { @id = "rdFianacialYear", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsFinancialYear, "Financial", new { @for = "rdFianacialYear" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsFinancialYear, false, new { @id = "rdCalenderYear" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsFinancialYear, "Calender", new { @for = "rdCalenderYear" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.IsYearly, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsYearly, true, new { @id = "rdYearly", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsYearly, "Yearly", new { @for = "rdYearly" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsYearly, false, new { @id = "rdMonthly" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsYearly, "Monthly", new { @for = "rdMonthly" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4" id="BranchCode">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BudgetYear, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.BudgetYear, new SelectList(ViewBag.BudgetYearList, "Value", "Name"), "Select Budget Year", new { @class = "form-control", @id = "ddlBudgetYear" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BudgetYear)
+                </div>
+            </div>
+            <div id="divLocation" style="display : none">
+                <div class="col-sm-4" id="BranchCode">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MainAccountId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.MainAccountId, new SelectList(ViewBag.CategoryList, "Value", "Name"), "Select Account Category", new { @class = "form-control", @id = "ddlAccountCategory" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.MainAccountId)
+                    </div>
+                </div>
+                <div class="col-sm-4" id="BranchCode" >
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LocationWiseAccountId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.LocationWiseAccountId, new SelectList(ViewBag.AccountCodeList, "Value", "Name"), "Select Account", new { @class = "form-control", @id = "ddlLocationWiseAccountCode" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.LocationWiseAccountId)
+                    </div>
+                </div>
+            </div>
+            <div id="divAccount">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LocationRegionId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.LocationRegionId, new SelectList(ViewBag.RegionList, "Value", "Name"), "Select Region", new { @class = "form-control", @id = "ddlRegionCode" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.LocationRegionId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.AccountWiseBranchId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.AccountWiseBranchId, Enumerable.Empty<SelectListItem>(), "Select Branch Location", new { @class = "form-control", @id = "ddlAccountWiseBranchCode" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.AccountWiseBranchId)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn">Submit</button>
+        </div>
+
+
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Budget', 'Criteria');
+        $("#ddlAccountCategory option[value='']").val(0)
+        $('#ddlAccountCategory').change(OnAccountCategoryChange);
+        $("#ddlRegionCode option[value='']").val(0)
+        $('#ddlRegionCode').change(OnRegionChange);
+    });
+
+    function OnAccountCategoryChange() {
+        if ($('#ddlAccountCategory').val() != "") {
+            var requestData = { accountCategoryId: $('#ddlAccountCategory').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetAccountGroupListByCategoryId", "AccountGroup")', JSON.stringify(requestData), GetAccountCodeListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetAccountCodeListSuccess(responseData) {
+        BindDropDownList('ddlLocationWiseAccountCode', responseData, 'Value', 'Name', 0, 'Select Account Code');
+    }
+
+    function OnRegionChange() {
+        if ($('#ddlRegionCode').val() != "") {
+            var requestData = { zoneId: $('#ddlRegionCode').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetLocationListByZoneId", "Location")', JSON.stringify(requestData), GetBranchListSuccess, ErrorFunction, false);
+        }
+    }
+
+    @*function OnRigionChange() {
+        if ($('#ddlRigion').val() != "") {
+            var requestData = { location: $('#ddlRigion').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetBranchListbyRigion", "Location")', JSON.stringify(requestData), GetBranchListSuccess, ErrorFunction, false);
+        }
+        else {
+            AjaxRequestWithPostAndJson('@Url.Action("GetAllBranchList", "Location")', JSON.stringify(''), GetBranchListSuccess, ErrorFunction, false);
+        }
+    }*@
+
+    function GetBranchListSuccess(responseData) {
+        BindDropDownList('ddlAccountWiseBranchCode', responseData, 'Value', 'Name', 0, 'Select Branch');
+        $("#ddlAccountWiseBranchCode option[value='All']").val(0)
+    }
+</script>
+

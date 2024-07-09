@@ -1,0 +1,226 @@
+﻿@model CodeLock.Models.ThcSummary
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        thcUrl = '@Url.Action("", "THC", new { Area = "Operation" })';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Operation/Views/THC/VehicleArrival.js")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label("THC Date", new { @class = "label" })
+                            </div>
+                            <div id="drTHCDate"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.ArrivalLocationCode, new { @class = "label" })
+                            @Html.HiddenFor(model => model.ArrivalLocationCode, new { @id = "hdnCustomerLocation" })
+                            @Html.DropDownListFor(model => model.ArrivalLocationCode, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlArrivalLocation", @placeholder = "Select Location(s)" })
+                            @Html.ValidationMessageFor(model => model.ArrivalLocationCode)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.Label("", " ", new { @class = "label" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("THC No(s)", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ThcNo, new { @class = "form-control", @id = "txtTHCNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ThcNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("Vehicle No(s)", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "txtVehicleNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.VehicleNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(SessionUtility.DocketNomenClature + "(s)", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.DocketNo)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtThcDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ThcNo, new { @class = "label" })
+                                @Html.Label(" ", new { @id = "lblThcNo", @class = "label-bold" })
+                                @Html.HiddenFor(model => model.ThcId, new { @id = "hdnTHCId" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ThcDate, new { @class = "label" })
+                                @Html.Label(" ", new { @id = "lblThcDate", @class = "label-bold" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                                @Html.Label(" ", new { @id = "lblVehicleNo", @class = "label-bold" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.FromLocationCode, new { @class = "label" })
+                                @Html.Label(" ", new { @id = "lblDepartedLocationCode", @class = "label-bold" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ActualDepartureDate, new { @class = "label" })
+                                @Html.Label(" ", new { @id = "lblActualDepartedDate", @class = "label-bold" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ExpectedArrivalDate, new { @class = "label" })
+                                @Html.Label(" ", new { @id = "lblExpectedArrivalDate", @class = "label-bold" })
+                                @Html.HiddenFor(m => m.ExpectedArrivalDate, new { @id = "hdnExpectedArrivalDate" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "ActualArrivalDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.ActualArrivalDate), IsDateOnly = false, IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.HiddenFor(m => m.StartKm, new { @id = "hdnStartKm" })
+                                @Html.LabelFor(model => model.StartKm, new { @class = "label" })
+                                @Html.Label(" ", new { @id = "lblStartKM", @style = "text-align: right", @class = "label-bold" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.EndKm, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.EndKm, new { @class = "form-control", @id = "txtEndKM" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.EndKm)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", "Total Actual Weight", new { @class = "label" })
+                                @Html.Label(" ", new { @id = "lblTotalActualWeight", @style = "text-align: right", @class = "label-bold" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", "Total LR", new { @class = "label" })
+                                @Html.Label(" ", new { @id = "lblTotalDocket", @style = "text-align: right", @class = "label-bold" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", "Total Packages", new { @class = "label" })
+                                @Html.Label(" ", new { @id = "lblTotalPackages", @style = "text-align: right", @class = "label-bold" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.IncomingSealStatus, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.IncomingSealStatus, new List<SelectListItem> { new SelectListItem() { Text = "OK", Value = "1" },
+                                                                                             new SelectListItem() { Text = "Broken", Value = "2" },
+                                                                                             new SelectListItem() { Text = "Unsealed", Value = "3" } }, new { @class = "form-control", @id = "ddlIncomingSealStatus" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.IncomingSealStatus)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.IncomingSealNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.IncomingSealNo, new { @class = "form-control", @id = "txtIncomingSealNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.IncomingSealNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4" id="dvIncomingSealReason" style="display:none">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.IncomingSealReason, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.IncomingSealReason, new { @class = "form-control", @id = "txtIncomingSealReason" })
+                                    @Html.HiddenFor(m => m.OutgoingSealNo, new { @id = "hdnOutgoingSealNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.IncomingSealReason)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.IncomingRemark, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.IncomingRemark, new { @class = "form-control", @id = "txtIncomingRemark" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.IncomingRemark)
+                            </div>
+                        </div>
+                        <div class="col-sm-4" id="dvLateArrivalReason">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LateArrivalReasonId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.LateArrivalReasonId, new SelectList(ViewBag.LateArrivalReasonList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlLateArrivalReason", @placeholder = "Select Reason" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.LateArrivalReasonId)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

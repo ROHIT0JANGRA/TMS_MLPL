@@ -1,0 +1,135 @@
+﻿@model CodeLock.Models.MasterCompany
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Company Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Company", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.CompanyId)
+    @Html.HiddenFor(model => model.CompanyId)
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CompanyCode, new { @class = "label" })
+                    <div class="form-group">
+                        @Html.Label("", Model.CompanyCode)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CompanyName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CompanyName, new { @class = "form-control", @id = "txtCompanyName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CompanyName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CompanyAddress, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CompanyAddress, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CompanyAddress)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "StartDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.StartDate), DefaultDate = Model.StartDate.ConvertToDateTime(), IsRequired = true, IsDateOnly = true, AllowFutureDate = false, AllowPastDate = true, IsValidateFinYear = false, SetBlank = Model.StartDate == null ? true : false })
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ContactPerson, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ContactPerson, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ContactPerson)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MobileNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MobileNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MobileNo)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GstTinNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.GstTinNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GstTinNo)
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PANNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PANNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PANNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TANNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.TANNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TANNo)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RegistrationNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.RegistrationNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.RegistrationNo)
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PunchLine, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PunchLine, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PunchLine)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Company', 'Update', 'txtCompanyName', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.CompanyId })');
+    });
+</script>
+

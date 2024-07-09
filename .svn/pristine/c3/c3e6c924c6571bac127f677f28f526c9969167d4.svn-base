@@ -1,0 +1,91 @@
+﻿@{
+	ViewBag.Title = "GenerationDone";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+	<div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+	<div class="col-sm-3">
+		<strong><label id="lblBillNo">Bill No</label></strong>
+	</div>
+	<div class="col-sm-4">
+		<div class="form-group">
+			@Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+			@Html.Hidden("hdnDocumentId")
+		</div>
+	</div>
+	<div class="col-sm-2">
+		<button onclick="return ViewReport(this);" class="btn btn-info">
+			<i class="fa fa-eye"></i>
+		</button>
+	</div>
+</div>
+<script>
+    var billId = 0, billType = 0, customerId = 0, customerBillFormatMasterUrl;
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+		lblBillNo = $('#lblBillNo');
+        lblDocumentNo = $('#lblDocumentNo');
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        billId = GetUrlValue()["BillId"];
+        billType = GetUrlValue()["BillType"];
+        customerId = GetUrlValue()["CustomerId"];
+        paybasId = GetUrlValue()["PaybasId"];
+        transportModeId = GetUrlValue()["TransportModeId"];
+        ftlTypeId = GetUrlValue()["FtlTypeId"];
+        serviceTypeId = GetUrlValue()["ServiceTypeId"];
+        useTransportModeServiceType = GetUrlValue()["UseTransportModeServiceType"];
+        customerBillFormatMasterUrl = '@Url.Action("", "CustomerBillFormat", new { Area = "Master" })';
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        if (billType == 4) {
+            spnMassage.text("Supplementary Bill is Generated Successfully");
+            SetPageLoad('Supplementary Bill', 'Done', '', 'Go To Supplementary Bill Generation', '@Url.Action("SupplementryBill")');
+        }
+         else if (billType == 20) {
+            spnMassage.text("Credit/Debit Note is Generated Successfully");
+            SetPageLoad('Credit/Debit Note Generation', 'Done', '', 'Go To Note Generation', '@Url.Action("CreditDebitNote")');
+            lblBillNo.text("Credit/Debit Note No.");
+        }
+         else if (billType == 30) {
+            spnMassage.text("Bill is Updated Successfully");
+            SetPageLoad('Bill Edit', 'Done', '', 'Go To Bill Edit', '@Url.Action("GenerationMLPLEdit")');
+            lblBillNo.text("Bill No.");
+        }
+        else {
+            spnMassage.text("Bill is Generated Successfully");
+            SetPageLoad('Bill Generation', 'Done', '', 'Go To Bill Generation', '@Url.Action("GenerationDumtco")');
+        }
+    }
+
+    function ViewReport() {
+
+        var billFormat = 'CustomerBillView';
+        var requestData = { customerId: customerId, paybasId: billType, transportModeId: transportModeId, serviceTypeId: serviceTypeId };
+        AjaxRequestWithPostAndJson(customerBillFormatMasterUrl + '/GetBillFormatByCustomerId', JSON.stringify(requestData), function (result) {
+            if (!IsObjectNullOrEmpty(result))
+                billFormat = result.Name;
+
+        }, ErrorFunction, false);
+        var prmList = [{ Name: "BillId", Value: billId }];
+
+        if (billType == 4) {
+            var reportInfo = { PrmList: prmList, Name: 'CustomerSuppBillDetailView', Description: 'Supplementary Bill View' };
+            return ShowReport(reportInfo);
+        }
+        else if (billType == 20)
+        {
+			var prmList = [{ Name: "CreditDebitNoteId", Value: billId }];
+			var reportInfo = { PrmList: prmList, Name: 'CreditDebitNoteView', Description: 'Credit Debit View' };
+		    return ShowReport(reportInfo);
+	    }
+        else {
+
+            var reportInfo = { PrmList: prmList, Name: billFormat, Description: 'Customer Bill View' };
+            return ShowReport(reportInfo);
+        }
+
+    }
+</script>

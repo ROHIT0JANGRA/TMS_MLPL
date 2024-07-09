@@ -1,0 +1,258 @@
+﻿@model CodeLock.Models.MasterDcr
+@{
+    ViewBag.Title = "Manage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="divDCRSearch">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocumentTypeId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.DocumentTypeId, new SelectList(ViewBag.DocumentTypeList, "Value", "Name"), "Select Document Type", new { @class = "form-control", @id = "ddlDocumentTypeId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DocumentTypeId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label( "Document Number", new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.DocumentNumber, new { @class = "form-control", @id = "txtDocumentNumber" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DocumentNumber)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(" ",  new { @class = "label" })
+                        <button type="button" class="btn btn-primary" tabindex="3" id="btnSearch" >Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="divDCRResult">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocumentTypeName, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.LabelFor(model => model.DocumentTypeName, " ", new { @id = "lblDocumentTypeName" , @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BookCode, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label("lblBookCode", " ", new { @id = "lblBookCode", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BusinessTypeId, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label("lblBusinessTypeId", " ", new { @id = "lblBusinessTypeId", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SeriesFrom, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label("lblSeriesFrom", " ", new { @id = "lblSeriesFrom", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SeriesTo, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label("lblSeriesTo", " ", new { @id = "lblSeriesTo", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.HiddenFor(model => model.LocationId, new { @id = "hdnLocationId" })
+                            @Html.HiddenFor(model => model.LocationCode, new { @id = "hdnLocationCode" })
+                            @Html.Label("lblLocationId", " ", new { @id = "lblLocationId", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.AllotedCategory, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label("lblAllotedCategory", " ", new { @id = "lblAllotedCategory", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.AllotedTo, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label("lblAllotedTo", " ", new { @id = "lblAllotedTo", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Total, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label("lblTotal", " ", new { @id = "lblTotal", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Used, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label("lblUsed", " ", new { @id = "lblUsed", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Cancelled, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label("lblCancelled", " ", new { @id = "lblCancelled", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Void, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label("lblVoid", " ", new { @id = "lblVoid", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label("lblIsActive", " ", new { @id = "lblIsActive", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Action", new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.ActionId, new List<SelectListItem> { new SelectListItem() { Text = "Split", Value = "1" }, new SelectListItem() { Text = "Reallocate", Value = "2" } }, new { @class = "form-control", @id = "ddlAction" })
+                            <i></i>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer" style="display:none"  id="divbtnAction">
+            <button type="button"  id="btnAction" class="btn btn-success primary-btn" tabindex="3">Next</button>
+        </div>
+    </div>
+}
+<script>
+    var ddlDocumentTypeId, txtDocumentNumber, btnSearch, divDCRSearch, divDCRResult, divbtnAction;
+    var lblDocumentTypeName, lblBookCode, lblBusinessTypeId, lblSeriesFrom, lblSeriesTo, lblLocationId, lblAllotedCategory;
+    var lblAllotedTo, lblTotal, lblUsed, lblCancelled, lblVoid, lblSuffix, lblSuffixBase, lblIsActive, hdnLocationId;
+
+    $(document).ready(function () {
+        ddlDocumentTypeId = $('#ddlDocumentTypeId');
+        txtDocumentNumber = $('#txtDocumentNumber');
+        txtDocumentNumber.rules("add", { required: true, messages: { required: "Please enter Document Number." } });
+        divDCRSearch = $('#divDCRSearch');
+        divDCRResult = $('#divDCRResult');
+        divDCRResult.hide();
+        lblDocumentTypeName = $('#lblDocumentTypeName');
+        lblBookCode = $('#lblBookCode');
+        lblBusinessTypeId = $('#lblBusinessTypeId');
+        lblSeriesFrom = $('#lblSeriesFrom');
+        lblSeriesTo = $('#lblSeriesTo');
+        lblLocationId = $('#lblLocationId');
+        hdnLocationId = $('#hdnLocationId');
+        lblAllotedCategory = $('#lblAllotedCategory');
+        lblAllotedTo = $('#lblAllotedTo');
+        lblTotal = $('#lblTotal');
+        lblUsed = $('#lblUsed');
+        lblCancelled = $('#lblCancelled');
+        lblVoid = $('#lblVoid');
+        lblIsActive = $('#lblIsActive');
+        btnSearch = $('#btnSearch');
+        ddlAction = $('#ddlAction');
+        btnAction = $('#btnAction');
+        divbtnAction = $('#divbtnAction');
+
+        btnSearch.click(OnSearchClick);
+        btnAction.click(OnActionClick);
+        SetPageLoad('DCR', 'Manage', '');
+    });
+
+    function OnSearchClick() {
+        var IsValid = IsFormValid($('form:eq(0)'), ['ddlDocumentTypeId', 'txtDocumentNumber']);
+        if (IsValid) {
+            var requestData = { DocumentTypeId: ddlDocumentTypeId.val(), SeriesFrom: txtDocumentNumber.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetDetailByDocumentTypeIdAndDocumentNumber")', JSON.stringify(requestData), function (result) {
+                if (IsObjectNullOrEmpty(result)) {
+                    ShowMessage('Document Number is not in DCR Series');
+                }
+                else
+                    OnSearchSuccess(result);
+            }, ErrorFunction, false);
+        }
+        return false;
+    }
+
+    function OnSearchSuccess(responseData) {
+        divDCRSearch.hide();
+        divDCRResult.show();
+        lblDocumentTypeName.text(responseData.DocumentTypeName);
+        lblBookCode.text(responseData.BookCode + responseData.Suffix);
+        lblBusinessTypeId.text(responseData.BusinessType);
+        lblSeriesFrom.text(responseData.SeriesFrom);
+        lblSeriesTo.text(responseData.SeriesTo);
+        lblLocationId.text(responseData.LocationCode);
+        hdnLocationId.val(responseData.LocationId);
+        lblAllotedCategory.text(responseData.AllotedCategory == 'U' ? 'User' : responseData.AllotedCategory == 'B' ? 'BA' : 'Location');
+        lblAllotedTo.text(responseData.AllotedToName);
+        lblTotal.text(responseData.Total);
+        lblUsed.text(responseData.Used);
+        lblCancelled.text(responseData.Cancelled);
+        lblVoid.text(responseData.Void);
+        lblIsActive.text(responseData.IsActive ? "Yes" : "No");
+
+        if (parseInt(lblUsed.text()) > 0) {
+            $("#ddlAction option[value='2']").remove();
+           // ddlAction.('refresh');
+        }
+
+        divbtnAction.css("display", "block");
+        return false;
+    }
+
+    function OnActionClick() {
+        if (ddlAction.val() == 1)
+            window.location.href = "@Url.Action("Split")?documentTypeId=" + ddlDocumentTypeId.val() + "&documentNo=" + txtDocumentNumber.val();
+        else
+            window.location.href = "@Url.Action("ReallocateDumptco")?documentTypeId=" + ddlDocumentTypeId.val() + "&documentNo=" + txtDocumentNumber.val();
+        return false;
+    }
+</script>
+
+

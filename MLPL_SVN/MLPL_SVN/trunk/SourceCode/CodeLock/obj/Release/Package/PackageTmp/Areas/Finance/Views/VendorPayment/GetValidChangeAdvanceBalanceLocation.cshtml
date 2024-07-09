@@ -1,0 +1,63 @@
+﻿@model CodeLock.Models.ChangeAdvanceBalanceLocation
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocumentNo, new { @class = "form-control", @id = "txtDocumentNo" })
+                        
+                    </div>
+                    @Html.ValidationMessageFor(m => m.DocumentNo)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+
+<script>
+    var DocumentNo,  txtDocumentNo, btnSubmit;
+
+    $(document).ready(function () {
+        SetPageLoad('Change Advance Balance Location', '');
+        txtDocumentNo = $('#txtDocumentNo');
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+    });
+
+    function OnSubmit() {
+        if (!$("#j-forms").valid()) { return false; }
+        if (txtDocumentNo.val() != "") {
+            var requestData = { DocumentNo: txtDocumentNo.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("ValidateDocumentIdForAdvanceBalanceLocation", "VendorPayment")', JSON.stringify(requestData), function (result) {
+                if (!IsObjectNullOrEmpty(result)) {
+
+                    var url = "@Url.Action("ChangeAdvanceBalanceLocation", "VendorPayment")?DocumentNo=" + txtDocumentNo.val();
+                    window.location.href = url;
+                   
+                    return false;
+                }
+                else {
+                    ShowMessage('Document is not Valid');
+                    txtDocumentNo.val('');
+                    txtDocumentNo.focus();
+                    return false;
+                }
+                return false;
+            }, ErrorFunction, false);
+        }
+        return false;
+    }
+
+
+
+</script>
+

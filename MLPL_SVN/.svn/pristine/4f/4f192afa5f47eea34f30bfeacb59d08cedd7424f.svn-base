@@ -1,0 +1,101 @@
+﻿@model CodeLock.Models.Docket
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.DocketNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo", autofocus = "autofocus" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.DocketNo)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+
+        <!-- Modal -->
+        <!-- Modal Popup -->
+        <div id="MyPopup" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">
+                            Barcode Scanning
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <input id="txtScan" class = "form-control" tabindex="1" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" tabindex="2">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+}
+
+<script>
+    var docketId, docketFieldList, txtDocketNo, btnSubmit, isFinancialUpdate = false;
+    const displayBox = document.getElementById('txtScan');
+    let scannedData = '';
+
+    $(document).ready(function () {
+        docketFieldList = JSON.parse('@DisplayName.GetList("Docket")'.replace(/&quot;/g, '"'));
+        SetPageLoad(GetFieldCaptionByName(docketFieldList, 'Docket'), 'Update', '', '', '');
+        //txtDocketNo = $('#txtDocketNo');
+        btnSubmit = $('#btnSubmit');
+        //if (!IsObjectNullOrEmpty(GetUrlValue()["isFinancialUpdate"])) if (GetUrlValue()["isFinancialUpdate"].toBool()) isFinancialUpdate = true;
+        btnSubmit.click(OnSubmit);
+        // Add an event listener for the 'keydown' event at the document level.
+        displayBox.addEventListener('keyup', handleBarcodeScan);
+        //$('#txtDocketNo').change(function () {
+
+        //});
+
+
+
+    });
+
+    // Function to handle barcode scans.
+    function handleBarcodeScan(event) {
+        // Check if the event represents a key press.
+
+        if (event.key !== 'Enter') {
+            // Append the pressed key to the scanned data.
+            scannedData += event.key;
+        }
+
+        if (scannedData.length == 6) {
+            displayBox.value = scannedData;
+            scannedData = '';
+        }
+    }
+
+    function OnSubmit() {
+
+        $('#MyPopup').modal('show');
+        $('#MyPopup').on('shown.bs.modal', function () {
+            $('#txtScan').focus();
+        });
+
+    }
+</script>
+

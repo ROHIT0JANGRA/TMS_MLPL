@@ -1,0 +1,109 @@
+﻿@model CodeLock.Models.VendorContract
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "j-forms", @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorTypeId, new SelectList(ViewBag.VendorTypeList, "Value", "Name"), "Select Vendor Type", new { @class = "form-control", @id = "ddlVendorTypeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorTypeId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorId, Enumerable.Empty<SelectListItem>(), "Select Vendor Name", new { @class = "form-control select2", @id = "ddlVendorId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorId)
+                </div>
+            </div>
+        </div>
+
+        <table id="dtVendorContract"></table>
+
+    </div>
+}
+
+
+<script>
+    var ddlVendorId, dtVendorContract;
+    $(document).ready(function () {
+        SetPageLoad('Vendor Contract', 'List', 'ddlVendorTypeId', 'Add New', '@Url.Action("Insert")');
+        ddlVendorId = $('#ddlVendorId');
+        ddlVendorTypeId = $('#ddlVendorTypeId');
+        ddlVendorId.change(OnVendorChange);
+        ddlVendorTypeId.change(OnVendoTypeChange);
+        dtVendorContract = LoadDataTable('dtVendorContract', false, true, true, null, null, [],
+            [
+                { title: '@Html.DisplayNameFor(model => model.ManualContractId)', data: "ManualContractId" },
+                { title: '@Html.DisplayNameFor(model => model.StartDate)', data: "StartDate" },
+                { title: '@Html.DisplayNameFor(model => model.EndDate)', data: "EndDate" },
+                { title: '@Html.DisplayNameFor(model => model.IsActive)', data: "IsActive" },
+                { title: "Action", data: "Edit" }
+            ]);
+    });
+
+    function OnVendoTypeChange() {
+        var requestData = { vendorTypeId: ddlVendorTypeId.val() != '' ? ddlVendorTypeId.val() : 0 };
+        AjaxRequestWithPostAndJson('@Url.Action("GetVendorNameByVendorTypeId", "Vendor",new {@Area = "Master" })', JSON.stringify(requestData), GetVendorNameListSuccess, ErrorFunction, false);
+    }
+
+    function GetVendorNameListSuccess(responseData) {
+        BindDropDownList('ddlVendorId', responseData, 'Value', 'Name', '', 'Select Vendor Name');
+    }
+
+    function OnVendorChange() {
+        @*var vendorId = '@Html.Raw(ViewBag.vendorId)';
+        if (vendorId > 0) {
+            SetDropDownValue($('#ddlVendorId'), vendorId);
+            var requestData = { VendorId: ddlVendorId.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetAll")', JSON.stringify(requestData), OnVendorChangeSuccess, ErrorFunction, false);
+        }*@
+        if (ddlVendorTypeId.val() == 5 && ddlVendorId.val() != '') {
+            var url = '@Url.Action("Index", "CustomerContract")?customerId=' + ddlVendorId.val() + '&isCustomerContract=' + false;
+            window.location.href = url;
+            return false;
+        }
+        else {
+            var requestData = { VendorId: ddlVendorId.val() != '' ? ddlVendorId.val() : 0 };
+            AjaxRequestWithPostAndJson('@Url.Action("GetAll")', JSON.stringify(requestData), OnVendorChangeSuccess, ErrorFunction, false);
+        }
+    }
+    function OnVendorChangeSuccess(responseData) {
+        dtVendorContract.fnClearTable()
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.IsActive = item.IsActive ? "Yes" : "No";
+                item.StartDate = $.displayDate(item.StartDate);
+                item.EndDate = $.displayDate(item.EndDate);
+                item.Edit = '<a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("StepSelection", "VendorContract")?contractId=' + item.ContractId + '&vendorTypeId=' + item.VendorTypeId + '&vendorId=' + item.VendorId + '">' +
+                '<i class="zmdi zmdi-edit"></i>' +
+                    '</a>' +
+                    '<a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Details", "VendorContract")?id=' + item.ContractId + '">' +
+                '<i class="fa fa-file"></i>' +
+                    '</a>' +
+                       '<a class="btn btn-default btn-sm m-user-edit" onclick="return ViewReport(' + item.ContractId +  ')">' +
+                '<i class="glyphicon glyphicon-eye-open"></i>' +
+                '</a>';
+            });
+            dtVendorContract.fnAddData(responseData);
+        }
+    }
+
+    function ViewReport(contractId) {
+        var prmList = [{ Name: "ContractId", Value: contractId }];
+        var reportInfo = { PrmList: prmList, Name: 'VendorContractView', Description: 'Vendor Contract View' };
+        return ShowReport(reportInfo);
+    }
+</script>   

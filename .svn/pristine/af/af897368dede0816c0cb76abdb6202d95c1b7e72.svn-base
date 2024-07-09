@@ -1,0 +1,212 @@
+﻿@using CodeLock.Models
+@model Grn
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/scripts/common-event.js"></script>
+@using (Html.BeginForm("Insert", "Grn", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.GrnId, new { @id = "hdnGrnId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GrnNo, new { @class = "label" })
+                    <div class="system-label">
+                        @Html.LabelFor(model => model.GrnNo, "<System Generated>")
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { DefaultDate = Model.GrnDateTime.ConvertToDateTime(), FieldName = "GrnDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.GrnDateTime), IsDateOnly = false, IsRequired = true, AllowFutureDate = false, AllowPastDate = false, MinDate = DateTime.Now.Date, MaxDate = DateTime.Now.Date.AddDays(1) })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SupplierCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.SupplierId, new { @id = "hdnSupplierId" })
+                        @Html.TextBoxFor(model => model.SupplierCode, null, new { @class = "form-control", @id = "txtSupplierCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SupplierCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.Label("lblSupplierName", " ", new { @class = "label-bold", @id = "lblSupplierName" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PoNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PoNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PoNo)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { DefaultDate = Model.PoDate, FieldName = "PoDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.PoDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.InvoiceNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.InvoiceNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.InvoiceNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { DefaultDate = Model.InvoiceDate, FieldName = "InvoiceDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.InvoiceDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @Html.ValidationMessageFor(m => m.Details)
+                <table id="dtProduct">
+                    <thead>
+                        <tr>
+                            <th>Product Code</th>
+                            <th>Product Name</th>
+                            <th>UOM</th>
+                            <th>Packages</th>
+                            <th>Quantity</th>
+                            <th></th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Details.Count; i++)
+                        {
+                            var item = Model.Details[i];
+                            var j = i.ToString();
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => item.ProductId, new { id = "hdnProductId" + j, @Name = "Details[" + j + "].ProductId" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.ProductCode, new { @class = "form-control", @id = "txtProductCode" + j, @Name = "Details[" + j + "].ProductCode" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => item.ProductCode)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.ProductName, new { @class = "form-control textlabel", @id = "txtProductName" + j })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.Uom, new { @class = "form-control textlabel", @id = "txtUom" + j })
+                                        @Html.HiddenFor(m => item.UomQuantity, new { @id = "hdnUomQuantity" + j })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.Packages, new { @class = "form-control numric", @id = "txtPackages" + j, @Name = "Details[" + j + "].Packages" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => item.Packages)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.Quantity, new { @class = "form-control textlabel numric3", @id = "txtQuantity" + j, @Name = "Details[" + j + "].Quantity" })
+                                    </div>
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => item.FirstSerialNo, new { id = "hdnFirstSerialNo" + j, @Name = "Details[" + j + "].FirstSerialNo" })
+                                    @Html.HiddenFor(m => item.SecondSerialNo, new { id = "hdnSecondSerialNo" + j, @Name = "Details[" + j + "].SecondSerialNo" })
+                                    @Html.HiddenFor(m => item.IsSingle, new { id = "hdnIsSingle" + j, @Name = "Details[" + j + "].IsSingle" })
+                                    @*<button id="@("btnPopUp" + j)" onclick="OnPopUpClick(this.Id)" class="btn btn-primary btn-xs dt-edit" style="display:none;">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </button>*@
+                                    <div class="btn-toolbar" role="toolbar">
+                                            <div class="btn-group" role="group">
+                                                <a class="btn btn-default btn-sm m-user-edit" id="@("btnPopUp" + j)" onclick="OnPopUpClick(this.Id)"><span class="zmdi zmdi-search"></span></a>
+                                            </div>
+                                        </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Generate</button>
+        </div>
+    </div>
+}
+
+<script>
+    companyId = '@SessionUtility.CompanyId';
+    $(document).ready(function () {
+        SetPageLoad('GRN', 'Entry', 'txtGrnDateTime', 'Go To List', '@Url.Action("Index")');
+        //$('#ddlGrnType').closest('div').hide();
+        hdnGrnId = $('#hdnGrnId');
+        var txtSupplierCode = $('#txtSupplierCode'), hdnSupplierId = $('#hdnSupplierId'), lblSupplierName = $('#lblSupplierName');
+        txtSupplierCode.blur(function () { return WMS.IsSupplierCodeExist(txtSupplierCode, hdnSupplierId, lblSupplierName); });
+        SupplierAutoComplete(txtSupplierCode.Id, hdnSupplierId.Id);
+        InitGrid('dtProduct', false, 6, InitProductTable);
+    });
+
+    function InitProductTable() {
+        $('[id*="txtProductCode"]').each(function () {
+            var txtProductCode = $(this);
+            var hdnProductId = $('#' + this.Id.replace('txtProductCode', 'hdnProductId'));
+            var txtProductName = $('#' + this.Id.replace('txtProductCode', 'txtProductName'));
+            var txtUom = $('#' + this.Id.replace('txtProductCode', 'txtUom'));
+            var hdnIsSingle = $('#' + this.Id.replace('txtProductCode', 'hdnIsSingle'));
+            var btnPopUp = $('#' + this.Id.replace('txtProductCode', 'btnPopUp'));
+            var hdnFirstSerialNo = $('#' + this.Id.replace('txtProductCode', 'hdnFirstSerialNo'));
+            var hdnSecondSerialNo = $('#' + this.Id.replace('txtProductCode', 'hdnSecondSerialNo'));
+            var txtQuantity = $('#' + this.Id.replace('txtProductCode', 'txtQuantity'));
+            var hdnUomQuantity = $('#' + this.Id.replace('txtProductCode', 'hdnUomQuantity'));
+            var txtPackages = $('#' + this.Id.replace('txtProductCode', 'txtPackages'));
+            txtProductCode.blur(function () {
+                if (!CheckDuplicateInTable('dtProduct', 'txtProductCode', 'Product Code', txtProductCode)) return false;
+                txtQuantity.val(0);
+                txtPackages.val(0);
+                hdnFirstSerialNo.val('');
+                hdnSecondSerialNo.val('');
+                return WMS.IsProductCodeExist(txtProductCode, hdnProductId, txtProductName, txtUom, hdnIsSingle, hdnUomQuantity);
+            });
+
+            txtProductCode.blur(function () {
+                btnPopUp.showHide(hdnIsSingle.val() != '');
+                txtPackages.attr('readOnly', false);
+            });
+            WMS.ProductAutoComplete(txtProductCode.Id, hdnProductId.Id);
+            txtPackages.blur(function () {
+                txtQuantity.val(parseFloat(txtPackages.val() * parseFloat(hdnUomQuantity.val())));
+            });
+        });
+    }
+
+    function OnPopUpClick(objId) {
+        var btnPopUp = $(objId);
+        var hdnIsSingle = $('#' + objId.replace('btnPopUp', 'hdnIsSingle'));
+        var hdnProductId = $('#' + objId.replace('btnPopUp', 'hdnProductId'));
+        var hdnFirstSerialNo = $('#' + objId.replace('btnPopUp', 'hdnFirstSerialNo'));
+        var popup;
+
+        popup = window.open("../../WMS/Grn/ScanSerialNumber?productId=" + hdnProductId.val() + "&rowId=" + objId + "&isSingle=" + hdnIsSingle.val() + "&grnId=" + hdnGrnId.val(), "Popup", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=600,width=1300,height=650");
+        popup.focus();
+        return false;
+    }
+</script>
+
+

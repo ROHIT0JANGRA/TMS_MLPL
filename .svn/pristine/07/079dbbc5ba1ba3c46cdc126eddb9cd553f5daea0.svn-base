@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "PfmDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><span class="PageSeparator-Span" id="spnMassage"></span></div>
+    <div class="col-sm-3">
+        <h4>PFM No</h4>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <div class="clearfix">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <button onclick="return ViewReport();" class="btn btn-info">
+            <i class="fa fa-eye"></i>
+        </button>
+    </div>
+</div>
+<script>
+    var status = '';
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        status = GetUrlValue()["status"];
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        lblDocumentNo.html(GetUrlValue()["DocumentNo"]);
+        hdnDocumentId.val(GetUrlValue()["DocumentId"]);
+        if (status == "Forward") {
+            spnMassage.text("PFM is Generated Successfully");
+            SetPageLoad('PFM', 'Done', '', 'Go To Generate PFM', '@Url.Action("Forward")');
+        }
+        else if (status == "Acknowledge") {
+            spnMassage.text("PFM is Acknowledged Successfully");
+            SetPageLoad('PFM', 'Acknowledge Done', '', 'Go To Acknowledge PFM', '@Url.Action("Acknowledge")');
+        }
+    }
+    function ViewReport() {
+        return ShowViewPrint('@ModuleHelper.Pfm', hdnDocumentId.val());
+    }
+</script>
+

@@ -1,0 +1,158 @@
+﻿@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@model DocketHold
+@{
+    ViewBag.Title = "DocketHold";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    baseUrl = '@Url.Action("", "DocketHold")';
+    docketNomenclature = '@SessionUtility.DocketNomenClature';
+</script>
+@using (Html.BeginForm("DocketUnhold", "Docket", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.HoldId)
+    @Html.HiddenFor(model => model.HoldId, new { @id = "hdnHoldId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-xs-3">
+                <dl>
+                    <dd>
+                        @Html.DisplayNameFor(model => model.DocketNo)
+                    </dd>
+                    <dt>
+                        @Html.DisplayFor(model => model.DocketNo)
+                    </dt>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "UnholdDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.UnholdDate), IsRequired = true, IsDateOnly = true, AllowFutureDate = false, AllowPastDate = true, IsValidateFinYear = false, SetBlank = true })
+            </div>
+            <div class="col-xs-3">
+                <dl>
+                    <dd>
+                        @Html.DisplayNameFor(model => model.DocketStatus)
+                    </dd>
+                    <dt>
+                        @Html.DisplayFor(model => model.DocketStatus)
+                    </dt>
+                </dl>
+            </div>
+            <div class="col-xs-3">
+                <dl>
+                    <dd>
+                        @Html.DisplayNameFor(model => model.FromLocation)
+                    </dd>
+                    <dt>
+                        @Html.DisplayFor(model => model.FromLocation)
+                    </dt>
+                </dl>
+            </div>
+            <div class="col-xs-3">
+                <dl>
+                    <dd>
+                        @Html.DisplayNameFor(model => model.ToLocation)
+                    </dd>
+                    <dt>
+                        @Html.DisplayFor(model => model.ToLocation)
+                    </dt>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">
+                <dl>
+                    <dd>
+                        @Html.DisplayNameFor(model => model.ConsignorName)
+                    </dd>
+                    <dt>
+                        @Html.DisplayFor(model => model.ConsignorName)
+                    </dt>
+                </dl>
+            </div>
+            <div class="col-xs-3">
+                <dl>
+                    <dd>
+                        @Html.DisplayNameFor(model => model.ConsigneeName)
+                    </dd>
+                    <dt>
+                        @Html.DisplayFor(model => model.ConsigneeName)
+                    </dt>
+                </dl>
+            </div>
+            <div class="col-xs-3">
+                <dl>
+                    <dd>
+                        @Html.DisplayNameFor(model => model.DocketDate)
+                    </dd>
+                    <dt>
+                        @Html.DisplayFor(model => model.DocketDate)
+                    </dt>
+                </dl>
+            </div>
+            <div class="col-xs-3">
+                <dl>
+                    <dd>
+                        @Html.DisplayNameFor(model => model.EnteredBy)
+                    </dd>
+                    <dt>
+                        @Html.DisplayFor(model => model.EnteredBy)
+                    </dt>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">
+                <dl>
+                    <dd>
+                        @Html.DisplayNameFor(model => model.HoldReason)
+                    </dd>
+                    <dt>
+                        @Html.DisplayFor(model => model.HoldReason)
+                    </dt>
+                </dl>
+            </div>
+            <div class="col-xs-3">
+                <dl>
+                    <dd>
+                        @Html.DisplayNameFor(model => model.HoldDate)
+                    </dd>
+                    <dt>
+                        @Html.DisplayFor(model => model.HoldDate)
+                    </dt>
+                </dl>
+            </div>
+            <div class="col-xs-3">
+                <dl>
+                    <dd>
+                        @Html.DisplayNameFor(model => model.HoldByName)
+                    </dd>
+                    <dt>
+                        @Html.DisplayFor(model => model.HoldByName)
+                    </dt>
+                </dl>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UnholdReason, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextAreaFor(model => model.UnholdReason, new { @class = "form-control js-auto-size" })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UnholdReason)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Submit</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Docket', 'Unhold', '', 'Goto List', '@Url.Action("DocketHoldIndex")', 'Add New', '@Url.Action("DocketHold")', '', '');
+    });
+</script>

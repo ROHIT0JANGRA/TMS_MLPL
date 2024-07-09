@@ -1,0 +1,221 @@
+﻿@using CodeLock.Helper
+@model CodeLock.Models.PickupRequest
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Pickup Request";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("PickupRequest", "Docket", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.City, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.CityId, new { @id = "hdnCityId" })
+                        @Html.TextBoxFor(model => model.City, null, new { @class = "form-control", @id = "txtCity", autocomplete = "off" })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.City)
+
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Pincode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Pincode, new { @class = "form-control", @id = "txtPincode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Pincode)
+
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "PickupDate", FieldCaption = "Pickup Date", IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = false })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "PickupTime", FieldCaption = "Pickup Time", IsRequired = true, IsTimeOnly = true })
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ContactPerson, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ContactPerson, new { @class = "form-control", @id = "txtContactPerson" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ContactPerson)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MobileNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MobileNo, new { @class = "form-control", @id = "txtMobileNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MobileNo)
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EmailId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.EmailId, new { @class = "form-control", @id = "txtEmailId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.EmailId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GstNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.GstNo, new { @class = "form-control", @id = "txtGstNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GstNo)
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PickupAddress, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextAreaFor(model => model.PickupAddress, new { @class = "form-control", @id = "txtPickupAddress", cols = "10", rows = "4" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PickupAddress)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.NoofPkt, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.NoofPkt, new { @class = "form-control numeric2", @id = "txtNoofPkt" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.NoofPkt)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Weight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Weight, new { @class = "form-control numeric2", @id = "txtWeight" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Weight)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ASNNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ASNNo, new { @class = "form-control", @id = "txtASNNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ASNNo)
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Delivery Information </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DeliveryCity, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.DeliveryCityId, new { @id = "hdnDeliveryCityId" })
+                        @Html.TextBoxFor(model => model.DeliveryCity, null, new { @class = "form-control", @id = "txtDeliveryCity", @autocomplete = "off" })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DeliveryCity)
+
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DeliveryPincode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DeliveryPincode, new { @class = "form-control", @id = "txtDeliveryPincode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DeliveryPincode)
+                </div>
+
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.VendorName, null, new { @class = "form-control", @id = "txtVendorName", @autocomplete = "off" })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorName)
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.CustomerCodeId, new { @id = "hdnCustomerCodeId" })
+                        @Html.TextBoxFor(model => model.CustomerCode, null, new { @class = "form-control", @id = "txtCustomerCode", @autocomplete = "off" })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerCode)
+
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label("CustomerName", " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Submit</button>
+            </div>
+        </div>
+}
+
+<script>
+    $(document).ready(function () {
+
+        //SetPageLoad('Pickup Order', 'Generation');
+        SetPageLoad('Pickup Order', 'Generation', null, 'Go To List', '@Url.Action("PickupRequestList")');
+
+        hdnCityId = $('#hdnCityId');
+        txtCity = $('#txtCity');
+        hdnDeliveryCityId = $('#hdnDeliveryCityId');
+        txtDeliveryCity = $('#txtDeliveryCity');
+        hdnCustomerCodeId = $('#hdnCustomerCodeId');
+        txtCustomerCode = $('#txtCustomerCode');
+
+        CityAutoComplete('txtCity', 'hdnCityId', 'City');
+        txtCity.blur(function () { return IsCityNameExist(txtCity, hdnCityId, 'City') });
+
+        CityAutoComplete('txtDeliveryCity', 'hdnDeliveryCityId', 'Delivery City');
+        txtDeliveryCity.blur(function () { return IsCityNameExist(txtDeliveryCity, hdnDeliveryCityId, 'Delivery City') });
+
+        CustomerAutoComplete('txtCustomerCode', 'hdnCustomerCodeId', 'Customer Name');
+        $('#txtCustomerCode').blur(function () { IsCustomerCodeExist($('#txtCustomerCode'), $('#hdnCustomerCodeId'), $('#lblCustomerName')); });
+
+        if ('@ViewBag.OptionEnabled' == "N") {
+            $('#txtCustomerCode').val('@ViewBag.UserTypeMapCode');
+            $('#hdnCustomerCodeId').val('@ViewBag.UserTypeMapId');
+            $('#lblCustomerName').text('@ViewBag.UserTypeMapName');
+            $('#txtCustomerCode').disable();
+        }
+
+    });
+
+</script>

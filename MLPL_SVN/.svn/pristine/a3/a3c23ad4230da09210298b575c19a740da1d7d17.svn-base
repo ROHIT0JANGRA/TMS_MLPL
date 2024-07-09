@@ -1,0 +1,362 @@
+﻿@using CodeLock.Models
+@model Tax
+
+<script>
+    var dtTax, taxList, accountMasterUrl, chkGst, chkTds, chkRoundOffGst, chkRoundOffTds, chkTdsWithoutGst, ddlGstExemptedCategoryId, txtGstRate, hdnGstServiceTypeId, totalTaxAmount = 0.00;
+    var gstDetails = { IsGst: true, IsRcm: false, GstRate: 18.00, IsInterState: 'false', IsState: true, CustomerCode: '', CustomerName: '', WalkingGstTinNo: '', DeclarationDocumentName: '', StateList: [] };
+    var hdnVendorId;
+    $(document).ready(function () {
+        accountMasterUrl = '@Url.Action("", "Account", new { Area = "Master" })';
+        generalMasterUrl = '@Url.Action("", "General", new { Area = "Master" })';
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        txtSubTotal = $('#txtSubTotal');
+        txtGstApplicableAmount = $('#txtGstApplicableAmount');
+        txtTdsApplicableAmount = $('#txtTdsApplicableAmount');
+        chkGst = $('#chkGst');
+        chkTds = $('#chkTds');
+        chkRoundOffGst = $('#chkRoundOffGst');
+        ddlGstExemptedCategoryId = $('#ddlGstExemptedCategoryId');
+        chkRoundOffTds = $('#chkRoundOffTds');
+        chkTdsWithoutGst = $('#chkTdsWithoutGst');
+        hdnServiceTaxApplicableAmount = $('#hdnServiceTaxApplicableAmount');
+        hdnTdsApplicableAmount = $('#hdnTdsApplicableAmount');
+        txtTdsAmount = $('#txtTdsAmount');
+        txtGstRate = $('#txtGstRate');
+        hdnGstServiceTypeId = $('#hdnGstServiceTypeId');
+        txtTdsRate = $('#txtTdsRate');
+        ddlTdsSection = $('#ddlTdsSection');
+        txtPanNo = $('#txtPanNo');
+        hdnTotalTax = $('#hdnTotalTax');
+        txtGrandTotal = $('#txtGrandTotal');
+        txtTdsRate.readOnly(!chkTds.IsChecked);
+        txtTdsRate.closest('div').removeClass("readonly");
+        GetTaxDetails();
+        GetGstExemptedCategoryList();
+        chkGst.change(function () {
+            chkRoundOffGst.enable(chkGst.IsChecked);
+            chkRoundOffGst.uncheck(!chkGst.IsChecked);
+            ddlGstExemptedCategoryId.enable(!chkGst.IsChecked);
+            if (chkTds.IsChecked) {
+                chkTdsWithoutGst.enable(chkGst.IsChecked);
+                chkTdsWithoutGst.uncheck(!chkGst.IsChecked);
+            }
+            GetTaxDetails();
+        }).change();
+
+        txtTdsRate.change(function () {
+            CalculateServiceTaxDetails();
+        });
+
+        chkTds.change(function () {
+            chkRoundOffTds.enable(chkTds.IsChecked);
+            chkRoundOffTds.uncheck(!chkTds.IsChecked);
+            txtTdsRate.readOnly(!chkTds.IsChecked);
+            if (!chkTds.IsChecked) {
+                txtTdsRate.val(0.00).change();
+                ddlTdsSection.val('');
+                ddlTdsSection.disable();
+            }
+            else {
+                var requestData = { vendorId: hdnVendorId.val() };
+                AjaxRequestWithPostAndJson(vendorMasterUrl + '/GetById', JSON.stringify(requestData), function (result) {
+                    txtTdsRate.val(result.MasterVendorDetail.TDSRate).change();
+                    ddlTdsSection.val(result.MasterVendorDetail.TdsAccountId);
+                });
+                ddlTdsSection.enable();
+            }
+            if (chkGst.IsChecked) {
+                chkTdsWithoutGst.enable(chkTds.IsChecked);
+                chkTdsWithoutGst.uncheck(!chkTds.IsChecked);
+            }
+            CalculateServiceTaxDetails();
+        });
+
+        chkRoundOffGst.change(function () {
+            GetTaxDetails();
+        });
+
+        chkRoundOffTds.change(function () {
+            CalculateServiceTaxDetails();
+        });
+
+        chkTdsWithoutGst.change(function () {
+            CalculateServiceTaxDetails();
+        });
+    });
+
+    function GetGstExemptedCategoryList() {
+        var requestData = {};
+        requestData.codeTypeId = 62;
+        AjaxRequestWithPostAndJson(generalMasterUrl + '/GetByIdList', JSON.stringify(requestData), function (result) {
+            BindDropDownList(ddlGstExemptedCategoryId.Id, result, 'Value', 'Name', '', 'Select Gst Exempted Category');
+        });
+    }
+
+    function GetTaxDetails() {
+        isSuccessfull = true;
+        AjaxRequestWithPostAndJson(accountMasterUrl + '/GetTaxDetails', '', function (responseData) {
+            taxList = responseData.sort(ComparerTax);
+            //SetTaxPercentageGstServiceTypeWise(taxList);
+            if (dtTax == null)
+                dtTax = LoadDataTable('dtTax', false, false, false, null, null, [],
+                  [
+                      { title: 'Tax Code', data: 'TaxCode', hidden: true },
+                      { title: 'Tax Name', data: 'TaxDetail' },
+                      { title: 'Tax Percentage', data: 'TaxPercentage' },
+                      { title: 'Tax Amount', data: 'TaxAmount' }
+                  ]);
+            else {
+                $('#dtTax').addClass('dataTable');
+                dtTax.fnClearTable();
+            }
+
+            var totalTax = 0.00, gstTax = 0.00;
+            gstDetails.GstRate = parseFloat(txtGstRate.val());
+            if (chkGst.IsChecked) {
+                taxPercentageTotal = gstDetails.GstRate;
+                totalTax = parseFloat(txtGstApplicableAmount.val()) * gstDetails.GstRate / 100;
+                //txtGstAmount.val(totalTax);
+                if (gstDetails.IsRcm) {
+                    totalTax = taxPercentageTotal = 0;
+                    $.each(taxList, function (i, item) {
+                        item.TaxAmount = item.TaxPercentage = 0;
+                    });
+                }
+                else {
+                    $.each(taxList, function (i, item) {
+                        
+                       
+                        
+                        if (gstDetails.IsInterState=='true' && item.TaxName == 'IGST') {
+                            
+                            item.TaxAmount = totalTax;
+                            item.TaxPercentage = gstDetails.GstRate;
+                        }
+                        else if (gstDetails.IsInterState == 'false') {
+                            
+                            if ((gstDetails.IsState && item.TaxName == 'SGST') || (!gstDetails.IsState && item.TaxName == 'UGST') || item.TaxName == 'CGST') {
+                                item.TaxAmount = totalTax / 2;
+                                item.TaxPercentage = gstDetails.GstRate / 2;
+                            }
+                            else
+                                item.TaxAmount = item.TaxPercentage = 0;
+                        }
+                        else
+                            
+                            item.TaxAmount = item.TaxPercentage = 0;
+                    });
+                }
+                if (chkRoundOffGst.IsChecked)
+                    hdnTotalTax.val(parseFloat(parseFloat(totalTax, 0), 2));
+                else
+                    hdnTotalTax.val(parseFloat(totalTax,2));
+            }
+            else
+                hdnTotalTax.val(0);
+
+
+            if (taxList.length > 0) {
+                $.each(taxList, function (i, item) {
+                    item.TaxDetail = '<input type="hidden" name="TaxList[' + i + '].TaxCode" id="hdnTaxCode' + i + '" value="' + item.TaxCode + '"/>' +
+                         '<input type="hidden" name="TaxList[' + i + '].TaxAmount" id="hdnTaxAmount' + i + '" value="' + parseFloat(item.TaxAmount).toFixed(2) + '"/>' +
+                         '<input type="hidden" name="TaxList[' + i + '].BaseOn" id="hdnBaseOn' + i + '" value="' + item.BaseOn + '"/>' +
+                         '<label class="label" d="lblTaxName' + i + '">' + item.TaxName + '</label>';
+                    if (chkGst.IsChecked) item.TaxPercentage = '<input type="text" class="form-control textlabel numeric2" name=\'TaxList[' + i + '].TaxPercentage\' style=\'width:100%\' id=\'txtTaxPercentage' + i + '\' value=' + parseFloat(item.TaxPercentage).toFixed(2) + ' />';
+                    else item.TaxPercentage = '<input type="text" class="form-control textlabel numeric2" name=\'TaxList[' + i + '].TaxPercentage\'  id=\'txtTaxPercentage' + i + '\' value=\'0.00\' />';
+                    if (chkRoundOffGst.IsChecked) item.TaxAmount = '<input type="text" class="form-control textlabel numeric2" name="TaxList[' + i + '].TaxAmount" id="txtTaxAmount' + i + '" value="' + parseFixed(parseFixed(item.TaxAmount, 0), 2) + '"/>';
+                    else item.TaxAmount = '<input type="text" class="form-control textlabel numeric2" name="TaxList[' + i + '].TaxAmount" id="txtTaxAmount' + i + '" value="' + parseFixed(item.TaxAmount, 2) + '"/>';
+                });
+                dtTax.dtAddData(taxList);
+                $('#dtTax').DataTable().column(0).visible(false);
+            }
+            CalculateServiceTaxDetails();
+        });
+    }
+
+    function SetTaxPercentageGstServiceTypeWise(txtList) {
+        var gstRate = parseFloat(txtGstRate.val()).toFixed(2) / 2;
+        $.each(taxList, function (i, item) {
+            if (hdnGstServiceTypeId.val() == 1)
+                if (item.TaxCode == 8 || item.TaxCode == 7)
+                    item.TaxPercentage = gstRate;
+
+            if (hdnGstServiceTypeId.val() == 2)
+                if (item.TaxCode == 8 || item.TaxCode == 9)
+                    item.TaxPercentage = gstRate;
+
+            if (hdnGstServiceTypeId.val() == 3)
+                if (item.TaxCode == 6)
+                    item.TaxPercentage = gstRate * 2;
+
+            if (hdnGstServiceTypeId.val() == 4)
+                item.TaxPercentage = 0.00;
+
+        });
+    }
+
+    function CalculateServiceTaxDetails() {
+        txtGstApplicableAmount.val(hdnServiceTaxApplicableAmount.val());
+        if (!chkTdsWithoutGst.IsChecked)
+            txtTdsApplicableAmount.val(parseFloat(hdnTdsApplicableAmount.val()) + parseFloat(hdnTotalTax.val()));
+        else
+            txtTdsApplicableAmount.val(parseFloat(hdnTdsApplicableAmount.val()));
+        if (chkRoundOffTds.IsChecked)
+            txtTdsAmount.val(parseFixed(parseFixed(txtTdsApplicableAmount.val(), 0) * parseFixed(txtTdsRate.val(), 2) / 100, 0));
+        else
+            txtTdsAmount.val(parseFixed(parseFixed(txtTdsApplicableAmount.val(), 2) * parseFixed(txtTdsRate.val(), 2) / 100, 2));
+        txtGrandTotal.val((parseFloat(txtSubTotal.val()) + parseFloat(hdnTotalTax.val())) - parseFloat(txtTdsAmount.val()));
+    }
+
+</script>
+@{
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.SubTotal, new { @class = "label" })
+                @Html.TextBoxFor(model => model.SubTotal, new { @class = "form-control textlabel numeric2 label-bold", @id = "txtSubTotal" })
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.GstRate, new { @class = "label" })
+                @Html.TextBoxFor(model => model.GstRate, new { @class = "form-control numeric2", @id = "txtGstRate" })
+                @Html.HiddenFor(model => model.GstTypeId, new { @id = "hdnGstServiceTypeId" })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.RoundOffGst, new { @id = "chkRoundOffGst", @disabled = "disabled" })
+                    <i></i>
+                    @Html.LabelFor(model => model.RoundOffGst, new { @class = "label", @for = "chkRoundOffGst" })
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.EnableTds, new { @id = "chkTds" })
+                    <i></i>
+                    @Html.LabelFor(model => model.EnableTds, new { @class = "label", @for = "chkTds" })
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.EnableGst, new { @id = "chkGst" })
+                    <i></i>
+                    @Html.LabelFor(model => model.EnableGst, new { @class = "label" })
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.RoundOffTds, new { @id = "chkRoundOffTds", @disabled = "disabled" })
+                    <i></i>
+                    @Html.LabelFor(model => model.RoundOffTds, new { @class = "label", @for = "chkRoundOffTds" })
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                @Html.LabelFor(m => m.GstExemptedCategoryId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(m => m.GstExemptedCategoryId, Enumerable.Empty<SelectListItem>(), "Select GST Exempted Category", new { @class = "form-control", @id = "ddlGstExemptedCategoryId", @disabled = "true" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(m => m.GstExemptedCategoryId)
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.TdsWithoutGst, new { @id = "chkTdsWithoutGst", @disabled = "disabled" })
+                    <i></i>
+                    @Html.LabelFor(model => model.TdsWithoutGst, new { @class = "label", @for = "chkTdsWithoutGst" })
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            @Html.Label("Add Service Tax(+)", new { @class = "label", style = "font-weight:bold" })
+        </div>
+        <div class="col-sm-6">
+            @Html.Label("Less TDS(-)", new { @class = "label", style = "font-weight:bold" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.GstApplicableAmount, new { @class = "label" })
+                @Html.Hidden("hdnServiceTaxApplicableAmount")
+                @Html.TextBoxFor(model => model.GstApplicableAmount, null, new { @class = "form-control textlabel numeric2 label-bold", @id = "txtGstApplicableAmount" })
+            </div>
+            <div>
+                <table id="dtTax"></table>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.GrandTotal, new { @class = "label" })
+                @Html.HiddenFor(model => model.TaxTotal, new { @id = "hdnTotalTax", @value = "0" })
+                @Html.TextBoxFor(model => model.GrandTotal, null, new { @class = "form-control textlabel numeric2 label-bold", @id = "txtGrandTotal" })
+                @Html.ValidationMessageFor(model => model.GrandTotal)
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.TdsApplicableAmount, new { @class = "label" })
+                <div class="input">
+                    @Html.Hidden("hdnTdsApplicableAmount")
+                    @Html.TextBoxFor(model => model.TdsApplicableAmount, null, new { @class = "form-control textlabel numeric2 label-bold", @id = "txtTdsApplicableAmount" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.TdsAccountId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.TdsAccountId, Enumerable.Empty<SelectListItem>(), "Select TDS Section", new { @class = "form-control", @id = "ddlTdsSection" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.TdsAccountId)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.TdsRate, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.TdsRate, new { @class = "form-control numeric2", @id = "txtTdsRate" })
+                </div>
+                @Html.ValidationMessageFor(model => model.TdsRate)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.TdsAmount, new { @class = "label" })
+                @Html.TextBoxFor(model => model.TdsAmount, new { @class = "form-control numeric2 textlabel label-bold", @id = "txtTdsAmount" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.PanNo, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.PanNo, new { @class = "form-control", @id = "txtPanNo" })
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+
+    $(document).ready(function () {
+        BindAccountDropDown(ddlTdsSection, 9, 'TDS');
+    });
+
+    function BindAccountDropDown(ddl, category, type) {
+        AjaxRequestWithPostAndJson('@Url.Action("GetListByCategory", "Account", new { Area = "Master" })', JSON.stringify({ categoryId: category }), function (result) {
+            BindDropDownList(ddl.Id, result, 'Value', 'Description', '', type + ' Account');
+        }, ErrorFunction, false);
+    }
+
+</script>

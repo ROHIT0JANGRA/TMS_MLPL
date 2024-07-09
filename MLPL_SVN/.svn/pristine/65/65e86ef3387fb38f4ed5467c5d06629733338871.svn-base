@@ -1,0 +1,44 @@
+﻿@model CodeLock.Models.MasterBinHierarchy
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Insert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "BinHierarchy", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.BinHierarchyId)
+    @Html.Hidden("BinHierarchyId", 0)
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BinHierarchyName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BinHierarchyName, new { @class = "form-control", @id = "txtBinHierarchyName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BinHierarchyName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.WarehouseId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.WarehouseId, new SelectList(ViewBag.WarehouseList, "Value", "Name"), "Select Warehouse", new { @class = "form-control", @id = "ddlWarehouse" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.WarehouseId)
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Bin Hierarchy', 'Create', 'txtBinHierarchyName', 'Goto List', '@Url.Action("Index")');
+    });
+</script>

@@ -1,0 +1,110 @@
+﻿@model CodeLock.Models.DepsRegister
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                @Html.Label("Select Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drDepsDate"></div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control", @id = "ddlLocationId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                @Html.LabelFor(model => model.Status, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.Status, new List<SelectListItem> {
+                        new SelectListItem() {Text = "All",Value="0"},
+                        new SelectListItem() {Text = "Generated",Value="1"},
+                        new SelectListItem() {Text = "Updated",Value="2"},
+                        new SelectListItem() {Text = "Closed",Value="3"},}, new { @class = "form-control", @id = "ddlDepsStatus" })
+                    <i></i>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                @Html.LabelFor(model => model.Type, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.Type, new List<SelectListItem> {
+                        new SelectListItem() {Text = "All",Value="0"},
+                        new SelectListItem() {Text = "Short",Value="1"},
+                        new SelectListItem() {Text = "Exta",Value="2"},
+                        new SelectListItem() {Text = "Pilferage",Value="3"},
+                        new SelectListItem() {Text = "Damage",Value="4"},}, new { @class = "form-control", @id = "ddlDepsType" })
+                    <i></i>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocketNo)
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DepsNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DepsNo, new { @class = "form-control", @id = "txtDepsNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DepsNo)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDepsDate, ddlDepsType, txtDepsNo, txtDocketNo, ddlLocationId, btnSubmit, ddlDepsStatus;
+    $(document).ready(function () {
+        SetPageLoad('DEPS', 'Register', '', '', '');
+        InitObjects();
+    });
+
+    function InitObjects() {
+        drDepsDate = InitDateRange('drDepsDate', DateRange.LastWeek);
+        btnSubmit = $('#btnSubmit');
+        txtDepsNo = $('#txtDepsNo');
+        txtDocketNo = $('#txtDocketNo');
+        ddlLocationId = $('#ddlLocationId');
+        ddlDepsStatus = $('#ddlDepsStatus');
+        ddlDepsType = $('#ddlDepsType');
+        btnSubmit.click(ViewReport);
+    }
+
+    function ViewReport() {
+        var prmList = [
+              { Name: "FromDate", Value: drDepsDate.startDate },
+              { Name: "ToDate", Value: drDepsDate.endDate },
+              { Name: "DocketNo", Value: txtDocketNo.val() == '' ? " " : txtDocketNo.val() },
+              { Name: "DepsNo", Value: txtDepsNo.val() == '' ? " " : txtDepsNo.val() },
+              { Name: "LocationId", Value: ddlLocationId.val() },
+              { Name: "DepsStatus", Value: ddlDepsStatus.val() },
+              { Name: "DepsType", Value: ddlDepsType.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'DepsRegister', Description: 'DEPS Register' };
+        return ShowReport(reportInfo);
+    }
+</script>

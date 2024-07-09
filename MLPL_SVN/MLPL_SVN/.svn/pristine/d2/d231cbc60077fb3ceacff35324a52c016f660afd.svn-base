@@ -1,0 +1,56 @@
+﻿@using CodeLock.Models
+@model VendorAdvancePaymentCancellation
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+        baseUrl = '@Url.Action("", "VendorPayment")';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+        currentDate = '@DateTime.Now';
+        dateTimeFormat = '@ConfigHelper.JsDateFormat' + ' ' + '@ConfigHelper.TimeFormat';
+</script>
+<script src="@Url.Content("~/Areas/Finance/Views/VendorPayment/VendorAdvPaymentCancellation.js")"></script>
+
+<div class="row" id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("VendorAdvancePaymentCancellation", "VendorPayment", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label("Payment Date", new { @class = "label" })
+                            </div>
+                            <div id="drPaymentDate"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PaymentNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.PaymentNo, new { @class = "form-control", @id = "txtPaymentNo" })
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Label(" ", new { @class = "label" })
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>*@
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtVendorBillPaymentList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

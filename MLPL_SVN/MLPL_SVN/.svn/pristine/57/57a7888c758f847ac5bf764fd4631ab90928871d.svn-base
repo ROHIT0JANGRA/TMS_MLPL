@@ -1,0 +1,227 @@
+﻿@model CodeLock.Models.MastersIndiaEway
+@{
+    ViewBag.Title = "eWay Bill View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("eWayBillExtend", "Docket", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    eWay Bill No.
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.eway_bill_number, new { @class = "form-control textlabel", @id = "txteway_bill_number" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    eWay Bill Date
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.eway_bill_date, new { @class = "form-control textlabel", @id = "txteway_bill_date" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Valid Date
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.eway_bill_valid_date, new { @class = "form-control textlabel", @id = "txteway_bill_valid_date" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Bill Status
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.eway_bill_status, new { @class = "form-control textlabel", @id = "txteway_bill_status" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    User Gstin
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.userGstin, new { @class = "form-control textlabel", @id = "txtuserGstin" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Vehicle No.
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.vehicle_number, new { @class = "form-control textlabel", @id = "txtvehicle_number" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Place of Consignor
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.place_of_consignor, new { @class = "form-control textlabel", @id = "txtplace_of_consignor" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    State of Consignor
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.state_of_consignor, new { @class = "form-control textlabel", @id = "txtstate_of_consignor" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="page-separator">Extend Eway Bill Validity </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Transporter  Document No.
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.transporter_document_number, new { @class = "form-control textlabel", @id = "txttransporter_document_number" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Transporter  Document Date
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.transporter_document_date, new { @class = "form-control textlabel", @id = "txttransporter_document_date" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Current Pincode
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.from_pincode, new { @class = "form-control", @id = "txtfrom_pincode" })
+                    </div><br />
+                    <button type="button" id="btnCalculate" class="btn btn-danger danger-btn">Calculate Distance</button>
+
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    To Pincode
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.pincode_of_consignee, new { @class = "form-control textlabel", @id = "txtpincode_of_consignee" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Remaining Distance
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.remaining_distance, new { @class = "form-control", @id = "txtremaining_distance" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.remaining_distance)
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Transport Mode
+
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.mode_of_transport, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Road", Value = "1" },
+                                                                            new SelectListItem{ Text="Rail", Value = "2" },
+                                                                            new SelectListItem{ Text="Air", Value = "3" },
+                                                                            new SelectListItem{ Text="Ship", Value = "4" }
+                                                                         }, new { @class = "form-control", @id = "ddlmode_of_transport" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.mode_of_transport)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Extend Reason
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.extend_validity_reason, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Natural Calamity", Value = "1" },
+                                                                            new SelectListItem{ Text="Law and Order Situation", Value = "2" },
+                                                                            new SelectListItem{ Text="Transhipment", Value = "3" },
+                                                                            new SelectListItem{ Text="Accident", Value = "4" },
+                                                                            new SelectListItem{ Text="Other", Value = "5" }
+                                                                         }, new { @class = "form-control", @id = "ddlextend_validity_reason" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.extend_validity_reason)
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Extend Remarks
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.extend_remarks, new { @class = "form-control", @id = "txtextend_remarks" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.extend_remarks)
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Submit</button>
+            </div>
+        </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('eWay Bill', 'Extend valid date', '', '', '');
+        baseUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+
+        txtfrom_pincode = $('#txtfrom_pincode');
+        txtpincode_of_consignee = $('#txtpincode_of_consignee');
+        txtremaining_distance = $('#txtremaining_distance');
+        btnCalculate = $('#btnCalculate');
+
+        btnCalculate.click(function () {
+            if (txtfrom_pincode.val() == "")
+            {
+                ShowMessage('Please enter from pincode');
+                return false;
+            }
+
+            CalculateDistance();
+            return true;
+        });
+
+        if('@ViewBag.ErrorMessage' !="")
+        {
+            ShowMessage('@ViewBag.ErrorMessage');
+        }
+
+    });
+
+    function CalculateDistance() {
+        var requestData = { fromPincode: txtfrom_pincode.val(), toPincode: txtpincode_of_consignee.val() };
+        isSuccessfull = true;
+      
+        AjaxRequestWithPostAndJson(baseUrl + '/CalculateDistance', JSON.stringify(requestData), function (responseData) {
+
+            if (responseData.remaining_distance != "Invalid")
+            {
+                txtremaining_distance.val(responseData.remaining_distance)
+            }
+            else
+            {
+                txtremaining_distance.val('0')
+            }
+        }, ErrorFunction, false);
+
+    }
+
+</script>

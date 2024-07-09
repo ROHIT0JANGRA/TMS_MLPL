@@ -1,0 +1,105 @@
+﻿@model CodeLock.Models.BillRegister
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("BillRegister", "Finance", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Label("Bill Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drBillDate"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                        @Html.TextBoxFor(model => model.CustomerCode, new { @class = "form-control", @id = "txtCustomerCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                </div>
+            </div>
+        </div>
+
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BillNo, new { @class = "form-control", @id = "txtBillNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BillNo)
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", "Manual Bill No", new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBox("txtManualBillNo", null, new { @class = "form-control", @id = "txtManualBillNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" value="Submit" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+<script>
+
+            var hdnCustomerId, txtCustomerCode, lblCustomerName, txtBillNo, txtManualBillNo, btnSubmit;
+
+
+            $(document).ready(function () {
+                SetPageLoad('Bill Register', 'Report', '', '', '');
+
+                hdnCustomerId = $('#hdnCustomerId');
+                txtCustomerCode = $('#txtCustomerCode');
+                lblCustomerName = $('#lblCustomerName');
+                txtBillNo = $('#txtBillNo');
+                txtManualBillNo = $('#txtManualBillNo');
+                //txtMRNo = $('#txtMRNo');
+                //txtManualMRNo = $('#txtManualMRNo');
+                btnSubmit = $('#btnSubmit');
+
+                btnSubmit.click(ViewReport);
+                drBillDate = InitDateRange('drBillDate', DateRange.LastWeek);
+
+                CustomerAutoComplete(txtCustomerCode.Id, hdnCustomerId.Id);
+                txtCustomerCode.blur(function () { IsCustomerCodeExist(txtCustomerCode, hdnCustomerId, lblCustomerName) });
+
+            });
+
+
+            function ViewReport() {
+
+                var prmList = [{ Name: "FromDate", Value: drBillDate.startDate },
+                  { Name: "ToDate", Value: drBillDate.endDate },
+                  { Name: "CustomerId", Value: txtCustomerCode.val() == '' ? 0 : hdnCustomerId.val() },
+                  { Name: "BillNo", Value: txtBillNo.val() == '' ? ' ' : txtBillNo.val() },
+                  { Name: "ManualBillNo", Value: txtManualBillNo.val() == '' ? ' ' : txtManualBillNo.val() }
+                  //{ Name: "MRNo", Value: txtMRNo.val() == '' ? ' ' : txtMRNo.val() },
+                  //{ Name: "ManualMRNo", Value: txtManualMRNo.val() == '' ? ' ' : txtManualMRNo.val() }
+                ];
+                var reportInfo = { PrmList: prmList, Name: 'BillRegister', Description: 'Bill Register' };
+                return ShowReport(reportInfo);
+
+                }
+</script>
+

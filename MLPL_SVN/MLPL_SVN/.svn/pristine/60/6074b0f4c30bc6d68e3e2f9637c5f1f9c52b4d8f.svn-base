@@ -1,0 +1,49 @@
+﻿@model List<CodeLock.Models.MasterUserCompanyMapping>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtUserCompanyMapping">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().UserName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().CompanyName)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CompanyName)
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Mapping", new { id = item.UserId })"><span class="zmdi zmdi-edit"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('User to Company', 'Mapping List', '', 'Go To Mapping', '@Url.Action("Mapping")');
+        LoadDataTable('dtUserCompanyMapping', true, true, true);
+    });
+</script>

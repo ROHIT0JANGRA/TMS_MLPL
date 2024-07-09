@@ -1,0 +1,51 @@
+﻿
+@{
+    ViewBag.Title = "DepsDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap" style="height:200px">
+                <div class="alert alert-success" ><h5><label id="lblMessage">DEPS is Generated Successfully</label></h5></div>
+                <div class="row ">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            
+                            @Html.Label(SessionUtility.DocketNomenClature + " No", new { @class = "label-bold" })
+                            
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <div class="clearfix">
+                                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                                @Html.Hidden("hdnDocumentId")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button onclick="return ViewReport();" class="btn btn-info">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        
+   
+    <script>
+        var lblDocumentNo, hdnDocumentId, hdnDocumentSuffix;
+        $(document).ready(function () {
+            SetPageLoad('DEPS', 'Done', '', 'Go To Create', '@Url.Action("Deps")');
+            lblDocumentNo = $('#lblDocumentNo');
+            hdnDocumentId = $('#hdnDocumentId');
+            lblVoucherNo = $('#lblVoucherNo');
+            OnPageLoad();
+        });
+
+        function OnPageLoad() {
+            lblDocumentNo.html(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+        }
+
+        function ViewReport() {
+            return ShowViewPrint('@ModuleHelper.Deps', hdnDocumentId.val());
+        }
+    </script>

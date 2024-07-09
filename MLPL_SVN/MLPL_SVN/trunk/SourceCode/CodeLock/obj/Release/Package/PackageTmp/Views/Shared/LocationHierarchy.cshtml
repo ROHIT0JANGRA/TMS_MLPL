@@ -1,0 +1,26 @@
+﻿@using CodeLock.Models
+@model LocationHierarchy
+@{
+    <div class="form-group">
+        @Html.Label(Model.FieldName, Model.FieldCaption, new { @id = "lbl" + Model.FieldName, @class = "label" })
+        <div class="select">
+            @Html.DropDownListFor(model => model.FieldName, Enumerable.Empty<SelectListItem>(), new { @class = "form-control select2", @id = "ddl" + Model.FieldName })
+            <i></i>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $('#ddl' + '@Model.FieldName').change(function () {
+            var ddl = $(this);
+            var allowAll = ('@Model.AllowAll').toLowerCase() == 'true';
+            var selectedLocationId = ddl.val() == null ? (allowAll ? 1 : '@SessionUtility.LoginLocationId') : ddl.val();
+            var virtualLocationId = allowAll ? 1 : '@SessionUtility.LoginLocationId';
+            AjaxRequestWithPostAndJson('@Url.Action("GetLocationListByLocationId", "Location", new { Area = "Master" })', JSON.stringify({ locationId: selectedLocationId }), function (result) {
+                 BindDropDownList(ddl.Id, result, 'Value', 'Name', null, null, selectedLocationId);
+                return false;
+            }, ErrorFunction, false);
+        }).change();
+    });
+</script>
+

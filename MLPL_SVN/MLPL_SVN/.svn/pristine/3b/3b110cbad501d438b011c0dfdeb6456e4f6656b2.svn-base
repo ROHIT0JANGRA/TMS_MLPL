@@ -1,0 +1,76 @@
+﻿@using CodeLock.Models
+@model FuelVendor
+@{
+    ViewBag.Title = "FuelVendor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="@Url.Content("~/Areas/Reports/Views/FMS/FuelVendor.js")"></script>
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Label("Tripsheet Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drTripsheetDate"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                        @Html.TextBoxFor(model => model.VehicleNo, null, new { @class = "form-control", @id = "txtVehicleNo" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.TripsheetNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(m => m.TripsheetNo, new { @class = "form-control", @id = "txtTripsheetNo" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label("(seperated by comma if multiple)")
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                        @Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @class = "label-bold", @id = "labelName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+

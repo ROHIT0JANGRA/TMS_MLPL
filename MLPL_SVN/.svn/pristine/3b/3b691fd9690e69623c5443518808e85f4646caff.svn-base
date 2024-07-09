@@ -1,0 +1,236 @@
+﻿@using CodeLock.Helper
+@model CodeLock.Models.DocketOtherCharges
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "Docket Other Charges";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("DocketOtherCharges", "Docket", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        <div id="dvStep1">
+            <div class="row">
+                <div class="col-sm-3">
+                    @Html.Label("Select Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ChargeType, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.ChargeType, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Select Charge Type", Value = "" },
+                                                                            new SelectListItem{ Text="Holiday (Pickup & Delivery) Charge", Value = "9" },
+                                                                            new SelectListItem{ Text="Delivery re-attemt", Value = "41" },
+                                                                            new SelectListItem{ Text="DPH Charges", Value = "36" }
+                                                                            //new SelectListItem{ Text="Handling Charges", Value = "39" }
+                                                                         }, new { @class = "form-control", @id = "ddlChargeType" })
+
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ChargeType)
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <button id="btnStep1" type="button" class="btn btn-primary primary-btn" tabindex="0">Step 1</button>
+            </div>
+        </div>
+
+        <div id="dvStep2" style="display:none;">
+            <div class="page-separator">List of Docket(s)</div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="dtHolidayDocketList"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="dtReAttemptDocketList"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="dtOthersDocketList"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <button id="btnStep2" type="submit" class="btn btn-primary primary-btn" tabindex="1">Submit</button>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+
+    var LocationId, baseUrl, dtProductList, dtHolidayDocketList, dtReAttemptDocketList, dtOthersDocketList, dtOthersDocketList, drDate;
+
+    $(document).ready(function () {
+        baseUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+        LocationId = '@SessionUtility.LoginLocationId';
+        SetPageLoad('Docket', 'Other Charges', null);
+
+        drDate = InitDateRange('drDate', DateRange.LastWeek, false);
+
+        ddlChargeType = $('#ddlChargeType');
+        btnStep1 = $('#btnStep1');
+        btnStep2 = $('#btnStep2');
+        dvStep2 = $('#dvStep2');
+
+        dtHolidayDocketList = LoadDataTable('dtHolidayDocketList', false, false, false, null, null, [],
+          [
+              { title: 'Docket No', data: 'DocketNo' },
+              { title: 'DocketDate', data: 'DocketDate' },
+              { title: 'From City', data: 'FromCity' },
+              { title: 'To City', data: 'ToCity' },
+              { title: 'Paybas', data: 'Paybas' },
+              { title: 'Transport Mode', data: 'TransportMode' },
+              { title: 'Charges Amount', data: 'ChargesAmount' },
+              { title: 'SubTotal', data: 'SubTotal' },
+              { title: 'Sgst', data: 'Sgst' },
+              { title: 'Cgst', data: 'Cgst' },
+              { title: 'Igst', data: 'Igst' },
+              { title: 'TaxTotal', data: 'TaxTotal' },
+              { title: 'GrandTotal', data: 'GrandTotal' }
+          ]);
+
+        dtReAttemptDocketList = LoadDataTable('dtReAttemptDocketList', false, false, false, null, null, [],
+          [
+              { title: 'Docket No', data: 'DocketNo' },
+              { title: 'DocketDate', data: 'DocketDate' },
+              { title: 'From City', data: 'FromCity' },
+              { title: 'To City', data: 'ToCity' },
+              { title: 'Paybas', data: 'Paybas' },
+              { title: 'Transport Mode', data: 'TransportMode' },
+              { title: 'Re Attempt', data: 'ChargesCount' },
+              { title: 'Charges Amount', data: 'ChargesAmount' },
+              { title: 'SubTotal', data: 'SubTotal' },
+              { title: 'Sgst', data: 'Sgst' },
+              { title: 'Cgst', data: 'Cgst' },
+              { title: 'Igst', data: 'Igst' },
+              { title: 'TaxTotal', data: 'TaxTotal' },
+              { title: 'GrandTotal', data: 'GrandTotal' }
+          ]);
+
+        dtOthersDocketList = LoadDataTable('dtOthersDocketList', false, false, false, null, null, [],
+          [
+              { title: 'Docket No', data: 'DocketNo' },
+              { title: 'DocketDate', data: 'DocketDate' },
+              { title: 'From City', data: 'FromCity' },
+              { title: 'To City', data: 'ToCity' },
+              { title: 'Paybas', data: 'Paybas' },
+              { title: 'Transport Mode', data: 'TransportMode' },
+              { title: 'Charges Amount', data: 'ChargesAmount' },
+              { title: 'SubTotal', data: 'SubTotal' },
+              { title: 'Sgst', data: 'Sgst' },
+              { title: 'Cgst', data: 'Cgst' },
+              { title: 'Igst', data: 'Igst' },
+              { title: 'TaxTotal', data: 'TaxTotal' },
+              { title: 'GrandTotal', data: 'GrandTotal' }
+          ]);
+
+        btnStep1.click(function () {
+
+            if (ddlChargeType.val() == "")
+            {
+                ShowMessage('Please Select Charge Type');
+                dvStep2.hide();
+                ddlChargeType.focus();
+                return false;
+            }
+
+            GetDocketList();
+        });
+
+    });
+    function GetDocketList() {
+        var requestData = {
+            ChargeTypeId: ddlChargeType.val(), LocationId: LocationId, fromDate: drDate.startDate, toDate: drDate.endDate
+        };
+        AjaxRequestWithPostAndJson(baseUrl + '/GetListForOtherCharges', JSON.stringify(requestData), function (result) {
+
+            dtHolidayDocketList.fnClearTable();
+            dtReAttemptDocketList.fnClearTable();
+            dtOthersDocketList.fnClearTable();
+
+            dtHolidayDocketList.show();
+            dtReAttemptDocketList.show();
+            dtOthersDocketList.show();
+
+            if (result.length == 0) {
+                ShowMessage('No Record Found');
+                dvStep2.hide();
+                return false;
+            }
+            else {
+                $.each(result, function (i, item) {
+                    item.DocketNo = '<span>' + item.DocketNo + '</span>' +
+                                        '<input type=\'hidden\' name="Details[' + i + '].DocketId" id="hdnDocketId' + i + '" value=' + item.DocketId + ' />' +
+                                        '<input type=\'hidden\' name="Details[' + i + '].ChargeCode" id="hdnChargeCode' + i + '" value=' + item.ChargeCode + ' />' +
+                                        '<input type=\'hidden\' name="Details[' + i + '].GstRate" id="hdnGstRate' + i + '" value=' + item.GstRate + ' />';
+
+                    item.DocketDate = $.displayDate(item.DocketDate);
+
+                    if (ddlChargeType.val() == "41")
+                    {
+                        item.ChargesCount = '<input type="text" class="form-control textlabel" data-val="true" data-val-required="Please enter Tax Total" name="Details[' + i + '].ChargesCount" id="txtChargesCount' + i + '" value=' + item.ChargesCount + ' />' +
+                         '<span data-valmsg-for="Details[' + i + '].ChargesCount" data-valmsg-replace="true"></span>';
+                    }
+
+                    item.ChargesAmount = '<input type="text" class="form-control numeric2" data-val="true" data-val-required="Please enter Charge Amount" name="Details[' + i + '].ChargesAmount" id="txtChargesAmount' + i + '" value=' + item.ChargesAmount + ' />' +
+                                         '<span data-valmsg-for="Details[' + i + '].ChargesAmount" data-valmsg-replace="true"></span>';
+
+                    item.SubTotal = '<input type="text" class="form-control textlabel" data-val="true" data-val-required="Please enter Sub Total" name="Details[' + i + '].SubTotal" id="txtSubTotal' + i + '" value=' + item.SubTotal + ' />' +
+                                         '<span data-valmsg-for="Details[' + i + '].SubTotal" data-valmsg-replace="true"></span>';
+
+                    item.Sgst = '<input type="text" class="form-control textlabel" data-val="true" data-val-required="Please enter Sgst Amount" name="Details[' + i + '].Sgst" id="txtSgst' + i + '" value=' + item.Sgst + ' />' +
+                                         '<span data-valmsg-for="Details[' + i + '].Sgst" data-valmsg-replace="true"></span>';
+
+                    item.Cgst = '<input type="text" class="form-control textlabel" data-val="true" data-val-required="Please enter Cgst Amount" name="Details[' + i + '].Cgst" id="txtCgst' + i + '" value=' + item.Cgst + ' />' +
+                                         '<span data-valmsg-for="Details[' + i + '].Cgst" data-valmsg-replace="true"></span>';
+
+                    item.Igst = '<input type="text" class="form-control textlabel" data-val="true" data-val-required="Please enter Igst Amount" name="Details[' + i + '].Igst" id="txtIgst' + i + '" value=' + item.Igst + ' />' +
+                                         '<span data-valmsg-for="Details[' + i + '].Igst" data-valmsg-replace="true"></span>';
+
+                    item.TaxTotal = '<input type="text" class="form-control textlabel" data-val="true" data-val-required="Please enter Tax Total" name="Details[' + i + '].TaxTotal" id="txtTaxTotal' + i + '" value=' + item.TaxTotal + ' />' +
+                                         '<span data-valmsg-for="Details[' + i + '].TaxTotal" data-valmsg-replace="true"></span>';
+
+                    item.GrandTotal = '<input type="text" class="form-control textlabel" data-val="true" data-val-required="Please enter Grand Total" name="Details[' + i + '].GrandTotal" id="txtGrandTotal' + i + '" value=' + item.GrandTotal + ' />' +
+                                         '<span data-valmsg-for="Details[' + i + '].GrandTotal" data-valmsg-replace="true"></span>';
+                });
+
+                if (ddlChargeType.val() == "9") {
+                    dtHolidayDocketList.dtAddData(result);
+                    dtReAttemptDocketList.hide();
+                    dtOthersDocketList.hide();
+                }
+                else if (ddlChargeType.val() == "41") {
+                    dtReAttemptDocketList.dtAddData(result);
+                    dtHolidayDocketList.hide();
+                    dtOthersDocketList.hide();
+                }
+                else
+                {
+                    dtOthersDocketList.dtAddData(result);
+                    dtHolidayDocketList.hide();
+                    dtReAttemptDocketList.hide();
+                }
+                dvStep2.show();
+            }
+        }, ErrorFunction, false);
+        return false;
+    }
+
+</script>

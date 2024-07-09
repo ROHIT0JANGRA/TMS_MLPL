@@ -1,0 +1,239 @@
+﻿using CodeLock.Areas.Master.Repository;
+using CodeLock.Areas.WMS.Repository;
+using CodeLock.Models;
+using Microsoft.CSharp.RuntimeBinder;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Web.Mvc;
+
+namespace CodeLock.Areas.WMS.Controllers
+{
+  public class GrnController : Controller
+  {
+    public readonly IGrnRepository grnRepository;
+    public readonly IGatePassRepository gatePassRepository;
+    public readonly IGeneralRepository generalRepository;
+
+    public GrnController()
+    {
+    }
+
+    public GrnController(
+      IGrnRepository _grnRepository,
+      IGeneralRepository _generalrepository,
+      IGatePassRepository _gatePassRepository)
+    {
+      this.gatePassRepository = _gatePassRepository;
+      this.grnRepository = _grnRepository;
+      this.generalRepository = _generalrepository;
+    }
+
+    public ActionResult Insert()
+    {
+        Grn grn = new Grn();
+        grn.Details.Add(new GrnDetail());
+        ((dynamic)base.ViewBag).GrnTypeList = this.generalRepository.GetByIdList(30);
+        return base.View(grn);
+    }
+
+    [ValidateAntiForgeryToken]
+    [HttpPost]
+    public ActionResult Insert(Grn objGrn)
+    {
+            ActionResult actionResult;
+            objGrn.SupplierType = 1;
+
+            if (!base.ModelState.IsValid)
+            {
+                ((dynamic)base.ViewBag).GrnTypeList = this.generalRepository.GetByIdList(30);
+                actionResult = base.View(objGrn);
+            }
+            else
+            {
+                actionResult = this.InsertGrn(objGrn);
+            }
+            return actionResult;
+        }
+
+    private ActionResult InsertGrn(Grn objGrn)
+    {
+      if (this.ModelState.IsValid)
+      {
+        objGrn.CompanyId = SessionUtility.CompanyId;
+        objGrn.WarehouseId = SessionUtility.WarehouseId;
+        objGrn.EntryBy = SessionUtility.LoginUserId;
+        Grn grn1 = objGrn;
+        DateTime dateTime = objGrn.GrnDateTime.Value;
+        DateTime date = dateTime.Date;
+        grn1.GrnDate = date;
+        Grn grn2 = objGrn;
+        dateTime = objGrn.GrnDateTime.Value;
+        TimeSpan timeOfDay = dateTime.TimeOfDay;
+        grn2.GrnTime = timeOfDay;
+        objGrn.Details.ForEach((Action<GrnDetail>) (m => m.GrnDate = objGrn.GrnDate));
+        Response response = this.grnRepository.Insert(objGrn);
+        if (response.IsSuccessfull)
+          return (ActionResult) this.RedirectToAction("Done", "Asn", (object) new
+          {
+            documentType = "GRN",
+            documentNo = response.DocumentNo,
+            documentId = response.DocumentId,
+            documentTypeId = ModuleHelper.GRN
+          });
+        this.TempData["result"] = (object) response;
+      }
+      return (ActionResult) this.View((object) objGrn);
+    }
+
+    public ActionResult ScanSerialNumber()
+    {
+      return (ActionResult) this.View((object) new List<SerialNumberDetail>()
+      {
+        new SerialNumberDetail()
+      });
+    }
+
+    public JsonResult IsFirstSerialNoExistForDispatch(
+      byte companyId,
+      short warehouseId,
+      int productId,
+      string firstSerialNumber)
+    {
+      return this.Json((object) this.grnRepository.IsFirstSerialNoExistForDispatch(companyId, warehouseId, productId, firstSerialNumber));
+    }
+
+    public JsonResult IsGrnExist(
+      byte companyId,
+      short warehouseId,
+      int productId,
+      long grnId)
+    {
+      return this.Json((object) this.grnRepository.IsGrnExist(companyId, warehouseId, productId, grnId));
+    }
+
+    public JsonResult IsFirstSerialNoExistByGrnId(
+      byte companyId,
+      short warehouseId,
+      int productId,
+      string firstSerialNumber,
+      long grnId)
+    {
+      return this.Json((object) this.grnRepository.IsFirstSerialNoExistByGrnId(companyId, warehouseId, productId, firstSerialNumber, grnId));
+    }
+
+    public JsonResult IsFirstSerialNoExist(
+      byte companyId,
+      short warehouseId,
+      int productId,
+      string firstSerialNumber)
+    {
+      return this.Json((object) this.grnRepository.IsFirstSerialNoExist(companyId, warehouseId, productId, firstSerialNumber));
+    }
+
+    public JsonResult IsSecondSerialNoExistForDispatch(
+      byte companyId,
+      short warehouseId,
+      int productId,
+      string firstSerialNumber,
+      string secondSerialNumber)
+    {
+      return this.Json((object) this.grnRepository.IsSecondSerialNoExistForDispatch(companyId, warehouseId, productId, firstSerialNumber, secondSerialNumber));
+    }
+
+    public JsonResult IsSecondSerialNoExistByGrnId(
+      byte companyId,
+      short warehouseId,
+      int productId,
+      string firstSerialNumber,
+      string secondSerialNumber,
+      long grnId)
+    {
+      return this.Json((object) this.grnRepository.IsSecondSerialNoExistByGrnId(companyId, warehouseId, productId, firstSerialNumber, secondSerialNumber, grnId));
+    }
+
+    public JsonResult IsSecondSerialNoExist(
+      byte companyId,
+      short warehouseId,
+      int productId,
+      string firstSerialNumber,
+      string secondSerialNumber)
+    {
+      return this.Json((object) this.grnRepository.IsSecondSerialNoExist(companyId, warehouseId, productId, firstSerialNumber, secondSerialNumber));
+    }
+
+    public ActionResult InsertFromAsn()
+    {
+            Grn grn = new Grn();
+            ((dynamic)base.ViewBag).GrnTypeList = this.generalRepository.GetByIdList(30);
+            ((dynamic)base.ViewBag).GatePassNoList = this.gatePassRepository.GetGatePassNoList();
+            grn.Details.Add(new GrnDetail());
+            return base.View(grn);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult InsertFromAsn(Grn objGrn)
+    {
+            ActionResult action;
+            ((dynamic)base.ViewBag).GrnTypeList = this.generalRepository.GetByIdList(30);
+            ((dynamic)base.ViewBag).GatePassNoList = this.gatePassRepository.GetGatePassNoList();
+            if (base.ModelState.IsValid)
+            {
+                objGrn.CompanyId = SessionUtility.CompanyId;
+                objGrn.WarehouseId = SessionUtility.WarehouseId;
+                objGrn.EntryBy = SessionUtility.LoginUserId;
+                objGrn.EntryDate = SessionUtility.FinStartDate;
+                objGrn.UpdateBy = new short?(SessionUtility.LoginUserId);
+                objGrn.UpdateDate = new DateTime?(SessionUtility.FinStartDate);
+                Grn date = objGrn;
+                DateTime value = objGrn.GrnDateTime.Value;
+                date.GrnDate = value.Date;
+                Grn timeOfDay = objGrn;
+                value = objGrn.GrnDateTime.Value;
+                timeOfDay.GrnTime = value.TimeOfDay;
+                objGrn.Details.ForEach((GrnDetail m) => m.GrnDate = objGrn.GrnDate);
+                Response response = this.grnRepository.InsertFromAsn(objGrn);
+                if (response.IsSuccessfull)
+                {
+                    action = base.RedirectToAction("Done", "Asn", new { documentType = "GRN", documentNo = response.DocumentNo, documentId = response.DocumentId, documentTypeId = ModuleHelper.GRN });
+                    return action;
+                }
+                base.TempData["result"] = response;
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                       .Where(y => y.Count > 0)
+                       .ToList();
+            }
+            action = base.View(objGrn);
+            return action;
+        }
+
+    public JsonResult GetGrnListForPutAway(Grn objGrn)
+    {
+      return this.Json((object) this.grnRepository.GetGrnListForPutAway(objGrn.CompanyId, objGrn.WarehouseId, objGrn.GrnNo.ConvertToString(), objGrn.FromDate, objGrn.ToDate, SessionUtility.FinStartDate, SessionUtility.FinEndDate));
+    }
+
+    public JsonResult GetGrnDetailsForPutAway(long[] objGrnIdList)
+    {
+      return this.Json((object) this.grnRepository.GetGrnDetailsForPutAway(objGrnIdList));
+    }
+
+    public ActionResult Register()
+    {
+      return (ActionResult) this.View((object) new GrnRegister());
+    }
+
+    [HttpPost]
+    public JsonResult GetRegisterGrnDetail(
+      string grnNo,
+      DateTime fromDate,
+      DateTime toDate)
+    {
+      return this.Json((object) this.grnRepository.GetRegisterGrnDetail(grnNo, fromDate, toDate, SessionUtility.FinStartDate, SessionUtility.FinEndDate));
+    }
+  }
+}

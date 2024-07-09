@@ -1,0 +1,48 @@
+﻿@model CodeLock.Models.MasterGeneral
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Update", "General", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.CodeTypeId)
+    @Html.AntiModelInjectionFor(m => m.CodeId)
+    @Html.HiddenFor(m => m.CodeTypeId)
+    @Html.HiddenFor(m => m.CodeId)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CodeDescription, Model.CodeType, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CodeDescription, new { @class = "form-control", @id = "txtCodeDescription" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CodeDescription)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('General', 'Update', 'txtCodeDescription', 'Add New', '@Url.Action("Insert", new { id = Model.CodeTypeId })', 'Details', '@Url.Action("View", new { id = Model.CodeTypeId, codeId = Model.CodeId })', 'Goto List', '@Url.Action("List", new { id = Model.CodeTypeId })');
+    });
+</script>
+

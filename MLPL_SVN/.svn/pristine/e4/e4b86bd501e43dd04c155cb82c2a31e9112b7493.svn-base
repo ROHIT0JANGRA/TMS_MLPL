@@ -1,0 +1,103 @@
+﻿@using CodeLock.Models
+@model Pick
+@{
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    baseUrl = '@Url.Action("", "Pick" ,new { Area = "WMS" })';
+    companyId = '@SessionUtility.CompanyId';
+    warehouseId = '@SessionUtility.WarehouseId';
+</script>
+<script src="@Url.Content("~/Areas/WMS/Views/Pick/Update.js")"></script>
+
+<div class="row" id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Update", "Pick", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.PickId, new { @id = "hdnPickId" })
+            @Html.HiddenFor(m => m.OrderId, new { @id = "txtOrderId", @Class = "form-control textlabel label-bold"})
+
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="1">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            @Html.Label("Pick Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drPickDate"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Label("PickNo", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBox("txtPickNo", "", new { @class = "form-control", @id = "txtPickNo" })
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Label("OrderNo", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBox("txtOrderNo", "", new { @class = "form-control", @id = "txtOrderNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("InvoiceNo", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBox("txtInvoiceNo", "", new { @class = "form-control", @id = "txtInvoiceNo" })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="tab-pane" id="2">
+                    <div class="row" id="dvList">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtPickList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="3">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.PickNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(m => m.PickNo, new { @id = "txtPickNumber", @Class = "form-control textlabel label-bold" })
+                                    @Html.HiddenFor(m => m.PickId, new { @id = "hdnPickId" })
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "PickDateTime", IsDateOnly = false, FieldCaption = "Pick Update Date Time", IsRequired = true, AllowFutureDate = false, AllowPastDate = false, MinDate = DateTime.Now.Date, MaxDate = DateTime.Now.Date.AddDays(1) })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">SKU Details</div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtPickDetail"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+</div>
+</div>

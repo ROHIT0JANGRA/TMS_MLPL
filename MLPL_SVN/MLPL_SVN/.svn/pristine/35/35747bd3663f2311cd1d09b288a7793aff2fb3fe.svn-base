@@ -1,0 +1,78 @@
+﻿@using CodeLock.Models
+@model DrsCancellation
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    baseUrl = '@Url.Action("", "Drs")';
+    docketNomenclature = '@SessionUtility.DocketNomenClature';
+    currentDate = '@DateTime.Now';
+    dateTimeFormat = '@ConfigHelper.JsDateFormat' + ' ' + '@ConfigHelper.TimeFormat';
+</script>
+<script src="~/Areas/Operation/Views/Drs/Cancellation.js"></script>
+
+<div class="row" id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Cancellation", "Drs", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label("Drs Date", new { @class = "label" })
+                            </div>
+                            <div id="drDrsDate"></div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DrsNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.DrsNo, new { @class = "form-control", @id = "txtDrsNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                @Html.Label("(seperated by comma if multiple)")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualDrsNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualDrsNo, new { @class = "form-control", @id = "txtManualDrsNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDrsDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

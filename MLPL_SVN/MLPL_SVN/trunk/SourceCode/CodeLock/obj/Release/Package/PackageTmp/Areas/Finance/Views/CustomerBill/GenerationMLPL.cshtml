@@ -1,0 +1,882 @@
+﻿@using CodeLock.Models
+@model CustomerBill
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "GstGeneration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/xlsx.full.min.js"></script>
+<script>
+    $(document).ready(function () {
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        customerBillGenerationUrl = '@Url.Action("", "CustomerBill", new { Area = "Finance" })';
+        customerContractMasterUrl = '@Url.Action("", "CustomerContract", new { Area = "Contract" })';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+        gstMasterUrl = '@Url.Action("", "Gst", new { Area = "Master" })';
+        customerSupBillUrl = '@Url.Action("MiscellaneousBill", "CustomerBill")';
+        cityMasterUrl = '@Url.Action("", "City", new { Area = "Master" })';
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        customerAddressMasterUrl = '@Url.Action("", "CustomerAddress", new { Area = "Master" })';
+        currentDate = '@DateTime.Now';
+        dateFormat = '@ConfigHelper.JsDateFormat';
+
+        btnExportExcel = $('#btnExportExcel');
+        btnExportExcel.click(ExportDocketBilling);
+
+        btnExportIssuesExcel = $('#btnExportIssuesExcel');
+        btnExportIssuesExcel.click(ExportDocketIssues);
+
+    });
+    function ExportDocketIssues() {
+
+        $("#dtExportList").html("");
+        var ExportCol = '<thead><tr style="background-color:#E5E7E9;">';
+        ExportCol = ExportCol + '<th style="width:5%">S. No. </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Docket No </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Docket Date </th>';
+
+        ExportCol = ExportCol + '<th style="width:10%">From City </th>';
+        ExportCol = ExportCol + '<th style="width:10%">To City </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Status</th>';
+        ExportCol = ExportCol + '</tr>';
+        ExportCol = ExportCol + '</thead>';
+
+        $('#dtExportList').append(ExportCol);
+        var sno = 0;
+
+        $('#dtDocketErrorList').find('[id*="hdnIssueDocketNo"]').each(function () {
+            var hdnIssueDocketNo = $('#' + this.id.replace('hdnIssueDocketNo', 'hdnIssueDocketNo'));
+            var hdnIssueDocketDate = $('#' + this.id.replace('hdnIssueDocketNo', 'hdnIssueDocketDate'));
+
+            var hdnIssueFromCity = $('#' + this.id.replace('hdnIssueDocketNo', 'hdnIssueFromCity'));
+            var hdnIssueToCity = $('#' + this.id.replace('hdnIssueDocketNo', 'hdnIssueToCity'));
+            var hdnIssuePodStatus = $('#' + this.id.replace('hdnIssueDocketNo', 'hdnIssuePodStatus'));
+
+            var colsInner = "";
+            sno = sno + 1;
+            var colsInner = '<tr style="background-color:#FBEEE6;">';
+            colsInner = colsInner + '<td style="width:5%">' + sno + '</td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnIssueDocketNo.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + $.displayDate(hdnIssueDocketDate.val()) + ' </td>';
+
+            colsInner = colsInner + '<td style="width:10%">' + hdnIssueFromCity.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnIssueToCity.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnIssuePodStatus.val() + ' </td>';
+
+            colsInner = colsInner + '</tr>';
+
+
+            $('#dtExportList').append(colsInner);
+        });
+
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:application/vnd.ms-excel,' + encodeURIComponent($('div[id$=dvExport]').html()));
+        element.setAttribute('download', 'Issues list');
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+    function ExportDocketBilling() {
+
+        $("#dtExportList").html("");
+        var ExportCol = '<thead><tr style="background-color:#E5E7E9;">';
+        ExportCol = ExportCol + '<th style="width:5%">S. No. </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Docket No </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Docket Date </th>';
+
+        ExportCol = ExportCol + '<th style="width:10%">From City </th>';
+        ExportCol = ExportCol + '<th style="width:10%">To City </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Vehicle No </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Vehical Type </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Consignor </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Consignee </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Business Type </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Vendor </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Vendor Docket No </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Pickup ID </th>';
+
+        ExportCol = ExportCol + '<th style="width:10%">Actual Weight </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Charged Weight </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Freight Rate </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Freight RateType </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Freight </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Docket Charge </th>';
+        ExportCol = ExportCol + '<th style="width:10%">SubTotal </th>';
+        ExportCol = ExportCol + '<th style="width:10%">TaxTotal </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Docket Total </th>';
+        ExportCol = ExportCol + '</tr>';
+        ExportCol = ExportCol + '</thead>';
+
+        $('#dtExportList').append(ExportCol);
+        var sno = 0;
+
+        $('#dtDocketList').find('[id*="hdnDocketId"]').each(function () {
+            var hdnDocketNo = $('#' + this.id.replace('hdnDocketId', 'hdnDocketNo'));
+            var hdnDocketDate = $('#' + this.id.replace('hdnDocketId', 'hdnDocketDate'));
+
+            var hdnFromCity = $('#' + this.id.replace('hdnDocketId', 'hdnFromCity'));
+            var hdnToCity = $('#' + this.id.replace('hdnDocketId', 'hdnToCity'));
+            var hdnVehicleNo = $('#' + this.id.replace('hdnDocketId', 'hdnVehicleNo'));
+            var hdnVehicalType = $('#' + this.id.replace('hdnDocketId', 'hdnVehicalType'));
+            var hdnConsignorName = $('#' + this.id.replace('hdnDocketId', 'hdnConsignorName'));
+            var hdnConsigneeName = $('#' + this.id.replace('hdnDocketId', 'hdnConsigneeName'));
+            var hdnBusinessType = $('#' + this.id.replace('hdnDocketId', 'hdnBusinessType'));
+            var hdnVendorName = $('#' + this.id.replace('hdnDocketId', 'hdnVendorName'));
+            var hdnVendorCode = $('#' + this.id.replace('hdnDocketId', 'hdnVendorCode'));
+            var hdnPickupID = $('#' + this.id.replace('hdnDocketId', 'hdnPickupID'));
+
+            var hdnActualWeight = $('#' + this.id.replace('hdnDocketId', 'hdnActualWeight'));
+            var hdnChargedWeight = $('#' + this.id.replace('hdnDocketId', 'hdnChargedWeight'));
+            var hdnFreightRate = $('#' + this.id.replace('hdnDocketId', 'hdnFreightRate'));
+            var hdnFreightRateType = $('#' + this.id.replace('hdnDocketId', 'hdnFreightRateType'));
+            var hdnFreight = $('#' + this.id.replace('hdnDocketId', 'hdnFreight'));
+            var hdnDocketCharge = $('#' + this.id.replace('hdnDocketId', 'hdnDocketCharge'));
+            var txtSubTotal = $('#' + this.id.replace('hdnDocketId', 'txtSubTotal'));
+            var txtTaxTotal = $('#' + this.id.replace('hdnDocketId', 'txtTaxTotal'));
+            var txtDocketTotal = $('#' + this.id.replace('hdnDocketId', 'txtDocketTotal'));
+            var colsInner = "";
+            sno = sno + 1;
+            var colsInner = '<tr style="background-color:#FBEEE6;">';
+            colsInner = colsInner + '<td style="width:5%">' + sno +'</td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnDocketNo.val() +' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + $.displayDate(hdnDocketDate.val()) + ' </td>';
+
+            colsInner = colsInner + '<td style="width:10%">' + hdnFromCity.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnToCity.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnVehicleNo.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnVehicalType.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnConsignorName.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnConsigneeName.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnBusinessType.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnVendorName.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnVendorCode.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnPickupID.val() + ' </td>';
+
+            colsInner = colsInner + '<td style="width:10%">' + hdnActualWeight.val() + ' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnChargedWeight.val() +' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnFreightRate.val() +' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnFreightRateType.val() +' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnFreight.val() +' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + hdnDocketCharge.val() +' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + txtSubTotal.val() +' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + txtTaxTotal.val() +' </td>';
+            colsInner = colsInner + '<td style="width:10%">' + txtDocketTotal.val() +'</td>';
+            colsInner = colsInner + '</tr>';
+
+
+            $('#dtExportList').append(colsInner);
+        });
+
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:application/vnd.ms-excel,' + encodeURIComponent($('div[id$=dvExport]').html()));
+        element.setAttribute('download', 'Docket list for billing');
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        customerBillGenerationUrl = '@Url.Action("", "CustomerBill", new { Area = "Finance" })';
+        customerContractMasterUrl = '@Url.Action("", "CustomerContract", new { Area = "Contract" })';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+        gstMasterUrl = '@Url.Action("", "Gst", new { Area = "Master" })';
+        customerSupBillUrl = '@Url.Action("MiscellaneousBill", "CustomerBill")';
+        cityMasterUrl = '@Url.Action("", "City", new { Area = "Master" })';
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        customerAddressMasterUrl = '@Url.Action("", "CustomerAddress", new { Area = "Master" })';
+    });
+</script>
+<script src="~/areas/finance/views/customerbill/GenerationMLPL.js?version=@DateTime.Now.Ticks"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("GenerationMLPL", "CustomerBill", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.AntiModelInjectionFor(model => model.BillId)
+            @Html.Hidden("BillId", 0)
+
+            <div id="dvExport" style="display:none;">
+                <table id="dtExportList" border="1"></table>
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TransactionTypeId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.TransactionTypeId, new List<SelectListItem> {
+                                   new SelectListItem() {Text = "Transaction Billing", Value="1"},
+                                   new SelectListItem() {Text = "Miscellaneous Billing", Value="2"},}, new { @class = "form-control", @id = "ddlTransactionTypeId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.TransactionTypeId)
+                            </div>
+                        </div>
+                    </div>
+                    <div id="dvTransactionBilling">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.GstServiceTypeId, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.HiddenFor(model => model.GstServiceTypeId, new { @id = "hdnGstServiceTypeId" })
+                                        @Html.DropDownList("GstServiceType", new SelectList(ViewBag.TransactionCategoryList, "Value", "Name"), new { @class = "form-control", @id = "ddlGstServiceTypeId" })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.GstServiceTypeId)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                @Html.Label("Transaction Date", new { @class = "label" })
+                                <div class="clearfix">
+                                    <div id="drTransactionDate"></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.PaybasId, new List<SelectListItem> {
+                                        new SelectListItem() {Text = "Paid-Freight", Value="1"},
+                                        new SelectListItem() {Text = "TBB-Freight", Value="2"},
+                                        new SelectListItem() {Text = "ToPay-Freight", Value="3"},
+                                        new SelectListItem() {Text = "Miscellaneous", Value="7"}}, "Select Bill Type", new { @class = "form-control", @id = "ddlPaybasId" })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.PaybasId)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                                    @Html.HiddenFor(model => model.TransportModeId, new { @id = "hdnTransportModeId" })
+                                    @Html.TextBoxFor(model => model.CustomerCode, null, new { @class = "form-control", @id = "txtCustomerCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CustomerCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4" id="dvCustomerState">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerGstStateId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.CustomerGstStateId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlCustomerGstStateId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CustomerGstStateId)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvCustomerAddress" style="display:none">
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerAddressId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.CustomerAddressId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlCustomerAddressId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CustomerAddressId)
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DisplayAddress, " ", new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.DisplayAddress, " ", new { @class = "label-bold", @id = "lblCustomerAddress" })
+                            </div>
+                        </div>
+
+                    </div>
+                    @*<div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CustomerAddressId, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.CustomerAddressId, new SelectList(ViewBag.AddressList, "Value", "Name"), "Select Address", new { @class = "form-control", @id = "ddlCustomerAddressId" })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.CustomerAddressId)
+                                </div>
+                            </div>
+                        </div>*@
+                    <div class="row" id="dvCompanyState">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CompanyGstStateId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.CompanyGstStateId, Enumerable.Empty<SelectListItem>(), new { @id = "ddlCompanyGstStateId", @class = "form-control" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CompanyGstStateId)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.PrimaryBillingTypeId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlPrimaryBillingTypeId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.PrimaryBillingTypeId)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ServiceTypeId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.ServiceTypeId, new SelectList(ViewBag.ServiceTypeList, "Value", "Name"), "Select", new { @class = "form-control", @id = "ddlServiceTypeId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ServiceTypeId)
+                            </div>
+                        </div>
+                        <div class="col-sm-4" id="dvFtlType" style="display:none">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.FtlTypeId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.FtlTypeId, new SelectList(ViewBag.FtlTypeList, "Value", "Name"), "All", new { @class = "form-control", @id = "ddlFtlTypeId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.FtlTypeId)
+                            </div>
+                        </div>
+
+                        @*<div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="inline-group">
+                                        @Html.LabelFor(model => model.IsRCM, new { @class = "label" })
+                                        <label class="radio">
+                                            @Html.RadioButtonFor(model => model.IsRCM, true, new { @id = "rdRcmYes", @checked = "checked" })
+                                            <i></i>
+                                            @Html.LabelFor(model => model.IsRCM, "Yes", new { @for = "rdRcmYes" })
+                                        </label>
+                                        <label class="radio">
+                                            @Html.RadioButtonFor(model => model.IsRCM, false, new { @id = "rdRcmNo" })
+                                            <i></i>
+                                            @Html.LabelFor(model => model.IsRCM, "No", new { @for = "rdRcmNo" })
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.IsSez, new { @class = "label" })
+                                    <label class="checkbox">
+                                        @Html.CheckBoxFor(model => model.IsSez, new { @id = "ChkSez" })
+                                        <i></i>
+                                    </label>
+                                </div>
+                            </div>*@
+
+
+                    </div>
+                    <div class="row" id="dvManifestVendor" style="display:none">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorCode, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                                    @Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.VendorCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorName, " ", new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.VendorName, " ", new { @class = "label-bold", @id = "lblVendorName" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvManifestType" style="display:none">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManifestId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.ManifestId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlManifestId" })
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.THCNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.THCNo, null, new { @class = "form-control textlabel", @id = "txtTHCNo" })
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.FirstDriverName, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.FirstDriverName, null, new { @class = "form-control textlabel", @id = "txtFirstDriverName" })
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.VehicleNo, null, new { @class = "form-control textlabel", @id = "txtVehicleNo" })
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.DocketNo, null, new { @class = "form-control", @id = "txtDocketNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.DocketNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                @Html.Label("(seperated by comma if multiple)")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="page-separator">Customer & Invoice Details</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @*@Html.LabelFor(model => model.CustomerName, " ", new { @class = "label" })*@
+                                @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomer" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillNo, new { @class = "label" })
+                                <div class="system-label">
+                                    @Html.Label("<System Generated>")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualBillNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualBillNo, new { @class = "form-control", @id = "txtManualBillNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualBillNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "BillDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.BillDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                        @*<div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.BillingAddress, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.LabelFor(m => m.BillingAddress, " ", new { @id = "lblBillingAddress", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "DueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DueDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.GenerationState, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.GenerationStateId, new { @id = "hdnBillGenerationStateId" })
+                                    @Html.LabelFor(model => model.GenerationState, " ", new { @id = "lblBillGenerationState", @class = "label-bold" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.GenerationState)
+                            </div>
+                        </div>
+                        @*<div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.GenerationCity, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(m => m.GenerationCityId, new { @id = "hdnBillGenerationCityId" })
+                                        @Html.LabelFor(m => m.GenerationCity, " ", new { @id = "lblBillGenerationCity", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.GenerationCity, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.GenerationCityId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlGenerationCityId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CustomerGstStateId)
+                            </div>
+                        </div>
+                        @*<div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.CustomerGstStateGstTinNo, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(m => m.CustomerGstId, new { @id = "hdnCustomerGstId" })
+                                        @Html.LabelFor(m => m.CustomerGstStateGstTinNo, " ", new { @id = "lblCustomerGstStateGstTinNo", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerGstStateGstTinNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(m => m.CustomerGstId, new { @id = "hdnCustomerGstId" })
+                                    @Html.TextBoxFor(model => model.CustomerGstStateGstTinNo, new { @class = "form-control", @id = "txtCustomerGstStateGstTinNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CustomerGstStateGstTinNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillingAddress, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.BillingAddress, new { @class = "form-control", @id = "txtBillingAddress" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.BillingAddress)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.SubmissionState, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(m => m.SubmissionStateId, new { @id = "hdnBillSubmissionStateId" })
+                                    @Html.LabelFor(m => m.SubmissionState, " ", new { @id = "lblBillSubmissionState", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.SubmissionCity, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(m => m.SubmissionCityId, new { @id = "hdnBillSubmissionCityId" })
+                                        @Html.LabelFor(m => m.SubmissionCity, " ", new { @id = "lblBillSubmissionCity", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SubmissionCity, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.SubmissionCityId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlSubmissionCityId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.SubmissionCityId)
+                            </div>
+                        </div>
+                        @*<div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.CompanyGstStateGstTinNo, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(m => m.CompanyGstId, new { @id = "hdnCompanyGstId" })
+                                        @Html.LabelFor(m => m.CompanyGstStateGstTinNo, " ", new { @id = "lblCompanyGstStateGstTinNo", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CompanyGstStateGstTinNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(m => m.CompanyGstId, new { @id = "hdnCompanyGstId" })
+                                    @Html.TextBoxFor(model => model.CompanyGstStateGstTinNo, new { @class = "form-control", @id = "txtCompanyGstStateGstTinNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Label("SubmissionBillingAddress", "Billing Address", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBox("SubmissionBillingAddress", " ", new { @class = "form-control", @id = "txtSubmissionBillingAddress" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3" style="display:none">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.SubmissionLocationCode, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(m => m.SubmissionLocationId, new { @id = "hdnBillSubmissionLocationId" })
+                                    @Html.LabelFor(m => m.SubmissionLocationCode, " ", new { @id = "lblBillSubmissionLocationCode", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "PeriodFromDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.PeriodFromDate), IsRequired = false, AllowFutureDate = true, AllowPastDate = true })
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "PeriodToDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.PeriodToDate), IsRequired = false, AllowFutureDate = true, AllowPastDate = true })
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txtRemarks" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Remarks)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">GST Details</div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ServiceType, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.ServiceType, " ", new { @id = "lblServiceType", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.InterState, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.InterState, " ", new { @id = "lblInterState", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.SacName, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(m => m.SacId, new { @id = "hdnSacId" })
+                                    @Html.LabelFor(m => m.SacName, " ", new { @id = "lblSacName", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.GstRate, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.GstRate, new { @class = "textlabel form-control label-bold numeric", @id = "txtGstRate" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.GstRate)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.GstIsRCM, new { @class = "label" })
+                                @Html.HiddenFor(m => m.GstType, new { @id = "hdnGstType" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.GstIsRCM, " ", new { @id = "lblGstIsRCM", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.GstIsSez, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.GstIsSez, " ", new { @id = "lblGstIsSez", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CustomerGstInNo, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.CustomerGstInNo, " ", new { @id = "lblCustomerGstInNo", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.TransporterGstInNo, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.TransporterGstInNo, " ", new { @id = "lblTransporterGstInNo", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dvErrorList" style="display:none;">
+                        <div class="page-separator" style="background-color:red;">Issues List   &nbsp;&nbsp;  <button type="button" class="btn btn-danger" id="btnExportIssuesExcel" style="background-color:forestgreen; border-color:#808080;">Export</button></div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div>
+                                    <table id="dtDocketErrorList"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="page-separator">Transaction Details</div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDocketList">
+                                    <tfoot>
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+
+
+                                            <th>Total</th>
+                                            <th>
+                                                @Html.TextBoxFor(model => model.TotalChargedWeight, null, new { @class = "form-control textlabel numeric2", @id = "txtTotalChargedWeight" })
+                                            </th>
+                                            <th>
+                                                @Html.TextBoxFor(model => model.TotalQty, null, new { @class = "form-control textlabel numeric2", @id = "txtTotalQty" })
+                                            </th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            @*<th></th>
+                                                <th></th>*@
+                                            @*<th></th>*@
+                                        </tr>
+                                    </tfoot>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">Summary of Transactions</div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.SubTotal, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.SubTotal, new { @id = "hdnSubTotal" })
+                                    @Html.LabelFor(model => model.SubTotal, "0.00", new { @id = "lblSubTotal", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Sgst, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.Sgst, new { @id = "hdnSgst" })
+                                    @Html.LabelFor(model => model.Sgst, "0.00", new { @id = "lblSgst", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Cgst, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.Cgst, new { @id = "hdnCgst" })
+                                    @Html.LabelFor(model => model.Cgst, "0.00", new { @id = "lblCgst", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Igst, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.Igst, new { @id = "hdnIgst" })
+                                    @Html.LabelFor(model => model.Igst, "0.00", new { @id = "lblIgst", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Ugst, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.Ugst, new { @id = "hdnUgst" })
+                                    @Html.LabelFor(model => model.Ugst, "0.00", new { @id = "lblUgst", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.GstTotal, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.GstTotal, new { @id = "hdnGstTotal" })
+                                    @Html.LabelFor(model => model.GstTotal, "0.00", new { @id = "lblGstTotal", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.TotalAmount, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.TotalAmount, new { @id = "hdnTotal" })
+                                    @Html.LabelFor(model => model.TotalAmount, "0.00", new { @id = "lblTotal", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.DocketCount, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.DocketCount, new { @id = "hdnDocketCount" })
+                                    @Html.LabelFor(model => model.DocketCount, "0.00", new { @id = "lblDocketCount", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12" id="lblSezRCM" style="color:red; font-size:14px; font-family:Verdana;">
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+
+        }
+    </div>
+</div>

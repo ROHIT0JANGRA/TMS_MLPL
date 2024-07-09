@@ -1,0 +1,281 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Added by HTTrack -->
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Empower Logics</title>
+
+    <!-- Global stylesheets -->
+    @Styles.Render("~/assets/css")
+    <!-- /global stylesheets -->
+    @Scripts.Render("~/bundles/jquery")
+
+<script>
+
+
+        var docketFieldList = JSON.parse('@DisplayName.GetList("Docket")'.replace(/&quot;/g, '"'));
+        var appUrl = '@Url.Action("Action", "Controller", new { Area = "Master" })';
+        loginLocationId = '@SessionUtility.LoginLocationId';
+        loginLocationCode = '@SessionUtility.LoginLocationCode';
+        LocationHierarchyId = '@SessionUtility.LocationHierarchyId';
+        loginUserId = '@SessionUtility.LoginUserId';
+        loginUserLocationId = '@SessionUtility.LoginUserLocationId';
+        loginCompanyId = '@SessionUtility.CompanyId';
+        loginCompanyCode = '@SessionUtility.CompanyCode';
+        loginCompanyName = '@SessionUtility.CompanyName';
+        loginFinYear = '@SessionUtility.FinYear';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+        prsNomenclature = '@SessionUtility.PrsNomenclature';
+        loadingSheetNomenclature = '@SessionUtility.LoadingSheetNomenclature';
+        manifestNomenclature = '@SessionUtility.ManifestNomenclature';
+        thcNomenclature = '@SessionUtility.ThcNomenclature';
+        drsNomenclature = '@SessionUtility.DrsNomenclature';
+        finStartDate = '@SessionUtility.FinStartDate';
+        finEndDate = '@SessionUtility.FinEndDate';
+        calYrStartDate = '@SessionUtility.CalYrStartDate';
+        CalYrEndDate = '@SessionUtility.CalYrEndDate';
+        localStoragePath = '@Url.Content("~")' + '@System.Configuration.ConfigurationManager.AppSettings["LocalStoragePath"]'.replace('~','');
+
+        var reportUrl = '@Url.Action("ViewReport", "Report", new { Area = "" })';
+
+        jsDateFormat = '@ConfigHelper.JsDateFormat';
+        jsTimeFormat = '@ConfigHelper.JsTimeFormat';
+        jsDateTimeFormat = '@ConfigHelper.JsDateTimeFormat';
+        jsDisplayDateFormat = '@ConfigHelper.JsDisplayDateFormat';
+        jsDisplayTimeFormat = '@ConfigHelper.JsTimeFormat';
+        jsDisplayDateTimeFormat = '@ConfigHelper.JsDisplayDateTimeFormat';
+        systemDateTime = moment('@DateTime.Now.ToString(ConfigHelper.DisplayDateTimeFormat)');
+
+
+
+        //$('#btnStep1').click(function () {
+        //    if (!CheckValidLoginLocation()) return false;
+        //});
+        //$('[id*="btnStep"]').click(function () {
+        //    if (!CheckValidLoginLocation()) return false;
+        //});
+        //window.onkeydown = function (event) {
+        //    //if (event.which == 192 || event.which == 222) {
+        //    //    event.preventDefault();   // turn off browser transition to the previous page
+        //    //}
+        //    var charCode = (event.which) ? event.which : event.keyCode
+        //    if (charCode == 8 ||
+        //        charCode == 9 ||
+        //        charCode == 46 ||
+        //        charCode == 51 ||
+        //        charCode == 190 ||
+        //        charCode == 191 ||
+        //        charCode == 189 ||
+        //        charCode == 188 ||
+        //        charCode == 32 ||
+        //        charCode == 13 ||
+        //        (charCode >= 37 && charCode <= 40) ||
+        //        (charCode >= 48 && charCode <= 57) ||
+        //        (charCode >= 96 && charCode <= 105) ||
+        //        (charCode >= 65 && charCode <= 90)
+        //        ) {
+
+        //    }
+        //    else {
+        //        event.preventDefault();
+        //    }
+
+        //};
+
+        //window.addEventListener('paste', (event) => {
+
+        //    //Regex for Valid Characters i.e. Alphabets, Numbers and Space.
+        //    var iChars = "!`%^&*+=[]\\\';{}|\":~";
+
+        //    // Get pasted data via clipboard API
+        //    clipboardData = event.clipboardData || window.clipboardData;
+        //    pastedData = clipboardData.getData('Text');
+
+        //    for (var i = 0; i < pastedData.length; i++) {
+
+        //        if (iChars.indexOf(pastedData.charAt(i)) != -1) {
+
+        //            alert("Your string has special characters. \nThese are not allowed.");
+        //            event.preventDefault();
+        //            return false;
+        //        }
+        //    }
+        //});
+
+</script>
+
+</head>
+<body class="overlay-leftbar">
+    @*<div class="alert alert-danger fade in" role="alert">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            <strong>Error!</strong> A problem has been occurred while submitting your data.
+        </div>*@
+    <!--Topbar Start Here-->
+    <header class="topbar clearfix">
+        <!--Top Search Bar Start Here-->
+        <div class="top-search-bar">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <div class="search-input-addon">
+                            <span class="addon-icon"><i class="zmdi zmdi-search"></i></span>
+                            <input type="text" class="form-control top-search-input" placeholder="Search">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Top Search Bar End Here-->
+        <!--Topbar Left Branding With Logo Start-->
+        <div class="topbar-left pull-left">
+            <div class="clearfix">
+                <ul class="left-branding pull-left clickablemenu ttmenu dark-style menu-color-gradient">
+                    <li><span class="left-toggle-switch"><i class="zmdi zmdi-menu faa-pulse animated"></i></span></li>
+                    <li>
+                        <div class="">
+                            <a href='@Url.Action("Index", "Dashboard", new { area = "" })' title="Admin Template"><img src="~/assets/images/logo.png" alt="logo" width="190" height="60"></a>
+                        </div>
+                    </li>
+                </ul>
+                <!--Mobile Search and Rightbar Toggle-->
+                <ul class="branding-right pull-right">
+                    <li><a href="#" class="btn-mobile-search btn-top-search"><i class="zmdi zmdi-search"></i></a></li>
+                    <li><a href="#" class="btn-mobile-bar"><i class="zmdi zmdi-apps"></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <!--Topbar Left Branding With Logo End-->
+        <!--Topbar Right Start-->
+        <div class="topbar-right pull-right">
+            <div class="clearfix">
+                <!--Mobile View Leftbar Toggle-->
+                <ul class="left-bar-switch pull-left">
+                    <li><span class="left-toggle-switch"><i class="zmdi zmdi-menu faa-pulse animated"></i></span></li>
+                </ul>
+                <ul class="pull-right top-right-icons">
+                    <li><a href='@Url.Action("Index", "Dashboard", new { area = "" })'><i class="zmdi zmdi-home noty-icon"></i></a></li>
+                    <li><span class="noty-separator">|&nbsp;</span></li>
+                    <li><span class="noty-label">@SessionUtility.LoginUserName</span></li>
+                    <li><span class="noty-separator">&nbsp;|&nbsp;</span></li>
+                    <li><span class="noty-label">@SessionUtility.LoginLocationCode</span></li>
+                    <li><span class="noty-separator">&nbsp;|&nbsp;</span></li>
+                    @*<li><a href="#" class="right-toggle-switch"><i class="zmdi zmdi-format-align-left"></i><span class="more-noty"></span></a></li>*@
+                    <li class="dropdown notifications-dropdown">
+                        <a href="#" class="btn-notification dropdown-toggle" data-toggle="dropdown"><span class="more-noty"></span><i class="zmdi zmdi-format-align-left"></i></a>
+                        <div class="dropdown-menu notifications-tabs" style="height: 275px!important;width: 310px!important;">
+                            <div>
+                                <ul class="nav material-tabs nav-tabs" role="tablist">
+                                    <li class="active"><a href="#message" aria-controls="message" role="tab" data-toggle="tab">Extra Login Information</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div role="tabpanel" id="message">
+                                        <div class="message-list-container">
+                                            <ul class="clearfix">
+                                                <li class="clearfix">
+                                                    <a href="#" class="message-thumb">
+                                                        @*  <i class="fa fa-building fa-2x"></i>*@
+                                                        <img src="~/assets/icon/calendar_year.png" alt="Calendar Icon">
+                                                    </a><a href="#" class="message-intro">@SessionUtility.FinStartDate.ToString("yyyy") : @SessionUtility.FinEndDate.ToString("yyyy")   </a>
+                                                </li>
+                                                <li class="clearfix">
+                                                    <a href="#" class="message-thumb">
+                                                        @*  <i class="fa fa-building fa-2x"></i>*@
+                                                        <img src="~/assets/icon/factory.png" alt="Company Icon">
+                                                    </a><a href="#" class="message-intro">@SessionUtility.CompanyName </a>
+                                                </li>
+                                                <li class="clearfix">
+                                                    <a href="#" class="message-thumb">
+                                                        <img src="~/assets/icon/warehouse.png" alt="Warehouse Icon">
+                                                        @* <i class="fa fa-truck fa-2x"></i>*@
+                                                    </a><a href="#" class="message-intro">@SessionUtility.WarehouseName </a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="dropdown apps-dropdown">
+                        <a href="#" class="btn-apps dropdown-toggle" data-toggle="dropdown"><i class="zmdi zmdi-settings"></i></a>
+                        <div class="dropdown-menu">
+                            <ul class="more-apps">
+                                <li><a href='@Url.Action("VirtualLogin", "Home", new { area = "" })'><i class="zmdi zmdi-accounts-alt"></i> Virtual Login</a></li>
+                                <li><a href='@Url.Action("ChangePassword", "User", new { area = "Master", id = SessionUtility.LoginUserId })'><i class="zmdi zmdi-accounts-alt"></i> Change Password</a></li>
+                                <li><a href='@Url.Action("Logout", "Home", new { area = "" })'><i class="fa fa-power-off"></i> Logout</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+        <!--Topbar Right End-->
+    </header>
+    <!--Topbar End Here-->
+    <!--Leftbar Start Here-->
+    <aside class="leftbar">
+        <div class="left-aside-container">
+            <ul class="list-accordion tree-style">
+                @if (Session["MyMenu"] == null)
+                {
+                    Session["MyMenu"] = Html.Partial("~/Views/Shared/_Menu.cshtml");
+                }
+                @Session["MyMenu"]
+            </ul>
+        </div>
+    </aside>
+    <!--Leftbar End Here-->
+    <!--Page Container Start Here-->
+    <section class="main-container">
+        <div class="container">
+            <div id="dvPageHeader" class="page-header filled light">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <h2 id="lblPageHeader"> </h2>
+                        <p id="lblPageSubHeader"></p>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="data-align-right">
+                            <div class="tbl-action-toolbar hide">
+                                <ul>
+                                    <li><a id="aNavigation1" class="btn add-row btn-primary" href="#"></a></li>
+                                    <li><a id="aNavigation2" class="btn add-row btn-primary" href="#"></a></li>
+                                    <li><a id="aNavigation3" class="btn add-row btn-primary" href="#"></a></li>
+                                    <li><a id="aNavigation4" class="btn add-row btn-primary" href="#"></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @RenderBody()
+        </div>
+        <!--Footer Start Here -->
+        <footer class="footer-container">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="footer-left">
+                            <span>© @DateTime.Now.Year <a href="">Empower Logics Pvt Ltd.</a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!--Footer End Here -->
+    </section>
+    <!--Page Container End Here-->
+    @Scripts.Render("~/assets/js")
+    @RenderSection("scripts", required: false)
+    <div id="dvLoader" class="page_loader">
+        @*   <img src="~/assets/images/loader.gif" width="90" height="90" alt="Loading..." style="position: fixed; top: 50%; left: 50%;background-color:transparent" />*@
+    </div>
+
+</body>
+
+</html>

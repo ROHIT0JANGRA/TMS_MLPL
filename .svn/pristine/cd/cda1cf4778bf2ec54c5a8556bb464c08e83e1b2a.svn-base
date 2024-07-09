@@ -1,0 +1,142 @@
+﻿@model CodeLock.Models.MasterAccount
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Account Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Account', 'Update', 'ddlCategory', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.AccountId })');
+        accountGroupUrl = '@Url.Action("", "AccountGroup")';
+        accountUrl = '@Url.Action("", "Account")';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Master/Views/Account/Update.js")"></script>
+@using (Html.BeginForm("Update", "Account", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.AccountId)
+    @Html.HiddenFor(model => model.AccountId)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AccountCode, new { @class = "label" })
+                    <div class="form-group">
+                        @Html.Label("", Model.AccountCode)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.MainCategoryId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.MainCategoryId, new SelectList(ViewBag.CategoryList, "Value", "Name", Model.MainCategoryId), "Select Category", new { @class = "form-control", @id = "ddlCategory" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.MainCategoryId)
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.AccountGroupId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.AccountGroupId, new SelectList(ViewBag.AccountCodeList, "Value", "Name", Model.AccountGroupId), "Select GroupCode", new { @class = "form-control", @id = "ddlAccountGroup" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.AccountGroupId)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AccountDescription, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.AccountDescription, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AccountDescription)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.AccountCategoryId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.AccountCategoryId, new SelectList(ViewBag.AccountCategoryList, "Value", "Name", Model.AccountCategoryId), "Select Account Category", new { @class = "form-control", @id = "ddlAccountCategory" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.AccountCategoryId)
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.CompanyId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.CompanyId, new SelectList(ViewBag.CompanyList, "Value", "Name", Model.CompanyId), "Select Company", new { @class = "form-control", @id = "ddlCompany" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.CompanyId)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.PartyTypeId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.PartyTypeId, new SelectList(ViewBag.PartyAccountList, "Value", "Name", Model.PartyTypeId), "Select Party Account", new { @class = "form-control", @id = "ddlPartyType" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.PartyTypeId)
+            </div>
+            <div class="col-sm-4" id="dvMappedAccount" style="display:none">
+                @Html.LabelFor(model => model.MappedAccountId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.MappedAccountId, new SelectList(ViewBag.MappedAccountList, "Value", "Name", Model.MappedAccountId), "Select Mapped Account", new { @class = "form-control", @id = "ddlMappedAccountId" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.MappedAccountId)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4" id="divNEFTCode" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.NEFTCode, new { @class = "label", @id = "lblNEFTCode" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.NEFTCode, new { @class = "form-control", @id = "txtNEFTCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.NEFTCode)
+                </div>
+            </div>
+        </div>
+        <div class="=row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.AccountLocation, new { @class = "label" })
+                @Html.HiddenFor(model => model.AccountLocation, new { @id = "hdnAccountLocation" })
+                @Html.HiddenFor(model => model.SavedAccountLocation, new { @id = "hdnSavedAccountLocation" })
+                @Html.DropDownListFor(model => model.AccountLocation, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlAccountLocation", @placeholder = "Select Location" })
+                @Html.ValidationMessageFor(model => model.AccountLocation)
+            </div>
+            <div id="divvendorandparty" class="col-sm-4">
+                @Html.LabelFor(model => model.PartyId, new { @class = "label", @id = "lblParty" })
+                <div class="input-wrapper">
+                    @Html.HiddenFor(model => model.PartyId, new { @id = "hdnPartyId" })
+                    @Html.TextBoxFor(model => model.PartyCode, null, new { @class = "form-control", @id = "txtParyCode", @readonly = "true" })
+                </div>
+                @Html.ValidationMessageFor(m => m.PartyCode)
+
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @class = "label-bold", @id = "lblName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}

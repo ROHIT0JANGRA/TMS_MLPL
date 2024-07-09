@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = "Result";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap" style="height:300px">
+    <div class="alert alert-success"><h5>The contract is saved successfully</h5></div>
+    <div class="col-sm-3">
+        <h4>Contract Id</h4>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.Label("lblDocumentNo", (string)ViewBag.ManualContractId, new { @class = "label-bold" })
+        </div>
+    </div>
+    <div class="col-md-4">
+        <button onclick="return ViewReport();" class="btn btn-primary btn-xs dt-edit">
+            <span class="glyphicon glyphicon-eye-open"></span>
+        </button>
+    </div>
+    <br />
+    <div class="col-sm-12">
+        <a href="@Url.Action("StepSelection",  new { id = ViewBag.ContractId })">Edit the same Contract</a>
+        <br />
+        <a href="@Url.Action("", new { customerId = ViewBag.CustomerId, isCustomerContract = ViewBag.IsCustomerContract })">Edit the other Contract</a>
+        @if (ViewBag.IsCustomerContract)
+            {
+            <br />
+            <a href="@Url.Action("")">Edit other Customer's Contract</a>
+        }
+    </div>
+</div>
+<script>
+    var contractId = '@Html.Raw(ViewBag.ContractId)';
+    function ViewReport() {
+        return ShowViewPrint('@ModuleHelper.CustomerContract', contractId);
+    }
+</script>

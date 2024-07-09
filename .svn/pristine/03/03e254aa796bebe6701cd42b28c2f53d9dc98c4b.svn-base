@@ -1,0 +1,74 @@
+﻿@model List<CodeLock.Models.MasterDcr>
+@{
+    ViewBag.Title = "Result";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap material-table-widget">
+        <table class="table-bordered" id="dtDcr">
+            <thead>
+                <tr>
+                    <th>
+                        Document Type
+                    </th>
+                    <th>
+                        Book Code
+                    </th>
+                    <th>
+                        Series From
+                    </th>
+                    <th>
+                        Series To
+                    </th>
+                    <th>
+                        Business Type
+                    </th>
+                    <th>
+                        Total Leaf
+                    </th>
+                    <th>
+                        Location
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                    {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(model => Model[i].DocumentTypeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => Model[i].BookCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => Model[i].SeriesFrom)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => Model[i].SeriesTo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => Model[i].BusinessType)
+                        </td>
+                        <td class="align-right">
+                            @((int)Model[i].Total)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => Model[i].LocationCode)
+                        </td>
+                    </tr>
+                    }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        //SetPageLoad('DCR', 'Add Result', '', 'Add', '@Url.Action("Insert")');
+        SetPageLoad('DCR', 'Add Result');
+        LoadDataTable('dtDcr', true, true, true);
+    });
+</script>

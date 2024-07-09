@@ -1,0 +1,191 @@
+﻿@model CodeLock.Models.PickupRequest
+@{
+    ViewBag.Title = "PickupRequestView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PickupRequestNo, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.PickupRequestNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.City, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.City
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Pincode, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.Pincode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PickupDate, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.PickupDate.ToDisplayDate()
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PickupTime, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.PickupTime.ToDisplayDateTime()
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ContactPerson, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.ContactPerson, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MobileNo, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.MobileNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EmailId, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.EmailId, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GstNo, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.GstNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PickupAddress, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.PickupAddress, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.NoofPkt, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.NoofPkt, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Weight, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.Weight, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ASNNo, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.ASNNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="page-separator">Delivery Information </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DeliveryCity, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.DeliveryCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DeliveryPincode, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.DeliveryPincode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.CustomerCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerName, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.CustomerName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorName, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Pickup Order', 'View Detail', '', 'Add New', '@Url.Action("PickupRequest")');
+
+      });
+</script>

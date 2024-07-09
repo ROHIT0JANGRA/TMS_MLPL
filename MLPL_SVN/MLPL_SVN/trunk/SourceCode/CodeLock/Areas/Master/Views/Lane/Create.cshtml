@@ -1,0 +1,320 @@
+﻿@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@model Lane
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap">
+    @using (Html.BeginForm("GetLaneDetails", "Lane", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+    {
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    Customer
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CustomerId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Customer", new { @class = "form-control select2", @id = "CustomerId" })
+                        <i></i>
+                    </div>@Html.ValidationMessageFor(model => model.CustomerId)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="0" id="btnNext">Next</button>
+        </div>
+
+    }
+    @using (Html.BeginForm("Create", "Lane", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+    {
+        if (Model != null && Model.LaneDetails != null)
+        {
+            @Html.HiddenFor(model => model.CustomerId)
+            @Html.AntiForgeryToken()
+            <div class="page-separator">Lane Details</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="material-table-widget">
+                        <table id="dtLaneMaster">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LaneDetails[0].LaneId)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LaneDetails[0].MasterLaneId)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LaneDetails[0].RouteId)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LaneDetails[0].FTLTypeId)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LaneDetails[0].FuelTypeId)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LaneDetails[0].ContractedKM)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LaneDetails[0].AssetCount)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LaneDetails[0].DriverCount)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LaneDetails[0].IsActive)
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.LaneDetails.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="input">
+                                                @Html.TextBoxFor(model => model.LaneDetails[i].LaneId,
+                                                                        new { @class = "form-control", @id = "txtLaneId" + i.ToString(), @Name = "LaneDetails[" + i + "].LaneId" })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.LaneDetails[i].LaneId)
+                                            @Html.HiddenFor(model => Model.LaneDetails[i].ID,
+                                                                        new { @id = "hdnID" + i.ToString(), @Name = "LaneDetails[" + i + "].ID" })
+                                            @Html.HiddenFor(model => model.LaneDetails[i].CustomerId,
+                                                                        new { @id = "hdnCustomerId" + i.ToString(), @Name = "LaneDetails[" + i + "].CustomerId" })
+                                        </td>
+                                        <td>
+                                            <div class="input">
+                                                @Html.TextBoxFor(modelItem => Model.LaneDetails[i].MasterLaneId,
+                                                                        new { @class = "form-control", @id = "txtMasterLaneId" + i.ToString(), @Name = "LaneDetails[" + i + "].MasterLaneId" })
+                                            </div>
+                                            @Html.ValidationMessageFor(modelItem => Model.LaneDetails[i].MasterLaneId)
+                                        </td>
+                                        <td>
+                                            <div class="select" style="width:150px">
+                                                @Html.DropDownListFor(modelItem => Model.LaneDetails[i].RouteId, new SelectList(ViewBag.RouteList, "Value", "Name", Model.LaneDetails[i].RouteId), "Select",
+                                                                        new
+                                                                             {
+                                                                                 @class = "form-control",
+                                                                                 @id = "ddlRouteId" + i.ToString(),
+                                                                                 @Name = "LaneDetails[" + i + "].RouteId",
+                                                                            @enabled = true
+                                                                        })
+                                                <i></i>
+                                            </div>
+                                            @Html.HiddenFor(model => Model.LaneDetails[i].RouteId, new { @id = "hdnRouteId" + i.ToString(), @Name = "LaneDetails[" + i + "].RouteId" })
+                                            @Html.ValidationMessageFor(modelItem => Model.LaneDetails[i].RouteId)
+                                        </td>
+                                        <td>
+                                            <div class="select" style="width:150px">
+                                                @Html.DropDownListFor(modelItem => Model.LaneDetails[i].FTLTypeId, new SelectList(ViewBag.FtlTypeList, "Value", "Name", Model.LaneDetails[i].FTLTypeId), "Select",
+                                                                        new
+                                                                             {
+                                                                                 @class = "form-control",
+                                                                                 @id = "ddlFTLTypeId" + i.ToString(),
+                                                                                 @Name = "LaneDetails[" + i + "].FTLTypeId",
+                                                                            @enabled = true
+                                                                        })
+                                                <i></i>
+                                            </div>
+                                            @Html.HiddenFor(model => Model.LaneDetails[i].FTLTypeId, new { @id = "hdnFTLTypeId" + i.ToString(), @Name = "LaneDetails[" + i + "].FTLTypeId" })
+                                            @Html.ValidationMessageFor(modelItem => Model.LaneDetails[i].FTLTypeId)
+                                        </td>
+                                        <td>
+                                            <div class="select" style="width:150px">
+                                                @Html.DropDownListFor(modelItem => Model.LaneDetails[i].FuelTypeId, new SelectList(ViewBag.FuelTypeList, "Value", "Name", Model.LaneDetails[i].FuelTypeId), "Select",
+                                                                        new
+                                                                             {
+                                                                                 @class = "form-control",
+                                                                                 @id = "ddlFuelTypeId" + i.ToString(),
+                                                                                 @Name = "LaneDetails[" + i + "].FuelTypeId",
+                                                                            @enabled = true
+                                                                        })
+                                                <i></i>
+                                            </div>
+                                            @Html.HiddenFor(model => Model.LaneDetails[i].FuelTypeId, new { @id = "hdnFuelTypeId" + i.ToString(), @Name = "LaneDetails[" + i + "].FuelTypeId" })
+                                            @Html.ValidationMessageFor(modelItem => Model.LaneDetails[i].FuelTypeId)
+                                        </td>
+                                        <td>
+                                            <div class="input">
+                                                @Html.TextBoxFor(modelItem => Model.LaneDetails[i].ContractedKM,
+                                                                        new { @class = "form-control numeric", @id = "txtContractedKM" + i.ToString(), @Name = "LaneDetails[" + i + "].ContractedKM" })
+                                            </div>
+                                            @Html.ValidationMessageFor(modelItem => Model.LaneDetails[i].ContractedKM)
+                                        </td>
+                                        <td>
+                                            <div class="input">
+                                                @Html.TextBoxFor(modelItem => Model.LaneDetails[i].AssetCount,
+                                                                        new { @class = "form-control numeric", @id = "txtAssetCount" + i.ToString(), @Name = "LaneDetails[" + i + "].AssetCount" })
+                                            </div>
+                                            @Html.ValidationMessageFor(modelItem => Model.LaneDetails[i].AssetCount)
+                                        </td>
+                                        <td>
+                                            <div class="input">
+                                                @Html.TextBoxFor(modelItem => Model.LaneDetails[i].DriverCount,
+                                                                        new { @class = "form-control numeric", @id = "txtDriverCount" + i.ToString(), @Name = "LaneDetails[" + i + "].DriverCount" })
+                                            </div>
+                                            @Html.ValidationMessageFor(modelItem => Model.LaneDetails[i].DriverCount)
+                                        </td>
+                                        <td>
+                                            <div class="input">
+                                                @Html.CheckBoxFor(modelItem => Model.LaneDetails[i].IsActive,
+                                                                        new { @id = "chkIsActive" + i.ToString(), @class = "checkbox", @Name = "LaneDetails[" + i + "].IsActive" })
+                                            </div>
+                                        </td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-footer">
+                        <button type="submit" class="btn btn-success primary-btn" tabindex="0">Save</button>
+                    </div>
+
+                </div>
+            </div>
+        }
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Lane Master', '', 'filter', 'Go To Listing', '@Url.Action("Index")');
+        if ($("#dtLaneMaster").length > 0) {
+            InitGrid('dtLaneMaster', false, 9, InitLaneDetail);
+            $("#btnNext").prop("disabled", true);
+            $("#CustomerId").prop("disabled", true);
+
+            InitLaneDetail()
+        }
+    });
+
+    function InitLaneDetail() {
+        $('[id*="txtLaneId"]').each(function () {
+
+            var txtLaneId = $(this);
+
+            var txtMasterLaneId = $('#' + txtLaneId.Id.replace('txtLaneId', 'txtMasterLaneId'));
+            var hdnCustomerId = $('#' + txtLaneId.Id.replace('txtLaneId', 'hdnCustomerId'));
+            var hdnID = $('#' + txtLaneId.Id.replace('txtLaneId', 'hdnID'));
+            var ddlRouteCode = $('#' + txtLaneId.Id.replace('txtLaneId', 'ddlRouteId'));
+            var ddlFTLType = $('#' + txtLaneId.Id.replace('txtLaneId', 'ddlFTLTypeId'));
+            var ddlFuelType = $('#' + txtLaneId.Id.replace('txtLaneId', 'ddlFuelTypeId'));
+            var chkIsActive = $('#' + txtLaneId.Id.replace('txtLaneId', 'chkIsActive'));
+            var btnRemove = $('#' + txtLaneId.Id.replace('txtLaneId', 'btnRemove'));
+            var btnAdd = $('#' + txtLaneId.Id.replace('txtLaneId', 'btnAdd'));
+
+            hdnCustomerId.val($("#CustomerId").val());
+            if (hdnID.val() == null || hdnID.val() == undefined || hdnID.val() == "")
+                hdnID.val(0);
+
+            txtLaneId.blur(function () {
+                if (!CheckDuplicateInTable('dtLaneMaster', 'txtLaneId', 'Lane Id', txtLaneId)) return false;
+            });
+            if (txtLaneId.val() != "" && txtLaneId.val() != undefined && hdnID.val() != "0" && hdnID.val() != undefined) {
+                txtLaneId.prop("readonly", true);
+                txtMasterLaneId.prop("readonly", true);
+                ddlRouteCode.prop("readonly", true);
+                ddlFTLType.prop("readonly", true);
+                ddlFuelType.prop("readonly", true)
+
+                ddlRouteCode.prop("disabled", true);
+                ddlFTLType.prop("disabled", true);
+                ddlFuelType.prop("disabled", true);
+
+                ddlRouteCode.val(ddlRouteCode.val()).trigger('change');
+                ddlFTLType.val(ddlFTLType.val()).trigger('change');
+                ddlFuelType.val(ddlFuelType.val()).trigger('change');
+
+            }
+            else {
+                txtLaneId.prop("readonly", false);
+                txtMasterLaneId.prop("readonly", false);
+                ddlRouteCode.prop("readonly", false);
+                ddlFTLType.prop("readonly", false);
+                ddlFuelType.prop("readonly", false)
+
+                ddlRouteCode.prop("disabled", false);
+                ddlFTLType.prop("disabled", false);
+                ddlFuelType.prop("disabled", false);
+
+            }
+
+            //txtLaneId.onfocus(function () { onTextFocus(txtLaneId) });
+
+        });
+    }
+
+
+    function onTextFocus(txtLaneId) {
+        
+        var txtMasterLaneId = $('#' + txtLaneId.Id.replace('txtLaneId', 'txtMasterLaneId'));
+        var hdnCustomerId = $('#' + txtLaneId.Id.replace('txtLaneId', 'hdnCustomerId'));
+        var hdnID = $('#' + txtLaneId.Id.replace('txtLaneId', 'hdnID'));
+        var ddlRouteCode = $('#' + txtLaneId.Id.replace('txtLaneId', 'ddlRouteId'));
+        var ddlFTLType = $('#' + txtLaneId.Id.replace('txtLaneId', 'ddlFTLTypeId'));
+        var ddlFuelType = $('#' + txtLaneId.Id.replace('txtLaneId', 'ddlFuelTypeId'));
+        var chkIsActive = $('#' + txtLaneId.Id.replace('txtLaneId', 'chkIsActive'));
+        var btnRemove = $('#' + txtLaneId.Id.replace('txtLaneId', 'btnRemove'));
+        var btnAdd = $('#' + txtLaneId.Id.replace('txtLaneId', 'btnAdd'));
+        if (txtLaneId.val() != "" && txtLaneId.val() != undefined && hdnID.val() != "0" && hdnID.val() != undefined) {
+            txtLaneId.prop("readonly", true);
+            txtMasterLaneId.prop("readonly", true);
+            ddlRouteCode.prop("readonly", true);
+            ddlFTLType.prop("readonly", true);
+            ddlFuelType.prop("readonly", true)
+
+            ddlRouteCode.prop("disabled", true);
+            ddlFTLType.prop("disabled", true);
+            ddlFuelType.prop("disabled", true);
+        }
+        else {
+            txtLaneId.prop("readonly", false);
+            txtMasterLaneId.prop("readonly", false);
+            ddlRouteCode.prop("readonly", false);
+            ddlFTLType.prop("readonly", false);
+            ddlFuelType.prop("readonly", false)
+
+            ddlRouteCode.prop("disabled", false);
+            ddlFTLType.prop("disabled", false);
+            ddlFuelType.prop("disabled", false);
+
+        }
+    }
+
+
+    function AddTableRow(tableId, allowDeleteAll, asFirstRow) {
+        if (IsObjectNullOrEmpty(asFirstRow)) asFirstRow = false;
+        var trFirst = $('#' + tableId + ' > tbody > tr:first');
+        var trLast = $('#' + tableId + ' > tbody > tr:last');
+        var trNew = trFirst.clone();
+
+        if (asFirstRow) {
+            trFirst.before(trNew);
+            trNew.attr('data-row-id', '-1');
+        }
+        else {
+            RenameCloneIdsAndNames(trNew, true);
+            if (trNew.attr('data-row-id'))
+                trLast.after(trNew);
+        }
+
+        ManageTableAddRemove(tableId, allowDeleteAll);
+
+        RegisterValidation();
+        trLast = $('#' + tableId + ' > tbody > tr:last');
+        trLast.find(':text,:radio,:checkbox,select,textarea').prop("readOnly", false).prop("disabled", false);
+        var elements = trLast.find(':text,:radio,:checkbox,select,textarea').filter(function () {
+            return !this.readOnly &&
+                !this.disabled &&
+                $(this).parentsUntil('form', 'div').css('display') != "none";
+        });
+        if (elements.length > 0)
+            elements[0].focus();
+
+        trLast.find('select:first(:visible,not:disabled)').focus();
+        $('#' + tableId + ' > tbody > tr:last').find('[id*=chk]').val('true');
+        return false;
+    }
+</script>

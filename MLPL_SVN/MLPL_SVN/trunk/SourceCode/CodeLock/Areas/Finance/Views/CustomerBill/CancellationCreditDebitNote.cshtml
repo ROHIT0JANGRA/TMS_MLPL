@@ -1,0 +1,62 @@
+﻿@model CreditDebitNote
+@using CodeLock.Models
+@{
+    ViewBag.Title = "Cancellation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    baseUrl = '@Url.Action("", "CustomerBill")';
+    currentDate = '@DateTime.Now';
+    dateTimeFormat = '@ConfigHelper.JsDateFormat' + ' ' + '@ConfigHelper.TimeFormat';
+</script>
+<script src="~/areas/finance/views/customerbill/CancellationCreditDebitNote.js"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("CancellationCreditDebitNote", "CustomerBill", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label("Note Date", new { @class = "label" })
+                            </div>
+                            <div id="drCreditDebitNoteDate"></div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.NoteNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.NoteNo, new { @class = "form-control", @id = "txtNoteNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.NoteNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtCreditDebitNoteDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

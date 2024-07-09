@@ -1,0 +1,337 @@
+﻿@model CodeLock.Models.DriverSettlement
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        vendorMasterurl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        TripsheetUrl = '@Url.Action("", "Tripsheet", new { Area = "FMS" })';
+        currentDate = '@DateTime.Now';
+    });
+</script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("DriverSettlement", "Tripsheet", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Search By", new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.searchBy, new List<SelectListItem> {
+                                new SelectListItem() {Text = "Enter Manual Tripsheet No", Value="1"},
+                                new SelectListItem() {Text = "Enter Tripsheet No", Value="2"},
+                                new SelectListItem() {Text = "Enter Vehicle No", Value="3"}}, new { @class = "form-control", @id = "ddlsearchBy" })
+                                <i></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("Tripsheet No", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBox("txtTripsheetNo", "", new { @class = "form-control", @id = "txtTripsheetNo" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @Html.Hidden("hdnVehicleId", '0', new { @id = "hdnVehicleId" })
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Select Trip Sheet Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drTripsheetDate"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtTripsheetDetailList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TripsheetNo, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.TripsheetId, new { @id = "hdnTripsheetId" })
+                                    @Html.HiddenFor(model => model.TripsheetNo, new { @id = "hdnTripsheetNo" })
+                                    @Html.Label(" ", new { @id = "lblTripsheetNo", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualTripsheetNo, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblManualTripsheetNo", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TripsheetDate, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblTripsheetDate", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblVehicleNo", @class = "label-bold" })
+                                    @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DriverName, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(m => m.DriverId, new { @id = "hdnDriverId" })
+                                    @Html.Label(" ", new { @id = "lblDriverName", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DriverLicenseNo, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblDriverLicenseNo", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DriverLicenseValidityDate, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblDriverLicenseValidityDate", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.StartLocationCode, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblStartLocationCode", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.EndLocationCode, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblEndLocationCode", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Category, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblCategory", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblCustomerCode", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.StartKm, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblStartKm", @class = "label-bold" })
+                                    @Html.HiddenFor(model => model.StartKm, new { @id = "hdnStartKm" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.EndKm, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblEndKm", @class = "label-bold" })
+                                    @Html.HiddenFor(model => model.EndKm, new { @id = "hdnEndKm" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.FinCloseDateTime, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblFinCloseDateTime", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "SettlementDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.SettlementDate), IsDateOnly = true, IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.SettlementRemarks, new { @class = "label" })
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.SettlementRemarks, null, new { @class = "form-control", @id = "txtSettlementRemarks" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.SettlementRemarks)
+                        </div>
+                    </div>
+                    <div class="row" id="dvFuelSlipDetail">
+                        <div class="col-sm-12">
+                            <div>
+                                @Html.Label(" ", "FuelSlip Details", new { @class = "label-bold" })
+                                <table id="dtFuelSlipDetail"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">Expense Details</div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="flip-scroll overflow-table">
+                                <table class="table table-condensed cf" id="dtExpensesDetails">
+                                    <thead class="cf">
+                                        <tr>
+                                            <th>Head</th>
+                                            <th>Actual Amount</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Total Advance Paid</td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => m.TotalAdvance, new { @class = "form-control numeric textlabel", @id = "txtTotalAdvance" })
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                            <td>Net Amount to Driver Payable(-)</td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => m.PaidAmount, new { @class = "form-control numeric", @id = "txtDriverPayableNetAmount" })
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Expenses</td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => m.TotalExpense, new { @class = "form-control numeric textlabel", @id = "txtTotalExpenses" })
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                            <td>Net Amount to Driver Receivable(+)</td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => m.ReceivedAmount, new { @class = "form-control numeric", @id = "txtDriverReceivableNetAmount" })
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>    - Diesel expense against cash</td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => m.TotalOilExpenseCash, new { @class = "form-control  numeric textlabel", @id = "txtDieselExpense" })
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                            <td>Tripsheet balance to Driver ledger</td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.HiddenFor(model => model.DriverBalanceAmount, new { @id = "hdnDriverBalanceAmount" })
+                                                    @Html.HiddenFor(model => model.DriverBalanceDrCr, new { @id = "hdnDriverBalanceDrCr" })
+                                                    @Html.TextBox("DriverBalance", "0", new { @class = "form-control  textlabel align-right", @id = "txtDriverBalanceAmount" })
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>    - Enroute Expense</td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => m.TotalEnrouteExpense, new { @class = "form-control numeric textlabel", @id = "txtEnrouteExpense" })
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                            <td>Remarks</td>
+                                            <td>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                                                    <div class="input">
+                                                        @Html.TextBoxFor(model => model.Remarks, null, new { @class = "form-control text-complete text-complete-html", @id = "txtFromCity" })
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Diesel expense against card</td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => m.TotalOilExpenseCard, new { @class = "form-control numeric textlabel", @id = "txtDieselExpenseCard" })
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Net Amount</td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => m.NetAmount, new { @class = "form-control numeric textlabel", @id = "txtNetAmount" })
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="divPaymentDetail" style="display:none">
+                        <div class="page-separator">Payment Details</div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.Partial("Payment", new CodeLock.Models.PaymentControl() { PaymentDetails = new Payment() { AllowCashCard = true } })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="divReceiptDetail" style="display:none">
+                        <div class="page-separator">Receipt Details</div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.Partial("Receipt", new CodeLock.Models.ReceiptControl() { })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script src="@Url.Content("~/Areas/FMS/Views/Tripsheet/DriverSettlement.js")"></script>

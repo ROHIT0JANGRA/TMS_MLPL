@@ -1,0 +1,133 @@
+﻿@model IEnumerable<CodeLock.Models.MasterCompany>
+@{
+    ViewBag.Title = "Company List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtCompany">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CompanyCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CompanyName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ContactPerson)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MobileNo)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.CompanyAddress)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.StartDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.GstTinNo)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.PANNo)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.TANNo)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.RegistrationNo)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.PunchLine)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CompanyCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CompanyName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ContactPerson)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MobileNo)
+                    </td>
+                    <td>
+                        @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.CompanyId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.CompanyId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.CompanyAddress)
+                    </td>
+                    <td style="display:none">
+                        @item.StartDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.GstTinNo)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.PANNo)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.TANNo)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.RegistrationNo)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.PunchLine)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Company', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtCompany', true, true, true);
+    });
+</script>

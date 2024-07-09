@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewBag.Title = "CollectionDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+    <div class="col-sm-3">
+        <h4>MR No</h4>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+            @Html.Hidden("hdnDocumentId")
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <button onclick="return ViewReport();" class="btn btn-info">
+            <i class="fa fa-eye"></i>
+        </button>
+        @*<button onclick="return PrintReport(this);" class="btn btn-primary">
+            <i class="glyphicon glyphicon-print"></i>
+        </button>*@
+    </div>
+</div>
+<script>
+    var mrId = 0;
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        lblDocumentNo = $('#lblDocumentNo');
+        lblDocumentNo.html(GetUrlValue()["DocumentNo"]);
+        mrId = GetUrlValue()["DocumentId"];
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        spnMassage.text("Bills are collected Successfully");
+        SetPageLoad('Bill Collection', 'Done', '', 'Go To Bill Collection', '@Url.Action("Collection")');
+    }
+
+    function ViewReport() {
+        return ShowViewPrint('@ModuleHelper.Mr', mrId);
+    }
+</script>
+
+
+

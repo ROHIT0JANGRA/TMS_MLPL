@@ -1,0 +1,85 @@
+﻿@using CodeLock.Models
+@model DocketDacc
+@{
+    ViewBag.Title = "Docket DACC Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    baseUrl = '@Url.Action("", "DocketDacc")';
+    docketNomenclature = '@SessionUtility.DocketNomenClature';
+</script>
+@using (Html.BeginForm("DocketDacc", "Docket", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="page-separator"><span class="page-separator" id="spnMassage">Docket DACC Update</span></div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                        @Html.HiddenFor(model => model.DocketId, new { @id = "hdnDocketId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocketNo)
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txRemarks" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Remarks)
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <div class="align-right">
+                    @*@Html.Label("btnsubmit", " ", new { @class = "label" })*@
+                    <div class="clearfix">
+                        <button type="submit" class="btn btn-primary m-" id="btnSubmit">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+
+    $(document).ready(function () {
+        InitObjects();
+        AttachEvents();
+    });
+
+    function AttachEvents() {
+        txtDocketNo.blur(function () { CheckValidDocketNo(); });
+    }
+    function InitObjects() {
+        txtDocketNo = $("#txtDocketNo");
+        hdnDocketId = $("#hdnDocketId");
+
+        docketUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+    }
+
+    function CheckValidDocketNo() {
+        if (txtDocketNo.val() != '') {
+            var requestData = { docketNo: txtDocketNo.val() };
+            AjaxRequestWithPostAndJson(docketUrl + '/CheckValidDocketNoForDacc', JSON.stringify(requestData), function (result) {
+                if (result != 0) {
+                    hdnDocketId.val(result);
+                    return true;
+                }
+                else {
+                    ShowMessage(docketNomenclature + ' is not valid for DACC Update');
+                    txtDocketNo.val('');
+                    hdnDocketId.val('');
+                    txtDocketNo.focus();
+                    return false;
+                }
+            }, ErrorFunction, false);
+        }
+    }
+</script>
+
+

@@ -1,0 +1,304 @@
+﻿using CodeLock.Areas.Master.Repository;
+using CodeLock.Models;
+using Microsoft.CSharp.RuntimeBinder;
+using Secure_Coding.MvcSecurityExtensions;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Runtime.CompilerServices;
+using System.Web.Mvc;
+
+namespace CodeLock.Areas.Master.Controllers
+{
+  public class VehicleController : Controller
+  {
+    private readonly IVehicleRepository vehicleRepository;
+    private readonly IVehicleTypeRepository vehicleTypeRepository;
+    private readonly IGeneralRepository generalRepository;
+    private readonly ILocationRepository locationRepository;
+    private readonly IVendorRepository vendorRepository;
+
+        public VehicleController()
+        {
+        }
+
+        public VehicleController(IVehicleRepository _vehicleRepository, IVehicleTypeRepository _vehicleTypeRepository, IGeneralRepository _generalRepository, ILocationRepository _locationRepository, IVendorRepository _vendorRepository)
+        {
+            this.vehicleRepository = _vehicleRepository;
+            this.vehicleTypeRepository = _vehicleTypeRepository;
+            this.generalRepository = _generalRepository;
+            this.locationRepository = _locationRepository;
+            this.vendorRepository = _vendorRepository;
+        }
+
+        [HttpPost]
+        public JsonResult GetAutoCompleteVehicleForMaintanance(string vehicleNo)
+        {
+            return base.Json(this.vehicleRepository.GetAutoCompleteVehicleForMaintanance(vehicleNo));
+        }
+
+        [HttpPost]
+        public JsonResult GetAutoCompleteVehicleListForStatus(string vehicleNo)
+        {
+            return base.Json(this.vehicleRepository.GetAutoCompleteVehicleListForStatus(vehicleNo, SessionUtility.LoginUserId));
+        }
+
+
+
+
+        [HttpPost]
+        public JsonResult CheckValidVehicleNoForJobOrder(string vehicleNo, short locationId)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.CheckValidVehicleNoForJobOrder(vehicleNo, locationId));
+            return jsonResult;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.vehicleRepository.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        [HttpPost]
+        public JsonResult GetAutoCompleteListForJobOrder(string vehicleNo, string locationId)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.GetAutoCompleteListForJobOrder(vehicleNo, locationId));
+            return jsonResult;
+        }
+
+        [HttpPost]
+        public JsonResult GetAutoCompleteVehicleList(string vehicleNo)
+        {
+            return base.Json(this.vehicleRepository.GetAutoCompleteVehicleList(vehicleNo));
+        }
+
+        [HttpPost]
+        public JsonResult GetAutoCompleteVehicleListByLocation(string vehicleNo, string locationId)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.GetAutoCompleteVehicleListByLocation(vehicleNo, locationId));
+            return jsonResult;
+        }
+
+        [HttpPost]
+        public JsonResult GetAutoCompleteVehicleListByLocationForTripsheet(string vehicleNo, string locationId)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.GetAutoCompleteVehicleListByLocationForTripsheet(vehicleNo, locationId));
+            return jsonResult;
+        }
+
+        [HttpPost]
+        
+        public JsonResult GetAutoCompleteVehicleListByForTripsheetCloser(string TripsheetNo, string TripsheetAction, string searchBy,string locationId)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.GetAutoCompleteVehicleListByForTripsheetCloser(TripsheetNo, TripsheetAction, searchBy, locationId));
+            return jsonResult;
+        }
+        public JsonResult GetById(short id)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.GetById(id), JsonRequestBehavior.AllowGet);
+            return jsonResult;
+        }
+
+        public JsonResult GetStartKm(short vehicleId)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.GetStartKm(vehicleId));
+            return jsonResult;
+        }
+
+        public JsonResult GetStartKmByVehicleId(short vehicleId)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.GetStartKmByVehicleId(vehicleId), JsonRequestBehavior.AllowGet);
+            return jsonResult;
+        }
+
+        public JsonResult GetTripsheetByVehicleId(short vehicleId,DateTime documentDateTime)
+        {
+            return base.Json(this.vehicleRepository.GetTripsheetByVehicleId(vehicleId, documentDateTime));
+        }
+
+        public JsonResult GetVehicleByFtlTypeId(byte ftlTypeId)
+        {
+            return base.Json(this.vehicleRepository.GetVehicleByFtlTypeId(ftlTypeId));
+        }
+
+        public JsonResult GetVehicleByVendorIdFtlTypeId(byte ftlTypeId, short vendorId)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.GetVehicleByVendorIdFtlTypeId(ftlTypeId, vendorId));
+            return jsonResult;
+        }
+
+        [HttpPost]
+        public JsonResult GetVehicleListByCardType(bool isFuelCard)
+        {
+            return base.Json(this.vehicleRepository.GetVehicleListByCardType(isFuelCard));
+        }
+
+        [HttpPost]
+        public JsonResult GetVehicleListByVendorId(short vendorId)
+        {
+            return base.Json(this.vehicleRepository.GetVehicleListByVendorId(vendorId));
+        }
+
+        [HttpPost]
+        public JsonResult GetVehicleListByVendorTypeByLocation(string vehicleNo, byte vendorTypeId)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.GetVehicleListByVendorTypeByLocation(vehicleNo, vendorTypeId, SessionUtility.LoginLocationId));
+            return jsonResult;
+        }
+
+        public ActionResult Index()
+        {
+            return base.View(this.vehicleRepository.GetAll());
+        }
+
+        public ActionResult Insert()
+        {
+            ((dynamic)base.ViewBag).VehicleTypeList = this.vehicleTypeRepository.GetVehicleTypeList();
+            ((dynamic)base.ViewBag).VendorTypeList = this.generalRepository.GetByIdList(29);
+            ((dynamic)base.ViewBag).LocationList = this.locationRepository.GetLocationList();
+            ((dynamic)base.ViewBag).FtlTypeList = this.generalRepository.GetByIdList(9);
+            return base.View(new MasterVehicle());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ValidateAntiModelInjection("VehicleId")]
+        public ActionResult Insert(MasterVehicle objMasterVehicle)
+        {
+            ActionResult action;
+            if (!base.ModelState.IsValid)
+            {
+                action = base.View(objMasterVehicle);
+            }
+            else
+            {
+                objMasterVehicle.MasterVehicleDetail.EntryBy = SessionUtility.LoginUserId;
+                short num = this.vehicleRepository.Insert(objMasterVehicle);
+                action = base.RedirectToAction("View", new { id = num });
+            }
+            return action;
+        }
+
+        [HttpPost]
+        [ValidateAntiModelInjection("VehicleId")]
+        public JsonResult IsVehicleNoAvailable(MasterVehicle objMasterVehicle)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.IsVehicleNoAvailable(objMasterVehicle.VehicleNo, objMasterVehicle.VehicleId));
+            return jsonResult;
+        }
+
+        [HttpPost]
+        public JsonResult IsVehicleNoExist(string vehicleNo)
+        {
+            return base.Json(this.vehicleRepository.IsVehicleNoExist(vehicleNo));
+        }
+
+        [HttpPost]
+        public JsonResult IsVehicleNoExistByLocation(string vehicleNo, short locationId)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.IsVehicleNoExistByLocation(vehicleNo, locationId));
+            return jsonResult;
+        }
+
+        [HttpPost]
+        public JsonResult IsVehicleNoExistByVendorTypeByLocation(string vehicleNo, byte vendorTypeId)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.IsVehicleNoExistByVendorTypeByLocation(vehicleNo, vendorTypeId, SessionUtility.LoginLocationId));
+            return jsonResult;
+        }
+
+        [HttpPost]
+        public JsonResult IsVehicleNoExistForTripsheet(string vehicleNo)
+        {
+            JsonResult jsonResult = base.Json(this.vehicleRepository.IsVehicleNoExistForTripsheet(vehicleNo, SessionUtility.LoginLocationId));
+            return jsonResult;
+        }
+
+        public ActionResult Update(short? id)
+        {
+            ActionResult httpStatusCodeResult;
+            int? nullable;
+            int? nullable1;
+            ((dynamic)base.ViewBag).VehicleTypeList = this.vehicleTypeRepository.GetVehicleTypeList();
+            ((dynamic)base.ViewBag).VendorTypeList = this.generalRepository.GetByIdList(29);
+            ((dynamic)base.ViewBag).LocationList = this.locationRepository.GetLocationList();
+            ((dynamic)base.ViewBag).FtlTypeList = this.generalRepository.GetByIdList(9);
+            ((dynamic)base.ViewBag).VendorNameList = this.vendorRepository.GetVendorNameList();
+            short? nullable2 = id;
+            if (nullable2.HasValue)
+            {
+                nullable1 = new int?(nullable2.GetValueOrDefault());
+            }
+            else
+            {
+                nullable = null;
+                nullable1 = nullable;
+            }
+            nullable = nullable1;
+            if (nullable.HasValue)
+            {
+                httpStatusCodeResult = base.View(this.vehicleRepository.GetById(id.Value));
+            }
+            else
+            {
+                httpStatusCodeResult = new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            return httpStatusCodeResult;
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ValidateAntiModelInjection("VehicleId")]
+        public ActionResult Update(MasterVehicle objMasterVehicle)
+        {
+            ActionResult action;
+            if (!base.ModelState.IsValid)
+            {
+                action = base.View(objMasterVehicle);
+            }
+            else
+            {
+                objMasterVehicle.MasterVehicleDetail.UpdateBy = new short?(SessionUtility.LoginUserId);
+                short num = this.vehicleRepository.Update(objMasterVehicle);
+                action = base.RedirectToAction("View", new { id = num });
+            }
+            ((dynamic)base.ViewBag).VehicleTypeList = this.vehicleTypeRepository.GetVehicleTypeList();
+            ((dynamic)base.ViewBag).VendorTypeList = this.generalRepository.GetByIdList(29);
+            ((dynamic)base.ViewBag).LocationList = this.locationRepository.GetLocationList();
+            ((dynamic)base.ViewBag).FtlTypeList = this.generalRepository.GetByIdList(9);
+            ((dynamic)base.ViewBag).VendorNameList = this.vendorRepository.GetVendorNameList();
+            return action;
+        }
+
+        public ActionResult View(short? id)
+        {
+            ActionResult httpStatusCodeResult;
+            int? nullable;
+            int? nullable1;
+            short? nullable2 = id;
+            if (nullable2.HasValue)
+            {
+                nullable1 = new int?(nullable2.GetValueOrDefault());
+            }
+            else
+            {
+                nullable = null;
+                nullable1 = nullable;
+            }
+            nullable = nullable1;
+            if (nullable.HasValue)
+            {
+                httpStatusCodeResult = base.View(this.vehicleRepository.GetById(id.Value));
+            }
+            else
+            {
+                httpStatusCodeResult = new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            return httpStatusCodeResult;
+        }
+
+    }
+}

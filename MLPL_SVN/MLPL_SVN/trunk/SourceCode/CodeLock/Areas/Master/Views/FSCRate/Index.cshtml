@@ -1,0 +1,123 @@
+﻿@using CodeLock.Models
+@model FSCRate
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+
+    @if (Model  != null && Model.Details != null)
+    {
+        <div class="page-separator">FSC Rate Master Detail</div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="dtFSCRateMaster">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details[0].CustomerId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details[0].LaneId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details[0].MasterLaneId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details[0].RouteId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details[0].FTLTypeId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details[0].PeriodFrom)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details[0].PeriodTo)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details[0].VariableBaseAmtPerTrip)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details[0].FuelBasePrice)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details[0].NewFuelPrice)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details[0].TotalTripFSCAmount)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details[0].IsActive)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Details)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CustomerName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.LaneId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.MasterLaneId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.RouteName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FTLTypeDesc)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PeriodFrom)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PeriodTo)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.VariableBaseAmtPerTrip)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FuelBasePrice)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.NewFuelPrice)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.TotalTripFSCAmount)
+                                </td>
+                                <td>
+                                    @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="page-separator">No Records Found</div>
+    }
+</div>
+
+<script>
+    var MessageText = "", MessageType = "";
+    MessageText = '@ViewBag.MessageText';
+    MessageType = '@ViewBag.MessageType';
+    $(document).ready(function () {
+        if (MessageType != null && MessageType != "" && MessageType != undefined)
+            $.alert({
+                title: MessageType,
+                content: MessageText,
+            });
+        SetPageLoad('FSC Rate Master', '', 'filter', 'Add/Modify', '@Url.Action("Create")');
+        LoadDataTable('dtFSCRateMaster', true, true, true);
+    });
+</script>
+
+

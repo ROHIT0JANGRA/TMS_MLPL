@@ -1,0 +1,151 @@
+﻿@model CodeLock.Models.MasterState
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.StateName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.StateName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.StateCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.StateCode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.CountryName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CountryName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsServiceTaxExempted)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsServiceTaxExempted)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsUnionTerritory)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsUnionTerritory)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsActive)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EntryByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </dt>
+                <dd>
+                    @Model.EntryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.UpdateDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table" id="dtStateDocument">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.MasterStateDocumentList.FirstOrDefault().DocumentName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.MasterStateDocumentList.FirstOrDefault().IsInbound)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.MasterStateDocumentList.Count; i++)
+                    {
+                        var item = Model.MasterStateDocumentList.ToArray()[i];
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => item.DocumentName)
+                            </td>
+                            <td>
+                                @Html.Raw((item.IsInbound) ? "Inbound" : "Outbound")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('State', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { id = Model.StateId })');
+    });
+</script>
+

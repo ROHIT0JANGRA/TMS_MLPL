@@ -1,0 +1,713 @@
+﻿@model CodeLock.Models.Tripsheet
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    var pageUrl = "@Url.Action(".")";
+</script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Insert", "Tripsheet", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiModelInjectionFor(m => m.TripsheetId)
+            @Html.HiddenFor(m => m.CompanyId, new { @id = "hdnCompanyId" })
+            @Html.Hidden("TripsheetId", 0)
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TripsheetNo, new { @class = "label" })
+                                @Html.Label("<System Generated>")
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "TripsheetDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.TripsheetDateTime), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, MinDate = DateTime.Now.Date.AddDays(-3), MaxDate = DateTime.Now, IsDateOnly = false })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualTripsheetNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualTripsheetNo, new { @class = "form-control" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.ManualTripsheetNo)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.StartLocation, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(m => m.StartLocationId, new { @id = "hdnStartLocationId" })
+                                    @Html.HiddenFor(m => m.StartLocation)
+                                    @Html.LabelFor(model => model.StartLocation, @SessionUtility.LoginLocationCode, new { @id = "lblStartLocation" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.EndLocationId, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.HiddenFor(model => model.EndLocationId, new { @id = "hdnEndLocationId" })
+                                        @Html.TextBoxFor(model => model.EndLocation, new { @class = "form-control", @id = "txtEndLocation" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.EndLocationId)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Category, new { @class = "label" })
+                                <div class="select">
+                                    @Html.HiddenFor(model => model.SubCategory, new { @id = "hdnSubCategory" })
+                                    @Html.DropDownListFor(model => model.Category, new List<SelectListItem> {
+                                            new SelectListItem() {Text = "Select",Value=""},
+                                            new SelectListItem() {Text = "External Usage", Value="1"},
+                                            new SelectListItem() {Text = "Internal Usage", Value="2"},
+                                            new SelectListItem() {Text = "LegWise", Value="3"}
+                                    }, new { @class = "form-control", @id = "ddlCategory" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Category)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="divCustomer">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                                        @Html.TextBoxFor(model => model.CustomerCode, new { @class = "form-control", @id = "txtCustomerCode" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerCode)
+                                </div>
+                            </div>
+                            <div class="col-sm-4" id="divCustomer">
+                                <div class="form-group">
+                                    @Html.Label("", " ", new { @class = "label" })
+                                    <div class="input">
+                                        @Html.Label("", " ", new { @class = "label-bold", @id = "lblCustomerId" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" id="divSubCategoryForExternalUsage">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ExternalUsageSubCategory, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.ExternalUsageSubCategory, new List<SelectListItem> {
+                                        new SelectListItem() {Text = "Select",Value=""},
+                                        new SelectListItem() {Text = "Long Haul", Value="1"},
+                                        new SelectListItem() {Text = "Milk Run", Value="2"}
+                                       }, new { @class = "form-control", @id = "ddlExternalUsageSubCategory" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ExternalUsageSubCategory)
+                            </div>
+                        </div>
+                        <div class="col-sm-4" id="divSubCategoryForInternalUsage">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.InternalUsageSubCategory, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.InternalUsageSubCategory, new List<SelectListItem> {
+                                        new SelectListItem() {Text = "Own", Value="1"}
+                                       }, new { @class = "form-control", @id = "ddlExternalUsageSubCategory" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.InternalUsageSubCategory)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VehicleId, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                                    @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "txtVehicleNo" })
+                                </div>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.VehicleNo)
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VehicleMode, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.VehicleMode, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "form-control", @id = "ddlVehicleMode" })
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.UseFuelCard, new { @class = "label" })
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(model => model.UseFuelCard, new { @id = "chkUseFuelCard" })
+                                    <i></i>
+                                </label>
+                            </div>
+                        </div>*@
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row" id="divDriverInfo">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.FirstDriverId, new { @class = "control-label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.FirstDriverId, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "form-control", @id = "ddlFirstDriverId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.FirstDriverId)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SecondDriverId, new { @class = "control-label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.SecondDriverId, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "form-control", @id = "ddlSecondDriverId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.SecondDriverId)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.FirstDriverName, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.FirstDriverName, new { @class = "form-control", @id = "txtFirstDriverName" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.FirstDriverName)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.FirstDriverLicenseNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.FirstDriverLicenseNo, new { @class = "form-control", @id = "txtFirstDriverLicenseNo" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.FirstDriverLicenseNo)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "FirstDriverLicenseValidityDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.FirstDriverLicenseValidityDate), IsDateOnly = true, IsRequired = true, AllowFutureDate = true, AllowPastDate = false, SetBlank = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.FirstDriverMobileNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.FirstDriverMobileNo, new { @class = "form-control", @id = "txtFirstDriverMobileNo" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.FirstDriverMobileNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.FirstDriverLicenseIssueBy, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.FirstDriverLicenseIssueBy, new { @class = "form-control", @id = "txtFirstDriverLicenseIssueBy" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.FirstDriverLicenseIssueBy)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SecondDriverName, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.SecondDriverName, new { @class = "form-control", @id = "txtSecondDriverName" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.SecondDriverName)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SecondDriverLicenseNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.SecondDriverLicenseNo, new { @class = "form-control", @id = "txtSecondDriverLicenseNo" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.SecondDriverLicenseNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "SecondDriverLicenseValidityDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.SecondDriverLicenseValidityDate), IsDateOnly = true, IsRequired = false, AllowFutureDate = true, AllowPastDate = false, SetBlank = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SecondDriverMobileNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.SecondDriverMobileNo, new { @class = "form-control", @id = "txtSecondDriverMobileNo" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.SecondDriverMobileNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SecondDriverLicenseIssueBy, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.SecondDriverLicenseIssueBy, new { @class = "form-control", @id = "txtSecondDriverLicenseIssueBy" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.SecondDriverLicenseIssueBy)
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="row" id="dvUseCashCard">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.UseCashCard, new { @class = "label" })
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(model => model.UseCashCard, new { @tabindex = "0", @id = "chkUseCashCard" })
+                                    <i></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>*@
+                </div>
+                <div class="tab-pane">
+                    @*<div class="row">
+                        <div class="col-sm-4" id="dvFuelCard">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.FuelCard, new { @class = "control-label" })
+                                <div class="select">
+                                    @Html.HiddenFor(model => model.FuelCard, new { @id = "hdnFuelCard" })
+                                    @Html.DropDownListFor(model => model.FuelCard, Enumerable.Empty<SelectListItem>(), new { @class = "form-control select2-multiple", @id = "ddlFuelCard", @multiple = "multiple", @placeholder = "Select Fuel Card" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.FuelCard)
+                            </div>
+                        </div>
+                        <div class="col-sm-4" id="dvCashCard">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CashCard, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.CashCard, new { @id = "hdnCashCard" })
+                                    @Html.DropDownListFor(model => model.CashCard, Enumerable.Empty<SelectListItem>(), new { @class = "form-control select2-multiple", @id = "ddlCashCard", @multiple = "multiple", @placeholder = "Select Cash Card" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CashCard)
+                            </div>
+                        </div>
+                    </div>*@
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.RouteId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.RouteId, new List<SelectListItem> {
+                                new SelectListItem() {Text = "City Wise", Value="1"},
+                                    new SelectListItem() {Text = "Route Wise", Value="2"}
+                                }, new { @class = "form-control", @id = "ddlRouteId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.RouteId)
+                            </div>
+                        </div>
+                        <div id="divCityWise">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.FromCityId, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.HiddenFor(model => model.FromCityId, new { @id = "hdnFromCityId" })
+                                        @Html.TextBoxFor(model => model.FromCity, new { @class = "form-control", @id = "txtFromCity" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.FromCity)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ToCityId, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.HiddenFor(model => model.ToCityId, new { @id = "hdnToCityId" })
+                                        @Html.TextBoxFor(model => model.ToCity, new { @class = "form-control", @id = "txtToCity" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.ToCity)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" id="divRouteWise">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TripRouteId, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.TripRouteId, new { @id = "hdnTripRouteId" })
+                                    @Html.TextBoxFor(model => model.TripRouteName, new { @class = "form-control", @id = "txtTripRouteName" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.TripRouteId)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TransitTime, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.TransitTimeHour, new { @id = "hdnTransitTimeHour" })
+                                    @Html.HiddenFor(m => m.TransitTimeMinute, new { @Id = "hdnTransitTimeMin" })
+                                    @Html.TextBoxFor(model => model.TransitTime, new { @class = "form-control", @id = "txtTransitTime" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.TransitTime)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.StartKm, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.StartKm, new { @class = "form-control", @id = "txtStartKm" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.StartKm)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DriverBalance, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(m => m.DriverBalance, new { @id = "hdnDriverBalance" })
+                                    @Html.LabelFor(model => model.DriverBalance, "0.00", new { @id = "lblDriverBalance" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txtRemarks" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Remarks)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.Label("Checklist")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "control-label" })
+                                <div class="clearfix">
+                                    <a href="#" onclick="return GetChecklist()">Click here for Checklist</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12 table-responsive" style="display: none;">
+                            <div>
+                                @{var docketListHeader = "Attached " + SessionUtility.DocketNomenClature + "(s)";}
+                                @docketListHeader
+                                <table id="dtDocketList"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4" id="divFuelSlipProvided">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.IsFuelSlipProvided, new { @class = "label", @for = "chkIsFuelSlipProvided" })
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(model => model.IsFuelSlipProvided, new { @id = "chkIsFuelSlipProvided" })
+                                    <i></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="divFuelSlipDetail">
+                        <div class="col-sm-12">
+                            Fuel Slip Details
+                            <table id="dtFuelSlipDetail">
+                                <thead>
+                                    <tr>
+                                        <th>Fuel Slip No</th>
+                                        <th>Fuel Slip Date</th>
+                                        <th>Fuel Vendor</th>
+                                        <th></th>
+                                        <th>Quantity (Ltr)</th>
+                                        <th>Rate</th>
+                                        <th>Amount</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.FuelSlipDetails.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.FuelSlipDetails[i].SlipNo, new { @class = "form-control", @id = "txtSlipNo" + i.ToString() })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.FuelSlipDetails[i].SlipNo)
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldId = "txtFuelSlipDate" + i.ToString(), FieldName = "FuelSlipDetails[" + i + "].FuelSlipDate", FieldCaption = @Html.DisplayNameFor(m => Model.FuelSlipDetails[i].FuelSlipDate).ToString(), UseFieldCaption = false, IsRequired = true, IsDateOnly = true, AllowFutureDate = false, AllowPastDate = true })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.FuelSlipDetails[i].FuelSlipDate)
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.HiddenFor(model => Model.FuelSlipDetails[i].FuelVendorId, new { @id = "hdnFuelVendorId" + i })
+                                                    @Html.TextBoxFor(m => Model.FuelSlipDetails[i].FuelVendorCode, new { @class = "form-control text-complete text-complete-html", id = "txtFuelVendorCode" + i })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.FuelSlipDetails[i].FuelVendorCode)
+                                            </td>
+                                            <td>
+                                                @Html.LabelFor(m => Model.FuelSlipDetails[i].FuelVendorName, " ", new { @id = "lblFuelVendorName" + i, @class = "label-bold" })
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.FuelSlipDetails[i].Quantity, new { @class = "form-control numeric2", @id = "txtQuantity" + i.ToString() })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.FuelSlipDetails[i].Quantity)
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.FuelSlipDetails[i].Rate, new { @class = "form-control numeric2", @id = "txtRate" + i.ToString() })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.FuelSlipDetails[i].Rate)
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.FuelSlipDetails[i].Amount, new { @class = "form-control numeric2", @id = "txtAmount" + i.ToString() })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.FuelSlipDetails[i].Amount)
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th class="align-right">
+                                            <div class="input">
+                                                @Html.TextBox("TotalQuantity", "0", new { @id = "txtTotalQuantity", @class = "form-control textlabel", @style = "text-align: right" })
+                                            </div>
+                                        </th>
+                                        <th></th>
+                                        <th class="align-right">
+                                            <div class="input">
+                                                @Html.TextBox("TotalAmount", "0", new { @id = "txtTotalAmount", @class = "form-control textlabel", @style = "text-align: right" })
+                                            </div>
+                                        </th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.IsAdvancePaid, new { @class = "label", @for = "chkIsAdvancePaid" })
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(model => model.IsAdvancePaid, new { @id = "chkIsAdvancePaid" })
+                                    <i></i>
+                                </label>
+                            </div>
+                        </div>
+                        @*<div class="col-sm-4" id="dvIsAdvancePaidByCashCard">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.IsAdvancePaidByCashCard, new { @class = "label", @for = "chkIsAdvancePaidByCashCard" })
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(model => model.IsAdvancePaidByCashCard, new { @id = "chkIsAdvancePaidByCashCard" })
+                                    <i></i>
+                                </label>
+                            </div>
+                        </div>*@
+                    </div>
+                    <div id="divAdvanceTakenDetails">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AdvancePlace, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.AdvancePlace, new { @class = "form-control", @id = "txtAdvancePlace" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.AdvancePlace)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "AdvanceDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.AdvanceDate), IsDateOnly = true, IsRequired = false, AllowFutureDate = false, AllowPastDate = true, SetBlank = true })
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AdvanceAmount, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.AdvanceAmount, new { @class = "form-control numeric", @id = "txtAdvanceAmount" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.AdvanceAmount)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AdvanceLocationId, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.HiddenFor(model => model.AdvanceLocationId, new { @id = "hdnAdvanceLocationId" })
+                                        @Html.TextBoxFor(model => model.AdvanceLocationCode, new { @class = "form-control", @id = "txtAdvanceLocationCode", @readOnly = true })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AdvancePaidBy, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.AdvancePaidBy, new { @class = "form-control", @id = "txtAdvancePaidBy" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.AdvancePaidBy)
+                                </div>
+                            </div>
+                            @*<div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AdvanceCardId, new { @class = "control-label" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.AdvanceCardId, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "form-control", @id = "ddlAdvanceCardId" })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.AdvanceCardId)
+                                </div>
+                            </div>*@
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    @Html.Partial("Payment", new CodeLock.Models.PaymentControl() { PaymentDetails = new Payment() { AllowCashCard = true } })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal scale fade" id="largeModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="page-separator">Checklist Details</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped table-condensed cf" id="dtChecklistDetails">
+                                            <thead class="cf">
+                                                <tr>
+                                                    <th>Category</th>
+                                                    <th>Checklist</th>
+                                                    <th>Checking Done</th>
+                                                    <th>Comments</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (int i = 0; i < Model.ChecklistDetails.Count; i++)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @Html.HiddenFor(model => Model.ChecklistDetails[i].CheckListId, new { @id = "hdnCheckListId" + i.ToString() })
+                                                            @Html.DisplayFor(m => Model.ChecklistDetails[i].Category, new { @class = "form-control" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.DisplayFor(m => Model.ChecklistDetails[i].Description, new { @class = "form-control" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.LabelFor(m => Model.ChecklistDetails[i].IsChecked, " ", new { @For = "chkIsChecked" + (i + 1).ToString() })
+                                                            <label class="checkbox">
+                                                                @Html.CheckBoxFor(model => model.ChecklistDetails[i].IsChecked, new { @id = "chkIsChecked" + (i + 1).ToString() })
+                                                                <i></i>
+                                                            </label>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input">
+                                                                @Html.TextBoxFor(model => model.ChecklistDetails[i].Remarks, new { @class = "form-control", @id = "txtRemarks" + i.ToString() })
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CheckListCheckedBy, new { @class = "label" })
+                                        <div class="input">
+                                            @Html.TextBoxFor(model => model.CheckListCheckedBy, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.CheckListCheckedBy)
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CheckListCheckedDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.CheckListCheckedDate), IsDateOnly = true, IsRequired = false, AllowFutureDate = false, AllowPastDate = true, SetBlank = true })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CheckListApprovedBy, new { @class = "label" })
+                                        <div class="input">
+                                            @Html.TextBoxFor(model => model.CheckListApprovedBy, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.CheckListApprovedBy)
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CheckListApprovedDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.CheckListApprovedDate), IsDateOnly = true, IsRequired = false, AllowFutureDate = false, AllowPastDate = true, SetBlank = true })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-footer">
+                                <button type="submit" class="btn btn-success primary-btn" id="btnPopup">Create</button>
+                                <button type="reset" value="Reset" class="btn btn-flat btn-default btn-ripple" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div><!--.modal-content-->
+                </div><!--.modal-dialog-->
+            </div>
+        }
+    </div>
+</div>
+<script src="~/Areas/FMS/Views/Tripsheet/Insert.js"></script>

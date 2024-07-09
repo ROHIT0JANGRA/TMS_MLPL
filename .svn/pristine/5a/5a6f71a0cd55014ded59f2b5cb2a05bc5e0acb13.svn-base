@@ -1,0 +1,125 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.Advice
+@using CodeLock.Helper
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Advice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@using (Html.BeginForm("Advice", "Accounts", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.AdviceId, new { @id = "hdnAdviceId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AdviceNo, new { @class = "label" })
+                    <div class="system-label">
+                        @Html.Label("<System Generated>")
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.AdviceType, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.AdviceType, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Debit Advice",Value="1"},
+                        new SelectListItem() {Text = "Credit Advice", Value="2"},}, new { @class = "form-control", @id = "ddlVolumetricWeightType" })<i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.AdviceType)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "AdviceDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, model => model.AdviceDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = true, SetBlank = false })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(model => model.LocationId, new { @id = "hdnLocationId" ,@Value = @SessionUtility.LoginLocationId })
+                        @Html.LabelFor(model => model.LocationCode, @SessionUtility.LoginLocationCode, new { @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RaisedLocationId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.RaisedLocationId, new { @id = "hdnRaisedLocationId" })
+                        @Html.TextBoxFor(model => model.RaisedLocationCode, new { @class = "form-control text-complete text-complete-html", @id = "txtRaisedLocationCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.RaisedLocationCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Reason, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextAreaFor(model => model.Reason, new { @class = "form-control js-auto-size" })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Reason)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentName, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextAreaFor(model => model.DocumentName, new { @class = "form-control js-auto-size" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocumentName)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Amount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Amount, new { @class = "form-control numeric2", @id = "txtAmount" })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Amount)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="page-separator">Payment Detail</div>
+                    @Html.Partial("Payment", new CodeLock.Models.PaymentControl() { })
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <input type="submit" value="Generate" class="btn btn-success primary-btn" id="btnSubmit" />
+        </div>
+    </div>
+}
+
+
+<script>
+    var hdnRaisedLocationId, txtRaisedLocationCode, txtAmount, txtPaymentAmountApplicable;
+    $(document).ready(function () {
+        SetPageLoad('Advice', 'Insert', '', '', '');
+        hdnRaisedLocationId = $('#hdnRaisedLocationId');
+        txtRaisedLocationCode = $('#txtRaisedLocationCode');
+        txtAmount = $('#txtAmount');
+        txtPaymentAmountApplicable = $('#txtPaymentAmountApplicable');
+        LocationAutoComplete('txtRaisedLocationCode', 'hdnRaisedLocationId');
+        txtRaisedLocationCode.blur(function () { return IsLocationCodeExist(txtRaisedLocationCode, hdnRaisedLocationId, 'Location'); });
+        txtAmount.blur(function () { SetPaymentAmount(txtAmount.val()); });
+        SetPaymentPartyTypeAndParty(8, $('#hdnRaisedLocationId').val());
+        $('#dvTdsDetails').hide();
+    });
+</script>
+
+
+

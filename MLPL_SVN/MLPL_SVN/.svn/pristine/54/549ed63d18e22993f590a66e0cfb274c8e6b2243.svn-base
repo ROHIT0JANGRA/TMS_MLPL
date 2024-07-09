@@ -1,0 +1,110 @@
+﻿@using CodeLock.Models
+@model Lane
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    @if (Model.LaneDetails != null)
+    {
+    <div class="page-separator">Lane Details</div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table id="dtLaneMaster">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LaneDetails[0].CustomerId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LaneDetails[0].LaneId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LaneDetails[0].MasterLaneId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LaneDetails[0].RouteId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LaneDetails[0].FTLTypeId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LaneDetails[0].FuelTypeId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LaneDetails[0].ContractedKM)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LaneDetails[0].AssetCount)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LaneDetails[0].DriverCount)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.LaneDetails[0].IsActive)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.LaneDetails)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CustomerName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.LaneId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.MasterLaneId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RouteName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FTLTypeDesc)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FuelTypeDesc)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ContractedKM)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AssetCount)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DriverCount)
+                            </td>
+                            <td>
+                                @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    }
+    else
+    {
+        <div class="page-separator">No Records Found</div>
+    }
+</div>
+
+<script>
+    var MessageText = "", MessageType = "";
+    MessageText = '@ViewBag.MessageText';
+    MessageType = '@ViewBag.MessageType';
+    $(document).ready(function () {
+        if (MessageType != null && MessageType != "" && MessageType != undefined)
+            $.alert({
+                title: MessageType,
+                content: MessageText,
+            });
+        SetPageLoad('Lane Master', '', 'filter', 'Add New', '@Url.Action("Create")');
+        LoadDataTable('dtLaneMaster', true, true, true);
+    });
+</script>
+
+

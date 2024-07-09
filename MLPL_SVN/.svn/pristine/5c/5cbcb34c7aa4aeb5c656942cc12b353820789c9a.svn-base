@@ -1,0 +1,250 @@
+﻿@model CodeLock.Models.DocketStatus
+@using CodeLock.Models
+@{
+    Layout = null;
+}
+
+<html style="">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="~/assets/images/favicon.png" type="image/x-icon">
+    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,700italic,400italic" type="text/css">
+
+    <style>
+        .ta {
+            position: fixed;
+            top: 10%;
+            left: 20%;
+            background-color: #fff;
+        }
+
+        #bu {
+            font-size: 15px;
+            border-bottom-color: #006;
+        }
+
+        #print {
+            position: relative;
+            top: -50;
+            left: 650px;
+        }
+
+        #print1 {
+            position: relative;
+            top: 90;
+            left: 20px;
+        }
+
+        .TableCL {
+            max-width: 65%;
+            background: white;
+            border-radius: 10px;
+            border: hsl(0, 100%, 100%);
+            border: solid;
+            border-color: white;
+            font-family: Verdana, Geneva, sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            -webkit-box-shadow: 10px 10px 79px -19px rgba(0,0,0,0.75);
+            -moz-box-shadow: 10px 10px 79px -19px rgba(0,0,0,0.75);
+            box-shadow: 10px 10px 79px -19px rgba(0,0,0,0.75);
+            min-width: 700px;
+        }
+
+        .BtnCL {
+            border: solid;
+            border-color: #161057;
+            border-radius: 8px;
+            background: #161057;
+            width: 150px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+
+</head>
+<body background="../assets/images/LoginBG.png" style="margin:0px">
+
+    @using (Html.BeginForm("IndexDocketStatus", "Home", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+    {
+        <div class="aaa" style="position: relative;">
+            <table border="0" align="center" cellspacing="0" valign="center" class="TableCL">
+                <tbody>
+                    <tr bgcolor="#e5f2ff" style="">
+
+                        <td style=""><img src="~/assets/images/logo.png" style="max-width: 60%;"></td>
+                        <td align="center" colspan="5" style="width: 70%;font-family: Verdana, Geneva, sans-serif;padding-right: 10%;"><h2 style="font-family:Verdana, Geneva, sans-serif;margin-top: 10px;">Tracking Status&nbsp;&nbsp;&nbsp;</h2></td>
+                        <td align="center" style="font-family:Verdana, Geneva, sans-serif;padding-right: 0%;">
+                            @*<a href="https://empowerlogics.com/" style="text-decoration: none;">
+                                    <img src="~/assets/images/home.png"><br>Home<br>
+                                </a>*@
+                        </td>
+                    </tr>
+                    <tr style="line-height: 1.2;">
+
+                        <td align="left" colspan="8" style="font-family:Verdana, Geneva, sans-serif;padding-top: 0px;padding-bottom: 0px;/* margin-top: 0px; *//* position: static; */">
+                            <center>
+                                <img src="~/assets/images/@Model.IconName" style="max-width: 633px;">
+                            </center>
+                        </td>
+                    </tr>
+                    <tr style="background:#f9f9f9">
+                        <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Docket No</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><font color="green"><b>@Model.DocketNo </b></font></td>
+                        <td align="left" style="white-space:nowrap">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Status</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.Status</b></td>
+                    </tr>
+                    <tr style="background:#f5f5f5">
+                        <td align="left" style="white-space:nowrap">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sales Order Date</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.DocketDate</b></td>
+
+                        <td align="left" style="white-space:nowrap">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Billing Party Name</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.BillingPartyName</b></td>
+                    </tr>
+                    <tr style="background:#f9f9f9">
+                        <td align="left" style="white-space:nowrap">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A.D.D.</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.ADDDate</b></td>
+
+                        <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Charge Weight</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.ChargeWeight</b> &nbsp;</td>
+                    </tr>
+                    <tr style="background:#f5f5f5">
+                        <td align="left" style="white-space:nowrap">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E.D.D.</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.EDD</b></td>
+                    </tr>
+                    <tr style="background:#f9f9f9">
+                        <td align="left" style="white-space:nowrap">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Origin</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.Origin</b></td>
+                    </tr>
+
+                    <tr style="background:#f5f5f5">
+                        <td align="left" style="white-space:nowrap">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Destination</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.Destination</b></td>
+                    </tr>
+
+                    <tr style="background:#f9f9f9">
+                        <td align="left" style="white-space:nowrap">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Location</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.CurrentLocation</b></td>
+                    </tr>
+                    <tr style="background:#f9f9f9">
+                        <td align="left" style="white-space:nowrap">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;From</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.FromCity</b></td>
+                    </tr>
+                    <tr style="background:#f5f5f5">
+                        <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.ToCity</b></td>
+                    </tr>
+                    @if (@Model.ShowPaybas == true)
+                    {
+                        <tr style="background:#f9f9f9">
+                            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pay Basis</td>
+                            <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td><b>@Model.PayBasis</b></td>
+                            <td align="left" rowspan="3" style="white-space:nowrap;vertical-align:middle;background:#e8ffcf">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remarks</td>
+                            <td align="center" rowspan="3" style="vertical-align:middle;background:#e8ffcf">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td rowspan="3" style="vertical-align:middle;background:#e8ffcf"><b>@Model.Remarks</b></td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr style="background:#f9f9f9;display:none">
+                            <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pay Basis</td>
+                            <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td><b>@Model.PayBasis</b></td>
+                            <td align="left" rowspan="3" style="white-space:nowrap;vertical-align:middle;background:#e8ffcf">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remarks</td>
+                            <td align="center" rowspan="3" style="vertical-align:middle;background:#e8ffcf">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td rowspan="3" style="vertical-align:middle;background:#e8ffcf"><b>@Model.Remarks</b></td>
+                        </tr>
+                    }
+
+
+
+                    <tr style="background:#f5f5f5">
+                        <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Transport Mode</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.ModeOfTransport</b></td>
+                    </tr>
+
+                    <tr style="background:#f9f9f9">
+                        <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consignor</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="white-space:nowrap">
+                            <b>@Model.ConsignorName</b>
+                        </td>
+                    </tr>
+
+                    <tr style="background:#f5f5f5">
+                        <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Consignee</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td style="white-space:nowrap"><b>@Model.ConsigneeName</b></td>
+                    </tr>
+
+                    <tr style="background:#f9f9f9">
+                        <td align="left" style="white-space:nowrap">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No. of Packages</td>
+                        <td align="center">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td><b>@Model.Packets</b></td>
+                    </tr>
+
+                    @if (Model.PODFile != "" && Model.PODFile != null)
+                    {
+                        <tr>
+                            <td colspan="7" align="right" style="width: 150px;">
+                                <div id="mbmcpebul_wrapper" style="max-width: 150px;padding-right: 5%; padding-bottom:2%">
+                                    <a class="BtnCL" href="#" onclick="return ViewAttachment();">Download P.O.D</a>
+
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" align="right" style="width: 150px;">
+                                <div id="mbmcpebul_wrapper" style="max-width: 150px;padding-right: 5%; padding-bottom:2%; color:red;">
+                                    <b> POD is not uploaded </b>
+                                </div>
+                            </td>
+                        </tr>
+
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+    }
+    <script>
+            var companyId = '@SessionUtility.CompanyId', lblDeliveryDate;
+
+            function ViewAttachment() {
+                var currentDomain = '@Url.Content("~")';
+                var DocumentName = '@Model.PODFile';
+                var filePath = '';
+                filePath = currentDomain + 'Storage/POD/';
+                window.open(filePath + DocumentName, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+                return false;
+            }
+    </script>
+    <div style="width:100%; height:40px; background-color:#000; display:block; position:fixed; bottom:0px; text-align:center;color: #B7B7B7;font-family: 'Source Sans Pro', sans-serif;">
+        <table style="height:100px; margin-top:12px"></table>Powered by
+        <a href="http://www.empowerlogics.com" style="color: white;text-decoration: none;">Empower Logics</a>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,481 @@
+﻿@using CodeLock.Models
+@model VehicleTracking
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "VehicleTracking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/scripts/common-event.js"></script>
+@using (Html.BeginForm("VehicleTracking", "Tripsheet", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.VehicleTrackingId, new { @id = "hdnVehicleTrackingId" })
+    <div class="widget-wrap">
+        <div class="row">
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                        @Html.TextBoxFor(model => model.VehicleNo, null, new { @class = "form-control", @maxlength = "15", @id = "txtVehicleNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleNo)
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TripsheetId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.TripsheetId, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "form-control", @id = "ddlTripsheetId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TripsheetId)
+                </div>
+            </div>
+
+        </div>
+        <div id="pnlDetail">
+            <div class="page-separator"><span class="page-separator">Tripsheet Detail </span></div>
+            <div class="row">
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TripsheetNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.TripsheetNo, null, new { @class = "form-control textlabel", @id = "txtTripsheetNo" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TripsheetDate, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.TripsheetDate, null, new { @class = "form-control textlabel", @id = "txtTripsheetDate" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.RouteName, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.RouteName, null, new { @class = "form-control textlabel", @id = "txtRouteName" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DriverName, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.DriverName, null, new { @class = "form-control textlabel", @id = "txtDriverName" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VehicleMode, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.VehicleMode, null, new { @class = "form-control textlabel", @id = "txtVehicleMode" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.StartingKMReading, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.StartingKMReading, null, new { @class = "form-control textlabel", @id = "txtStartingKMReading" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Category, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.Category, null, new { @class = "form-control textlabel", @id = "txtCategory" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TotalLRAttached, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.TotalLRAttached, null, new { @class = "form-control textlabel", @id = "txtTotalLRAttached" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TSGeneratedUsername, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.TSGeneratedUsername, null, new { @class = "form-control textlabel", @id = "txtTSGeneratedUsername" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="page-separator">Detail</div>
+            <div class="row">
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FromCity, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.FromCity, null, new { @class = "form-control", @id = "txtFromCity" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ToCity, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.ToCity, null, new { @class = "form-control", @id = "txtToCity" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "Dated", FieldCaption = "Dated", IsRequired = false, AllowFutureDate = false, AllowPastDate = true, MaxDate = DateTime.Now, IsDateOnly = true })
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "DatedTime", FieldCaption = "Time", IsRequired = false, IsTimeOnly = true })
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.StartKM, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.StartKM, null, new { @class = "form-control numeric", @id = "txtStartKM" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.EndKM, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.EndKM, null, new { @class = "form-control numeric", @id = "txtEndKM" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TotalRunKM, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.TotalRunKM, null, new { @class = "form-control textlabel", @id = "txtTotalRunKM" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LoadType, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.LoadType, null, new { @class = "form-control", @id = "txtLoadType" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CustomerName, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.CustomerName, null, new { @class = "form-control", @id = "txtCustomerName" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LRDetails, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.LRDetails, null, new { @class = "form-control", @id = "txtLRDetails" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Remark, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.Remark, null, new { @class = "form-control", @id = "txtRemark" })
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="row" style="text-align:right">
+                <div class="col-md-12">
+                    <button type="button" onclick="AddSku()" class="btn btn-danger">+ Add </button>
+                </div>
+            </div>
+            <div class="page-separator">List of Tracking</div>
+            <div class="row">
+                <div class="col-md-12">
+                    @Html.Partial("_VehicleTrackingList", Model.TrackingList)
+                </div>
+            </div>
+
+            <div class="row" style="text-align:right">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+
+        baseUrl = '@Url.Action("", "Tripsheet", new { Area = "FMS" })';
+        SetPageLoad("Vehicle", 'Vehicle Tracking');
+
+        InitObjects();
+        VehicleAutoComplete('txtVehicleNo', 'hdnVehicleId');
+        AttachEvents();
+
+    });
+    function InitObjects() {
+        txtVehicleNo = $('#txtVehicleNo'); hdnVehicleId = $('#hdnVehicleId');
+        $('#pnlDetail').hide();
+    };
+
+    function AttachEvents() {
+        txtVehicleNo.blur(function () {
+
+            if (hdnVehicleId.val() == 0)
+            {
+                ShowMessage('Invalid vaehicle no');
+                return false;
+            }
+
+            var requestData = { vehicleId: hdnVehicleId.val() };
+            AjaxRequestWithPostAndJson(baseUrl + '/GetTrispeedListByVehicleNo', JSON.stringify(requestData), function (result) {
+
+                if (result.length == 0) {
+                    ShowMessage('No Record Found');
+                    return false;
+                }
+                else
+                {
+                    BindDropDownList('ddlTripsheetId', result, 'Value', 'Name', '', 'Select');
+                }
+
+            }, ErrorFunction, false);
+        });
+
+        $('#ddlTripsheetId').change(GetTrispeedDetail);
+        $('#txtStartKM').change(DistanceCalculate);
+        $('#txtEndKM').change(DistanceCalculate);
+
+        DeleteSku(0, 0);
+    }
+
+    function DistanceCalculate() {
+
+        var StartKM = $('#txtStartKM').val();
+        var EndKM = $('#txtEndKM').val();
+        var TotalRunKM = parseInt(EndKM) - parseInt(StartKM);
+        $('#txtTotalRunKM').val(TotalRunKM);
+    }
+
+    function GetTrispeedDetail() {
+        $('#pnlDetail').hide();
+        if ($('#ddlTripsheetId').val() != '') {
+            var requestData = { TripsheetId: $('#ddlTripsheetId').val() };
+            AjaxRequestWithPostAndJson(baseUrl + '/GetById', JSON.stringify(requestData), function (result) {
+                $('#txtTripsheetNo').val(result.TripsheetNo);
+                $('#txtTripsheetDate').val($.entryDate(result.TripsheetDate));
+                $('#txtRouteName').val(result.Route);
+                $('#txtDriverName').val(result.DriverName);
+                $('#txtVehicleMode').val(result.VehicleMode);
+                $('#txtStartingKMReading').val(result.StartKm);
+                $('#txtCategory').val(result.Category);
+                $('#txtTotalLRAttached').val(0);
+                $('#txtTSGeneratedUsername').val(result.EntryBy);
+                $('#hdnVehicleTrackingId').val(result.VehicleTrackingId);
+                $('#pnlDetail').show();
+
+                var TripsheetId = $('#ddlTripsheetId').val();
+                GetTracking(TripsheetId);
+
+            }, ErrorFunction, false);
+        }
+    }
+    function GetTracking(TripsheetId) {
+
+        var requestData = {
+            TripsheetId: TripsheetId
+        };
+
+        var rtn = true;
+
+        AjaxRequestWithPostAndHtml(baseUrl + '/GetTracking', JSON.stringify(requestData), function (result) {
+
+            if (result.length == 0) {
+                ShowMessage('No Record Found');
+                return false;
+            }
+            else {
+                $("#listSkuItems").html(result);
+            }
+        }, ErrorFunction, false);
+
+        return rtn;
+    }
+    function DeleteSku(OrderDetailId, intial) {
+        var requestData = {
+            OrderDetailId: OrderDetailId
+        };
+
+        var rtn = false;
+
+        if (OrderDetailId == 0 && intial == 0) {
+            rtn = true;
+        }
+        else {
+            rtn = confirm("Do you want to delete ?");
+        }
+
+        if (rtn) {
+            AjaxRequestWithPostAndHtml(baseUrl + '/DeleteTracking', JSON.stringify(requestData), function (result) {
+
+                if (result.length == 0) {
+                    ShowMessage('No Record Found');
+                    return false;
+                }
+                else {
+                    $("#listSkuItems").html(result);
+                }
+            }, ErrorFunction, false);
+        }
+        return rtn;
+    }
+
+    function AddSku() {
+
+
+        var FromCity = $('#txtFromCity').val();
+        var ToCity = $('#txtToCity').val();
+        var Dated = $('#txtDated').val() + " " + $('#txtDatedTime').val();
+        var StartKM = $('#txtStartKM').val();
+        var EndKM = $('#txtEndKM').val();
+        var TotalRunKM = $('#txtTotalRunKM').val();
+        var LoadType = $('#txtLoadType').val();
+        var CustomerName = $('#txtCustomerName').val();
+        var LRDetails = $('#txtLRDetails').val();
+        var Remark = $('#txtRemark').val();
+
+        var index = 0;
+        var TotalPartQuantity = 0;
+
+        if (FromCity == "") {
+            ShowMessage("From City can't be blank");
+            return false;
+        }
+        if (ToCity == "") {
+            ShowMessage("To City can't be blank");
+            return false;
+        }
+        if (Dated == "") {
+            ShowMessage("Dated can't be blank");
+            return false;
+        }
+
+
+
+        if (StartKM == "")
+            StartKM = "0";
+
+        if (EndKM == "")
+            EndKM = "0";
+
+        if (TotalRunKM == "")
+            TotalRunKM = "0";
+
+        if (parseFloat(StartKM) <= 0) {
+            ShowMessage("Start KM can't be zero");
+            return false;
+        }
+
+        if (parseFloat(EndKM) <= 0) {
+            ShowMessage("End KM can't be zero");
+            return false;
+        }
+
+        if (parseFloat(TotalRunKM) <= 0) {
+            ShowMessage("Total Run KM can't be zero");
+            return false;
+        }
+
+        var dflag = "";
+        var requestValidateData = {
+            SkuId: 0
+        };
+
+        AjaxRequestWithPostAndHtml(baseUrl + '/ValidateTracking', JSON.stringify(requestValidateData), function (result) {
+
+            if (result.length == 0) {
+                ShowMessage('No Record Found');
+                return false;
+            }
+            else {
+                dflag = result;
+            }
+        }, ErrorFunction, false);
+
+        if (dflag == "YES") {
+            ShowMessage('Duplicate Sku');
+            return false;
+        }
+
+        var requestData = {
+            FromCity: FromCity, ToCity: ToCity, DatedDes: Dated,
+            StartKM: StartKM,
+            EndKM: EndKM, TotalRunKM: TotalRunKM, LoadType: LoadType,
+            CustomerName: CustomerName, LRDetails: LRDetails, Remark: Remark
+        };
+
+        AjaxRequestWithPostAndHtml(baseUrl + '/AddTracking', JSON.stringify(requestData), function (result) {
+
+            if (result.length == 0) {
+                ShowMessage('No Record Found');
+                return false;
+            }
+            else {
+                $("#listSkuItems").html(result);
+                $('#txtFromCity').val("");
+                $('#txtToCity').val("");
+                $('#txtDated').val("");
+                $('#txtStartKM').val(0);
+                $('#txtEndKM').val(0);
+                $('#txtTotalRunKM').val(0);
+                $('#txtLoadType').val("");
+                $('#txtCustomerName').val("");
+                $('#txtLRDetails').val("");
+                $('#txtRemark').val("");
+                $('#txtFromCity').focus();
+            }
+        }, ErrorFunction, false);
+    }
+</script>

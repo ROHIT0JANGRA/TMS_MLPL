@@ -1,0 +1,57 @@
+﻿@model IEnumerable<CodeLock.Models.MasterTripCheckList>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtTripCheckList">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(m => m.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.CategoryId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.IsActive)
+                </th>
+                <th>Edit</th>
+            </tr>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <th>
+                        @Html.DisplayFor(m => item.Description)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => item.Category)
+                    </td>
+                    <td>
+                        @Html.YesNo(item.IsActive)
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Insert", new { id = item.CheckListId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.CheckListId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Check List', 'List', '', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtTripCheckList', true, true, true);
+        $('[id=dtTripCheckList_filter]').find('input').focus();
+    });
+</script>
+
+
+

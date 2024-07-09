@@ -1,0 +1,47 @@
+﻿@model CodeLock.Models.MasterBinHierarchy
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Update", "BinHierarchy", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.BinHierarchyId)
+    @Html.HiddenFor(model => model.BinHierarchyId)
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BinHierarchyName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BinHierarchyName, new { @class = "form-control", @id = "txtBinHierarchyName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BinHierarchyName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.WarehouseId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.WarehouseId, new SelectList(ViewBag.WarehouseList, "Value", "Name"), "Select Warehouse", new { @class = "form-control", @id = "ddlWarehouse" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.WarehouseId)
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Bin Hierarchy', 'Update', 'txtBinHierarchyName', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Create")', 'View Detail', '@Url.Action("View", new { id = Model.BinHierarchyId })');
+    });
+</script>
+

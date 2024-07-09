@@ -1,0 +1,232 @@
+﻿@using CodeLock.Models
+@model DeliveryMrHeader
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Delivery Mr Generation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        billGenerationUrl = '@Url.Action("", "CustomerBill", new { Area = "Finance" })';
+    });
+</script>
+<script src="~/areas/finance/views/CustomerBill/DeliveryMr.js"></script>
+@using (Html.BeginForm("DeliveryMr", "CustomerBill", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div id="dvStep1">
+            <div class="page-separator">Docket List Criteria</div>
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocketNos, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.DocketNos, null, new { @class = "form-control", @id = "txtDocketNos" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DocketNos)
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MrDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MrDate), IsRequired = true, IsDateOnly = false, AllowFutureDate = false, AllowPastDate = true })
+                        
+                    </div>
+                </div>
+                              
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocketSuffix, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.DocketSuffix, new SelectList(ViewBag.DocketSuffixList, "Value", "Name"), "Select Docket Suffix", new { @class = "form-control", @id = "ddlDocketSuffix" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DocketSuffix)
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.VehicleNo, null, new { @class = "form-control", @id = "txtVehicleNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.VehicleNo)
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.Remarks, null, new { @class = "form-control", @id = "txtVehicleNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Remarks)
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                       @Html.LabelFor(model => model.IsPartial, new { @class = "label", @for = "chkIsIsPartial" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsPartial, new { @id = "chkIsIsPartial" })
+                        <i></i>
+                    </label>
+                    </div>
+                </div>
+               
+            </div>
+            <div id="dvPartialStep">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <div class="inline-group">
+                                @Html.LabelFor(model => model.IsDeliveredByConsignee, new { @class = "label" })
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.IsDeliveredByConsignee, false, new { @id = "rdIsReceiver", @checked = "checked" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsDeliveredByConsignee, "Receiver", new { @for = "rdIsReceiver" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.IsDeliveredByConsignee, true, new { @id = "rdIsConsignee" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsDeliveredByConsignee, "Consignee", new { @for = "rdIsConsignee" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <div class="inline-group">
+                                @Html.Label(" ", " ", new { @class = "label", @id = "lblIsDeliverFromMaster" })
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.IsDeliveredFromMaster, true, new { @id = "rdPartyFromMaster", @checked = "checked" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsDeliveredFromMaster, "From Master", new { @for = "rdPartyFromMaster" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.IsDeliveredFromMaster, false, new { @id = "rdPartyWalkin" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsDeliveredFromMaster, "Walk-In", new { @for = "rdPartyWalkin" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Label(" ", new { @class = "label", @id = "lblDeliverCode" })
+                            <div class="input">
+                                @Html.HiddenFor(model => model.DeliverPartyId, new { @id = "hdnDeliverId" })
+                                @Html.TextBoxFor(model => model.DeliverPartyCode, null, new { @class = "form-control", @id = "txtDeliverCode" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.DeliverPartyCode)
+                        </div>
+                    </div>
+                    <div class="col-sm-4 dvReceiver">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DeliverPartyName, " ", new { @class = "label", @id = "lblDeliverNameLabel" })
+                            <div class="clearfix">
+                                @Html.TextBoxFor(model => model.DeliverPartyName, " ", new { @class = "form-control", @id = "txtDeliverName" })
+                                @Html.Label("DeliverPartyName", " ", new { @class = "label", @id = "lblDeliverName", @style = "display:none" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.DeliverPartyName)
+                        </div>
+                    </div>
+                    <div class="col-sm-4" id="dvGstTinNo">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.GstTinNo, new { @class = "label" })
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.GstTinNo, null, new { @class = "form-control", @id = "txtGstTinNo" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.GstTinNo)
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="form-footer">
+                    <button id="btnStep1" type="button" class="btn btn-primary primary-btn" tabindex="0">Step 1</button>
+                </div>
+            </div>
+        <div id="dvStep2" style="display:none">
+            <div id="dvPartyDetail">
+                <div class="page-separator">Docket Party Information</div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ConsignorName, new { @class = "label" })
+                            <div class="input">
+                                @Html.LabelFor(model => model.ConsignorName, " ", new { @class = "label-bold", @id = "lblConsignorName" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ConsigneeName, new { @class = "label" })
+                            <div class="input">
+                                @Html.LabelFor(model => model.ConsigneeName, " ", new { @class = "label-bold", @id = "lblConsigneeName" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PartyCode, new { @class = "label", @id = "lblPartyCode" })
+                            <div class="input">
+                                @Html.HiddenFor(model => model.PartyId, new { @id = "hdnPartyId" })
+                                @Html.TextBoxFor(model => model.PartyCode, null, new { @class = "form-control", @id = "txtPartyCode" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.PartyCode)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PartyName, new { @class = "label", @id = "lblPartyNameLabel" })
+                            <div class="clearfix">
+                                @Html.TextBoxFor(model => model.PartyName, " ", new { @class = "form-control textlabel label-bold", @id = "txtPartyName" })
+                                @Html.Label("PartyName", " ", new { @class = "label-bold", @id = "lblPartyName", @style = "display:none" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.PartyName)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-separator">Docket List</div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="dtDocketList"></table>
+                        @Html.HiddenFor(model => model.DeliveryMrChargeList, new { @id = "hdnDeliveryMrChargeList" })
+                        @Html.HiddenFor(model => model.TotalBillAmount, new { @id = "hdnTotalBillAmount" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <button id="btnStep2" type="button" class="btn btn-primary primary-btn" tabindex="0">Step 2</button>
+            </div>
+        </div>
+        <div id="dvStep3" style="display:none">
+            <div id="dvrecept" style="display:none">
+                <div class="page-separator">Receipt Detail</div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.Partial("Receipt", new CodeLock.Models.ReceiptControl() { })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-separator"></div>
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Create Delivery MR</button>
+            </div>
+        </div>
+    </div>
+}
+
+

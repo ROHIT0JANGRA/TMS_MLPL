@@ -1,0 +1,34 @@
+﻿@model CodeLock.Models.MastersIndiaEway
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("ImportManualEWayBill", "Docket", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.eway_bill_number, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.eway_bill_number, new { @class = "form-control", @id = "txteway_bill_number" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.eway_bill_number)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Import EWay Bill</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Eway Bill', 'Manual', '', '', '');
+        txteway_bill_number = $('#txteway_bill_number');
+        btnSubmit = $('#btnSubmit');
+
+    });
+
+</script>
+

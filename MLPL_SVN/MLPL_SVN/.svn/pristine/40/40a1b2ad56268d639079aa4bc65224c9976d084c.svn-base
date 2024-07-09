@@ -1,0 +1,131 @@
+﻿@model CodeLock.Models.FastTagUploadInSystem
+@{
+    ViewBag.Title = "FastTag Upload In System";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("FastTagUploadInSystem", "Docket", FormMethod.Post, new { @class = "j-forms", enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TripsheetId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.TripsheetId, new SelectList(ViewBag.TripsheetList, "Value", "Name"), "Select Tripsheet", new { @class = "form-control select2", @id = "ddlStatus" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.TripsheetId)
+                    </div>
+                </div>
+
+        </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.File, new { @class = "label" })
+                        <div class="input prepend-big-btn">
+                            <label class="icon-right" for="prepend-big-btn">
+                                <i class="fa fa-download"></i>
+                            </label>
+                            <div class="file-button">
+                                Browse
+                                <input class="form-control" id="fuStatus" type="file" name="file" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                            </div>
+                            <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("blank", "Format Download Link")
+
+                        @{ var fileNamelnkId = "lnkAttachment";}
+                        <a href="#" id=@fileNamelnkId onclick="return DownloadFormat();">Download FastTag Upload Format</a>
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="submit" class="btn btn-success primary-btn" tabindex="3" id="btnSubmit">Upload</button>
+            </div>
+            <div id="dvResult">
+                <table id="dtResult">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details.FirstOrDefault().TransactionId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details.FirstOrDefault().TransactionDateTime)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details.FirstOrDefault().Plaza)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details.FirstOrDefault().VehicleClass)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details.FirstOrDefault().VehicleNo)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details.FirstOrDefault().LaneDirection)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details.FirstOrDefault().Fare)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Details.FirstOrDefault().UploadStatus)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Details.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(model => model.Details[i].TransactionId)
+                                </td>
+								<td>
+									@*@Html.DisplayFor(model => model.Details[i].TransactionDateTime)*@
+									@Model.Details[i].TransactionDateTime.ToDisplayDateTime()
+								</td>
+                                <td>
+                                    @Html.DisplayFor(model => model.Details[i].Plaza)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.Details[i].VehicleClass)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.Details[i].VehicleNo)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.Details[i].LaneDirection)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.Details[i].Fare)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => model.Details[i].UploadStatus)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Fast Tag', 'Upload', 'File');
+        var msg = '@Model.ErrorMessage';
+        if (msg != '')
+            ShowMessage(msg);
+
+        $('#dvResult').showHide(parseInt('@Model.Details.Count') > 0);
+        LoadDataTable('dtResult', true, false, false);
+    });
+
+    function DownloadFormat() {
+        window.location = '@Href("~/Areas/Operation/Views/Docket/UploadFormatFastTag.xlsx")';
+    }
+</script>

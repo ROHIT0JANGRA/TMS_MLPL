@@ -1,0 +1,146 @@
+﻿@model IEnumerable<CodeLock.Models.MasterProduct>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtProduct">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductDescription)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UnitsOfMeasurement)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UomQuantity)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UnitPrice)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.Length)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.Breadth)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.Height)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.ActualWeight)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.ChargeWeight)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.IsSerialNumber)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.IsSingle)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductDescription)
+                    </td>
+                    <td>
+                        @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { productId = item.ProductId, companyId = item.CompanyId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View",  new { productId = item.ProductId, companyId = item.CompanyId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UnitsOfMeasurement)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UomQuantity)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UnitPrice)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Length)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Breadth)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Height)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.ActualWeight)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.ChargeWeight)
+                    </td>
+                    <td style="display:none">
+                        @Html.Label("", item.IsSerialNumber == true ? "Yes" : "No", new { @class = item.IsSerialNumber == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td style="display:none">
+                        @Html.Label("", item.IsSingle == true ? "Yes" : "No", new { @class = item.IsSingle == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Product', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtProduct', true, true, true);
+    });
+</script>
+

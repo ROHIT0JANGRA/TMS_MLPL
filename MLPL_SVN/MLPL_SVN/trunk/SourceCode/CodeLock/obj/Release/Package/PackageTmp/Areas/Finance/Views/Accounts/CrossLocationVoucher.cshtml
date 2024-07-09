@@ -1,0 +1,454 @@
+﻿@using CodeLock.Models
+@model CrossLocationVoucher
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("CrossLocationVoucher", "Accounts", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(model => model.CompanyId, new { @id = "hdnCompanyId", @Value = @SessionUtility.CompanyId })
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VoucherNo, new { @class = "label" })
+                <div class="clearfix">
+                    @Html.Label("<System Generated>")
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "VoucherDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.VoucherDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(m => m.ManualNo, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(m => m.ManualNo, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(m => m.ManualNo)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.PreparedLocationId, new { @class = "label" })
+                <div class="clearfix">
+                    @Html.HiddenFor(m => m.PreparedLocationId, new { @Value = @SessionUtility.LoginLocationId })
+                    @Html.LabelFor(model => model.PreparedLocationCode, @SessionUtility.LoginLocationCode, new { @id = "lblPreparedLocationCode", @class = "label-bold" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.BusinessTypeId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.BusinessTypeId, new SelectList(ViewBag.BusinessTypeList, "Value", "Name"), new { @class = "form-control", @id = "ddlBusinessTypeId" })
+                    <i></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.AccountingLocationId, new { @class = "label" })
+                <div class="clearfix">
+                    @Html.HiddenFor(m => m.AccountingLocationId, new { @Value = @SessionUtility.LoginLocationId })
+                    @Html.LabelFor(model => model.AccountingLocationCode, @SessionUtility.LoginLocationCode, new { @id = "lblAccountingLocationCode", @class = "label-bold" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(m => m.ReferenceNo, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(m => m.ReferenceNo, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                @Html.Label(" ", new { @class = "label" })
+                <label class="radio">
+                    @Html.RadioButtonFor(model => model.CodeType, "2", new { @id = "rdCodeTypeCustomer", @tabindex = "0", @checked = "checked" })
+                    <i></i>
+                    @Html.LabelFor(model => model.CodeType, "Customer", new { @for = "rdCodeTypeCustomer" })
+                </label>
+                <label class="radio">
+                    @Html.RadioButtonFor(model => model.CodeType, "3", new { @id = "rdCodeTypeVendor", @tabindex = "0" })
+                    <i></i>
+                    @Html.LabelFor(model => model.CodeType, "Vendor", new { @for = "rdCodeTypeVendor" })
+                </label>
+                <label class="radio">
+                    @Html.RadioButtonFor(model => model.CodeType, "1", new { @id = "rdCodeTypeEmployee", @tabindex = "0" })
+                    <i></i>
+                    @Html.LabelFor(model => model.CodeType, "Employee", new { @for = "rdCodeTypeEmployee" })
+                </label>
+                <label class="radio">
+                    @Html.RadioButtonFor(model => model.CodeType, "5", new { @id = "rdCodeTypeDriver", @tabindex = "0" })
+                    <i></i>
+                    @Html.LabelFor(model => model.CodeType, "Driver", new { @for = "rdCodeTypeDriver" })
+                </label>
+                <label class="radio">
+                    @Html.RadioButtonFor(model => model.CodeType, "6", new { @id = "rdCodeTypeVehicle", @tabindex = "0" })
+                    <i></i>
+                    @Html.LabelFor(model => model.CodeType, "Vehicle", new { @for = "rdCodeTypeVehicle" })
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.CodeId, new { @class = "label" })
+                <div class="input">
+                    @Html.HiddenFor(model => model.CodeId, new { @id = "hdnCodeId" })
+                    @Html.TextBoxFor(model => model.Code, null, new { @class = "form-control text-complete text-complete-html", @id = "txtCode" })
+                </div>
+                @Html.ValidationMessageFor(m => m.Code)
+            </div>
+        </div>
+        <div class="col-sm-4" id="dvOther" style="display:none">
+            <div class="form-group">
+                @Html.LabelFor(model => model.PartyName, new { @class = "label", @id = "lblPartyName" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.PartyName, null, new { @class = "form-control", @id = "txtPartyName" })
+                </div>
+                @Html.ValidationMessageFor(m => m.PartyName)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Narration, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.Narration, null, new { @class = "form-control", @id = "txtCommanNarration" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.CrossingLocationId, new { @class = "label" })
+                <div class="input">
+                    @Html.HiddenFor(model => model.CrossingLocationId, new { @id = "hdnCrossingLocationId" })
+                    @Html.TextBoxFor(model => model.CrossingLocationCode, new { @class = "form-control text-complete text-complete-html", @id = "txtCrossingLocationCode" })
+                </div>
+                @Html.ValidationMessageFor(model => model.CrossingLocationCode)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div>
+                <table id="dtDetails">
+                    <thead>
+                        <tr>
+                            <th>
+                                Account Code
+                            </th>
+                            <th>
+                                Amount
+                            </th>
+                            <th>
+                                Narration
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Details.Count; i++)
+                        {
+                            var j = i.ToString();
+                            <tr>
+                                <td>
+                                    <div class="input">
+                                        @Html.HiddenFor(m => Model.Details[i].AccountId, new { id = "hdnAccountId" + j })
+                                        @Html.TextBoxFor(m => m.Details[i].AccountCode, new { @class = "form-control", id = "txtAccountCode" + j })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.Details[i].AccountCode)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].Amount, new { @class = "numeric2", @id = "txtAmount" + j })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.Details[i].Amount)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].Narration, new { @class = "form-control", @id = "txtNarration" + j })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.Details[i].Narration)
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            @Html.LabelFor(model => model.TransactionModeId, new { @class = "label" })
+            <div class="select">
+                @Html.DropDownListFor(model => model.TransactionModeId, new List<SelectListItem>
+                                                { new SelectListItem{Text="Payment", Value="1"},
+                                                  new SelectListItem{Text="Receipt", Value="2"}}, "Select Transaction Mode", new { @class = "form-control", @id = "ddlTransactionModeId" })
+                <i></i>
+            </div>
+            @Html.ValidationMessageFor(model => model.TransactionModeId)
+        </div>
+    </div>
+    <div class="row" id="dvPaymentControl">
+        <div class="col-sm-12">
+            <div class="form-group">
+                @Html.Partial("Payment", new PaymentControl() { })
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="dvReceiptControl">
+        <div class="col-sm-12">
+            <div class="form-group">
+                @Html.Partial("Receipt", new ReceiptControl() { })
+            </div>
+        </div>
+    </div>
+    <div class="row form-buttons">
+        <div class="col-sm-offset-5 col-sm-7">
+            <input type="submit" value="Submit" class="btn btn-success primary-btn" id="btnSubmit" />
+        </div>
+    </div>
+}
+
+<script>
+    var hdnCompanyId, txtCode, hdnCodeId, dvOther, txtPartyName, lblPartyName, txtCommanNarration, hdnCrossingLocationId, txtCrossingLocationCode, btnSubmit,
+        dvPaymentControl, dvReceiptControl, ddlTransactionModeId;
+    var selectedCodeType = "2";
+    var employeeMasterUrl, customerMasterUrl, vendorMasterUrl, vehicleMasterUrl, driverMasterUrl;
+    $(document).ready(function () {
+        SetPageLoad('Cross Location', 'Voucher', '', '', '');
+        locationId = '@SessionUtility.LoginLocationId';
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        hdnCompanyId = $('#hdnCompanyId');
+        txtCode = $('#txtCode');
+        hdnCodeId = $('#hdnCodeId');
+        dvOther = $('#dvOther');
+        txtPartyName = $('#txtPartyName');
+        lblPartyName = $('#lblPartyName');
+        txtCommanNarration = $('#txtCommanNarration');
+        txtCrossingLocationCode = $('#txtCrossingLocationCode');
+        hdnCrossingLocationId = $('#hdnCrossingLocationId');
+        ddlTransactionModeId = $('#ddlTransactionModeId');
+        dvPaymentControl = $('#dvPaymentControl');
+        dvReceiptControl = $('#dvReceiptControl');
+        btnSubmit = $('#btnSubmit');
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        employeeMasterUrl = '@Url.Action("", "Employee", new { Area = "Master" })';
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        vehicleMasterUrl = '@Url.Action("", "Vehicle", new { Area = "Master" })';
+        driverMasterUrl = '@Url.Action("", "Driver", new { Area = "Master" })';
+        InitGrid('dtDetails', false, 5, Init);
+    }
+
+    function AttachEvents() {
+        LocationAutoComplete('txtCrossingLocationCode', 'hdnCrossingLocationId');
+        txtCrossingLocationCode.blur(function () { return CheckValidLocationCode(txtCrossingLocationCode, hdnCrossingLocationId, 'Location'); });
+        $('[id*="rdCodeType"]').each(function () { $(this).click(function () { selectedCodeType = $(this).val(); OnCodeTypeChange(); }); });
+        AutoComplete('txtCode', customerMasterUrl + '/GetAutoCompleteListByCompanyId', 'customerCode', 'l', 'l', 'l', 'd', '', 'hdnCodeId', '', '');
+        txtCode.blur(function () { return CheckIsValid(txtCode, hdnCodeId); });
+        $('#txtCommanNarration').blur(SetCommanNarration);
+        ddlTransactionModeId.change(OnTransactionModeChange);
+        OnTransactionModeChange();
+        btnSubmit.click(OnSubmit);
+        $('#dvTdsDetails').hide();
+    }
+
+    function OnCodeTypeChange() {
+        txtCode.val('');
+        hdnCodeId.val('');
+        txtPartyName.val('');
+        dvOther.hide();
+        switch (selectedCodeType) {
+            case "1":
+                employeeScript.EmployeeAutoComplete('txtCode', 'hdnCodeId');
+                break;
+            case "2":
+                AutoComplete('txtCode', customerMasterUrl + '/GetAutoCompleteListByCompanyId', 'customerCode', 'l', 'l', 'l', 'd', '', 'hdnCodeId', '', '');
+                break;
+            case "3":
+                VendorAutoComplete('txtCode', 'hdnCodeId');
+                break;
+            case "5":
+                DriverAutoComplete('txtCode', 'hdnCodeId');
+                break;
+            case "6":
+                VehicleAutoComplete('txtCode', 'hdnCodeId');
+                break;
+            case "8":
+                txtCode.autocomplete("destroy");
+                break;
+        }
+    }
+
+    function CheckIsValid(objName, objHdnId) {
+        switch (selectedCodeType) {
+            case "1":
+                CheckValidUserName(objName, objHdnId);
+                dvOther.hide();
+                RemoveRequired(txtPartyName);
+                txtPartyName.val(objName.val().split(':')[1].trim());
+                break;
+            case "2":
+                CheckValidCustomerCode(objName, objHdnId);
+                dvOther.showHide(objHdnId.val() == 1);
+                lblPartyName.text("Customer");
+                if (objHdnId.val() != 1 && objHdnId.val() != '') {
+                    RemoveRequired(txtPartyName);
+                    txtPartyName.val(objName.val().split(':')[1].trim());
+                }
+                else {
+                    txtPartyName.val('');
+                    AddRequired(txtPartyName, 'Please enter Customer');
+                }
+                break;
+            case "3":
+                CheckValidVendorCode(objName, objHdnId);
+                dvOther.showHide(objHdnId.val() == 1);
+                lblPartyName.text("Vendor");
+                if (objHdnId.val() != 1 && objHdnId.val() != '') {
+                    RemoveRequired(txtPartyName);
+                    txtPartyName.val(objName.val().split(':')[1].trim());
+                }
+                else {
+                    txtPartyName.val('');
+                    AddRequired(txtPartyName, 'Please enter Vendor');
+                }
+                break;
+            case "5":
+                CheckValidDriverName(objName, objHdnId);
+                dvOther.showHide(objHdnId.val() == 1);
+                lblPartyName.text("Driver");
+                if (objHdnId.val() != 1 && objHdnId.val() != '') {
+                    RemoveRequired(txtPartyName);
+                    txtPartyName.val(objName.val());
+                }
+                else {
+                    txtPartyName.val('');
+                    AddRequired(txtPartyName, 'Please enter Driver');
+                }
+                break;
+            case "6":
+                CheckValidVehicleNo(objName, objHdnId);
+                dvOther.showHide(objHdnId.val() == 1);
+                lblPartyName.text("Vehicle");
+                if (objHdnId.val() != 1 && objName.val() != '') {
+                    RemoveRequired(txtPartyName);
+                    txtPartyName.val(objName.val());
+                }
+                else {
+                    txtPartyName.val('');
+                    AddRequired(txtPartyName, 'Please enter Vehicle');
+                }
+                break;
+            case "8":
+                dvOther.hide();
+                txtPartyName.val(objName.val());
+                break;
+        }
+
+		SetPaymentPartyTypeAndParty(selectedCodeType, objHdnId.val());
+    }
+
+    function CheckValidUserName(txtEmployee, hdnEmployeeId) {
+        if (txtEmployee.val() != "") {
+            var requestData = { userName: txtEmployee.val().split(':')[0].trim() };
+            AjaxRequestWithPostAndJson(employeeMasterUrl + '/CheckValidUserName', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    hdnEmployeeId.val(result.Value);
+                    txtEmployee.val(result.Name + ' : ' + result.Description);
+                }
+                else {
+                    ShowMessage('Employee is not exist');
+                    txtEmployee.val('');
+                    hdnEmployeeId.val('');
+                    txtEmployee.focus();
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function CheckValidCustomerCode(txtCustomerCode, hdnCustomerId) {
+        if (txtCustomerCode.val() != "") {
+            var requestData = { customerCode: txtCustomerCode.val().split(':')[0].trim() };
+            AjaxRequestWithPostAndJson(customerMasterUrl + '/CheckValidCustomerCodeByCompanyId', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    hdnCustomerId.val(result.Value);
+                    txtCustomerCode.val(result.Name + ' : ' + result.Description);
+                }
+                else {
+                    ShowMessage('Customer is not exist');
+                    txtCustomerCode.val('');
+                    hdnCustomerId.val('');
+                    txtCustomerCode.focus();
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function SetCommanNarration() {
+        $('[id*="txtNarration"]').val($('#txtCommanNarration').val());
+    }
+
+    function Init() {
+        $('[id*="hdnAccountId"]').each(function () {
+            var hdnAccountId = $(this);
+            var txtAccountCode = $('#' + this.Id.replace('hdnAccountId', 'txtAccountCode'));
+            var txtAmount = $('#' + this.Id.replace('hdnAccountId', 'txtAmount'));
+
+            AccountAutoComplete(txtAccountCode.Id, this.Id);
+            txtAccountCode.blur(function () { return CheckValidAccountCode(txtAccountCode, hdnAccountId, 'Account'); });
+            txtAmount.blur(GetSubTotal);
+        });
+    }
+
+    function GetSubTotal() {
+        var subTotal = 0;
+        $('[id*="txtAmount"]').each(function () {
+            var txtAmount = $(this);
+            subTotal = subTotal + txtAmount.val();
+        });
+        if (ddlTransactionModeId.val() == 2) {
+            SetReceiptAmount(subTotal, 0);
+            SetPaymentAmount(0);
+        }
+        else if (ddlTransactionModeId.val() == 1) {
+            SetReceiptAmount(0);
+            SetPaymentAmount(subTotal);
+        }
+        if (ddlTransactionModeId.val() == 2)
+            $('#ddlReceiptTdsAccount').enable(ddlTransactionModeId.val() == 2);
+        $('#txtReceiptAmountApplicable').enable(ddlTransactionModeId.val() == 2);
+    }
+
+    function OnTransactionModeChange() {
+        dvPaymentControl.showHide(ddlTransactionModeId.val() == 1);
+        dvReceiptControl.showHide(ddlTransactionModeId.val() == 2);
+        $('#txtReceiptAmountApplicable').enable(ddlTransactionModeId.val() == 2);
+        $('#ddlReceiptTdsAccount').enable(ddlTransactionModeId.val() == 2);
+        GetSubTotal();
+    }
+
+    function OnSubmit() {
+        $('#ddlReceiptTdsAccount').disable();
+    }
+</script>

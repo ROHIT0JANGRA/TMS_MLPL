@@ -1,0 +1,88 @@
+﻿
+using CodeLock.Areas.WMS.Repository;
+using CodeLock.Models;
+using System;
+using System.Web.Mvc;
+
+namespace CodeLock.Areas.WMS.Controllers
+{
+  public class DispatchController : Controller
+  {
+    public readonly IDispatchRepository dispatchRepository;
+
+    public DispatchController()
+    {
+    }
+
+    public DispatchController(IDispatchRepository _dispatchRepository)
+    {
+      this.dispatchRepository = _dispatchRepository;
+    }
+
+    public ActionResult Insert()
+    {
+      return (ActionResult) this.View((object) new Dispatch()
+      {
+        Details = {
+          new DispatchDetail()
+        }
+      });
+    }
+
+    [ValidateAntiForgeryToken]
+    [HttpPost]
+    public ActionResult Insert(Dispatch objDispatch)
+    {
+      if (this.ModelState.IsValid)
+      {
+        objDispatch.CompanyId = SessionUtility.CompanyId;
+        objDispatch.WarehouseId = SessionUtility.WarehouseId;
+        objDispatch.EntryBy = SessionUtility.LoginUserId;
+        Dispatch dispatch1 = objDispatch;
+        DateTime? dispatchDateTime = objDispatch.DispatchDateTime;
+        DateTime dateTime = dispatchDateTime.Value;
+        DateTime date = dateTime.Date;
+        dispatch1.DispatchDate = date;
+        Dispatch dispatch2 = objDispatch;
+        dispatchDateTime = objDispatch.DispatchDateTime;
+        dateTime = dispatchDateTime.Value;
+        TimeSpan timeOfDay = dateTime.TimeOfDay;
+        dispatch2.DispatchTime = timeOfDay;
+        Response response = this.dispatchRepository.Insert(objDispatch);
+        if (response.IsSuccessfull)
+          return (ActionResult) this.RedirectToAction("Done", "Asn", (object) new
+          {
+            documentType = "Dispatch",
+            documentNo = response.DocumentNo,
+            documentId = response.DocumentId,
+            documentTypeId = ModuleHelper.Dispatch
+          });
+      }
+      return (ActionResult) this.View((object) objDispatch);
+    }
+
+    public JsonResult GetOrderListForDispatch(Order objOrder)
+    {
+      return this.Json((object) this.dispatchRepository.GetOrderListForDispatch(objOrder.CompanyId, objOrder.WarehouseId, objOrder.OrderNo.ConvertToString(), objOrder.InvoiceNo.ConvertToString(), objOrder.FromDate, objOrder.ToDate, SessionUtility.FinStartDate, SessionUtility.FinEndDate));
+    }
+
+    public JsonResult GetOrderDetails(byte companyId, short warehouseId, long id)
+    {
+      return this.Json((object) this.dispatchRepository.GetOrderDetails(companyId, warehouseId, id));
+    }
+
+    public ActionResult Register()
+    {
+      return (ActionResult) this.View((object) new DispatchRegister());
+    }
+
+    [HttpPost]
+    public JsonResult GetRegisterDispatchDetail(
+      string dispatchNo,
+      DateTime fromDate,
+      DateTime toDate)
+    {
+      return this.Json((object) this.dispatchRepository.GetRegisterDispatchDetail(dispatchNo, fromDate, toDate, SessionUtility.FinStartDate, SessionUtility.FinEndDate), JsonRequestBehavior.AllowGet);
+    }
+  }
+}

@@ -1,0 +1,113 @@
+﻿@using CodeLock.Models
+@model BankReconcilation
+@{
+    ViewBag.Title = "BankReconciliation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        BankUrl = '@Url.Action("GetListByCategory", "Account", new { Area = "Master" })';
+       
+    });
+</script>
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.BankAccountId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(m => m.BankAccountId, new List<SelectListItem> { new SelectListItem { Text = "HDFC Bank", Value = "H" } }, "Select Bank", new { @class = "form-control", @id = "ddlBankAccount" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.BankAccountId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.Label("Transaction Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drTransactionDate"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ReconcileStatus, "ALL", new { @id = "rdAll", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ReconcileStatus, "ALL", new { @for = "rdAll" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ReconcileStatus, "R", new { @id = "rdReconciled" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ReconcileStatus, "Reconciled", new { @for = "rdReconciled" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ReconcileStatus, "NR", new { @id = "rdNotReconciled" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ReconcileStatus, "NotReconciled", new { @for = "rdNotReconciled" })
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReconcileStatus)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var drTransactionDate, currentDate, dateTimeFormat,ddlBankAccount, ddlLocationId, rdAll, rdReconciled, rdNotReconciled;
+    var  btnSubmit;
+    $(document).ready(function () {
+        SetPageLoad('Banking', 'Bank Reconcilation Report', '', '', '');
+        drTransactionDate = InitDateRange('drTransactionDate', DateRange.LastWeek);
+        ddlBankAccount = $("#ddlBankAccount");
+        ddlLocationId = $("#ddlLocationId");
+        rdAll = $("#rdAll");
+        rdReconciled = $("#rdReconciled");
+        rdNotReconciled = $("#rdNotReconciled");
+        BindAccountDropDown(ddlBankAccount, 6, 'Bank');
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    });
+
+    function ViewReport() {
+        var ReconcileStatusVal = "";
+        if (rdAll.prop("checked") == true)
+            ReconcileStatusVal = rdAll.val();
+        if (rdReconciled.prop("checked") == true)
+            ReconcileStatusVal = rdReconciled.val();
+        if (rdNotReconciled.prop("checked") == true)
+            ReconcileStatusVal = rdNotReconciled.val();
+
+        var prmList = [
+              { Name: "FromDate", Value: drTransactionDate.startDate },
+              { Name: "ToDate", Value: drTransactionDate.endDate },
+              { Name: "LocationId", Value: ddlLocationId.val() },
+              { Name: "ReconcileStatus", Value: ReconcileStatusVal },
+              { Name: "Finyear", Value: '@SessionUtility.CalenderYear' },
+              { Name: "IsCumulative", Value: true },
+              { Name: "BankAccountId", Value: ddlBankAccount.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'BankReconciliationRegister', Description: 'BankReconciliation Register' };
+        return ShowReport(reportInfo);
+    }
+
+    function BindAccountDropDown(ddl, category, type) {
+        AjaxRequestWithPostAndJson(BankUrl, JSON.stringify({ categoryId: category }), function (result) {
+            BindDropDownList(ddl.Id, result, 'Value', 'Description', '', type + ' Account');
+        }, ErrorFunction, false);
+    }
+
+</script>

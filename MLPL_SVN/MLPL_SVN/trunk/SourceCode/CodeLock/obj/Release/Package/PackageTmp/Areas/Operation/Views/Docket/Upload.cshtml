@@ -1,0 +1,158 @@
+﻿@model CodeLock.Models.DocketUpload
+@{
+    ViewBag.Title = "Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Upload", "Docket", FormMethod.Post, new { @class = "j-forms", enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.File, new { @class = "label" })
+                    <div class="input prepend-big-btn">
+                        <label class="icon-right" for="prepend-big-btn">
+                            <i class="fa fa-download"></i>
+                        </label>
+                        <div class="file-button">
+                            Browse
+                            <input class="form-control" id="fuStatus" type="file" name="File" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                        </div>
+                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("blank", "Format Download Link")
+
+                    @{ var fileNamelnkId = "lnkAttachment";}
+                    <a href="#" id=@fileNamelnkId onclick="return DownloadFormat();">Download Docket Upload Format</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3" id="btnSubmit">Upload</button>
+        </div>
+        <div id="dvResult">
+            <table id="dtResult">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().DocketNo)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().DocketDate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().Paybas)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().FromLocation)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().ToLocation)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().TransportMode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().ServiceType)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().FtlType)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().InvoiceAmount)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().Packages)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().ActualWeight)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().ChargedWeight)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().Freight)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().SubTotal)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().GrandTotal)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Details.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].DocketNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].DocketDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].Paybas)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].FromLocation)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].ToLocation)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].TransportMode)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].ServiceType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].FtlType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].InvoiceAmount)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].Packages)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].ActualWeight)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].ChargedWeight)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].Freight)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].SubTotal)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].GrandTotal)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Docket', 'Upload', 'File');
+        var msg = '@Model.ErrorMessage';
+        if (msg != '')
+            ShowMessage(msg);
+
+        $('#dvResult').showHide(parseInt('@Model.Details.Count') > 0);
+        LoadDataTable('dtResult', true, false, false);
+    });
+
+    function DownloadFormat() {
+        window.location = '@Href("~/Areas/Operation/Views/Docket/Docket_Upload_Format.xlsx")';
+    }
+</script>

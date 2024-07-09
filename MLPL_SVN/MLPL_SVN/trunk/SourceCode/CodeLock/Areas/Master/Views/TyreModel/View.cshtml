@@ -1,0 +1,132 @@
+﻿@model CodeLock.Models.MasterTyreModel
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TyreModelId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.TyreModelId)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TyreModelNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.TyreModelNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TyreModelDescription)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.TyreModelDescription)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.AverageTreadDepth)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.AverageTreadDepth)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ManufacturerId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ManufacturerId)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TyreSizeId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.TyreSizeId)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TyrePatternId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.TyrePatternId)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EntryByName)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+       
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </dt>
+                <dd>
+                    @Model.EntryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.UpdateDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('TyreModel', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { id = Model.TyreModelId })');
+    });
+</script>
+

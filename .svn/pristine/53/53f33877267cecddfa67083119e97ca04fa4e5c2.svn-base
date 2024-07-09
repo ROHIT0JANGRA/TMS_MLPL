@@ -1,0 +1,63 @@
+﻿
+@{
+    ViewBag.Title = "BillEntryDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:300px">
+    <div class="alert alert-success"><h5>Bill is Generated Successfully</h5></div>
+    <div class="row">
+        <div class="col-sm-3">
+            <h4>Bill No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblBillNo", @class = "label-bold" })
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return ViewReport();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+    var status = "", billId = 0, documentTypeId;
+    $(document).ready(function () {
+        SetPageLoad('Bill Generation', 'Done', '', 'Go To Vehicle Hire Bill Generation', '@Url.Action("VehicleHireBillEntry")', 'Go To Other Bill Generation', '@Url.Action("OtherBillEntry")');
+        lblBillNo = $('#lblBillNo');
+        lblBillNo.html(GetUrlValue()["billNo"]);
+        status = GetUrlValue()["status"];
+        billId = GetUrlValue()["billId"];
+        documentTypeId = GetUrlValue()["documentTypeId"];
+    });
+    function ViewReport() {
+        if (status == "VehicleHireBillEntry" && documentTypeId == 13) {
+            var prmList = [{ Name: "BillId", Value: billId }];
+            var reportInfo = { PrmList: prmList, Name: 'VendorFuelBillDetailViewPrint', Description: 'Vehicle Hire Bill Entry View' };
+            return ShowReport(reportInfo);
+        }
+        else if (status == "VehicleHireBillEntry") {
+            var prmList = [{ Name: "BillId", Value: billId }];
+            var reportInfo = { PrmList: prmList, Name: 'VendorBillDetailViewPrint', Description: 'Vehicle Hire Bill Entry View' };
+            return ShowReport(reportInfo);
+        }
+        else if (status == "BaBillEntry") {
+            var prmList = [{ Name: "BillId", Value: billId }];
+            var reportInfo = { PrmList: prmList, Name: 'VendorBaBillEntryDetailView', Description: 'Vendor BA Bill Entry Detail View' };
+            return ShowReport(reportInfo);
+        }
+        else if (status == "OtherBillEntry") {
+            var prmList = [{ Name: "BillId", Value: billId }];
+            var reportInfo = { PrmList: prmList, Name: 'VendorOtherBillView', Description: 'Vendor Bill Detail View' };
+            return ShowReport(reportInfo);
+        }
+        else if (status == "TplBillEntry") {
+            var prmList = [{ Name: "BillId", Value: billId }];
+            var reportInfo = { PrmList: prmList, Name: 'VendorTplBillView', Description: 'Vendor Bill Detail View' };
+            return ShowReport(reportInfo);
+        }
+    }
+</script>
+

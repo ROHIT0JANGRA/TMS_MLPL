@@ -1,0 +1,175 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.MasterStandardRouteCharge
+@{
+    ViewBag.Title = "StandardRouteCharge";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    baseUrl = '@Url.Action("", "RouteCityWise", new { Area = "Master" })';
+    companyId = '@SessionUtility.CompanyId';
+    warehouseId = '@SessionUtility.WarehouseId';
+</script>
+
+@using (Html.BeginForm("StandardRouteCharge", "RouteCityWise", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        <div id="dvStep1">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.RouteId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.RouteId, new SelectList(ViewBag.RouteList, "Value", "Name"), "Select Route", new { @class = "form-control", @id = "ddlRouteId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.RouteId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VehicleTypeId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.VehicleTypeId, new SelectList(ViewBag.VehicleTypeList, "Value", "Name"), "Select Vehicle Type", new { @class = "form-control", @id = "ddlVehicleType" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.VehicleTypeId)
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div style="color:red" id="divRouteMessage">
+                        @ViewBag.Message
+                    </div>
+            
+                </div>
+            </div>
+            <div class="form-footer">
+                <button id="btnStep1" type="button" class="btn btn-primary primary-btn" tabindex="0">Show Expense</button>
+            </div>
+
+            </div>
+        <div id="dvStep2" style="display:none">
+
+            <div class="page-separator">Expense Detail</div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.StandardFuelInLiters, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.TextBoxFor(model => model.StandardFuelInLiters, new { @class = "form-control numeric3", @id = "txtStandardFuelInLiters" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.StandardFuelRateInRs, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.TextBoxFor(model => model.StandardFuelRateInRs, new { @class = "form-control numeric3", @id = "txtStandardFuelRateInRs" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.StandardAdvanceAmount, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.TextBoxFor(model => model.StandardAdvanceAmount, new { @class = "form-control numeric3", @id = "txtStandardAdvanceAmount" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div style="width:50%">
+                            <table id="dtAsnList"></table>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Update </button>
+                </div>
+            </div>
+    </div>
+}
+
+<script>
+    var dtAsnList;
+
+    $(document).ready(function () {
+        SetPageLoad('Standard Route Charges', 'Mapping', null, '', '');
+
+        $('#btnStep1').click(function () {
+
+            if (IsStepValid($('#dvStep1'))) {
+                $('#dvStep2').showHide(true);
+                $('#dvStep1').pointerEvent(false);
+                document.getElementById("divRouteMessage").innerHTML = "";
+
+                GetExpencseList();
+            }
+            else
+            {
+                isStepValid = false;
+                return false;
+            }
+        });
+
+        //$('#btnSubmit').click(function () {
+
+        //});
+
+
+    });
+
+    function GetExpencseList() {
+        var requestData = {
+            RouteId: $('#ddlRouteId').val(), VehicleTypeId: $('#ddlVehicleType').val()
+        };
+        AjaxRequestWithPostAndJson(baseUrl + '/StandardRouteChargeView', JSON.stringify(requestData), function (result) {
+
+
+            if (dtAsnList == null)
+            {
+
+                dtAsnList = LoadDataTable('dtAsnList', false, false, false, null, null, [],
+                  [
+                      { title: 'S.No.', data: 'SNo' },
+                      { title: 'Name of Expense', data: 'ChargeName' },
+                      { title: 'Standard Rate', data: 'ChargeRate' }
+
+                  ]);
+            }
+            dtAsnList.fnClearTable();
+
+            if (result.length == 0) {
+                ShowMessage("Record not found");
+                isStepValid = false;
+                return false;
+            }
+            else {
+
+                $('#txtStandardFuelInLiters').val(result.StandardFuelInLiters);
+                $('#txtStandardFuelRateInRs').val(result.StandardFuelRateInRs);
+                $('#txtStandardAdvanceAmount').val(result.StandardAdvanceAmount);
+
+                $.each(result.ChargeList, function (i, item) {
+
+                    item.SNo = '<span>' + (i + 1) + '</span>';
+
+                    item.ChargeName = '<span>' + item.ChargeName + '</span>' +
+                                        '<input type=\'hidden\' name="ChargeList[' + i + '].ChargeCode" id="hdnChargeCode' + i + '" value=' + item.ChargeCode + ' />';
+
+                    item.ChargeRate = '<input type="text" class="form-control numeric3" data-val="true" data-val-required="Please enter Quantity" value=' + item.ChargeRate + ' name="ChargeList[' + i + '].ChargeRate" id="txtChargeRate' + i + '" value=\'0\'  data-val-range="Please enter Quantity greater than zero" data-val-range-max="999999999" data-val-range-min="0.001"/>' +
+                                          '<span data-valmsg-for="ChargeList[' + i + '].ChargeRate" data-valmsg-replace="true"></span>';
+                });
+                dtAsnList.dtAddData(result.ChargeList);
+
+            }
+        }, ErrorFunction, false);
+        return false;
+    }
+</script>

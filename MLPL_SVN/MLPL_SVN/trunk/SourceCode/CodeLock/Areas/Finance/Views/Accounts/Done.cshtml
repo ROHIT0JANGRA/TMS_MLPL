@@ -1,0 +1,174 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="row">
+        <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+        <div id="dvVoucherDetails">
+            <div class="col-sm-3">
+                <h4>Voucher No</h4>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                    @Html.Hidden("hdnDocumentId")
+                </div>
+            </div>
+            <div class="col-sm-2" id="dvJournalTransactionType" style="display:none">
+                <div class="form-group">
+                    <div class="clearfix">
+                        @Html.Label("Journal", new { @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button onclick="return ViewReport();" class="btn btn-info">
+                    <i class="fa fa-eye"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="dvCrossLocationDetail" style="display:none">
+        <div class="col-sm-3">
+            <h4>Voucher No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo2", @for = "DocumentNo2", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId2")
+            </div>
+        </div>
+        <div class="col-sm-2" id="dvCrossLocationTransactionType" style="display:none">
+            <div class="form-group">
+                <div class="clearfix">
+                    @Html.Label(" ", new { @id = "lblCrossLocationTransactionType", @for = "CrossLocationTransactionType", @class = "label-bold" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return ViewReport();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+    <div class="row" id="dvAdviceDetail" style="display:none">
+        <div class="col-sm-3">
+            <h4>Advice No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo3", @for = "DocumentNo3", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId3")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return ViewAdviceReport();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+    <div class="row" id="dvAdjustmentDetail" style="display:none">
+        <div class="col-sm-3">
+            <h4>Adjustment No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo4", @for = "DocumentNo4", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId4")
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var spnMassage, lblDocumentNo, hdnDocumentId, status, lblDocumentNo2, hdnDocumentId2, lblCrossLocationTransactionType;
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        lblDocumentNo2 = $('#lblDocumentNo2');
+        hdnDocumentId2 = $('#hdnDocumentId2');
+        lblDocumentNo3 = $('#lblDocumentNo3');
+        hdnDocumentId3 = $('#hdnDocumentId3');
+        lblDocumentNo4 = $('#lblDocumentNo4');
+        hdnDocumentId4 = $('#hdnDocumentId4');
+        lblCrossLocationTransactionType = $('#lblCrossLocationTransactionType');
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+        status = GetUrlValue()["status"];
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        if (status == "ContraVoucher") {
+            spnMassage.text("Contra Voucher Generated Successfully");
+            SetPageLoad('Voucher', 'Done', '', 'Create Contra Voucher', '@Url.Action("ContraVoucher")');
+        }
+        else if (status == "CreditDebitVoucher") {
+            spnMassage.text("Credit Debit Voucher Generated Successfully");
+            SetPageLoad('Voucher', 'Done', '', 'Create Credit Debit Voucher', '@Url.Action("CreditDebitVoucher")');
+        }
+        else if (status == "JournalVoucher") {
+            spnMassage.text("Journal Voucher Generated Successfully");
+            SetPageLoad('Voucher', 'Done', '', 'Create Journal Voucher', '@Url.Action("JournalVoucher")');
+        }
+        else if (status == "SpecialCostVoucher") {
+            spnMassage.text("Special Cost Voucher Generated Successfully");
+            SetPageLoad('Voucher', 'Done', '', 'Create Special Cost Voucher', '@Url.Action("SpecialCostVoucher")');
+        }
+        else if (status == "CrossLocationVoucher") {
+            spnMassage.text("Cross Location Voucher Generated Successfully");
+            SetPageLoad('Voucher', 'Done', '', 'Create Cross Location Voucher', '@Url.Action("CrossLocationVoucher")');
+            lblDocumentNo2.html(GetUrlValue()["documentNo2"]);
+            hdnDocumentId2.val(GetUrlValue()["documentId2"]);
+            $('#dvCrossLocationDetail').show();
+            $('#dvJournalTransactionType').show();
+            $('#dvCrossLocationTransactionType').show();
+            lblCrossLocationTransactionType.html(GetUrlValue()["transactionType"]);
+        }
+        else if (status == "AdviceGenerateDone") {
+            spnMassage.text("Advice Generated Successfully");
+            SetPageLoad('Advice', 'Done', '', 'Generate Advice', '@Url.Action("Advice")');
+            lblDocumentNo3.html(GetUrlValue()["documentNo"]);
+            hdnDocumentId3.val(GetUrlValue()["documentId"]);
+            $('#dvAdviceDetail').show();
+            $('#dvVoucherDetails').hide();
+        }
+        else if (status == "CustomerVendorAdjustmentDone") {
+            spnMassage.text("Customer Vendor Adjustment Done Successfully");
+            SetPageLoad('Customer Vendor Adjustment', 'Done', '', 'Go To Customer Vendor Adjustment', '@Url.Action("CustomerVendorAdjustment")');
+            $('#dvAdviceDetail').hide();
+            $('#dvCrossLocationDetail').hide();
+            $('#dvVoucherDetails').hide();
+            $('#dvAdjustmentDetail').show();
+            lblDocumentNo4.html(GetUrlValue()["documentNo"]);
+            hdnDocumentId4.val(GetUrlValue()["documentId"]);
+        }
+    }
+
+    function ViewReport() {
+        var prmList = [{ Name: "VoucherId", Value: hdnDocumentId.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'VoucherDetailView', Description: 'Voucher View' };
+        return ShowReport(reportInfo);
+        /*if (status == "ContraVoucher") {
+            var reportInfo = { PrmList: prmList, Name: 'ContraVoucherView', Description: 'Contra Voucher View' };
+            return ShowReport(reportInfo);
+        }
+        else if (status == "CreditDebitVoucher") {
+            var reportInfo = { PrmList: prmList, Name: 'CreditDebitVoucherView', Description: 'Credit Debit Voucher View' };
+            return ShowReport(reportInfo);
+        }
+        else if (status == "JournalVoucher") {
+            var reportInfo = { PrmList: prmList, Name: 'VoucherDetailView', Description: 'Journal Voucher View' };
+            return ShowReport(reportInfo);
+        }
+        else if (status == "SpecialCostVoucher") {
+            var reportInfo = { PrmList: prmList, Name: 'SpecialCostVoucherView', Description: 'Special Cost Voucher View' };
+            return ShowReport(reportInfo);
+        }*/
+    }
+
+    function ViewAdviceReport() {
+        return ShowViewPrint(159, hdnDocumentId.val());
+    }
+</script>

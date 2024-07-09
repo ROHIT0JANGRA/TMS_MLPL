@@ -1,0 +1,95 @@
+﻿@model IEnumerable<CodeLock.Models.MasterPart>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap material-table-widget">
+    <table id="dtPart">
+        <thead>
+            <tr>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.PartId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PartCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PartNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PartName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryBy)
+                </th>
+
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateBy)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.CompanyId)
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.PartId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PartCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PartNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PartName)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryBy)
+                    </td>
+
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.PartId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.PartId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Part', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtPart', true, true, true);
+    });
+</script>
+
+

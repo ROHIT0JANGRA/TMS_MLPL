@@ -1,0 +1,87 @@
+﻿@model CodeLock.Models.MasterVehicleStatus
+@{
+    ViewBag.Title = "Status Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.File, new { @class = "control-label" })
+                <div class="input-wrapper">
+                    <input type="file" id="fuStatus" name="File" />
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label></label>
+                <div class="input-wrapper">
+                    @{ var fileNamelnkId = "lnkAttachment";}
+                    <a href="#" id=@fileNamelnkId onclick="return DownloadFormat();">Download Vehicle Status Format</a>
+                    @*@Html.HiddenFor(model => model.Photo, new { id = "hdnFormatName" })*@
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-4 col-sm-12">
+            <input type="submit" value="Upload" class="btn btn-blue" id="btnSubmit" />
+        </div>
+    </div>
+    <div class="overflow-table" id="dvResult">
+        <table class="display" id="dtVehicle">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Details.FirstOrDefault().VehicleNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Details.FirstOrDefault().VehicleStatus)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Details.FirstOrDefault().StatusDateTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Details.FirstOrDefault().UploadStatus)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Details)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VehicleNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VehicleStatus)
+                        </td>
+                        <td>
+                            @item.StatusDateTime.ToDisplayDateTime()
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UploadStatus)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+                        }
+<script>
+    $(document).ready(function () {
+        var msg = '@Model.ErrorMessage';
+        if (msg != '')
+            ShowMessage(msg);
+        SetPageLoad('Vehicle Status Upload', '', 'File');
+
+        $('#dvResult').showHide(parseInt('@Model.Details.Count') > 0);
+        LoadDataTable('dtVehicle', true, true, true);
+    });
+
+    function DownloadFormat() {
+        window.location = '@Href("~/areas/Master/Views/Vehicle/Vehicle_Status_Upload_Format.xlsx")';
+    }
+</script>

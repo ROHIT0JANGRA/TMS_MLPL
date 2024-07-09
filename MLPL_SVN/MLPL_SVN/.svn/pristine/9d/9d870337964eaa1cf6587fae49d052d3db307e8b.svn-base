@@ -1,0 +1,570 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.Order
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/scripts/common-event.js"></script>
+@using (Html.BeginForm("Insert", "Order", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.OrderId)
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OrderNo, new { @class = "label" })
+                    <div class="system-label">
+                        @Html.LabelFor(model => model.OrderNo, "<System Generated>")
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Client Order No
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.InvoiceNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessage("Client Order No")
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { DefaultDate = Model.OrderDate.ConvertToDateTime(), FieldName = "OrderDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.OrderDate), IsDateOnly = false, IsRequired = true, AllowFutureDate = false, AllowPastDate = false, MinDate = DateTime.Now.Date, MaxDate = DateTime.Now.Date.AddDays(1) })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OrderType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.OrderType, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Retail", Value = "1" },
+                                                                            new SelectListItem{ Text="Direct Sale", Value = "2" },
+                                                                            new SelectListItem{ Text="STI", Value = "3" },
+                                                                         }, new { @class = "form-control", @id = "ddlOrderType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.OrderType)
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OrderFrom, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.OrderFrom, new List<SelectListItem>
+                                                                        {
+                                                                            //new SelectListItem{ Text="Supplier", Value = "1" },
+                                                                            new SelectListItem{ Text="Customer", Value = "2" },
+                                                                            new SelectListItem{ Text="Warehouse", Value = "3" },
+                                                                         }, new { @class = "form-control", @id = "ddlOrderFrom" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.OrderFrom)
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label", @id = "lblCustomerCode" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                        @Html.TextBoxFor(model => model.CustomerCode, null, new { @class = "form-control", @id = "txtCustomerCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerCode)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label(" ", " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.Label("lblCustomerName", " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                </div>
+            </div>
+
+        </div>
+
+        <div class="page-separator">SKU Details</div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                @Html.ValidationMessageFor(m => m.OrderDetails)
+                <table id="dtProduct">
+                    <thead>
+                        <tr>
+                            <th>Sku Code</th>
+                            <th>Sku Description</th>
+                            <th>Available Quantity </th>
+                            <th>Chargeable Qty </th>
+                            <th>Free Qty</th>
+                            <th>Order Qty</th>
+                            <th>Unit Price</th>
+                            <th>Sub Total</th>
+                            <th>GST(%)</th>
+                            <th>GST Amount</th>
+                            <th>Discount(%)</th>
+                            <th>Discount Amount</th>
+                            <th>Grand Total</th>
+                            <th width="95px">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.OrderDetails.Count; i++)
+                        {
+                            var item = Model.OrderDetails[i];
+                            var j = i.ToString();
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => item.SkuId, new { id = "hdnSkuId" + j, @Name = "OrderDetails[" + j + "].SkuId" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.SkuCode, new { @class = "form-control", @id = "txtSkuCode" + j, @Name = "OrderDetails[" + j + "].SkuCode" })
+                                    </div>
+                                    @Html.ValidationMessage("OrderDetails[" + j + "].SkuCode")
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.SkuDescription, new { @class = "form-control textlabel", @id = "txtSkuDescription" + j })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.AvailableQuantity, new { @class = "form-control textlabel", @id = "txtAvailableQuantity" + j, @Name = "OrderDetails[" + j + "].AvailableQuantity" })
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.ChargeableQty, new { @class = "form-control numeric", @id = "txtChargeableQty" + j, @Name = "OrderDetails[" + j + "].ChargeableQty" })
+                                    </div>
+                                    @Html.ValidationMessage("OrderDetails[" + j + "].ChargeableQty")
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.FreeQty, new { @class = "form-control", @id = "txtFreeQty" + j, @Name = "OrderDetails[" + j + "].FreeQty" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.OrderQty, new { @class = "form-control text textlabel", @id = "txtOrderQty" + j, @Name = "OrderDetails[" + j + "].OrderQty" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.UnitPrice, new { @class = "form-control text numric3", @id = "txtUnitPrice" + j, @Name = "OrderDetails[" + j + "].UnitPrice" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.SubTotal, new { @class = "form-control text textlabel", @id = "txtSubTotal" + j, @Name = "OrderDetails[" + j + "].SubTotal" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.GST, new { @class = "form-control text numric3", @id = "txtGST" + j, @Name = "OrderDetails[" + j + "].GST" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.GSTAmount, new { @class = "form-control text textlabel", @id = "txtGSTAmount" + j, @Name = "OrderDetails[" + j + "].GSTAmount" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.Discount, new { @class = "form-control text numric3", @id = "txtDiscount" + j, @Name = "OrderDetails[" + j + "].Discount" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.DiscountAmount, new { @class = "form-control text textlabel", @id = "txtDiscountAmount" + j, @Name = "OrderDetails[" + j + "].DiscountAmount" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.GrandTotal, new { @class = "form-control text textlabel", @id = "txtGrandTotal" + j, @Name = "OrderDetails[" + j + "].GrandTotal" })
+                                    </div>
+                                </td>
+
+                                <td></td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+
+                </table>
+            </div>
+        </div>
+
+        <div class="page-separator">Ship To</div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ShipToFrom, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ShipToFrom, new { @class = "form-control", @id = "txtShipToFrom" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ShipToFrom)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ShipToAddress1, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ShipToAddress1, new { @class = "form-control", @id = "txtShipToAddress1" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ShipToAddress1)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ShipToAddress2, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ShipToAddress2, new { @class = "form-control", @id = "txtShipToAddress2" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ShipToAddress3, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ShipToAddress3, new { @class = "form-control", @id = "txtShipToAddress3" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ShipToPincode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ShipToPincode, new { @class = "form-control", @id = "txtShipToPincode" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ShipToMobileNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ShipToMobileNo, new { @class = "form-control", @id = "txtShipToMobileNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ShipToMobileNo)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ShipToEmailId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ShipToEmailId, new { @class = "form-control", @id = "txtShipToEmailId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ShipToEmailId)
+                </div>
+            </div>
+        </div>
+
+            <div class="page-separator">Bill To</div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillToFrom, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BillToFrom, new { @class = "form-control", @id = "txtBillToFrom" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BillToFrom)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillToAddress1, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BillToAddress1, new { @class = "form-control", @id = "txtBillToAddress1" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BillToAddress1)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillToAddress2, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BillToAddress2, new { @class = "form-control", @id = "txtBillToAddress2" })
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillToAddress3, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BillToAddress3, new { @class = "form-control", @id = "txtBillToAddress3" })
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillToPincode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BillToPincode, new { @class = "form-control", @id = "txtBillToPincode" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillToMobileNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BillToMobileNo, new { @class = "form-control", @id = "txtBillToMobileNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BillToMobileNo)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillToEmailId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BillToEmailId, new { @class = "form-control", @id = "txtBillToEmailId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BillToEmailId)
+                </div>
+            </div>
+        </div>
+
+
+
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Generate</button>
+            </div>
+        </div>
+}
+
+<script>
+    var companyId = '@SessionUtility.CompanyId', isCoupon = 0, unitPrice = 0;
+    $(document).ready(function () {
+        SetPageLoad('Order', 'Entry', 'OrderDate');
+
+        lblCustomerCode = $('#lblCustomerCode');
+        txtCustomerCode = $('#txtCustomerCode');
+        hdnCustomerId = $('#hdnCustomerId');
+        ddlOrderFrom = $('#ddlOrderFrom');
+        lblCustomerName = $('#lblCustomerName');
+
+        txtShipToFrom = $('#txtShipToFrom');
+        txtShipToAddress1 = $('#txtShipToAddress1');
+        txtShipToAddress2 = $('#txtShipToAddress2');
+        txtShipToAddress3 = $('#txtShipToAddress3');
+        txtShipToPincode = $('#txtShipToPincode');
+        txtShipToMobileNo = $('#txtShipToMobileNo');
+        txtShipToEmailId = $('#txtShipToEmailId');
+        txtBillToFrom = $('#txtBillToFrom');
+        txtBillToAddress1 = $('#txtBillToAddress1');
+        txtBillToAddress2 = $('#txtBillToAddress2');
+        txtBillToAddress3 = $('#txtBillToAddress3');
+        txtBillToPincode = $('#txtBillToPincode');
+        txtBillToMobileNo = $('#txtBillToMobileNo');
+        txtBillToEmailId = $('#txtBillToEmailId');
+
+        InitGrid('dtProduct', false, 13, InitProductTable);
+
+        ddlOrderFrom.change(OnSupplierTypeChange);
+        txtCustomerCode.blur(CheckValidSupplier);
+
+        OnSupplierTypeChange();
+        $('#btnSubmit').click(OnSubmit);
+    });
+
+    function CheckValidSupplier() {
+        if (txtCustomerCode.val() != '')
+            if (ddlOrderFrom.val() == 1)
+                WMS.IsSupplierCodeExist(txtCustomerCode, hdnCustomerId, lblCustomerName);
+            else if (ddlOrderFrom.val() == 2)
+                IsCustomerCodeExistForOrder(txtCustomerCode, hdnCustomerId, lblCustomerName,
+               txtShipToFrom, txtShipToAddress1, txtShipToAddress2, txtShipToAddress3, txtShipToPincode, txtShipToMobileNo, txtShipToEmailId,
+                txtBillToFrom, txtBillToAddress1, txtBillToAddress2, txtBillToAddress3, txtBillToPincode, txtBillToMobileNo, txtBillToEmailId
+                );
+            else if (ddlOrderFrom.val() == 3)
+                IsWarehouseNameExist(txtCustomerCode, hdnCustomerId, lblCustomerName);
+    }
+    function OnSupplierTypeChange() {
+        hdnCustomerId.val('');
+        lblCustomerCode.val('');
+        txtCustomerCode.val('');
+        lblCustomerName.text('');
+
+        if (ddlOrderFrom.val() == 1) {
+            SupplierAutoComplete(txtCustomerCode.Id, hdnCustomerId.Id);
+            lblCustomerCode.text("Supplier");
+            AddRequired(txtCustomerCode, "Please enter Supplier");
+        }
+        else if (ddlOrderFrom.val() == 2) {
+            CustomerAutoComplete(txtCustomerCode.Id, hdnCustomerId.Id);
+            lblCustomerCode.text("Customer");
+            AddRequired(txtCustomerCode, "Please enter Customer");
+        }
+        else if (ddlOrderFrom.val() == 3) {
+            WarehouseAutoComplete(txtCustomerCode.Id, hdnCustomerId.Id);
+            lblCustomerCode.text("Warehouse");
+            AddRequired(txtSupplierCode, "Please enter Warehouse");
+        }
+    }
+
+    function InitProductTable() {
+        $('[id*="txtSkuCode"]').each(function () {
+            var txtSkuCode = $(this);
+            var hdnSkuId = $('#' + this.Id.replace('txtSkuCode', 'hdnSkuId'));
+            var txtSkuDescription = $('#' + this.Id.replace('txtSkuCode', 'txtSkuDescription'));
+            var txtAvailableQuantity = $('#' + this.Id.replace('txtSkuCode', 'txtAvailableQuantity'));
+            var txtChargeableQty = $('#' + this.Id.replace('txtSkuCode', 'txtChargeableQty'));
+            var txtFreeQty = $('#' + this.Id.replace('txtSkuCode', 'txtFreeQty'));
+            var txtOrderQty = $('#' + this.Id.replace('txtSkuCode', 'txtOrderQty'));
+            var txtUnitPrice = $('#' + this.Id.replace('txtSkuCode', 'txtUnitPrice'));
+            var txtSubTotal = $('#' + this.Id.replace('txtSkuCode', 'txtSubTotal'));
+            var txtGST = $('#' + this.Id.replace('txtSkuCode', 'txtGST'));
+            var txtGSTAmount = $('#' + this.Id.replace('txtSkuCode', 'txtGSTAmount'));
+            var txtDiscount = $('#' + this.Id.replace('txtSkuCode', 'txtDiscount'));
+            var txtDiscountAmount = $('#' + this.Id.replace('txtSkuCode', 'txtDiscountAmount'));
+            var txtGrandTotal = $('#' + this.Id.replace('txtSkuCode', 'txtGrandTotal'));
+
+            txtSkuCode.blur(function () {
+
+                if (!CheckDuplicateInTable('dtProduct', 'txtSkuCode', 'Sku Code', txtSkuCode))
+                   return false;
+
+                return WMS.IsSkuCodeOnCreateOrderExist(txtSkuCode, hdnSkuId, txtSkuDescription, txtAvailableQuantity, txtUnitPrice);
+            });
+
+            WMS.SkuAutoComplete(txtSkuCode.Id, hdnSkuId.Id);
+
+            txtChargeableQty.blur(function () {
+                Calculation(txtAvailableQuantity, txtChargeableQty, txtFreeQty, txtOrderQty, txtUnitPrice,
+       txtSubTotal, txtGST, txtGSTAmount, txtDiscount, txtDiscountAmount, txtGrandTotal);
+
+                var OrderQuantity, AvailQuantity;
+                AvailQuantity = txtAvailableQuantity.val();
+                OrderQuantity = txtOrderQty.val();
+
+                if (parseFloat(OrderQuantity) > parseFloat(AvailQuantity)) {
+                    ShowMessage('Quantity can not be grater then Available Quantity');
+                    txtChargeableQty.val('');
+                }
+            });
+
+            txtFreeQty.blur(function () {
+                Calculation(txtAvailableQuantity, txtChargeableQty, txtFreeQty, txtOrderQty, txtUnitPrice,
+       txtSubTotal, txtGST, txtGSTAmount, txtDiscount, txtDiscountAmount, txtGrandTotal);
+
+                var OrderQuantity, AvailQuantity;
+                AvailQuantity = txtAvailableQuantity.val();
+                OrderQuantity = txtOrderQty.val();
+
+
+                if (parseFloat(OrderQuantity) > parseFloat(AvailQuantity)) {
+                    ShowMessage('Quantity can not be grater then Available Quantity');
+                    txtFreeQty.val('');
+                }
+
+            });
+
+
+            txtGST.blur(function () {
+                Calculation(txtAvailableQuantity, txtChargeableQty, txtFreeQty, txtOrderQty, txtUnitPrice,
+       txtSubTotal, txtGST, txtGSTAmount, txtDiscount, txtDiscountAmount, txtGrandTotal);
+            });
+
+
+            txtDiscount.blur(function () {
+                Calculation(txtAvailableQuantity, txtChargeableQty, txtFreeQty, txtOrderQty, txtUnitPrice,
+       txtSubTotal, txtGST, txtGSTAmount, txtDiscount, txtDiscountAmount, txtGrandTotal);
+            });
+
+            txtUnitPrice.blur(function () {
+                Calculation(txtAvailableQuantity, txtChargeableQty, txtFreeQty, txtOrderQty, txtUnitPrice,
+       txtSubTotal, txtGST, txtGSTAmount, txtDiscount, txtDiscountAmount, txtGrandTotal);
+            });
+
+
+        });
+    }
+
+    function Calculation(txtAvailableQuantity, txtChargeableQty, txtFreeQty, txtOrderQty, txtUnitPrice,
+       txtSubTotal, txtGST, txtGSTAmount, txtDiscount, txtDiscountAmount, txtGrandTotal) {
+
+        var AvailableQuantity, ChargeableQty, FreeQty, OrderQty, UnitPrice, SubTotal, GST, GSTAmount, Discount, DiscountAmount, GrandTotal;
+
+        AvailableQuantity = txtAvailableQuantity.val();
+        ChargeableQty = txtChargeableQty.val();
+        FreeQty = txtFreeQty.val();
+        OrderQty = txtOrderQty.val();
+        UnitPrice = txtUnitPrice.val();
+        GST = txtGST.val();
+        Discount = txtDiscount.val();
+
+        if (ChargeableQty == "") {
+            ChargeableQty = "0";
+        }
+
+        if (FreeQty == "") {
+            FreeQty = "0";
+        }
+
+        if (UnitPrice == "") {
+            UnitPrice = "0";
+        }
+
+        if (GST == "") {
+            GST = "0";
+        }
+
+        if (Discount == "") {
+            Discount = "0";
+        }
+
+        if (AvailableQuantity == "") {
+            AvailableQuantity = "0";
+        }
+
+        OrderQty = parseFloat(ChargeableQty) + parseFloat(FreeQty);
+
+        SubTotal = parseFloat(ChargeableQty) * parseFloat(UnitPrice);
+
+        GSTAmount = (parseFloat(SubTotal) * parseFloat(GST))/100;
+
+        DiscountAmount = (parseFloat(SubTotal) * parseFloat(Discount)) / 100;
+
+        GrandTotal = parseFloat(SubTotal) + parseFloat(GSTAmount) - parseFloat(DiscountAmount);
+
+        txtOrderQty.val(OrderQty);
+        txtSubTotal.val(SubTotal);
+        txtGSTAmount.val(GSTAmount);
+        txtDiscountAmount.val(DiscountAmount);
+        txtGrandTotal.val(GrandTotal);
+    }
+
+    function CheckDuplicateInTableByCoupon(tableId, fieldId, obj) {
+        if (obj.val() != '') {
+            var selected = [];
+            var coupon
+            $('#' + tableId + ' tr:not(:first)').each(function () {
+                var ele = $(this).find('[id*=' + fieldId + ']');
+                if (ele.length > 0 && ele != obj && ele.val() != '' && ele.val().toUpperCase() == obj.val().toUpperCase()) {
+                    isCoupon = $('#' + ele.Id.replace('txtSkuCode', 'ddlCoupon')).val();
+                    unitPrice = $('#' + ele.Id.replace('txtSkuCode', 'txtUnitPrice')).val();
+                    return false;
+                }
+            });
+            return false;
+        }
+        return true;
+    }
+
+    function OnSubmit() {
+        //$('*[id*=ddlCoupon]').enable();
+    }
+</script>

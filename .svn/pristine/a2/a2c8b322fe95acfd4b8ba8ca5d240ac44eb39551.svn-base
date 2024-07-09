@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "VehicleStatusListUpdateDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row example-buttons">
+    <div class="col-md-12">
+        <div class="note note-info note-right-striped">
+            <div class="page-separator">Vehicles are Updated Successfully</div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vehicle Status Update', 'Done', '', 'Go To VehicleStatus List', '@Url.Action("VehicleStatusList")');
+    });
+</script>
+
+

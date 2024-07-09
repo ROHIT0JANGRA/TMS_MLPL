@@ -1,0 +1,126 @@
+﻿@using CodeLock.Models
+@model MasterConsignorConsigneeMapping
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Mapping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        loginCompanyId = '@SessionUtility.CompanyId';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        baseUrl = '@Url.Action("", "ConsignorConsignee")';
+
+        $(document).ready(function () {
+            InitObjects();
+            AttachEvents();
+
+            lblConsignor.text(hdnConsignorName.val());
+            lblConsignee.text(hdnConsigneeName.val());
+            lblBillingParty.text(hdnBillingPartyName.val());
+
+
+            var isAdd = true;
+            if (hdnConsignorId.val() != 0 && hdnConsigneeId.val() != 0 && hdnBillingPartyId.val() != 0)
+                isAdd = false;
+
+            if (isAdd == false) {
+                SetPageLoad('Consignor Consignee', 'Mapping Update', 'txtBillingPartyCode', 'Go To List', '@Url.Action("Index")');
+                txtConsignorCode.attr('readonly', true);
+                txtConsigneeCode.attr('readonly', true);
+            }
+            else {
+                SetPageLoad('Consignor Consignee', 'Mapping Add', 'txtCustomerCode', 'Go To List', 'Index');
+                txtConsignorCode.attr('readonly', false);
+                txtConsigneeCode.attr('readonly', false);
+            }
+            btnSubmit.text((isAdd ? 'Create' : 'Update'));
+        });
+    });
+</script>
+<script src="~/areas/master/views/consignorconsignee/mapping.js"></script>
+
+@using (Html.BeginForm("Mapping", "ConsignorConsignee", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.HiddenFor(model => model.MappingId, new { @id = "hdnMappingId" })
+    @Html.AntiModelInjectionFor(m => m.MappingId)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.ConsignorId, new { @id = "hdnConsignorId" })
+                        @Html.TextBoxFor(model => model.ConsignorCode, null, new { @class = "form-control", @id = "txtConsignorCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ConsignorCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorName, " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.HiddenFor(model => model.ConsignorName, new { @id = "hdnConsignorName" })
+                    @Html.LabelFor(model => model.ConsignorName, " ", new { @class = "label-bold", @id = "lblConsignor" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.ConsigneeId, new { @id = "hdnConsigneeId" })
+                        @Html.TextBoxFor(model => model.ConsigneeCode, null, new { @class = "form-control", @id = "txtConsigneeCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ConsigneeCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeName, " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.HiddenFor(model => model.ConsigneeName, new { @id = "hdnConsigneeName" })
+                    @Html.LabelFor(model => model.ConsigneeName, " ", new { @class = "label-bold", @id = "lblConsignee" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillingPartyCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.BillingPartyId, new { @id = "hdnBillingPartyId" })
+                        @Html.TextBoxFor(model => model.BillingPartyCode, null, new { @class = "form-control", @id = "txtBillingPartyCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BillingPartyCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillingPartyName, " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.HiddenFor(model => model.BillingPartyName, new { @id = "hdnBillingPartyName" })
+                    @Html.LabelFor(model => model.BillingPartyName, " ", new { @class = "label-bold", @id = "lblBillingParty" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3" id="btnSubmit"></button>
+        </div>
+    </div>
+}

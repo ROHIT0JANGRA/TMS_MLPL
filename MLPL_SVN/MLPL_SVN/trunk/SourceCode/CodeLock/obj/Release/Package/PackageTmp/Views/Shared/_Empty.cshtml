@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Added by HTTrack -->
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Empower Logics</title>
+
+
+    <!-- Global stylesheets -->
+    @Styles.Render("~/assets/css")
+    <!-- /global stylesheets -->
+    @Scripts.Render("~/bundles/jquery")
+
+    <script>
+        var docketFieldList = JSON.parse('@DisplayName.GetList("Docket")'.replace(/&quot;/g, '"'));
+        var appUrl = '@Url.Action("Action", "Controller", new { Area = "Master" })';
+        @*loginLocationId = '@SessionUtility.LoginLocationId';
+        loginLocationCode = '@SessionUtility.LoginLocationCode';
+        loginUserId = '@SessionUtility.LoginUserId';
+        loginUserLocationId = '@SessionUtility.LoginUserLocationId'
+        loginCompanyId = '@SessionUtility.CompanyId';
+        loginCompanyCode = '@SessionUtility.CompanyCode';
+        loginCompanyName = '@SessionUtility.CompanyName';
+        loginFinYear = '@SessionUtility.FinYear';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';*@
+        var reportUrl = '@Url.Action("ViewReport", "Report", new { Area = "" })';
+
+        jsDateFormat = '@ConfigHelper.JsDateFormat';
+        jsTimeFormat = '@ConfigHelper.JsTimeFormat';
+        jsDateTimeFormat = '@ConfigHelper.JsDateTimeFormat';
+        jsDisplayDateFormat = '@ConfigHelper.JsDisplayDateFormat';
+        jsDisplayTimeFormat = '@ConfigHelper.JsTimeFormat';
+        jsDisplayDateTimeFormat = '@ConfigHelper.JsDisplayDateTimeFormat';
+        systemDateTime = moment('@DateTime.Now.ToString(ConfigHelper.DisplayDateTimeFormat)');
+
+        swfPath = '@Href("~/assets/icon/copy_csv_xls.swf")';
+
+        //$('#btnStep1').click(function () {
+        //    if (!CheckValidLoginLocation()) return false;
+        //});
+        //$('[id*="btnStep"]').click(function () {
+        //    if (!CheckValidLoginLocation()) return false;
+        //});
+
+
+    </script>
+
+</head>
+<body class="overlay-leftbar">
+    <div class="bb-alert alert alert-success">
+        <span>The examples populate this alert with dummy content</span>
+    </div>
+    <!--Topbar Start Here-->
+    <header class="topbar clearfix">
+        <!--Top Search Bar Start Here-->
+        <div class="top-search-bar">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <div class="search-input-addon">
+                            <span class="addon-icon"><i class="zmdi zmdi-search"></i></span>
+                            <input type="text" class="form-control top-search-input" placeholder="Search">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Top Search Bar End Here-->
+        <!--Topbar Left Branding With Logo Start-->
+        <div class="topbar-left pull-left">
+            <div class="clearfix">
+                <ul class="left-branding pull-left clickablemenu ttmenu dark-style menu-color-gradient">
+                   @* <li><span class="left-toggle-switch"><i class="zmdi zmdi-menu faa-pulse animated"></i></span></li>*@
+                    <li>
+                        <div class="">
+                            <a href="index.html" title="Admin Template"><img src="~/assets/images/logo.png" alt="logo" width="190" height="60"></a>
+                        </div>
+                    </li>
+                </ul>
+                <!--Mobile Search and Rightbar Toggle-->
+                <ul class="branding-right pull-right">
+                    <li><a href="#" class="btn-mobile-search btn-top-search"><i class="zmdi zmdi-search"></i></a></li>
+                    <li><a href="#" class="btn-mobile-bar"><i class="zmdi zmdi-apps"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <!--Topbar End Here-->
+    <!--Page Container Start Here-->
+    <section class="main-container">
+        <div class="container">
+            <div id="dvPageHeader" class="page-header filled light">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <h2 id="lblPageHeader"> </h2>
+                        <p id="lblPageSubHeader"></p>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="data-align-right">
+                            <div class="tbl-action-toolbar hide">
+                                <ul>
+                                    <li><a id="aNavigation1" class="btn add-row btn-primary" href="#"></a></li>
+                                    <li><a id="aNavigation2" class="btn add-row btn-primary" href="#"></a></li>
+                                    <li><a id="aNavigation3" class="btn add-row btn-primary" href="#"></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @RenderBody()
+        </div>
+        <!--Footer Start Here -->
+        <footer class="footer-container">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="footer-left">
+                            <span>© @DateTime.Now.Year <a href="">Empower Logics Pvt Ltd.</a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!--Footer End Here -->
+    </section>
+    <!--Page Container End Here-->
+    @Scripts.Render("~/assets/js")
+    @RenderSection("scripts", required: false)
+    <div id="dvLoader" class="page_loader">
+        @*   <img src="~/assets/images/loader.gif" width="90" height="90" alt="Loading..." style="position: fixed; top: 50%; left: 50%;background-color:transparent" />*@
+    </div>
+
+</body>
+
+</html>

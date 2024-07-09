@@ -1,0 +1,644 @@
+﻿@using CodeLock.Helper
+@model CodeLock.Models.Docket
+@using CodeLock.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("ChangeDimension", "Thc", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.HiddenFor(model => model.DocketId, new { @id = "hdnDocketId" })
+    @Html.HiddenFor(model => model.IsVolumetric, new { @id = "hdnIsVolumetric" })
+    @Html.HiddenFor(model => model.CftMeasurementType, new { @id = "hdnCftMeasurementType" })
+    @Html.HiddenFor(model => model.VolumetricWeightType, new { @id = "hdnVolumetricWeightType" })
+
+
+    <div class="widget-wrap">
+        <div class="row" id="dvCft">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CftRatio, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CftRatio, null, new { @class = "form-control numeric2", @id = "txtCftRatio", @readonly = "readonly" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CftRatio)
+                </div>
+
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="label">Total Cubic</label>
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.TotalCubic, null, new { @class = "form-control numeric2", @id = "txtTotalCubic", @readonly = "readonly" })
+                        @*@Html.TextBox("txtTotalCubic", null, new { @class = "form-control numeric2" })*@
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @Html.ValidationMessageFor(m => Model.InvoiceList)
+                <table id="dtInvoiceList" style="min-height:200px;">
+                    <thead>
+                        <tr>
+                            <th>Invoice No</th>
+                            <th>Invoice Date</th>
+                            <th>Invoice Amount</th>
+                            <th>Packages</th>
+                            <th>Length</th>
+                            <th>Breadth</th>
+                            <th>Height</th>
+                            <th>Volumetric Weight</th>
+                            <th>Actual Weight</th>
+                            <th>Charged Weight</th>
+                            <th width="95px">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.InvoiceList.Count; i++)
+                        {
+                            var item = Model.InvoiceList[i];
+                            var j = i.ToString();
+                            <tr>
+                                <td>
+
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.InvoiceNo, new { @class = "form-control", @id = "txtInvoiceNo" + j, @Name = "InvoiceList[" + j + "].InvoiceNo" })
+                                    </div>
+                                </td>
+                                <td style="width:165px;">
+                                    <div class="input">
+                                        @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "InvoiceList[" + j + "].InvoiceDate", FieldCaption = @Html.DisplayNameFor(m => Model.InvoiceList[i].InvoiceDate).ToString(), UseFieldCaption = false, IsRequired = true, IsDateOnly = true, AllowFutureDate = false, AllowPastDate = true })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.InvoiceAmount, new { @class = "form-control numeric2", @id = "txtInvoiceAmount" + j, @Name = "InvoiceList[" + j + "].InvoiceAmount" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.Packages, new { @class = "form-control numeric", @id = "txtPackages" + j, @Name = "InvoiceList[" + j + "].Packages" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.Length, new { @class = "form-control numeric", @id = "txtLength" + j, @Name = "InvoiceList[" + j + "].Length" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.Breadth, new { @class = "form-control numeric", @id = "txtBreadth" + j, @Name = "InvoiceList[" + j + "].Breadth" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.Height, new { @class = "form-control numeric", @id = "txtHeight" + j, @Name = "InvoiceList[" + j + "].Height" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.VolumetricWeight, new { @class = "form-control numeric3", @id = "txtVolumetricWeight" + j, @Name = "InvoiceList[" + j + "].VolumetricWeight", @readonly = "readonly" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.ActualWeight, new { @class = "form-control numeric3", @id = "txtActualWeight" + j, @Name = "InvoiceList[" + j + "].ActualWeight" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => item.ChargedWeight, new { @class = "form-control numeric3", @id = "txtChargedWeight" + j, @Name = "InvoiceList[" + j + "].ChargedWeight", @readonly = "readonly" })
+                                    </div>
+                                </td>
+
+                                <td></td>
+                            </tr>
+
+                        }
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td height="0"></td>
+                            <td height="0"></td>
+                            <td data-title="Total Invoice Amount">
+                                <label id="lblTotalInvoiceAmount" class="tablefooter-label numeric2">0</label>
+                            </td>
+                            <td data-title="Total Packages">
+                                @Html.HiddenFor(m => m.Packages, new { @id = "hdnTotalPackages" })
+                                <label id="lblTotalPackages" class="tablefooter-label numeric">0</label>
+                            </td>
+                            <td height="0"></td>
+                            <td height="0"></td>
+                            <td height="0"></td>
+                            <td data-title="Total Volumetric Weight">
+                                <label id="lblTotalVolumetricWeight" class="tablefooter-label numeric3">0</label>
+                            </td>
+                            <td data-title="Total Actual Weight">
+                                @Html.HiddenFor(m => m.ActualWeight, new { @id = "hdnTotalActualWeight" })
+                                <label id="lblTotalActualWeight" class="tablefooter-label numeric3">0</label>
+                            </td>
+                            <td data-title="Total Charged Weight">
+                                @Html.HiddenFor(m => m.ChargedWeight, new { @id = "hdnTotalChargedWeight" })
+                                <label id="lblTotalChargedWeight" class="tablefooter-label numeric3">0</label>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+
+                </table>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+        <div class="page-separator">Docket Details</div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.DocketNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketDate, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.DocketDate, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.FromCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ToCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.CustomerCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerName, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.CustomerName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorName, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorAddress1, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorAddress1, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeName, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeAddress1, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorAddress1, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Invoice Details</div>
+        <table id="dtInvoice">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].InvoiceNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].InvoiceDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].Length)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].Breadth)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].Height)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].VolumetricWeight)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].ChargedWeight)
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.InvoiceList)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InvoiceNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InvoiceDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Length)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Breadth)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Height)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VolumetricWeight)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ChargedWeight)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+                        @Html.DisplayFor(model => model.ChargedWeight)
+                    </th>
+
+                </tr>
+
+            </tfoot>
+        </table>
+
+    </div>
+}
+
+<script>
+        var docketId, docketFieldList, txtDocketNo, btnSubmit, isFinancialUpdate = false, showErrorMessage = true, allowWalkIn = true;
+
+    $(document).ready(function () {
+        docketFieldList = JSON.parse('@DisplayName.GetList("Docket")'.replace(/&quot;/g, '"'));
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        SetPageLoad('Change Dimension', 'Update', '', '', '');
+        txtDocketNo = $('#txtDocketNo');
+
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+
+        txtCftRatio = $('#txtCftRatio');
+        txtCftRatio.change(function () { InvoiceCalculation(); });
+
+        LoadDataTable('dtInvoice', false, false, false);
+
+         currentDate = '@DateTime.Now';
+         dateTimeFormat = '@ConfigHelper.JsDateFormat';
+
+        InitGrid('dtInvoiceList', false, 10, InitInvoiceTable);
+
+
+
+    });
+
+    function InitInvoiceTable() {
+        $('[id*="txtInvoiceNo"]').each(function () {
+
+            var txtInvoiceNo = $(this);
+            var txtInvoiceDate = $('#' + this.Id.replace('txtInvoiceNo', 'txtInvoiceDate'));
+            var txtInvoiceAmount = $('#' + this.Id.replace('txtInvoiceNo', 'txtInvoiceAmount'));
+            var txtPackages = $('#' + this.Id.replace('txtInvoiceNo', 'txtPackages'));
+            var txtLength = $('#' + this.Id.replace('txtInvoiceNo', 'txtLength'));
+            var txtBreadth = $('#' + this.Id.replace('txtInvoiceNo', 'txtBreadth'));
+            var txtHeight = $('#' + this.Id.replace('txtInvoiceNo', 'txtHeight'));
+            var txtActualWeight = $('#' + this.Id.replace('txtInvoiceNo', 'txtActualWeight'));
+            var txtChargedWeight = $('#' + this.Id.replace('txtInvoiceNo', 'txtChargedWeight'));
+
+            if (txtInvoiceDate.val() == "") {
+                InitDateTimePicker(txtInvoiceDate.Id, false, true, true, currentDate, dateTimeFormat, '', '');
+            }
+
+            txtInvoiceAmount.change(function () { InvoiceCalculation(); });
+            txtPackages.change(function () { InvoiceCalculation(); });
+            txtLength.change(function () { InvoiceCalculation(); });
+            txtBreadth.change(function () { InvoiceCalculation(); });
+            txtHeight.change(function () { InvoiceCalculation(); });
+            txtActualWeight.change(function () { InvoiceCalculation(); });
+            txtChargedWeight.change(function () { InvoiceCalculation(); });
+        });
+        InvoiceCalculation();
+    }
+
+    function CalculateTotal() {
+
+        var InvoiceAmount = 0;
+        var Packages = 0;
+        var VolumetricWeight = 0;
+        var ActualWeight = 0;
+        var ChargedWeight = 0;
+
+
+        $('[id*="txtInvoiceNo"]').each(function () {
+
+            var txtInvoiceNo = $(this);
+            var txtInvoiceAmount = $('#' + this.Id.replace('txtInvoiceNo', 'txtInvoiceAmount'));
+            var txtPackages = $('#' + this.Id.replace('txtInvoiceNo', 'txtPackages'));
+            var txtLength = $('#' + this.Id.replace('txtInvoiceNo', 'txtLength'));
+            var txtBreadth = $('#' + this.Id.replace('txtInvoiceNo', 'txtBreadth'));
+            var txtHeight = $('#' + this.Id.replace('txtInvoiceNo', 'txtHeight'));
+
+            var txtVolumetricWeight = $('#' + this.Id.replace('txtInvoiceNo', 'txtVolumetricWeight'));
+            var txtActualWeight = $('#' + this.Id.replace('txtInvoiceNo', 'txtActualWeight'));
+            var txtChargedWeight = $('#' + this.Id.replace('txtInvoiceNo', 'txtChargedWeight'));
+
+            InvoiceAmount = InvoiceAmount + parseFloat(txtInvoiceAmount.val());
+            Packages = Packages + parseFloat(txtPackages.val());
+            VolumetricWeight = VolumetricWeight + parseFloat(txtVolumetricWeight.val());
+            ActualWeight = ActualWeight + parseFloat(txtActualWeight.val());
+            ChargedWeight = ChargedWeight + parseFloat(txtChargedWeight.val());
+        });
+
+        $('#hdnTotalPackages').val(Packages);
+        $('#lblTotalPackages').text(Packages);
+
+        $('#lblTotalVolumetricWeight').text(VolumetricWeight);
+
+        $('#hdnTotalActualWeight').val(ActualWeight);
+        $('#lblTotalActualWeight').text(ActualWeight);
+
+        $('#hdnTotalChargedWeight').val(ChargedWeight);
+        $('#lblTotalChargedWeight').text(ChargedWeight);
+
+    }
+    function InvoiceCalculation() {
+
+        var isVolumetric = false;
+        var totalInvoiceAmount = 0, totalActualWeight = 0, totalVolumetricWeight = 0;
+        var totalCubic = 0;
+        var totalPackages = 0, totalChargedWeight = 0;
+        var weightDecimalPlaces = 3;
+        var useRoundActualWeight = false;
+        var useRoundChargeWeight = false;
+        var useRoundUpperChargeWeight = false;
+
+        var CftMeasurementType = $('#hdnCftMeasurementType').val();
+        var VolumetricWeightType = $('#hdnVolumetricWeightType').val();
+        var useRoundVolumetricWeight = false;
+
+
+        if ($('#hdnIsVolumetric').val() == 'True')
+            isVolumetric = true;
+        else
+            isVolumetric = false;
+
+        $('#dtInvoiceList > tbody > tr').each(function () {
+            var tr = $(this);
+            var txtInvoiceNo = tr.find('[id*="txtInvoiceNo"]');
+            var txtInvoiceAmount = tr.find('[id*="txtInvoiceAmount"]');
+            var txtPackages = tr.find('[id*="txtPackages"]');
+
+            if (isVolumetric) {
+                var txtLength = tr.find('[id*="txtLength"]');
+                var txtBreadth = tr.find('[id*="txtBreadth"]');
+                var txtHeight = tr.find('[id*="txtHeight"]');
+                var txtVolumetricWeight = tr.find('[id*="txtVolumetricWeight"]');
+            }
+            var txtActualWeight = tr.find('[id*="txtActualWeight"]');
+            var txtChargedWeight = tr.find('[id*="txtChargedWeight"]');
+
+
+
+            if (txtInvoiceAmount.val() == "") {
+                txtInvoiceAmount.val(0);
+            }
+
+            var invoiceAmount = parseFloat(txtInvoiceAmount.val());
+            var packages = txtPackages.round(0);
+            var actualWeight = 0;
+            var chargedWeight = 0;
+
+
+            if (useRoundActualWeight) {
+                actualWeight = parseFloat(txtActualWeight.val()).toFixed(weightDecimalPlaces);
+            }
+            else {
+                actualWeight = parseFloat(txtActualWeight.val());
+            }
+
+            if (isVolumetric) {
+                chargedWeight = actualWeight;
+                var length = parseFloat(txtLength.val()), breadth = parseFloat(txtBreadth.val()), height = parseFloat(txtHeight.val());
+
+                var measuretype = "CM";
+                switch (CftMeasurementType) {
+                    case 'I': measuretype = 'Inch'; break;
+                    case 'C': measuretype = 'CM'; break;
+                    case 'F': measuretype = 'Feet'; break;
+                    case 'M': measuretype = 'Meter'; break;
+                }
+
+
+
+                var divider;
+                switch (CftMeasurementType) {
+                    case 'I': divider = 1728; break;
+                    case 'C': divider = 27000; break;
+                    case 'F': divider = 1; break;
+                    case 'M': divider = 270; break;
+                    default: divider = 1; break;
+                }
+
+
+
+                var cftRatio = $('#txtCftRatio').val();
+                var cubic = packages * (length * breadth * height * cftRatio);
+                var volumetricWeight = parseFloat((cubic / divider));
+
+                switch (VolumetricWeightType) {
+                    case 'A': chargedWeight = actualWeight; break;
+                    case 'V': chargedWeight = volumetricWeight; break;
+                    case 'M': chargedWeight = (actualWeight > volumetricWeight ? actualWeight : volumetricWeight); break;
+                    default: chargedWeight = actualWeight; break;
+                }
+
+
+                if (useRoundVolumetricWeight) {
+                    volumetricWeight = parseFloat(volumetricWeight).toFixed(weightDecimalPlaces);
+                }
+                else {
+                    volumetricWeight = parseFloat(volumetricWeight);
+                }
+                txtVolumetricWeight.val(volumetricWeight);
+                totalVolumetricWeight += parseFloat(volumetricWeight);
+                totalCubic += cubic;
+            }
+            else {
+                if (parseFloat(txtChargedWeight.val()) == 0) {
+                    chargedWeight = parseFloat(txtActualWeight.val());
+                }
+                else {
+                    chargedWeight = parseFloat(txtChargedWeight.val());
+                }
+
+            }
+
+            if (useRoundChargeWeight) {
+                if (useRoundUpperChargeWeight) {
+                    chargedWeight = Math.ceil(parseFloat(chargedWeight));
+                }
+                else { chargedWeight = parseFloat(chargedWeight).toFixed(0); }
+            }
+            else {
+                if (useRoundUpperChargeWeight) {
+                    chargedWeight = Math.ceil(parseFloat(chargedWeight));
+                }
+                else { chargedWeight = parseFloat(chargedWeight); }
+            }
+            txtChargedWeight.val(chargedWeight);
+
+            txtInvoiceAmount.val(invoiceAmount.toFixed(2));
+            totalInvoiceAmount += invoiceAmount;
+            totalPackages += packages;
+            totalActualWeight = parseFloat(totalActualWeight) + parseFloat(actualWeight);
+            totalChargedWeight = parseFloat(totalChargedWeight) + parseFloat(chargedWeight);
+
+
+        });
+
+        $('#lblTotalPackages').text(totalPackages);
+        $('#lblTotalInvoiceAmount').text(totalInvoiceAmount.toFixed(2));
+        if (isVolumetric) {
+            $('#txtTotalCubic').val(totalCubic);
+            $('#lblTotalVolumetricWeight').text(totalVolumetricWeight.toFixed(weightDecimalPlaces));
+        }
+        if (useRoundActualWeight) {
+            $('#lblTotalActualWeight').text(totalActualWeight.toFixed(weightDecimalPlaces));
+            $('#lblTotalChargedWeight').text(totalChargedWeight.toFixed(weightDecimalPlaces));
+        }
+        else {
+            $('#lblTotalActualWeight').text(totalActualWeight.toFixed(weightDecimalPlaces));
+            $('#lblTotalChargedWeight').text(totalChargedWeight.toFixed(weightDecimalPlaces));
+        }
+
+        hdnTotalPackages.val(totalPackages);
+        hdnTotalActualWeight.val($('#lblTotalActualWeight').text());
+        hdnTotalChargedWeight.val($('#lblTotalChargedWeight').text());
+
+    }
+
+    function OnSubmit() {
+        var index = 0;
+        var LRArray = [];
+        var InvoiceNo = "";
+        var duplicateindex = 0;
+
+        $('[id*="txtInvoiceNo"]').each(function () {
+            var txtInvoiceNo = $('#' + this.Id.replace('txtInvoiceNo', 'txtInvoiceNo'));
+            duplicateindex = 0;
+            if (txtInvoiceNo.val() == "") {
+                index = 1;
+            }
+            else {
+
+                for (var i = 0; i < LRArray.length; i++) {
+                    if (LRArray[i] == txtInvoiceNo.val()) {
+                        duplicateindex = 1;
+                        index = 2;
+                    }
+                }
+
+                if (duplicateindex == 0)
+                    LRArray.push(txtInvoiceNo.val());
+            }
+        });
+        if (index == 1) {
+            ShowMessage('Invoice No can not be blank');
+            return false;
+        }
+        if (index == 2) {
+            ShowMessage('Invoice No is duplicate found');
+            return false;
+        }
+
+
+        return true;
+    }
+
+</script>
+

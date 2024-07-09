@@ -1,0 +1,255 @@
+﻿@model  List<CodeLock.Models.VendorContractDistanceBased>
+
+@{
+    ViewBag.Title = "DistanceBased";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "j-forms", @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <table id="dtDistanceBased">
+            <thead>
+                <tr>
+                    <th style="width:10%">
+                        @Html.DisplayNameFor(model => model[0].TransportModeId)
+                    </th>
+                    <th style="width:10%">
+                        @Html.DisplayNameFor(model => model[0].FtlTypeId)
+                    </th>
+                    <th style="width:10%">
+                        @Html.DisplayNameFor(model => model[0].VehicleId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].MinimumCharge)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].MaximumCharge)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].MinimumKM)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].RatePerAdditionalKM)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].TripPerMonth)
+                    </th>
+                    <th id="thAction" style="width:85px">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.HiddenFor(model => Model[i].ContractId, new { @id = "hdnContractId" + i, @class = "static" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => Model[i].TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name", Model[i].TransportModeId), new { @class = "form-control", @id = "ddlTransportModeId" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].TransportModeId)
+                        </td>
+                        <td>
+                            @Html.HiddenFor(model => Model[i].ContractId, new { @id = "hdnContractId" + i })
+                            <div class="select">
+                                @Html.DropDownListFor(model => Model[i].FtlTypeId, new SelectList(ViewBag.FtlTypeList, "Value", "Name", Model[i].FtlTypeId), new { @class = "form-control", @id = "ddlFtlTypeId" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].FtlTypeId)
+                        </td>
+
+                        <td>
+                            <div class="select">
+                                @Html.DropDownListFor(model => Model[i].VehicleId, new SelectList(ViewBag.VehicleList, "Value", "Name", Model[i].VehicleId), new { @class = "form-control", @id = "ddlVehicleId" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].VehicleId)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model[i].MinimumCharge, new { @class = "form-control numeric2", @id = "txtMinimumCharge" + i.ToString() })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].MinimumCharge)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model[i].MaximumCharge, new { @class = "form-control numeric2", @id = "txtMaximumCharge" + i.ToString() })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].MaximumCharge)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model[i].MinimumKM, new { @class = "form-control numeric", @id = "txtMinimumKM" + i.ToString() })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].MinimumKM)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model[i].RatePerAdditionalKM, new { @class = "form-control numeric", @id = "txtRatePerAdditionalKM" + i.ToString() })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].RatePerAdditionalKM)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model[i].TripPerMonth, new { @class = "form-control numeric", @id = "txtTripPerMonth" + i.ToString() })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].TripPerMonth)
+                            @Html.HiddenFor(model => Model[i].EntryBy, new { @id = "hdnEntryBy" + i })
+                            @Html.HiddenFor(model => Model[i].EntryDate, new { @id = "hdnEntryDate" + i })
+                        </td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="form-footer">
+            <button id="btnSubmit" type="submit" class="btn btn-success primary-btn">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var ftlTypeId, vehicleTypeId, vehicleId;
+
+    $(document).ready(function () {
+          SetPageLoad('Vendor Contract', 'Distance Based', '', 'Go To Distance Criteria', '@Url.Action("DistanceBasedCriteria")/' + '@Model[0].ContractId' + '?vendorTypeId=@Html.Raw(@ViewBag.VendorTypeId)', 'Go To Step Selection', '@Url.Action("StepSelection", new { contractId = @Html.Raw(@ViewBag.ContractId), vendorTypeId = @Html.Raw(@ViewBag.VendorTypeId), vendorId = @Html.Raw(@ViewBag.VendorId) })');
+
+        transportModeId = '@Html.Raw(ViewBag.transportModeId)';
+        ftlTypeId = '@Html.Raw(ViewBag.FtlTypeId)';
+        vehicleId = '@Html.Raw(ViewBag.VehicleId)';
+
+        if ( transportModeId != '0' && ftlTypeId != '0' && vehicleId != '0') {
+            InitGrid('dtDistanceBased', false, 8, InitAutoComplete, true);
+            $('#thAction').hide();
+            $('td:nth-child(9)').hide();
+        }
+        else
+            InitGrid('dtDistanceBased', false, 8, InitAutoComplete);
+
+        $('#btnSubmit').click(OnSubmit);
+    });
+
+    function InitAutoComplete() {
+        $('[id*="ddlTransportModeId"]').each(function () {
+            var ddlTransportModeId = $(this);
+            var ddlFtlTypeId = $('#' + ddlTransportModeId.Id.replace('ddlTransportModeId', 'ddlFtlTypeId'));
+            var ddlVehicleId = $('#' + ddlTransportModeId.Id.replace('ddlTransportModeId', 'ddlVehicleId'));
+            ddlFtlTypeId.find('option[value=0]').remove();
+            AddFirstItemDropDownList(ddlTransportModeId, 0, 'All');
+            AddFirstItemDropDownList(ddlFtlTypeId, 0, 'All');
+
+            if (transportModeId != 0) {
+                ddlTransportModeId.attr("disabled", true);
+                ddlTransportModeId.val(transportModeId);
+            }
+            ddlFtlTypeId.val(ftlTypeId);
+            if (ftlTypeId > 0) {
+                ddlFtlTypeId.attr("disabled", true);
+                ddlFtlTypeId.val(ftlTypeId);
+            }
+            if (vehicleId != 0) {
+                ddlVehicleId.attr("disabled", true);
+                ddlVehicleId.val(vehicleId);
+            }
+
+            OnFtlTypeChange(ddlFtlTypeId, ddlVehicleId);
+            ddlVehicleId.val(vehicleId);
+            IsContractExist(ddlFtlTypeId);
+
+            ddlTransportModeId.change(function () {
+                try {
+                    IsDistanceBasedContractExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    SetFormFieldFocus($(this).Id);
+                }
+            });
+
+            ddlFtlTypeId.change(function () {
+                try {
+                    IsDistanceBasedContractExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    SetFormFieldFocus($(this).attr('id'));
+                }
+            });
+
+            ddlVehicleId.change(function () {
+                try {
+                    IsDistanceBasedContractExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    SetFormFieldFocus($(this).attr('id'));
+                }
+            });
+        });
+    }
+
+  function OnFtlTypeChange(ddlFtlTypeId, ddlVehicleId) {
+        if (ddlFtlTypeId.val() != "") {
+            var requestData = { ftlTypeId: ddlFtlTypeId.val() != '' ? ddlFtlTypeId.val() : 0 };
+            AjaxRequestWithPostAndJson('@Url.Action("GetVehicleByFtlTypeId", "Vehicle",new { @Area= "Master"})', JSON.stringify(requestData), function (responseData) {
+                BindDropDownList(ddlVehicleId.Id, responseData, 'Value', 'Name', '0', 'All');
+            }, ErrorFunction, false);
+        }
+    }
+
+    function IsDistanceBasedContractExist(obj) {
+        if (obj.val() != '') {
+            var outertr = obj.closest('tr');
+            var outerddlTransportModeId = outertr.find('[id*="ddlTransportModeId"]');
+            var outerddlFtlTypeId = outertr.find('[id*="ddlFtlTypeId"]');
+            var outerddlVehicleId = outertr.find('[id*="ddlVehicleId"]');
+
+            $('#dtDistanceBased tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innerddlTransportModeId = innertr.find('[id*="ddlTransportModeId"]');
+                var innerddlFtlTypeId = innertr.find('[id*="ddlFtlTypeId"]');
+                var innerddlVehicleId = innertr.find('[id*="ddlVehicleId"]');
+
+                if (innerddlTransportModeId.attr('id') != outerddlTransportModeId.attr('id') &&
+                    innerddlTransportModeId.val() == outerddlTransportModeId.val() &&
+                    innerddlFtlTypeId.val() == outerddlFtlTypeId.val() &&
+                    innerddlVehicleId.val() == outerddlVehicleId.val())
+                {
+                    ShowMessage("Distance contract is already exist");
+                    throw (true);
+                }
+            });
+        }
+    }
+
+    function IsContractExist(obj) {
+        if (obj.val() != '') {
+            var outertr = obj.closest('tr');
+            var outerddlTransportModeId = outertr.find('[id*="ddlTransportModeId"]');
+            var outerddlFtlTypeId = outertr.find('[id*="ddlFtlTypeId"]');
+            var outerddlVehicleId = outertr.find('[id*="ddlVehicleId"]');
+
+            $('#dtDistanceBased tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innerddlTransportModeId = innertr.find('[id*="ddlTransportModeId"]');
+                var innerddlFtlTypeId = innertr.find('[id*="ddlFtlTypeId"]');
+                var innerddlVehicleId = innertr.find('[id*="ddlVehicleId"]');
+
+                if (innerddlTransportModeId.attr('id') != outerddlTransportModeId.attr('id') &&
+                    innerddlTransportModeId.val() == outerddlTransportModeId.val() &&
+                    innerddlFtlTypeId.val() == outerddlFtlTypeId.val() &&
+                    innerddlVehicleId.val() == outerddlVehicleId.val()) {
+                    obj.val('');
+                }
+            });
+        }
+    }
+
+    function OnSubmit() {
+        $('[id*="ddlTransportModeId"]').removeAttr('disabled');
+        $('[id*="ddlVehicleId"]').removeAttr('disabled');
+        $('[id*="ddlFtlTypeId"]').removeAttr('disabled');
+    }
+</script>

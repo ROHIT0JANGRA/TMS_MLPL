@@ -1,0 +1,62 @@
+﻿@model LabourDCModule
+@using CodeLock.Models
+@{
+    ViewBag.Title = "Cancellation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    baseUrl = '@Url.Action("", "Manifest")';
+    currentDate = '@DateTime.Now';
+    dateTimeFormat = '@ConfigHelper.JsDateFormat' + ' ' + '@ConfigHelper.TimeFormat';
+</script>
+<script src="~/areas/operation/views/manifest/CancellationLabourDC.js"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("CancellationLabourDC", "Manifest", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label("LabourDC Date", new { @class = "label" })
+                            </div>
+                            <div id="drManifestDate"></div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LabourDCNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.LabourDCNo, new { @class = "form-control", @id = "txtLabourDCNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.LabourDCNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtManifestDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

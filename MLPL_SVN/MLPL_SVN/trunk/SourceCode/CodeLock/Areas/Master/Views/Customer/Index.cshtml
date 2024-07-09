@@ -1,0 +1,146 @@
+﻿
+@{
+    ViewBag.Title = "Customer List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="dvCustomers" class="widget-wrap material-table-widget">
+
+</div>
+
+<script>
+    var getAllCustomersUrl = ''
+    $(document).ready(function () {
+        SetPageLoad('Customer', 'List', 'filter', 'Add New', '@Url.Action("Insert")', '', '', '','','Download Excel','@Url.Action("DownloadExcel")');
+        //LoadDataTable('dtCustomer', true, true, true);
+        GetCustomerData();
+    });
+
+
+    function GetCustomerData() {
+        var tblCustomersContent = '<table id="dtCustomer" class="table table-bordered table-striped display nowrap" style="width:100%"><thead><tr>\
+                            <th>Group Code</th>\
+                            <th>Customer Code</th>\
+                            <th>Customer Name</th>\
+                            <th>Is Active</th>\
+                            <th>Is Walk-In</th>\
+                            <th>Action</th>\
+                            </tr></thead><tbody></tbody></table>';
+        $("#dvCustomers").html(tblCustomersContent);
+        table = $('#dtCustomer').dataTable({
+            clear: true,
+            destroy: true,
+            serverSide: true,
+            searchable:true,
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, 100, 100000], [10, 25, 50, 100, "All"]],
+            autoFill: false,
+            "initComplete": function (settings, json) {
+                $(this.api().table().container()).find('input').attr('autocomplete', 'off');
+            },
+            "language": {
+                "emptyTable": "No record found.",
+                "processing":
+                    '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
+            },
+            "ajax": {
+                url: '@Url.Action("GetCustomersByPagination", "Customer")',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: function (d) {
+                    var data = { data: d };
+                    return JSON.stringify(data);
+                },
+                AutoWidth: false,
+                "dataSrc": function (json) {
+                    var data = json;
+                    json.draw = data.draw;
+                    json.recordsTotal = data.recordsTotal;
+                    json.recordsFiltered = data.recordsFiltered;
+                    json.data = JSON.parse(data.data);
+                    return json.data;
+                }
+            },
+
+            "columns": [
+                {
+                    "data": "GroupCode", "width": "10px", "orderable": false, "name": "GroupCode"
+                },
+                //{
+                //    "data": "a", "width": "15px", "orderable": false, "name": "m.LicNo", "render": function (data, type, row, meta) {
+                //        return '<div style="text-align:center;"><input type="checkbox" class="SelectedChk" id="' + row.LicNo + '" value="' + row.LicNo + '" class="filled-in chk-col-success" title="Select All"/></div>';
+                //    },
+                //    "searchable": false
+                //},
+                {
+                    "data": "CustomerCode", "name": "CustomerCode", "searchable": true
+                },
+                { "data": "CustomerName", "name": "CustomerName", "searchable": true },
+                {
+                    "data": "IsActive", "width": "15px", "orderable": false, "name": "IsActive",
+                    "render": function (data, type, row, meta) {
+                        var isActive = row.IsActive ? 'Yes' : 'No';
+                        var activeClass = row.IsActive ? 'label label-success' : 'label label-default';
+                        return '<label class="' + activeClass +'">' + isActive +'</label>';
+                    },"searchable": false
+                },
+                {
+                    "data": "IsWalkIn", "width": "15px", "orderable": false, "name": "IsWalkIn",
+                    "render": function (data, type, row, meta) {
+                        var isWalkIn = row.IsWalkIn ? 'Yes' : 'No';
+                        var activeClass = row.IsWalkIn ? 'label label-success' : 'label label-default';
+                        return '<label class="' + activeClass + '">' + isWalkIn + '</label>';
+                    }, "searchable": false
+                },
+                {
+                    "data": "CustomerId", "name": "CustomerId", "orderable": false, "name": "CustomerId",
+                    "render": function (data, type, row, meta) {
+                        var updateUrl = '@Url.Action("Update", new { id = "__customerId__" })';
+                        var viewUrl = '@Url.Action("View", new { id = "__customerId__" })';
+                        return '<div class="btn-toolbar" role="toolbar">\
+                            <div class="btn-group" role="group">\
+                                <a class="btn btn-default btn-sm m-user-edit" href="'+ updateUrl.replace('__customerId__', row.CustomerId) +'"><span class="zmdi zmdi-edit"></span></a>\
+                                <a class="btn btn-default btn-sm m-user-edit" href="'+ viewUrl.replace('__customerId__', row.CustomerId) +'"><span class="fa fa-file"></span></a>\
+                            </div>\
+                        </div>';
+                    }, "searchable": false
+                }
+
+            ]
+        });
+    }
+
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("GetData", "Customer")',
+            type: 'GET',
+            dataType: 'json', // Specify the expected data type
+            success: function (data) {
+                parseData = JSON.parse(data);
+                console.log(parseData); // Log the response data to console
+
+                var nextLink = parseData['odata.nextLink'];
+                console.log(nextLink);
+
+
+                value = parseData.value;
+                $('#dataTable').DataTable({
+                    data: value, // Assuming 'value' is the array of objects in your JSON
+                    lengthMenu: [
+                        [5, 10, 15, 20], [5, 10, 15, 20]
+                    ],
+                    pageLength:5,
+                    columns: [
+                        { data: 'CardCode', title: 'Party Code' },
+                        { data: 'CardType', title: 'Type' },
+                        { data: 'CardName', title: 'Name' },
+                        { data: 'CreateDate', title: 'Create Date' }
+                    ]
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error); // Log any errors to console
+            }
+        });
+    });
+</script>

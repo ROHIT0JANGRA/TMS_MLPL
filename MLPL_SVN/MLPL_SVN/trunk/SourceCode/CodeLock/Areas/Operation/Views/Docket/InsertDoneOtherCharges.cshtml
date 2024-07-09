@@ -1,0 +1,41 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap" style="height:300px">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                Document No
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+                @Html.Hidden("hdnFileName")
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Docket', 'Other Charges', '', 'Upload More Charges', '@Url.Action("DocketOtherCharges")');
+
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        spnMassage = $('#spnMassage');
+        //
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+        spnMassage.text("Docket Charge has uploaded successfully");
+    }
+
+</script>
+

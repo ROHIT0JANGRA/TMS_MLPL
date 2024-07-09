@@ -1,0 +1,107 @@
+﻿@using CodeLock.Models
+@model ProfitLoss
+@{
+    ViewBag.Title = "ProfitLoss";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label("Voucher Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            @Html.Label(" ", new { @class = "label" })
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.IsCumulative, true, new { @id = "rdIndividual" })
+                                <i></i>
+                                @Html.LabelFor(model => model.IsCumulative, "Individual", new { @for = "rdIndividual" })
+                            </label>
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.IsCumulative, false, new { @id = "rdCumulative" })
+                                <i></i>
+                                @Html.LabelFor(model => model.IsCumulative, "Cumulative(Transaction includes all branches)", new { @for = "rdCumulative" })
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.LocationId, Enumerable.Empty<SelectListItem>(), " ", new { @class = "form-control", @id = "ddlLocationId" })
+                            <i></i>
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationId)
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+
+    var ddlCompanyId, chkCumulative, ddlLocationId, drDate, btnSubmit;
+    var dvIsIndividual, dvLocation;
+    $(document).ready(function () {
+        SetPageLoad('Finance Report', 'Profit And Loss', '', '', '');
+        locationId = '@SessionUtility.LoginLocationId';
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        ddlCompanyId = $('#ddlCompanyId');
+        chkCumulative = $('#chkCumulative');
+        ddlLocationId = $('#ddlLocationId');
+        dvLocation = $('#dvLocation');
+        lblCode = $('#lblCode');
+        rdIndividual = $('#rdIndividual');
+        rdCumulative = $('#rdCumulative');
+        locationUrl = '@Url.Action("", "Location", new { Area = "Master" })';
+    }
+
+    function AttachEvents() {
+        OnIsIndividualChange();
+        rdIndividual.change(OnIsIndividualChange);
+        rdCumulative.change(OnIsIndividualChange);
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    }
+
+    function OnIsIndividualChange() {
+        var requestData = { isRegion: rdIndividual.IsChecked }
+        AjaxRequestWithPostAndJson(locationUrl + '/GetLocationByHierarchyId', JSON.stringify(requestData), function (responseData) {
+            BindDropDownList('ddlLocationId', responseData, 'Value', 'Name', '', 'Select Location');
+        }, ErrorFunction, false);
+    }
+
+    function ViewReport() {
+        var prmList = [
+            { Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+            { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+            { Name: "FinYear", Value: '@SessionUtility.FinYear' },
+            { Name: "CalYear", Value: '@SessionUtility.CalenderYear' },
+            { Name: "IsCumulative", Value: rdCumulative.IsChecked },
+            { Name: "LocationId", Value: ddlLocationId.val() },
+            { Name: "Groupby", Value: 'Category,Groups,Account,Location' },
+            { Name: "CompanyId", Value: '@SessionUtility.CompanyId' }];
+        var reportInfo = { PrmList: prmList, Name: 'ProfitLoss', Description: 'Profit Loss Report' };
+        return ShowReport(reportInfo);
+    }
+</script>

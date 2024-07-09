@@ -1,0 +1,43 @@
+﻿@model CodeLock.Models.TripsheetExpectedExpense
+    @using CodeLock.Models
+    @using Secure_Coding.MvcSecurityExtensions;
+    @{
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+    <script>
+        $(document).ready(function () {
+            tripsheetUrl = '@Url.Action("", "Tripsheet", new { Area = "FMS" })';
+        });
+    </script>
+    <script src="@Url.Content("~/Areas/FMS/Views/Tripsheet/ExpectedExpense.js")"></script>
+
+    <div id="dvWizard">
+        <div class="panel-body">
+            @using (Html.BeginForm("ExpectedExpense", "Tripsheet", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="tab-content">
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                @Html.Label("Select Trip Sheet Date", new { @class = "label" })
+                                <div class="clearfix">
+                                    <div id="drTripsheetDate"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div>
+                                    <table id="dtTripsheetDetailList"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>

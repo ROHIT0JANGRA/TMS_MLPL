@@ -1,0 +1,544 @@
+﻿@model CodeLock.Models.MasterVendor
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Vendor Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Vendor", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.VendorId)
+    @Html.HiddenFor(model => model.VendorId,new {@id= "hdnVendorId" })
+<div class="widget-wrap">
+
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VendorCode, new { @class = "label" })
+                <div class="clearfix">
+                    @Html.HiddenFor(model => model.VendorCode)
+                    @Html.DisplayFor(model => model.VendorCode, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VendorName, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.VendorName, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.VendorName)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            @Html.LabelFor(model => model.VendorTypeId, new { @class = "label" })
+            <div class="select">
+                @Html.DropDownListFor(model => model.VendorTypeId, new SelectList(ViewBag.VendorTypeList, "Value", "Name"), "Select Vendor Type", new { @class = "form-control", @id = "ddlVendorType" })
+                <i></i>
+            </div>
+            @Html.ValidationMessageFor(model => model.VendorTypeId)
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.MobileNo, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.MasterVendorDetail.MobileNo, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MasterVendorDetail.MobileNo)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.EmailId, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.MasterVendorDetail.EmailId, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MasterVendorDetail.EmailId)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.Address, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.MasterVendorDetail.Address, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MasterVendorDetail.Address)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.CountryId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.MasterVendorDetail.CountryId, new SelectList(ViewBag.CountryList, "Value", "Name"), "Select Country", new { @class = "form-control", @id = "ddlCountry" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.MasterVendorDetail.CountryId)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.StateId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.MasterVendorDetail.StateId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlState" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.MasterVendorDetail.StateId)
+
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.CityId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.MasterVendorDetail.CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control", @id = "ddlCity" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.MasterVendorDetail.CityId)
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            @Html.LabelFor(model => model.VendorLocation, new { @class = "label" })
+            @Html.HiddenFor(model => model.VendorLocation, new { @id = "hdnVendorLocation" })
+            @Html.HiddenFor(model => model.SavedVendorLocation, new { @id = "hdnSavedVendorLocation" })
+            @Html.DropDownListFor(model => model.VendorLocation, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlVendorLocation", @placeholder = "Select Location" })
+            @Html.ValidationMessageFor(model => model.VendorLocation)
+        </div>
+        <div class="col-sm-4" id="dvWarehouse" style="display:none">
+            @Html.LabelFor(model => model.VendorWarehouse, new { @class = "label" })
+            @Html.HiddenFor(model => model.VendorWarehouse, new { @id = "hdnVendorWarehouse" })
+            @Html.HiddenFor(model => model.SavedVendorWarehouse, new { @id = "hdnSavedVendorWarehouse" })
+            @Html.DropDownListFor(model => model.VendorWarehouse, new SelectList(ViewBag.VendorWarehouseList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlVendorWarehouse", @placeholder = "Select Warehouse" })
+            @Html.ValidationMessageFor(model => model.VendorWarehouse)
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.IsActive)
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.IsBlackListed, new { @class = "label" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.MasterVendorDetail.IsBlackListed)
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-separator">Other Information</div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.PanNo, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.MasterVendorDetail.PanNo, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MasterVendorDetail.PanNo)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.GstTinNo, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.MasterVendorDetail.GstTinNo, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MasterVendorDetail.GstTinNo)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.Remarks, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.MasterVendorDetail.Remarks, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MasterVendorDetail.Remarks)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            @Html.LabelFor(model => model.VendorService, new { @class = "label" })
+            @Html.HiddenFor(model => model.VendorService, new { @id = "hdnVendorService" })
+            @Html.HiddenFor(model => model.SavedVendorService, new { @id = "hdnSavedVendorService" })
+            @Html.DropDownListFor(model => model.VendorService, new SelectList(ViewBag.ServiceList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlVendorService", @placeholder = "Select Services" })
+            @Html.ValidationMessageFor(model => model.VendorService)
+        </div>
+
+
+        <div class="col-sm-4">
+            @Html.LabelFor(model => model.ContractApplicableId, new { @class = "label" })
+            <div class="select">
+                @Html.DropDownListFor(model => model.ContractApplicableId, new List<SelectListItem>
+                                                                    {
+                                                                        new SelectListItem{ Text="From Location", Value = "1" },
+                                                                        new SelectListItem{ Text="To Location", Value = "2" },
+                                                                     }, new { @class = "form-control", @id = "ddlContractApplicableId" })
+                <i></i>
+            </div>
+            @Html.ValidationMessageFor(model => model.ContractApplicableId)
+        </div>
+
+
+
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ManualVendorCode, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.ManualVendorCode, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="dvPaybas" style="display:none">
+
+            <div class="unit">
+                <div class="inline-group">
+                    @Html.LabelFor(model => model.PayBas, new { @class = "label-bold" })
+                    @for (var i = 0; i < Model.PayBas.Count(); i++)
+                    {
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(m => m.PayBas[i].IsActive, new { @id = "chkPayBas" + i.ToString() })
+                            <i></i>
+                            @Html.LabelFor(m => m.PayBas[i].IsActive, Model.PayBas[i].CodeDescription, new { @class = "label", @For = "chkPayBas" + i.ToString() })
+                        </label>
+                        @Html.HiddenFor(m => m.PayBas[i].CodeTypeId)
+                        @Html.HiddenFor(m => m.PayBas[i].CodeId)
+                        @Html.HiddenFor(m => m.PayBas[i].CodeDescription)
+                    }
+                    @Html.ValidationMessageFor(model => model.PayBas)
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="page-separator">BillGst Detail</div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <div class="inline-group">
+                    @Html.LabelFor(model => model.MasterVendorDetail.IsTDSApplicable, new { @class = "label" })
+                    <label class="radio">
+                        @Html.RadioButtonFor(model => model.MasterVendorDetail.IsTDSApplicable, true, new { @id = "rdTDSYes", @checked = "checked" })
+                        <i></i>
+                        @Html.LabelFor(model => model.MasterVendorDetail.IsTDSApplicable, "Yes", new { @for = "rdTDSYes" })
+                    </label>
+                    <label class="radio">
+                        @Html.RadioButtonFor(model => model.MasterVendorDetail.IsTDSApplicable, false, new { @id = "rdTDSNo" })
+                        <i></i>
+                        @Html.LabelFor(model => model.MasterVendorDetail.IsTDSApplicable, "No", new { @for = "rdTDSNo" })
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.TDSRate, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.MasterVendorDetail.TDSRate, new { @class = "form-control numeric2", @id = "txtTDS" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MasterVendorDetail.TDSRate)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            @Html.LabelFor(model => model.MasterVendorDetail.TdsAccountId, new { @class = "label" })
+            <div class="select">
+                @Html.DropDownListFor(model => model.MasterVendorDetail.TdsAccountId, new SelectList(ViewBag.TdsAccountList, "Value", "Name"), "Select TdsAccount Type", new { @class = "form-control", @id = "ddlTdsAccount" })
+                <i></i>
+            </div>
+            @Html.ValidationMessageFor(model => model.MasterVendorDetail.TdsAccountId)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.TdsCertificate, new { @class = "label" })
+                <div class="input prepend-big-btn">
+                    <label class="icon-right" for="prepend-big-btn">
+                        <i class="fa fa-download"></i>
+                    </label>
+                    <div class="file-button">
+                        Browse
+                        <input class="form-control" id="fuTdsCertificateDocumentAttachment" type="file" name="MasterVendorDetail.TdsCertificateDocumentAttachment" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                    </div>
+                    <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MasterVendorDetail.IsGstApplicable, new { @class = "label" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.MasterVendorDetail.IsGstApplicable, new { @id = "chkIsGstApplicable" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div id="dvGstApplicable" style="display:none">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVendorDetail.VendorGstStateId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.MasterVendorDetail.VendorGstStateId, new SelectList(ViewBag.VendorGstStateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlVendorGstStateId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVendorDetail.VendorGstStateId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVendorDetail.VendorGstTinNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.MasterVendorDetail.VendorGstId, new { @id = "hdnVendorGstId" })
+                        @Html.TextBoxFor(model => model.MasterVendorDetail.VendorGstTinNo, new { @class = "form-control textlabel ", @id = "txtVendorGstTinNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVendorDetail.CompanyGstStateId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.MasterVendorDetail.CompanyGstStateId, new SelectList(ViewBag.CompanyGstStateList, "Value", "Name"), "Select State", new { @id = "ddlCompanyGstStateId", @class = "form-control" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVendorDetail.CompanyGstStateId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVendorDetail.CompanyGstTinNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.MasterVendorDetail.CompanyGstId, new { @id = "hdnCompanyGstId" })
+                        @Html.TextBoxFor(model => model.MasterVendorDetail.CompanyGstTinNo, new { @class = "form-control textlabel", @id = "txtCompanyGstTinNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-footer">
+        <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+    </div>
+</div> 
+   
+
+    @*<div class="col-sm-4">
+            @Html.LabelFor(model => model.PayBasId, new { @class = "label" })
+            <div class="select">
+                @Html.DropDownListFor(model => model.PayBasId, new SelectList(ViewBag.PayBasList, "Value", "Name"), "Select Paybas", new { @class = "form-control", @id = "ddlPaybasId" })
+                <i></i>
+            </div>
+            @Html.ValidationMessageFor(model => model.PayBasId)
+        </div>*@
+
+}
+<script>
+    var ddlVendorGstStateId, ddlCompanyGstStateId, gstMasterUrl, ruleMasterUrl;
+    var useGstDetail = false;
+    $(document).ready(function () {
+        SetPageLoad('Vendor', 'Update', 'txtVendorName', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.VendorId })');
+
+        var selectedLocationValue = $('#hdnSavedVendorLocation').val();
+        $('#hdnVendorLocation').val(selectedLocationValue);
+        if (selectedLocationValue != "") {
+            selectedLocationValue = selectedLocationValue.split(',');
+            $("#ddlVendorLocation").val(selectedLocationValue).trigger('change');
+            savedVendorLocation = selectedLocationValue;
+        }
+
+        var selectedWarehouseValue = $('#hdnSavedVendorWarehouse').val();
+        $('#hdnVendorWarehouse').val(selectedWarehouseValue);
+        if (selectedWarehouseValue != "" && selectedWarehouseValue != undefined) {
+            selectedWarehouseValue = selectedWarehouseValue.split(',');
+            $("#ddlVendorWarehouse").val(selectedWarehouseValue).trigger('change');
+            savedVendorWarehouse = selectedWarehouseValue;
+        }
+
+        var selectedServiceValue = $('#hdnSavedVendorService').val();
+        $('#hdnVendorService').val(selectedServiceValue);
+        if (selectedServiceValue != "") {
+            selectedServiceValue = selectedServiceValue.split(',');
+            $("#ddlVendorService").val(selectedServiceValue).trigger('change');
+            savedVendorService = selectedServiceValue;
+        }
+
+        DropDownChange('ddlVendorLocation', function () {
+            $('#hdnVendorLocation').val($(this).val());
+        });
+
+        DropDownChange('ddlVendorWarehouse', function () {
+            $('#hdnVendorWarehouse').val($(this).val());
+        });
+
+        DropDownChange('ddlVendorService', function () {
+            $('#hdnVendorService').val($(this).val());
+        });
+
+        $('#lnkAttachment').showHide($('#hdnTdsCertificate').val() != '');
+
+        rdTDSYes = $('#rdTDSYes');
+        txtTDS = $('#txtTDS');
+        ddlTdsAccount = $('#ddlTdsAccount');
+        OnIsTDSChange();
+        $('#rdTDSYes, #rdTDSNo').change(OnIsTDSChange);
+
+        hdnVendorTypeId = $('#ddlVendorType');
+        OnVendoTypeChange();
+        hdnVendorTypeId.change(OnVendoTypeChange);
+        $('#ddlCountry').change(OnCountryChange);
+        $('#chkIsGstApplicable').click(OnGstApplicable);
+        OnGstApplicable();
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        gstMasterUrl = '@Url.Action("", "Gst", new { Area = "Master" })';
+        ddlCompanyGstStateId = $('#ddlCompanyGstStateId');
+        ddlVendorGstStateId = $('#ddlVendorGstStateId');
+
+        ddlCompanyGstStateId.change(OnCompanyGstStateChange);
+        ddlVendorGstStateId.change(OnVendorGstStateChange);
+        OnGstStateChange();
+        UseGstDetail();
+    });
+
+    function OnCountryChange() {
+        if ($('#ddlCountry').val() != "") {
+            var requestData = { countryId: $('#ddlCountry').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetStateListByCountryId", "State")', JSON.stringify(requestData), GetStateListSuccess, ErrorFunction, false);
+        }
+    }
+    function OnStateChange() {
+        if ($('#ddlState').val() != "") {
+            var requestData = { stateId: $('#ddlState').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetCityListByStateId", "City")', JSON.stringify(requestData), GetCityListSuccess, ErrorFunction, false);
+        }
+    }
+    function GetCityListSuccess(responseData) {
+        BindDropDownList('ddlCity', responseData, 'Value', 'Name', '', 'Select City');
+    }
+    function GetStateListSuccess(responseData) {
+        BindDropDownList('ddlState', responseData, 'Value', 'Name', '', 'Select State');
+    }
+    function GetVendorStateListSuccess(responseData) {
+        BindDropDownList('ddlVendorState', responseData, 'Value', 'Name', '', 'Select vendor State');
+    }
+    //function GetCompanyGstState() {
+    //    var requestData = { ownerType: 1, ownerId: loginCompanyId, locationId: 0 };
+    //    AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstStateList', JSON.stringify(requestData), function (responseData) {
+    //        BindDropDownList(ddlCompanyGstStateId.Id, responseData, 'Description', 'Name', '', (responseData.length > 1 ? 'Select Company GST State' : ''));
+    //    }, ErrorFunction, false);
+    //}
+
+    function OnCompanyGstStateChange() {
+        var requestData = { ownerType: 1, ownerId: loginCompanyId, stateId: ddlCompanyGstStateId.val() };
+        AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstDetailByOwnerAndState', JSON.stringify(requestData), function (result) {
+            if (IsObjectNullOrEmpty(result)) {
+                $('#hdnCompanyGstId').val('');
+                $('#txtCompanyGstTinNo').val('');
+            }
+            else {
+                $('#hdnCompanyGstId').val(result.GstId);
+                $('#txtCompanyGstTinNo').val(result.GstTinNo);
+
+            }
+        });
+    }
+
+    function OnVendorGstStateChange() {
+        var requestData = { ownerType: 5, ownerId: $('#hdnVendorId').val(), stateId: ddlVendorGstStateId.val() };
+        AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstDetailByOwnerAndState', JSON.stringify(requestData), function (result) {
+            if (IsObjectNullOrEmpty(result)) {
+                $('#hdnVendorGstId').val('');
+                $('#txtVendorGstTinNo').val('');
+            }
+            else {
+                $('#hdnVendorGstId').val(result.GstId);
+                $('#txtVendorGstTinNo').val(result.GstTinNo);
+
+            }
+        });
+    }
+    function OnSetMatrix() {
+        ddlVendorType = $('#ddlVendorType');
+        if (ddlVendorType.val() == '5') {
+            $('#dvPaybas').show();
+        }
+        else {
+            $('#dvPaybas').showHide(false);
+        }
+    }
+
+    function OnVendoTypeChange() {
+        $('#dvWarehouse').showHide($('#ddlVendorType').val() == 9);
+        OnSetMatrix();
+    }
+    function UseGstDetail() {
+        var requestData = { moduleId: 230, ruleId: 1 };
+        AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(requestData), function (result) {
+            useGstDetail = result == 'Y' ? true : false;
+        }, ErrorFunction, false);
+        if (useGstDetail) {
+            $('#dvGst').showHide(useGstDetail);
+        }
+    }
+    function OnGstApplicable() {
+        $('#dvGstApplicable').showHide($('#chkIsGstApplicable').IsChecked);
+    }
+
+    function ViewAttachment() {
+        var hdnTdsCertificate = $('#hdnTdsCertificate');
+        var filePath = '';
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = '@Href("~/storage/Vendor/")';
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+        window.open(filePath + hdnTdsCertificate.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+        return false;
+    }
+
+    function OnIsTDSChange() {
+        txtTDS.readOnly(!rdTDSYes.IsChecked);
+        var rdTDSYesChecked = $('#rdTDSYes').is(':checked');
+        $('#ddlTdsAccount').prop('disabled', !rdTDSYesChecked);
+        if (!rdTDSYes.IsChecked) { txtTDS.val(0); }
+        if (!rdTDSYesChecked) {
+            $('#ddlTdsAccount').val('');
+        }
+    }
+
+    function OnGstStateChange() {
+        var requestData = { ownerType: 1, ownerId: loginCompanyId, stateId: ddlCompanyGstStateId.val() };
+        AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstDetailByOwnerAndState', JSON.stringify(requestData), function (result) {
+            if (IsObjectNullOrEmpty(result)) {
+                $('#hdnCompanyGstId').val('');
+                $('#txtCompanyGstTinNo').val('');
+            }
+            else {
+                $('#hdnCompanyGstId').val(result.GstId);
+                $('#txtCompanyGstTinNo').val(result.GstTinNo);
+
+            }
+        });
+    }
+</script>
+

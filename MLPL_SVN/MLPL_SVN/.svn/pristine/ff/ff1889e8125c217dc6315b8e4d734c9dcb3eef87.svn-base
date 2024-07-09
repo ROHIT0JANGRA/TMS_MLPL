@@ -1,0 +1,514 @@
+﻿@model  List<CodeLock.Models.VendorContractDocketBased>
+
+@{
+    ViewBag.Title = "DocketBased";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "j-forms", @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Contract ID", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.ManualContractId
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vendor Type", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.VendorType
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vendor Name", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.VendorCode : @ViewBag.VendorName
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <table id="dtDocketBased">
+            <thead class="cf">
+                <tr>
+                    <th id="thFromLocation">
+                        @Html.LabelFor(model => model[0].FromLocationId, new { @class = "label-bold", @id = "lblFromLocationCode" })
+                    </th>
+                    <th id="thToLocation">
+                        @Html.LabelFor(model => model[0].ToLocationId, new { @class = "label-bold", @id = "lblToLocationCode" })
+                    </th>
+                    <th id="thPaybas">
+                        @Html.DisplayNameFor(model => model[0].PaybasId)
+                    </th>
+                    <th id="thTransportMode">
+                        @Html.DisplayNameFor(model => model[0].TransportModeId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].IsBooking)
+                    </th>
+                    <th id="thServiceType">
+                        @Html.DisplayNameFor(model => model[0].ServiceType)
+                    </th>
+                    <th id="thRateofLabour">
+                        @Html.DisplayNameFor(model => model[0].RateofLabour)
+                    </th>
+                    <th id="thRateofLabourType">
+                        @Html.DisplayNameFor(model => model[0].RateofLabourType)
+                    </th>
+                    <th id="thWeightType">
+                        @Html.DisplayNameFor(model => model[0].WeightType)
+                    </th>
+                    <th id="thSlabFrom">
+                        @Html.DisplayNameFor(model => model[0].SlabFrom)
+                    </th>
+                    <th id="thSlabTo">
+                        @Html.DisplayNameFor(model => model[0].SlabTo)
+                    </th>
+                    <th id="thProductType">
+                        @Html.DisplayNameFor(model => model[0].ProductTypeId)
+                    </th>
+                    <th id="thPackagingType">
+                        @Html.DisplayNameFor(model => model[0].PackagingTypeId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].RateTypeId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].Rate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].MinimumCharge)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].MaximumCharge)
+                    </th>
+                    <th id="thAction" style="width:95px">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                <tr>
+                    <td id="@("tdFromLocation" + i)">
+                        @Html.HiddenFor(model => Model[i].ContractId, new { @class = "static", @id = "hdnContractId" + i })
+                        @Html.HiddenFor(model => Model[i].FromLocationId, new { @id = "hdnFromLocationId" + i })
+                        <div class="input">
+                            @Html.TextBoxFor(m => Model[i].FromLocationCode, new { @class = "form-control", id = "txtFromLocationCode" + i })
+                        </div>
+                        @Html.ValidationMessageFor(m => Model[i].FromLocationCode)
+                    </td>
+                    <td id="@("tdToLocation" + i)">
+                        @Html.HiddenFor(model => Model[i].ToLocationId, new { @id = "hdnToLocationId" + i })
+                        <div class="input">
+                            @Html.TextBoxFor(m => Model[i].ToLocationCode, new { @class = "form-control", id = "txtToLocationCode" + i })
+                        </div>
+                        @Html.ValidationMessageFor(m => Model[i].ToLocationCode)
+                    </td>
+                    <td id="@("tdPaybas" + i)">
+                        <div class="select" style="width: 90px;">
+                            @Html.DropDownListFor(m => Model[i].PaybasId, new SelectList(ViewBag.PayBasList, "Value", "Name", Model[i].PaybasId), new { @class = "form-control", id = "ddlPaybasId" + i.ToString() })
+                            <i></i>
+                        </div>
+
+                        @Html.ValidationMessageFor(m => Model[i].PaybasId)
+                    </td>
+                    <td id="@("tdTransportMode" + i)">
+                        <div class="select" style="width: 105px;">
+                            @Html.DropDownListFor(m => Model[i].TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name", Model[i].TransportModeId), new { @class = "form-control", id = "ddlTransportId" + i.ToString() })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => Model[i].TransportModeId)
+                    </td>
+                    <td>
+                        @Html.Label(" ", new { id = "lblIsBookingId" + i.ToString() })
+                        @Html.HiddenFor(model => Model[i].IsBooking, new { @id = "hdnIsBooking" + i.ToString() })
+                        @Html.HiddenFor(model => Model[i].BaContractTypeId, new { @id = "hdnBaContractTypeId" + i.ToString() })
+                    </td>
+                    <td id="@("tdServiceType" + i)">
+                        <div class="select">
+                            @Html.DropDownListFor(m => Model[i].ServiceType, new List<SelectListItem>
+                       {
+                           new SelectListItem{ Text="Service Type", Value = "" },
+                           new SelectListItem{ Text="Distribution", Value = "1" },
+                           new SelectListItem{ Text="FTL", Value = "2" }
+                       }, new { @class = "form-control", id = "ddlServiceType" + i.ToString() })
+                            <i></i>
+                            @Html.HiddenFor(model => Model[i].ServiceType, new { @id = "hdnServiceTypeId" + i })
+                        </div>
+                    </td>
+                    <td id="@("tdRateofLabour" + i)">
+                        <div class="input">
+                            @Html.TextBoxFor(m => Model[i].RateofLabour, new { @class = "form-control numeric2", id = "txtRateofLabour" + i.ToString() })
+                        </div>
+                    </td>
+                    <td id="@("tdRateofLabourType" + i)">
+                        <div class="select">
+                            @Html.DropDownListFor(m => Model[i].RateofLabourType, new List<SelectListItem>
+                                                                    {
+                                                                        new SelectListItem{ Text="Labour Rate Type", Value = "" },
+                                                                        new SelectListItem{ Text="Per Quantal", Value = "1" },
+                                                                        new SelectListItem{ Text="Flat", Value = "2" }
+                                                                     }, new { @class = "form-control", id = "ddlRateofLabourType" + i.ToString() })
+                            <i></i>
+                            @Html.HiddenFor(model => Model[i].RateofLabourType, new { @id = "hdnRateofLabourTypeId" + i })
+                        </div>
+                    </td>
+                    <td id="@("tdWeightType" + i)">
+                        <div class="select">
+                            @Html.DropDownListFor(m => Model[i].WeightType, new List<SelectListItem>
+                                                                    {
+                                                                        new SelectListItem{ Text="Weight Type", Value = "" },
+                                                                        new SelectListItem{ Text="Actual Weight", Value = "1" },
+                                                                        new SelectListItem{ Text="Charged Weight", Value = "2" }
+                                                                     }, new { @class = "form-control", id = "ddlWeightType" + i.ToString() })
+                            <i></i>
+                            @Html.HiddenFor(model => Model[i].WeightType, new { @id = "hdnWeightTypeId" + i })
+
+                        </div>
+                    </td>
+                    <td id="@("tdSlabFrom" + i)">
+                        <div class="input">
+                            @Html.TextBoxFor(m => Model[i].SlabFrom, new { @class = "form-control numeric", id = "txtSlabFrom" + i.ToString() })
+                        </div>
+                    </td>
+                    <td id="@("tdSlabTo" + i)">
+                        <div class="input">
+                            @Html.TextBoxFor(m => Model[i].SlabTo, new { @class = "form-control numeric", id = "txtSlabTo" + i.ToString() })
+                        </div>
+                    </td>
+                    <td id="@("tdProductType" + i)">
+                        <div class="select">
+                            @Html.DropDownListFor(m => Model[i].ProductTypeId, new SelectList(ViewBag.ProductTypeList, "Value", "Name", Model[i].ProductTypeId), new { @class = "form-control", id = "ddlProductTypeId" + i.ToString() })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => Model[i].ProductTypeId)
+                    </td>
+                    <td id="@("tdPackagingType" + i)">
+                        <div class="select">
+                            @Html.DropDownListFor(m => Model[i].PackagingTypeId, new SelectList(ViewBag.PackagingTypeList, "Value", "Name", Model[i].PackagingTypeId), new { @class = "form-control", id = "ddlPackagingTypeId" + i.ToString() })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => Model[i].PackagingTypeId)
+                    </td>
+                    <td>
+                        <div class="select">
+                            @Html.DropDownListFor(m => Model[i].RateTypeId, new SelectList(ViewBag.RateTypeList, "Value", "Name", Model[i].RateTypeId), "Select", new { @class = "form-control", id = "ddlRateTypeId" + i.ToString() })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => Model[i].RateTypeId)
+                    </td>
+                    <td>
+                        <div class="input">
+                            @Html.TextBoxFor(m => Model[i].Rate, new { @class = "form-control numeric2", id = "txtRate" + i.ToString() })
+                        </div>
+                        @Html.ValidationMessageFor(m => Model[i].Rate)
+                    </td>
+                    <td>
+                        <div class="input">
+                            @Html.TextBoxFor(m => Model[i].MinimumCharge, new { @class = "form-control numeric2", id = "txtMinimumCharge" + i.ToString() })
+                        </div>
+                        @Html.ValidationMessageFor(m => Model[i].MinimumCharge)
+                    </td>
+                    <td>
+                        <div class="input">
+                            @Html.TextBoxFor(m => Model[i].MaximumCharge, new { @class = "form-control numeric2", id = "txtMaximumCharge" + i.ToString() })
+                            @Html.HiddenFor(model => Model[i].EntryBy, new { @id = "hdnEntryBy" + i })
+                            @Html.HiddenFor(model => Model[i].EntryDate, new { @id = "hdnEntryDate" + i })
+                        </div>
+                        @Html.ValidationMessageFor(m => Model[i].MaximumCharge)
+
+                    </td>
+                    <td></td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var fromLocationId, fromLocationCode, toLocationId, toLocationCode, paybasId, transportModeId, isBooking, baContractTypeId;
+    var ruleMasterUrl,useLabourRate, useSlabRate;
+    $(document).ready(function () {
+        SetPageLoad('Vendor Contract', 'Docket Based', 'txtNumberOfRow', 'Go To Step Selection', '@Url.Action("StepSelection")');
+        fromLocationId = '@Html.Raw(ViewBag.fromLocationId)';
+        fromLocationCode = '@Html.Raw(ViewBag.fromLocationCode)';
+        toLocationId = '@Html.Raw(ViewBag.ToLocationId)';
+        toLocationCode = '@Html.Raw(ViewBag.ToLocationCode)';
+        paybasId = '@Html.Raw(ViewBag.PayBasId)';
+        transportModeId = '@Html.Raw(ViewBag.TransportModeId)';
+        isBooking = '@Html.Raw(ViewBag.IsBooking)';
+		baContractTypeId = '@Html.Raw(ViewBag.BaContractTypeId)';
+        lblFromLocationCode = $('#lblFromLocationCode');
+        lblToLocationCode = $('#lblToLocationCode');
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        baContractTypeId = '@Html.Raw(ViewBag.BaContractTypeId)';
+
+        if (fromLocationId != '0' && toLocationId != '0' && paybasId != '0' && transportModeId != '0') {
+            InitGrid('dtDocketBased', false, 17, InitAutoComplete, false);
+            //$('#thAction').hide();
+            //$('td:nth-child(14)').hide();
+        }
+        else
+            InitGrid('dtDocketBased', false, 17, InitAutoComplete, false);
+        $('#btnSubmit').click(OnSubmit);
+
+        ManageBaContract();
+    });
+
+	function ManageBaContract() {
+        $('[id*="tdRateofLabour"]').each(function () {
+            var tdRateofLabour = $(this);
+            var tdRateofLabourType = $('#' + tdRateofLabour.attr('id').replace('tdRateofLabour', 'tdRateofLabourType'));
+            var tdWeightType = $('#' + tdRateofLabour.attr('id').replace('tdRateofLabour', 'tdWeightType'));
+            var tdServiceType = $('#' + tdRateofLabour.attr('id').replace('tdRateofLabour', 'tdServiceType'));
+            var tdSlabFrom = $('#' + tdRateofLabour.attr('id').replace('tdRateofLabour', 'tdSlabFrom'));
+            var tdSlabTo = $('#' + tdRateofLabour.attr('id').replace('tdRateofLabour', 'tdSlabTo'));
+
+			useLabourRate = (baContractTypeId == 1 ? true : false);
+            $('#thServiceType').showHide(useLabourRate);
+            $('#thRateofLabour').showHide(useLabourRate);
+            $('#thRateofLabourType').showHide(useLabourRate);
+            $('#thWeightType').showHide(useLabourRate);
+            $('#thSlabFrom').showHide(!useLabourRate);
+            $('#thSlabTo').showHide(!useLabourRate);
+            tdRateofLabour.showHide(useLabourRate);
+            tdRateofLabourType.showHide(useLabourRate);
+            tdWeightType.showHide(useLabourRate);
+            tdServiceType.showHide(useLabourRate);
+            tdSlabFrom.showHide(!useLabourRate);
+            tdSlabTo.showHide(!useLabourRate);
+        })
+    }
+
+    function InitAutoComplete() {
+        $('[id*="txtFromLocationCode"]').each(function () {
+            var txtFromLocationCode = $(this);
+            var hdnFromLocationId = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'hdnFromLocationId'));
+            var txtToLocationCode = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'txtToLocationCode'));
+            var hdnToLocationId = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'hdnToLocationId'));
+            var ddlPaybasId = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'ddlPaybasId'));
+            var ddlTransportId = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'ddlTransportId'));
+            var lblIsBookingId = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'lblIsBookingId'));
+            var hdnIsBooking = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'hdnIsBooking'));
+            var ddlProductTypeId = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'ddlProductTypeId'));
+            var ddlPackagingTypeId = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'ddlPackagingTypeId'));
+            var ddlServiceType = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'ddlServiceType'));
+            var ddlRateofLabourType = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'ddlRateofLabourType'));
+            var ddlWeightType = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'ddlWeightType'));
+            var hdnServiceTypeId = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'hdnServiceTypeId'));
+            var hdnRateofLabourTypeId = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'hdnRateofLabourTypeId'));
+            var hdnWeightTypeId = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'hdnWeightTypeId'));
+            var hdnBaContractTypeId = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'hdnBaContractTypeId'));
+
+            var tdFromLocation = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'tdFromLocation'));
+            var tdToLocation = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'tdToLocation'));
+            var tdPaybas = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'tdPaybas'));
+            var tdTransportMode = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'tdTransportMode'));
+            var tdProductType = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'tdProductType'));
+            var tdPackagingType = $('#' + txtFromLocationCode.attr('id').replace('txtFromLocationCode', 'tdPackagingType'));
+
+            ddlServiceType.change(function () {
+                try {
+                    hdnServiceTypeId.val(ddlServiceType.val());
+                }
+                catch (e) {
+                }
+            });
+
+            ddlRateofLabourType.change(function () {
+                try {
+                    hdnRateofLabourTypeId.val(ddlRateofLabourType.val());
+                }
+                catch (e) {
+                }
+            });
+
+            ddlWeightType.change(function () {
+                try {
+                    hdnWeightTypeId.val(ddlWeightType.val());
+                }
+                catch (e) {
+                }
+            });
+
+            ddlServiceType.val(hdnServiceTypeId.val());
+            ddlRateofLabourType.val(hdnRateofLabourTypeId.val());
+            ddlWeightType.val(hdnWeightTypeId.val());
+
+            ManageLocation(hdnFromLocationId, hdnToLocationId, txtFromLocationCode, txtToLocationCode, isBooking == 'True');
+
+            if (fromLocationId != 0) {
+                txtFromLocationCode.attr("readOnly", true);
+                hdnFromLocationId.val(fromLocationId);
+                txtFromLocationCode.val(fromLocationCode);
+            }
+            if (toLocationId != 0) {
+                txtToLocationCode.attr("readOnly", true);
+                hdnToLocationId.val(toLocationId)
+                txtToLocationCode.val(toLocationCode);
+            }
+
+            if (baContractTypeId == 2) {
+                $('#thFromLocation').hide();
+                $('#thToLocation').hide();
+                $('#thPaybas').hide();
+                $('#thTransportMode').hide();;
+                $('#thProductType').hide();;
+                $('#thPackagingType').hide();
+                tdFromLocation.hide();
+                tdToLocation.hide();
+                tdPaybas.hide();
+                tdTransportMode.hide();
+                tdProductType.hide();
+                tdPackagingType.hide();
+            }
+            //if (paybasId) {
+            //    ddlPaybasId.attr("disabled", true);
+            //    ddlPaybasId.val(paybasId);
+            //    SetDropDownValue(ddlPaybasId, paybasId);
+            //}
+            //if (transportModeId) {
+            //    ddlTransportId.attr("disabled", true);
+            //    ddlTransportId.val(transportModeId);
+            //    SetDropDownValue(ddlTransportId, transportModeId);
+            //}
+
+            if (isBooking == 'True') {
+                lblIsBookingId.html('Booking');
+                hdnIsBooking.val(true);
+            }
+            else {
+                lblIsBookingId.html('Delivery');
+                hdnIsBooking.val(false);
+            }
+            hdnBaContractTypeId.val(baContractTypeId);
+
+            txtFromLocationCode.blur(function () {
+                try {
+                    IsDocketBasedContractExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            txtToLocationCode.blur(function () {
+                try {
+                    IsDocketBasedContractExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            ddlPaybasId.change(function () {
+                try {
+                    IsDocketBasedContractExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    SetDropDownValue($(this), '');
+                    SetFormFieldFocus($(this).attr('id'));
+                }
+            });
+
+            ddlTransportId.change(function () {
+                try {
+                    IsDocketBasedContractExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    SetDropDownValue($(this), '');
+                    SetFormFieldFocus($(this).attr('id'));
+                }
+            });
+
+        });
+    }
+
+    function ManageLocation(hdnFromLocationId, hdnToLocationId, txtFromLocationCode, txtToLocationCode, isBooking)
+    {
+        txtFromLocationCode.off("blur");
+        txtToLocationCode.off("blur");
+
+        if (isBooking)
+        {
+            lblFromLocationCode.text('From City');
+            lblToLocationCode.text('To Location');
+            CityAutoComplete(txtFromLocationCode.Id, hdnFromLocationId.Id);
+            LocationAutoComplete(txtToLocationCode.Id, hdnToLocationId.Id);
+
+            RemoveRequired(txtFromLocationCode);
+            RemoveRequired(txtToLocationCode);
+            AddRequired(txtFromLocationCode, "Please enter From City Name");
+            AddRequired(txtToLocationCode, "Please enter To Location Code");
+
+            txtFromLocationCode.blur(function () { return IsCityNameExist(txtFromLocationCode, hdnFromLocationId); });
+            txtToLocationCode.blur(function () { return IsLocationCodeExist(txtToLocationCode, hdnToLocationId); });
+        }
+        else
+        {
+            lblFromLocationCode.text('From Location');
+            lblToLocationCode.text('To City');
+            CityAutoComplete(txtToLocationCode.Id, hdnToLocationId.Id);
+            LocationAutoComplete(txtFromLocationCode.Id, hdnFromLocationId.Id);
+
+            RemoveRequired(txtFromLocationCode);
+            RemoveRequired(txtToLocationCode);
+            AddRequired(txtFromLocationCode, "Please enter From Location Code");
+            AddRequired(txtToLocationCode, "Please enter To City Name");
+
+            txtFromLocationCode.blur(function () { return IsLocationCodeExist(txtFromLocationCode, hdnFromLocationId); });
+            txtToLocationCode.blur(function () { return IsCityNameExist(txtToLocationCode, hdnToLocationId); });
+        }
+    }
+
+    function IsDocketBasedContractExist(obj) {
+        if (obj.val() != '' && !obj.is('[readonly]')) {
+            var outertr = obj.closest('tr');
+            var outertxtFromLocationCode = outertr.find('[id*="txtFromLocationCode"]');
+            var outertxtToLocationCode = outertr.find('[id*="txtToLocationCode"]');
+            var outerddlPaybasId = outertr.find('[id*="ddlPaybasId"]');
+            var outerddlTransportId = outertr.find('[id*="ddlTransportId"]');
+            var outerlblIsBookingId = outertr.find('[id*="lblIsBookingId"]');
+
+            $('#dtDocketBased tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innertxtFromLocationCode = innertr.find('[id*="txtFromLocationCode"]');
+                var innertxtToLocationCode = innertr.find('[id*="txtToLocationCode"]');
+                var innerddlPaybasId = innertr.find('[id*="ddlPaybasId"]');
+                var innerddlTransportId = innertr.find('[id*="ddlTransportId"]');
+                var innerlblIsBookingId = innertr.find('[id*="lblIsBookingId"]');
+
+                if (innertxtFromLocationCode.attr('id') != outertxtFromLocationCode.attr('id') && innertxtFromLocationCode.val() == outertxtFromLocationCode.val() &&
+                    innertxtToLocationCode.val() == outertxtToLocationCode.val() &&
+                    innerddlPaybasId.val() == outerddlPaybasId.val() &&
+                    innerddlTransportId.val() == outerddlTransportId.val() &&
+                    innerlblIsBookingId.val() == outerlblIsBookingId.val()) {
+                    ShowMessage("Docket contract is already exist");
+                    throw (true);
+                }
+            });
+        }
+    }
+
+    function OnSubmit() {
+        $('[id*="ddlPaybasId"]').removeAttr('disabled');
+        $('[id*="ddlTransportId"]').removeAttr('disabled');
+    }
+</script>

@@ -1,0 +1,53 @@
+﻿@model CodeLock.Models.MasterAccountCategory
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "AccountCategory Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "AccountCategory", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("AccountCategoryId", 0)
+    @Html.AntiModelInjectionFor(m => m.AccountCategoryId)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CategoryName, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.CategoryName, new { @class = "form-control", @id = "txtCategoryName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CategoryName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsMain, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsMain)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Account Category', 'Create', 'txtCategoryName', 'Go To List', '@Url.Action("Index")');
+    });
+</script>

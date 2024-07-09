@@ -1,0 +1,93 @@
+﻿@model  CodeLock.Models.RateMatrixStepSelection
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.ContractId, new { @id = "hdnContractId" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.StepSelection, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, true, new { @id = "rdSlabRange", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Slab Range", new { @for = "rdSlabRange" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, false, new { @id = "rdSlabRate" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Slab Rate", new { @for = "rdSlabRate" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="button" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Next</button>
+        </div>
+    </div>
+}
+<script>
+    var IncrementalForm;
+    $(document).ready(function () {
+        SetPageLoad('Customer Contract', 'Rate Matrix', '', 'Go To Criteria Selection', '@Url.Action("StandardChargeCriteria", new { id = Model.ContractId })');
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+
+        contractId = $('#hdnContractId').val();
+        baseOn1 = GetUrlValue()["baseOn1"];
+        baseOn2 = GetUrlValue()["baseOn2"];
+        baseCode1 = GetUrlValue()["baseCode1"];
+        baseCode2 = GetUrlValue()["baseCode2"];
+        chargeCode = GetUrlValue()["chargeCode"];
+        transportModeId = GetUrlValue()["transportModeId"];
+        isBooking = GetUrlValue()["isBooking"];
+        ftlTypeId = GetUrlValue()["ftlTypeId"];
+        matrixType = GetUrlValue()["matrixType"];
+        fromLocation = GetUrlValue()["fromLocation"];
+        toLocation = GetUrlValue()["toLocation"];
+        consignorId = GetUrlValue()["consignorId"];
+        consigneeId = GetUrlValue()["consigneeId"];
+        $('#btnSubmit').click(OnSubmit);
+
+        IncrementalForm = "N";
+        var request = { moduleId: 1, ruleId: 100 };
+        AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(request), function (result) {
+            IncrementalForm = result;
+        }, ErrorFunction, false);
+
+    });
+
+    function OnSubmit() {
+        if ($('#rdSlabRange').IsChecked) {
+
+            if (IncrementalForm == "Y")
+            {
+                window.location.href = "@Url.Action("RateMatrixSlabRangeSimply")/" + contractId + "?baseOn1=" + baseOn1 + "&baseOn2=" + baseOn2 + "&baseCode1=" + baseCode1 + "&baseCode2=" + baseCode2 + "&chargeCode=" + chargeCode + "&matrixType=" + matrixType + "&fromLocation=" + fromLocation + "&toLocation=" + toLocation + "&transportModeId=" + transportModeId + "&isBooking=" + isBooking + "&ftlTypeId=" + ftlTypeId + "&consignorId=" + consignorId + "&consigneeId=" + consigneeId;
+            }
+            else
+            {
+                window.location.href = "@Url.Action("RateMatrixSlabRange")/" + contractId + "?baseOn1=" + baseOn1 + "&baseOn2=" + baseOn2 + "&baseCode1=" + baseCode1 + "&baseCode2=" + baseCode2 + "&chargeCode=" + chargeCode + "&matrixType=" + matrixType + "&fromLocation=" + fromLocation + "&toLocation=" + toLocation + "&transportModeId=" + transportModeId + "&isBooking=" + isBooking + "&ftlTypeId=" + ftlTypeId + "&consignorId=" + consignorId + "&consigneeId=" + consigneeId;
+            }
+
+            return false;
+        }
+        else {
+
+            if (IncrementalForm == "Y")
+            {
+                window.location.href = "@Url.Action("RateMatrixSlabRateSimply")/" + contractId + "?baseOn1=" + baseOn1 + "&baseOn2=" + baseOn2 + "&baseCode1=" + baseCode1 + "&baseCode2=" + baseCode2 + "&chargeCode=" + chargeCode + "&matrixType=" + matrixType + "&fromLocation=" + fromLocation + "&toLocation=" + toLocation + "&transportModeId=" + transportModeId + "&isBooking=" + isBooking + "&ftlTypeId=" + ftlTypeId + "&consignorId=" + consignorId + "&consigneeId=" + consigneeId;
+            }
+            else
+            {
+                window.location.href = "@Url.Action("RateMatrixSlabRate")/" + contractId + "?baseOn1=" + baseOn1 + "&baseOn2=" + baseOn2 + "&baseCode1=" + baseCode1 + "&baseCode2=" + baseCode2 + "&chargeCode=" + chargeCode + "&matrixType=" + matrixType + "&fromLocation=" + fromLocation + "&toLocation=" + toLocation + "&transportModeId=" + transportModeId + "&isBooking=" + isBooking + "&ftlTypeId=" + ftlTypeId + "&consignorId=" + consignorId + "&consigneeId=" + consigneeId;
+            }
+
+            return false;
+        }
+    }
+</script>

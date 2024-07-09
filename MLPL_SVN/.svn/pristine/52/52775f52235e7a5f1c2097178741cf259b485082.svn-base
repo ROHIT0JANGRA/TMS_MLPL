@@ -1,0 +1,79 @@
+﻿@model CodeLock.Models.MasterTyrePosition
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "TyrePosition Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "TyrePosition", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.TyrePositionid)
+    @Html.Hidden("TyrePositionid", 0)
+
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VehicleTypeId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.VehicleTypeId, new SelectList(ViewBag.VehicleTypeList, "Value", "Name"), "Select Vehicle Type", new { @class = "form-control", @id = "ddlVehicleType" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.VehicleTypeId)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.PositionCategoryId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.PositionCategoryId, new SelectList(ViewBag.PositionCategoryTypeList, "Value", "Name"), "Select PositionCategory", new { @class = "form-control", @id = "ddlPositionCategory" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.PositionCategoryId)
+
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.PositionShortCode, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.PositionShortCode, new { @class = "form-control", @id = "txtPositionShortCode" })
+                </div>
+                @Html.ValidationMessageFor(model => model.PositionShortCode)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.TyrePositionDescription, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.TyrePositionDescription, new { @class = "form-control", @id = "txtTyrePositionDescription" })
+                </div>
+                @Html.ValidationMessageFor(model => model.TyrePositionDescription)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.IsActive)
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-footer">
+        <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+    </div>
+</div>
+
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('TyrePosition', 'Create', 'ddlVehicleType', 'Goto List', '@Url.Action("Index")');
+    });
+</script>
+

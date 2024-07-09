@@ -1,0 +1,80 @@
+﻿@model IEnumerable<CodeLock.Models.MasterTyreModel>
+
+@{
+    ViewBag.Title = "TyreModel List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap material-table-widget">
+    <table id="dtTyreModel">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.TyreModelId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TyreModelNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TyreModelDescription)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AverageTreadDepth)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ManufacturerId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TyreSizeId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TyrePatternId)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TyreModelId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TyreModelNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TyreModelDescription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AverageTreadDepth)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ManufacturerId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TyreSizeId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TyrePatternId)
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.TyreModelId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.TyreModelId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('TyreModel', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtTyreModel', true, true, true);
+    });
+</script>
+

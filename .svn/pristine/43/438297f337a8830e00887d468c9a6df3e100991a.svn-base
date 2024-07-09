@@ -1,0 +1,402 @@
+﻿@using CodeLock.Models;
+@model Manifest
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    let scannedData = '';
+
+    $(document).ready(function () {
+
+        baseUrl = '@Url.Action("")';
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        vendorContractUrl = '@Url.Action("", "VendorContract", new { Area = "Contract" })';
+
+        btnShowScan = $('#btnShowScan');
+        txtScan = $('#txtScan');
+        btnShowScan.click(OnShowScan);
+
+        $('#txtScan').keyup(
+            function (event) {
+                scannedData += event.key;
+
+                if (scannedData.length == 50) {
+                    txtScan.val(scannedData);
+
+
+                    var index = 0;
+                    $('#lblScanMessage').text("");
+                    $('[id*="hdnDocketId"]').each(function () {
+                        var hdnDocketId = $(this);
+                        var hdnDocketNoBarcode = $('#' + hdnDocketId.Id.replace('hdnDocketId', 'hdnDocketNoBarcode'));
+                        var hdnDocketNoBarcodeScan = $('#' + hdnDocketId.Id.replace('hdnDocketId', 'hdnDocketNoBarcodeScan'));
+                        var hdnDocketPackages = $('#' + hdnDocketId.Id.replace('hdnDocketId', 'txtDocketPackages'));
+                        var txtArrivalPackages = $('#' + hdnDocketId.Id.replace('hdnDocketId', 'txtLoadPackages'));
+
+                        var BarcodeArray = hdnDocketNoBarcode.val().split(",");
+                        var IsmatchBarcode = false;
+
+
+                        for (var i = 0; i < BarcodeArray.length; i++) {
+
+                            var txt = BarcodeArray[i] + " to " + scannedData;
+                            //alert(txt);
+                            if (BarcodeArray[i] === scannedData) {
+                                IsmatchBarcode = true;
+                            }
+                        }
+
+                        // Scaned Barcode
+                        var BarcodeScanArray = hdnDocketNoBarcodeScan.val().split(",");
+
+                        var IsmatchBarcodeScan = false;
+                        for (var i = 0; i < BarcodeScanArray.length; i++) {
+                            if (BarcodeScanArray[i] === scannedData) {
+                                IsmatchBarcodeScan = true;
+                                index = 1;
+                            }
+                        }
+
+                        if (IsmatchBarcodeScan == false && IsmatchBarcode == true) {
+
+                            if (hdnDocketNoBarcodeScan.val() == "") {
+                                hdnDocketNoBarcodeScan.val(scannedData);
+                            }
+                            else {
+                                hdnDocketNoBarcodeScan.val(hdnDocketNoBarcodeScan.val() + "," + scannedData);
+                            }
+
+                            if (parseInt(hdnDocketPackages.val()) < (parseInt(txtArrivalPackages.val()) + 1)) {
+
+                            }
+                            else {
+                                txtArrivalPackages.val(parseInt(txtArrivalPackages.val()) + 1);
+                                index = 1;
+                            }
+                        }
+                        if (IsmatchBarcodeScan == true) {
+                            $('#lblScanMessage').text("Bar Code already scanned");
+                            txtScan.val('');
+                        }
+                    });
+
+                    if (index == 0) {
+                        $('#lblScanMessage').text("Bar Code is not valid");
+                        txtScan.val('');
+                    }
+
+                    scannedData = '';
+                }
+            });
+    });
+
+    function OnShowScan() {
+        $('#lblScanMessage').text("");
+        $('#MyPopup').modal('show');
+        $('#MyPopup').on('shown.bs.modal', function () {
+            $('#txtScan').focus();
+        });
+    }
+
+    function OnShowBarcodeList(DocketId, DocketNo) {
+
+        //beep();
+
+        $('#lblDocketHeader').text("Docket No. :- " + DocketNo);
+
+
+        $("#dtDocketDetailsBarcode").html("");
+        var ExportCol = '<thead><tr style="background-color:#E5E7E9;">';
+        ExportCol = ExportCol + '<th style="width:5%">S. No. </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Bar Code </th>';
+        ExportCol = ExportCol + '<th style="width:10%">Scan Status</th>';
+        ExportCol = ExportCol + '</tr>';
+        ExportCol = ExportCol + '</thead>';
+
+        $('#dtDocketDetailsBarcode').append(ExportCol);
+        var sno = 0;
+        $('[id*="hdnDocketId"]').each(function () {
+            var hdnDocketId = $(this);
+            var hdnDocketNoBarcode = $('#' + hdnDocketId.Id.replace('hdnDocketId', 'hdnDocketNoBarcode'));
+            var hdnDocketNoBarcodeScan = $('#' + hdnDocketId.Id.replace('hdnDocketId', 'hdnDocketNoBarcodeScan'));
+            var hdnDocketPackages = $('#' + hdnDocketId.Id.replace('hdnDocketId', 'hdnDocketPackages'));
+            var txtArrivalPackages = $('#' + hdnDocketId.Id.replace('hdnDocketId', 'txtArrivalPackages'));
+
+            if (parseInt(hdnDocketId.val()) == parseInt(DocketId)) {
+
+                var BarcodeArray = hdnDocketNoBarcode.val().split(",");
+                for (var i = 0; i < BarcodeArray.length; i++) {
+
+                    var BarcodeScanArray = hdnDocketNoBarcodeScan.val().split(",");
+                    var IsmatchBarcodeScan = false;
+                    for (var j = 0; j < BarcodeScanArray.length; j++) {
+                        if (BarcodeScanArray[j] === BarcodeArray[i]) {
+                            IsmatchBarcodeScan = true;
+                        }
+                    }
+                    sno = sno + 1;
+
+                    var colsInner = '<tr>';
+                    colsInner = colsInner + '<td style="width:5%">' + sno + '</td>';
+                    colsInner = colsInner + '<td style="width:10%">' + BarcodeArray[i] + ' </td>';
+                    if (IsmatchBarcodeScan == true)
+                        colsInner = colsInner + '<td style="color:#116530;">Scanned </td>';
+                    else
+                        colsInner = colsInner + '<td style="color:#0000FF;">Pending </td>';
+
+                    colsInner = colsInner + '</tr>';
+
+                    $('#dtDocketDetailsBarcode').append(colsInner);
+
+                }
+                // Scaned Barcode 
+
+            }
+
+
+        });
+
+        $('#MyPopupBarcodeList').modal('show');
+    }
+
+
+</script>
+<script src="~/areas/operation/views/loadingsheet/UpdateParcelScanning.js"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("UpdateParcelScanning", "LoadingSheet", FormMethod.Post, new { @class = "j-forms j-multistep", @id = "j-forms" }))
+        {
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label("Loading Sheet Date", new { @class = "label" })
+                            </div>
+                            <div id="drLoadingSheetDate"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.LoadingSheetNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.LoadingSheetNo, new { @class = "form-control", @id = "txtLoadingSheetNo" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.LoadingSheetNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("lblNextLocation", "Next Location", new { @class = "label", @for = "txtNextLocation" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.NextLocationSearchId, new { @id = "hdnNextLocation", @value = "0" })
+                                    @Html.TextBox("txtNextLocation", null, new { @class = "form-control", @id = "txtNextLocation" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("Delivery Vendor", new { @class = "label" })
+                               @* @Html.LabelFor(model => model.VendorId, new { @class = "label" })*@
+                                <div class="select">
+                                    @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                                    @Html.DropDownListFor(model => model.VendorDumtcoId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlVendorDumtcoId" })
+                                    @*@Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })*@
+                                <i></i>
+                                </div>
+                                @*@Html.ValidationMessageFor(model => model.VendorDumtcoId)*@
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.VendorName, new { @id = "hdnVendorName" })
+                                    @Html.Label("VendorName", " ", new { @class = "label-bold", @id = "lblVendorName" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <table id="dtLoadingSheetList"></table>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div id="MyPopup" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title">
+                                        Barcode Scanning
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+
+                                    <input id="txtScan" class="form-control" tabindex="1" /> <br />
+                                    <label id="lblScanMessage" class="label_1 danger" style="color:red" /> <br />
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal" tabindex="2">
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="MyPopupBarcodeList" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title">
+                                        <label id="lblDocketHeader" class="label_1" />
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="scroll1">
+                                        <table id="dtDocketDetailsBarcode"></table>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal" tabindex="2">
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <button type="button" id="btnShowScan" class="btn btn-danger primary-btn">Scan</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table id="dtDocketList">
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 3%"></th>
+                                    <th style="min-width: 20%"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th>
+                                        Total
+                                        @Html.HiddenFor(m => m.TotalDocket, new { @id = "hdnTotalDocket", @value = "0" })
+                                    </th>
+                                    <th>
+                                        @Html.TextBoxFor(model => model.TotalPackages, "0", new { @class = "textlabel", id = "txtTotalPackages" })
+                                    </th>
+                                    <th>
+                                    </th>
+                                    <th>
+                                        @Html.TextBoxFor(model => model.TotalActualWeight, "0.000", new { @class = "textlabel", id = "txtTotalActualWeight" })
+                                    </th>
+                                    @*<th></th>
+                                    <th></th>
+                                    <th>
+                                        @Html.TextBoxFor(model => model.TotalKartAmount, "0.00", new { @class = "form-control textlabel numeric3", id = "txtTotalKartAmount" })
+                                    </th>
+                                    <th id="thTotalLabourAmount">
+                                        @Html.TextBoxFor(model => model.TotalLabourAmount, "0.00", new { @class = "form-control textlabel numeric3", id = "txtTotalLabourAmount" })
+                                    </th>
+
+                                    <th>
+                                        @Html.TextBoxFor(model => model.TotalDeliveryKartAmount, "0.00", new { @class = "form-control textlabel numeric3", id = "txtTotalDeliveryKartAmount" })
+                                    </th>
+                                    <th id="thTotalDeliveryLabourAmount">
+                                        @Html.TextBoxFor(model => model.TotalDeliveryLabourAmount, "0.00", new { @class = "form-control textlabel numeric3", id = "txtTotalDeliveryLabourAmount" })
+                                    </th>
+                                    <th>
+                                        @Html.TextBoxFor(model => model.TotalDoorDeliveryBaAmount, "0.00", new { @class = "form-control textlabel numeric3", id = "txtTotalDoorDeliveryBaAmount" })
+                                    </th>*@
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.LoadingSheetNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.LabelFor(model => model.LoadingSheetNo, new { @id = "lblLoadingSheetNo", @class = "label-bold" })
+                                        @Html.HiddenFor(model => model.LoadingSheetId, new { @id = "hdnLoadingSheetId" })
+                                        @Html.HiddenFor(model => model.LoadingSheetNo, new { @id = "hdnLoadingSheetNo" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.LoadingSheetDateTime, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.LabelFor(model => model.LoadingSheetDateTime, new { @id = "lblLoadingSheetDateTime", @class = "label-bold" })
+                                        @Html.HiddenFor(model => model.LoadingSheetDateTime, new { @id = "hdnLoadingSheetDateTime" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "ManifestDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.ManifestDateTime), IsDateOnly = false, IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.NextLocationCode, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.TextBox("NextLocationCode", null, new { @id = "txtNextLocationCode", @class = "form-control textlabel label-bold" })
+                                        @Html.HiddenFor(model => model.NextLocationId, new { @id = "hdnNextLocationId" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txtRemarks" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        }
+    </div>
+</div>

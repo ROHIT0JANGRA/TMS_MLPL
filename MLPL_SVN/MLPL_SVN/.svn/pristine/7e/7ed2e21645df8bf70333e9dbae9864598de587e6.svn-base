@@ -1,0 +1,105 @@
+﻿@model IEnumerable<CodeLock.Models.MasterPincode>
+
+@{
+    ViewBag.Title = "Pincode List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtPincode">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Pincode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CountryName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StateName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CityName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Area)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LocationCode)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Pincode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CountryName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StateName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CityName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Area)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LocationCode)
+                    </td>
+                    <td>
+                        @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.PincodeId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.PincodeId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Pincode', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtPincode', true, true, true);
+    });
+</script>
+

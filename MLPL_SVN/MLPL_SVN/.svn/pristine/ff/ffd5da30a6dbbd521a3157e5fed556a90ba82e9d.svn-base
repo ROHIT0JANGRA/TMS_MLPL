@@ -1,0 +1,120 @@
+﻿//  
+// Type: CodeLock.Areas.WMS.Repository.PickRepository
+//  
+//  
+//  
+
+using CodeLock.Helper;
+using CodeLock.Models;
+using CodeLock.Repository;
+using Dapper;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+
+namespace CodeLock.Areas.WMS.Repository
+{
+  public class PickRepository : BaseRepository, IPickRepository, IDisposable
+  {
+    public IEnumerable<Order> GetOrderListForPick(
+      byte companyId,
+      short warehouseId,
+      string orderNo,
+      string invoiceNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@CompanyId", (object) companyId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@WareHouseId", (object) warehouseId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@OrderNo", (object) orderNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@InvoiceNo", (object) invoiceNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FromDate", (object) fromDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@ToDate", (object) toDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinStartDate", (object) finStartDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinEndDate", (object) finEndDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return (IEnumerable<Order>) DataBaseFactory.QuerySP<Order>("Usp_Pick_GetOrderListForPick", (object) dynamicParameters, "Pick - GetOrderList").ToList<Order>();
+    }
+
+    public IEnumerable<PickDetail> GetOrderDetails(
+      byte companyId,
+      short warehouseId,
+      long id)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@CompanyId", (object) companyId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@WareHouseId", (object) warehouseId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@Id", (object) id, new DbType?(DbType.Int64), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return (IEnumerable<PickDetail>) DataBaseFactory.QuerySP<PickDetail>("Usp_Pick_GetOrderDetails", (object) dynamicParameters, "Pick - GetDispatchDetail").ToList<PickDetail>();
+    }
+
+    public Response Insert(Pick objPick)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@XmlPick", (object) XmlUtility.XmlSerializeToString((object) objPick), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return DataBaseFactory.QuerySP<Response>("Usp_Pick_Insert", (object) dynamicParameters, "Pick  - Insert").FirstOrDefault<Response>();
+    }
+
+    public IEnumerable<PickRegister> GetRegisterPickDetail(
+      string pickNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@PicNo", (object) pickNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FromDate", (object) fromDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@ToDate", (object) toDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinStartDate", (object) finStartDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinEndDate", (object) finEndDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return (IEnumerable<PickRegister>) DataBaseFactory.QuerySP<PickRegister>("Usp_Pick_GetRegisterPickDetail", (object) dynamicParameters, "Pick - GetRegisterPickDetail").ToList<PickRegister>();
+    }
+
+    public IEnumerable<Pick> GetPickListForUpdate(
+      byte companyId,
+      short warehouseId,
+      string pickNo,
+      string orderNo,
+      string invoiceNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@CompanyId", (object) companyId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@WareHouseId", (object) warehouseId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@PicNo", (object) pickNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@OrderNo", (object) orderNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@InvoiceNo", (object) invoiceNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FromDate", (object) fromDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@ToDate", (object) toDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinStartDate", (object) finStartDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinEndDate", (object) finEndDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return (IEnumerable<Pick>) DataBaseFactory.QuerySP<Pick>("Usp_Pick_GetPickListForUpdate", (object) dynamicParameters, "Pick - GetPickListForUpdate").ToList<Pick>();
+    }
+
+        public IEnumerable<PickDetail> GetPickDetails(
+          byte companyId,
+          short warehouseId,
+          string Id)
+        {
+            DynamicParameters dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("@CompanyId", (object)companyId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+            dynamicParameters.Add("@WareHouseId", (object)warehouseId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+            dynamicParameters.Add("@Id", (object)Id, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+            return (IEnumerable<PickDetail>)DataBaseFactory.QuerySP<PickDetail>("Usp_Pick_GetPickDetails", (object)dynamicParameters, "Pick - GetPickDetails").ToList<PickDetail>();
+        }
+
+        public Response Update(Pick objPick)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@XmlPickUpdate", (object) XmlUtility.XmlSerializeToString((object) objPick), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return DataBaseFactory.QuerySP<Response>("Usp_Pick_Update", (object) dynamicParameters, "Pick  - Update").FirstOrDefault<Response>();
+    }
+  }
+}

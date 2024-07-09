@@ -1,0 +1,81 @@
+﻿@model IEnumerable<CodeLock.Models.MasterHsn>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtHsn">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(m => m.HsnCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.HsnName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.IsActive)
+                </th>
+                <th>Edit</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+            </tr>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <th>
+                        @Html.DisplayFor(m => item.HsnCode)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => item.HsnName)
+                    </td>
+                    <td>
+                        @Html.YesNo(item.IsActive)
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Insert", new { id = item.HsnId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.HsnId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('HSN', 'List', '', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtHsn', true, true, true);
+        $('[id=dtHsn_filter]').find('input').focus();
+    });
+</script>
+
+
+

@@ -1,0 +1,83 @@
+﻿
+@model CodeLock.Models.DocketGPRORegister
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("DocketGPRORegister", "Operation", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Label("Select Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drDate"></div>
+                </div>
+            </div>
+           
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                        @Html.TextBoxFor(model => model.CustomerCode, new { @class = "form-control", @id = "txtCustomerCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(SessionUtility.DocketNomenClature, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocketNo)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDate, ddlFromLocationId, hdnCustomerId, txtCustomerCode, lblCustomerName, txtDocketNo, btnSubmit, customerMasterUrl;
+
+    $(document).ready(function () {
+        SetPageLoad('Docket', 'Docket Register GPRO', '', '', '');
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        drDate = InitDateRange('drDate', DateRange.LastWeek, false);
+        hdnCustomerId = $('#hdnCustomerId');
+        txtCustomerCode = $('#txtCustomerCode');
+        lblCustomer = $('#lblCustomer');
+        lblCustomerName = $('#lblCustomerName');
+        txtDocketNo = $('#txtDocketNo');
+        btnSubmit = $('#btnSubmit');
+
+        CustomerAutoComplete(txtCustomerCode.Id, hdnCustomerId.Id);
+        txtCustomerCode.blur(function () { IsCustomerCodeExist(txtCustomerCode, hdnCustomerId, lblCustomerName) });
+        btnSubmit.click(ViewReport);
+    });
+
+    function ViewReport() {
+        var prmList = [{ Name: "FromDate", Value: drDate.startDate }, { Name: "ToDate", Value: drDate.endDate }, { Name: "CustomerId", Value: hdnCustomerId.val() == '' ? 0 : hdnCustomerId.val() }, { Name: "DocketNo", Value: txtDocketNo.val() == '' ? 'ALL' : txtDocketNo.val() }];
+
+        var reportInfo = { PrmList: prmList, Name: 'Docket_GPRO_Register', Description: 'Docket GPRO Register' };
+        return ShowReport(reportInfo);
+    }
+</script>

@@ -1,0 +1,107 @@
+﻿@model CodeLock.Models.MasterUserCompanyMapping
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Mapping", "UserCompany", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.DefaultCompanyId, new { @id = "hndCompany" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UserId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.UserId, new SelectList(ViewBag.UserList, "Value", "Name"), "Select User", new { @class = "form-control select2", @id = "ddlUser" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UserId)
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <table id="dtMapping" class="table-bordered"></table>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+
+<script>
+    var dtMapping, ddlUser, hndCompany, btnSubmit;
+    $(document).ready(function () {
+        dtMapping = LoadDataTable('dtMapping', false, false, false, null, null, [],
+            [
+                { title: '@Html.DisplayNameFor(model => model.CompanyList)', data: "CompanyId" },
+                { title: '@Html.DisplayNameFor(model => model.DefaultCompanyId)', data: "DefaultCompanyId" }
+            ]);
+        hndCompany = $('#hndCompany')
+        ddlUser = $('#ddlUser');
+        ddlUser.change(OnUserChange);
+        OnUserChange();
+        $('#dtMapping_wrapper').remove();
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+        SetPageLoad('User to Company', 'Mapping', ddlUser.attr('id'), 'Go To List', '@Url.Action("Index")');
+
+        
+    });
+
+
+    function SetRadio(obj) {
+        $('input[type=radio]:checked').not(obj).prop('checked', false);
+        $(obj).val(true);
+        //return false;
+    }
+
+
+    function OnSubmit() {
+        var hndCompany = $('#hndCompany');
+        $('#dtMapping tr:not(:first)').each(function () {
+            var tr = $(this);
+            var rdbCompany = tr.find('[id*="DefaultCompanyId"]');
+            var hndCompanyId = tr.find('[id*="hndCompanyId"]');
+            if (rdbCompany.is(":checked")) {
+                hndCompany.val(hndCompanyId.val());
+                return false;
+            }
+        });
+    }
+
+    function OnUserChange() {
+        if (ddlUser.val() != "") {
+            var requestData = { userId: ddlUser.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetMappingByUserId")', JSON.stringify(requestData), OnUserChangeSuccess, ErrorFunction, false);
+        }
+    }
+
+    function OnUserChangeSuccess(responseData) {
+        dtMapping.fnClearTable();
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.CompanyId =
+                     "<input type='hidden' name='CompanyList[" + i + "].CompanyId' value='" + item.CompanyId + "' id='hndCompanyId[" + i + "]' />" +
+                     "<label class='label'>" + item.CompanyName + "</label>";
+                item.DefaultCompanyId =
+                    "<label class='radio'>" +
+                      "<input type='radio' name='CompanyList[" + i + "].IsActive' id='rdIsActive" + i + "' value='" + item.IsActive + "'" + (item.IsActive ? "checked" : "") + " onclick='SetRadio(this)'/>" +
+                      "<i></i>" +
+                      "<label  for='CompanyList[" + i + "].IsActive'></label>" +
+                "</label>";
+            });
+            dtMapping.fnAddData(responseData);
+            
+        }
+    }
+
+    function SetCheck(obj) {
+        obj.value = obj.checked;
+    }
+</script>

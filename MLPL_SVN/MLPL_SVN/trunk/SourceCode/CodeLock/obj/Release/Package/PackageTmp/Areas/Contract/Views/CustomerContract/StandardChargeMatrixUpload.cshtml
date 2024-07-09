@@ -1,0 +1,193 @@
+﻿@model CodeLock.Models.StandardChargeMatrixUpload
+@{
+    /**/
+
+    ViewBag.Title = "Standard Charge Matrix Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("StandardChargeMatrixUpload", "CustomerContract", FormMethod.Post, new { @class = "j-forms", enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            @*<div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.File, new { @class = "control-label" })
+                        <div class="input-wrapper">
+                            <input type="file" id="fuStatus" name="File" />
+                        </div>
+                    </div>
+                </div>*@
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.File, new { @class = "label" })
+                    <div class="input prepend-big-btn">
+                        <label class="icon-right" for="prepend-big-btn">
+                            <i class="fa fa-download"></i>
+                        </label>
+                        <div class="file-button">
+                            Browse
+                            <input class="form-control" id="fuStatus" type="file" name="File" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                        </div>
+                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("blank", "Format Download Link")
+
+                    @{ var fileNamelnkId = "lnkAttachment";}
+                    <a href="#" id=@fileNamelnkId onclick="return DownloadFormat();">Download Standard Charge Matrix Upload Format</a>
+                </div>
+            </div>
+        </div>
+        @*<div class="row">
+                <div class="col-sm-offset-4 col-sm-12">
+                    <input type="submit" value="Upload" class="btn btn-blue" id="btnSubmit" />
+                </div>
+            </div>*@
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3" id="btnSubmit">Upload</button>
+        </div>
+        <div id="dvResult">
+            <table id="dtResult">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().UploadStatus)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().ContractNo)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().ChargeCodeType)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().IsBooking)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().From)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().To)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().Matrix)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().TransportMode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().FtlType)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().Rate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().RateTypeDescription)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().ConsignorName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().ConsigneeName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().TransitDays)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().BillLocation)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().BillingCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().PartNo)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().PackagingType)
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @*@foreach (var item in Model.Details)*@
+                    @for (int i = 0; i < Model.Details.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].UploadStatus)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].ContractNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].ChargeCodeType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].IsBooking)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].From)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].To)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].Matrix)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].TransportMode)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].FtlType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].Rate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].RateTypeDescription)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].ConsignorName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].ConsigneeName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].TransitDays)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].BillLocation)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].BillingCode)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].PartNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].PackagingType)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Customer Contract', 'Standard Charge Matrix Upload', 'File');
+        var msg = '@Model.ErrorMessage';
+        if (msg != '')
+            ShowMessage(msg);
+
+        $('#dvResult').showHide(parseInt('@Model.Details.Count') > 0);
+        LoadDataTable('dtResult', true, false, false);
+    });
+
+    function DownloadFormat() {
+        window.location = '@Href("~/Areas/Contract/Views/CustomerContract/Standard_Charge_Matrix_Upload_Format.xlsx")';
+    }
+</script>

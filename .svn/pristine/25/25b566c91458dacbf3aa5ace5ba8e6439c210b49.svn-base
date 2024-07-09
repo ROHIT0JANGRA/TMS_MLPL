@@ -1,0 +1,179 @@
+﻿@model CodeLock.Models.FinanceDocumentTracking
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        trackingUrl = '@Url.Action("", "Tracking", new { Area = "Finance" })';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        billModuleId = '@ModuleHelper.CustomerBill';
+        mrModuleId = '@ModuleHelper.Mr';
+        deliveryMrModuleId = '@ModuleHelper.DeliveryMr';
+        vendorBillModuleId = '@ModuleHelper.VendorBill';
+        customerBillType = '@GeneralHelper.CustomerBillType';
+        vendorBllType = '@GeneralHelper.VendorBillType';
+        voucherModuleId = '@ModuleHelper.Voucher';
+        useTransportModeFTL = '@Html.Raw(ViewBag.UseTransportModeFTL)' == 'Y';
+        generalMasterUrl = '@Url.Action("", "General", new { Area = "Master" })';
+        customerBillFormatMasterUrl = '@Url.Action("", "CustomerBillFormat", new { Area = "Master" })';
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Finance/Views/Tracking/IndexAllTime.js?v52")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Select Document Date", new { @class = "label" })
+                            <div id="drDocumentDate"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("lblDocumentTypeId", "Document Type", new { @class = "label" })
+                                <div class="select">
+                                    @{
+                                        var billModuleId = ModuleHelper.CustomerBill.ToString();
+                                        var vendorBillModuleId = ModuleHelper.VendorBill.ToString();
+                                        var voucherModuleId = ModuleHelper.Voucher.ToString();
+
+                                        @Html.DropDownList("ddlDocumentTypeId", new List<SelectListItem>
+                                    {
+                                        new SelectListItem() {Text = "Customer Bill",Value = billModuleId },
+                                        new SelectListItem() {Text = "Vendor Bill", Value = vendorBillModuleId},
+                                        new SelectListItem() {Text = "Voucher", Value = voucherModuleId}
+                                    }, new { @class = "form-control", @id = "ddlDocumentTypeId" })<i></i>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4" id="dvBillType">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillTypeId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.BillTypeId, Enumerable.Empty<SelectListItem>(), "Select Bill Type", new { @class = "form-control", @id = "ddlBillTypeId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.BillTypeId)
+                            </div>
+                        </div>
+                        <div class="col-sm-4" id="dvPartyType" style="display:none">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PartyType, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.PartyType, new SelectList(ViewBag.PartyTypeList, "Value", "Name"), new { @class = "form-control", @id = "ddlPartyType" })
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PartyId, new { @class = "label", @id = "lblParty" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.PartyId, new { @id = "hdnPartyId" })
+                                    @Html.TextBoxFor(model => model.PartyCode, null, new { @class = "form-control", @id = "txtPartyCode" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @class = "label-bold", @id = "lblPartyName" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocumentNos, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.DocumentNos, new { @class = "form-control", @id = "txtDocumentNos" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualDocumentNos, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualDocumentNos, new { @class = "form-control", @id = "txtManualDocumentNos" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row" id="dvBillDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtBillDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvMrDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtMrDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvVoucherDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtVoucherDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvMrDeliveryBillDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtMrDeliveryBillDetail"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                                        }
+    </div>
+</div>
+
+
+
+

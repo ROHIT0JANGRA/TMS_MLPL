@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "VehicleStatusDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+    <div id="dvTripsheetDetails">
+        <div class="col-sm-2">
+            <h4>Vehicle Status Updated</h4>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                @Html.ActionLink("Go Back", "VehicleStatus", "Tripsheet")
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var status = "";
+    $(document).ready(function () {
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        spnMassage = $('#spnMassage');
+
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+        status = GetUrlValue()["status"];
+       
+    });
+    </script>
+

@@ -1,0 +1,275 @@
+﻿@using CodeLock.Models
+@model MasterVehicleCapacityRate
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "VehicleCapacityRate", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @*@Html.AntiModelInjectionFor(m => m.VendorId)*@
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3" id="dvVendorDetail">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                        @Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorCode)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorName, " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.LabelFor(model => model.VendorName, " ", new { @class = "label-bold", @id = "lblVendorName" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "StartDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.StartDate), DefaultDate = Model.StartDate, IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true, IsValidateFinYear = false })
+            </div>
+            <div class="col-sm-3">
+                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "EndDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.EndDate), DefaultDate = Model.EndDate, IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true, IsValidateFinYear = false })
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EmailId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.EmailId, new { @class = "form-control", @id = "txtEmailId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.EmailId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ContentForAutoMail, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ContentForAutoMail, new { @class = "form-control", @id = "txtContentForAutoMail" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ContentForAutoMail)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="dtVehicleCapacityRate">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Transport Mode</th>
+                            <th>Vehicle Type</th>
+                            <th>Vehicle Capacity</th>
+                            <th>Allowed Weight</th>
+                            <th>Allowed Mimumum Rate</th>
+                            <th>Allowed Maximum Rate</th>
+                            <th>Rate Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Details.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => Model.Details[i].LocationId, new { @id = "hdnLocationId" + i.ToString() })
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].LocationCode, new { @class = "form-control", @id = "txtLocationCode" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].LocationCode)
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => Model.Details[i].TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name", Model.Details[i].TransportModeId), "Select Transport Mode", new { @class = "form-control", @id = "ddlTransportModeId" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].TransportModeId)
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => Model.Details[i].VehicleTypeId, new SelectList(ViewBag.VehicleTypeList, "Value", "Name", Model.Details[i].VehicleTypeId), "Select Vehicle Type", new { @class = "form-control", @id = "ddlVehicleTypeId" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].VehicleTypeId)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].VehicleCapacity, new { @class = "form-control textlabel numeric2", @id = "txtVehicleCapacity" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].AllowedWeight, new { @class = "form-control numeric2", @id = "txtAllowedWeight" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].AllowedWeight)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].AllowedMimumumRate, new { @class = "form-control numeric2", @id = "txtAllowedMimumumRate" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].AllowedMimumumRate)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].AllowedMaximumRate, new { @class = "form-control numeric2", @id = "txtAllowedMaximumRate" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].AllowedMaximumRate)
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => Model.Details[i].RateTypeId, new SelectList(ViewBag.RateTypeList, "Value", "Name", Model.Details[i].RateTypeId), "Select Rate Type", new { @class = "form-control", @id = "ddlRateTypeId" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].RateTypeId)
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var hdnVendorId, txtVendorCode, lblVendorName, txtStartDate, txtEndDate, txtEmailId, txtContentForAutoMail;
+    var vehicleTypeMasterUrl;
+    $(document).ready(function () {
+        SetPageLoad('Vehicle Capacity-wise', 'Rate', '', 'Go To List', '@Url.Action("Index")');
+
+        hdnVendorId = $('#hdnVendorId');
+        txtVendorCode = $('#txtVendorCode');
+        lblVendorName = $('#lblVendorName');
+        txtStartDate = $('#txtStartDate');
+        txtEndDate = $('#txtEndDate');
+        txtEmailId = $('#txtEmailId');
+        txtContentForAutoMail = $('#txtContentForAutoMail');
+        vehicleTypeMasterUrl = '@Url.Action("", "VehicleType", new { Area = "Master" })';
+        VendorAutoComplete('txtVendorCode', 'hdnVendorId');
+        txtVendorCode.blur(function () {
+            IsVendorCodeExist(txtVendorCode, hdnVendorId, lblVendorName);
+            var requestData = { vendorCode: txtVendorCode.val(), vendorId: $('#hdnVendorId').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("", "VehicleCapacityRate")' + '/IsVendorAvailable', JSON.stringify(requestData), function (result) {
+                if (result) {
+                    ShowMessage('Already exist.');
+                    txtVendorCode.val('');
+                    $('#hdnVendorId').val('');
+                    lblVendorName.text('');
+                    return false;
+                }
+            }, ErrorFunction, false);
+        });
+        InitGrid('dtVehicleCapacityRate', false, 8, InitVehicleDetail);
+        $('#txtVendorCode').readOnly($('#hdnVendorId').val() > 0);
+        //$('#txtVendorCode').blur(OnVendorChange);
+        $('#dvVendorDetail').showHide($('#hdnVendorId').val() == 0);
+        if ($('#hdnVendorId').val() > 0)
+            OnVendorChange();
+        else {
+            txtStartDate.val('');
+            txtEndDate.val('');
+        }
+        txtStartDate.blur(function () {
+            CheckValidDate(txtStartDate);
+        });
+        txtEndDate.blur(function () {
+            CheckValidDate(txtEndDate);
+        });
+    });
+
+    function CheckValidDate(obj) {
+        if ($.setDateTime(txtEndDate.val()) < $.setDateTime(txtStartDate.val())) {
+            ShowMessage('Please select End Date greater than Start Date');
+            obj.val('');
+            return false;
+        }
+    }
+
+    function OnVendorChange() {
+        if ($('#txtVendorCode').val() != '') {
+            var requestData = { id: $('#hdnVendorId').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("", "VehicleCapacityRate")' + '/GetById', JSON.stringify(requestData), function (result) {
+                lblVendorName.text(txtVendorCode.val() + ' : ' + result.VendorName);
+                //txtStartDate.val($.entryDate(result.StartDate));
+                //txtEndDate.val($.entryDate(result.EndDate));
+                //txtEmailId.val(result.EmailId);
+                //txtContentForAutoMail.val(result.ContentForAutoMail);
+                //$.each(result.Details, function (index, value) {
+                //    var rowId = ($('#dtVehicleCapacityRate tbody tr').length - 1);
+                //    var hdnLocationId = $('#hdnLocationId' + rowId);
+                //    var txtLocationCode = $('#txtLocationCode' + rowId);
+                //    var ddlVehicleTypeId = $('#ddlVehicleTypeId' + rowId);
+                //    var txtVehicleCapacity = $('#txtVehicleCapacity' + rowId);
+                //    var ddlTransportModeId = $('#ddlTransportModeId' + rowId);
+                //    var txtAllowedWeight = $('#txtAllowedWeight' + rowId);
+                //    var txtAllowedMimumumRate = $('#txtAllowedMimumumRate' + rowId);
+                //    var txtAllowedMaximumRate = $('#txtAllowedMaximumRate' + rowId);
+                //    var ddlRateTypeId = $('#ddlRateTypeId' + rowId);
+                //    hdnLocationId.val(value.LocationId);
+                //    txtLocationCode.val(value.LocationCode);
+                //    ddlVehicleTypeId.val(value.VehicleTypeId);
+                //    ddlTransportModeId.val(value.TransportModeId);
+                //    txtVehicleCapacity.val(value.VehicleCapacity);
+                //    txtAllowedWeight.val(value.AllowedWeight);
+                //    txtAllowedMimumumRate.val(value.AllowedMimumumRate);
+                //    txtAllowedMaximumRate.val(value.AllowedMaximumRate);
+                //    ddlRateTypeId.val(value.RateTypeId);
+                //    AddGridRow('dtVehicleCapacityRate', false, InitVehicleDetail);
+                //});
+                //$('#dtVehicleCapacityRate tr:last').hide();
+            }, ErrorFunction, false);
+        }
+        else {
+            lblVendorName.text('');
+            txtStartDate.val('');
+            txtEndDate.val('');
+            txtEmailId.val('');
+            txtContentForAutoMail.val('');
+        }
+    }
+
+    function InitVehicleDetail() {
+        $('[id*="hdnLocationId"]').each(function () {
+            var hdnLocationId = $(this);
+            var txtLocationCode = $('#' + this.Id.replace('hdnLocationId', 'txtLocationCode'));
+            var ddlVehicleTypeId = $('#' + this.Id.replace('hdnLocationId', 'ddlVehicleTypeId'));
+            var txtVehicleCapacity = $('#' + this.Id.replace('hdnLocationId', 'txtVehicleCapacity'));
+            var txtAllowedWeight = $('#' + this.Id.replace('hdnLocationId', 'txtAllowedWeight'));
+            txtLocationCode.blur(function () {
+                if (!CheckDuplicateInTable('dtVehicleCapacityRate', 'txtLocationCode', 'Location', hdnLocationId)) return false;
+                IsLocationCodeExist(txtLocationCode, hdnLocationId);
+            });
+            LocationAutoComplete(txtLocationCode.Id, hdnLocationId.Id);
+            ddlVehicleTypeId.change(OnVehicleTypeChange);
+            if (ddlVehicleTypeId.val() != '') {
+                OnVehicleTypeChange();
+            }
+            
+            function OnVehicleTypeChange() {
+                if (ddlVehicleTypeId.val() != '') {
+                    var requestData = { id: ddlVehicleTypeId.val() };
+                    AjaxRequestWithPostAndJson(vehicleTypeMasterUrl + '/GetById', JSON.stringify(requestData), function (result) {
+                        txtVehicleCapacity.val(result.Capacity);
+                    }, ErrorFunction, false);
+                }
+                else
+                    txtVehicleCapacity.val(0);
+            }
+            txtAllowedWeight.blur(function () {
+                if (parseFloat(txtAllowedWeight.val()) > parseFloat(txtVehicleCapacity.val())) {
+                    ShowMessage('Allowed Weight must be less than Vehicle Capacity');
+                    txtAllowedWeight.val('');
+                    return false;
+                }
+            });
+        });
+    }
+</script>

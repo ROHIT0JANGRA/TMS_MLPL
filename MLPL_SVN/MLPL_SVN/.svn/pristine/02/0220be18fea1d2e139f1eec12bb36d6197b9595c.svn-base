@@ -1,0 +1,50 @@
+﻿@model List<CodeLock.Models.MasterUserVehicleMapping>
+
+@{
+    ViewBag.Title = "UserVehicleIndex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtUserCompanyMapping">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().UserName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().NoofVehicle)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NoofVehicle)
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("UserVehicleMapping", new { Id = item.UserId })"><span class="zmdi zmdi-edit"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Assign Vehicle To User', 'Mapping List', '', 'Go To Mapping', '@Url.Action("UserVehicleMapping")');
+        LoadDataTable('dtUserCompanyMapping', true, true, true);
+    });
+</script>
+

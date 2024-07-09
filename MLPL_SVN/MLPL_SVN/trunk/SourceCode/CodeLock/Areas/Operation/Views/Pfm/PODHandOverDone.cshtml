@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "PfmDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><span class="PageSeparator-Span" id="spnMassage"></span></div>
+    <div class="col-sm-3">
+        <h4>POD Handover</h4>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <div class="clearfix">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var status = '';
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        lblDocumentNo.html(GetUrlValue()["DocumentNo"]);
+        hdnDocumentId.val(GetUrlValue()["DocumentId"]);
+        spnMassage.text("POD Handover is Successfully");
+        SetPageLoad('PFM', 'IndexPODHandOver', '', 'Go To Generate POD Handover', '@Url.Action("IndexPODHandOver")');
+    }
+</script>
+

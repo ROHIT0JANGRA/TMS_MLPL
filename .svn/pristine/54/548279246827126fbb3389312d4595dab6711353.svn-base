@@ -1,0 +1,108 @@
+﻿@{
+    ViewBag.Title = "Done";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="note note-info note-right-striped">
+                    <div class="page-separator">
+                        <span id="spnMassage"></span>
+                    </div>
+                    <br />
+                    <div class="row example-buttons">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <div class="clearfix">
+                                    @Html.Label("Contract ID", new { @class = "label" })
+                                    @Html.Hidden("hdnIsAdded")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <div class="clearfix">
+                                    @Html.Label("lblDocumentNo", (string)ViewBag.ManualContractId)
+                                    @Html.Hidden("hdnDocumentId")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <button onclick="return OnEditClick();" class="btn btn-primary btn-xs dt-edit">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                            <button onclick="return OnDetailsClick();" class="btn btn-primary btn-xs dt-edit">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </button>
+                            <button onclick="return ViewReport();" class="btn btn-primary btn-xs dt-edit">
+                                <span class="glyphicon glyphicon-print"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <br />
+                    <a id="linkServiceSelection">Service Selection</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    var spnMassage;
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        hdnDocumentId = $('#hdnDocumentId');
+        hdnIsAdded = $('#hdnIsAdded');
+        hdnDocumentId.val(GetUrlValue()["id"]);
+        hdnIsAdded.val(GetUrlValue()["isAdded"]);
+
+        if ('@ViewBag.IsCustomerContract' == "False") {
+            SetPageLoad('Vendor Contract', 'Done', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = ViewBag.ContractId})');
+        }
+        else {
+            SetPageLoad('Customer Contract', 'Done', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = ViewBag.ContractId})');
+        }
+        $("#divEdit").hide();
+        var serviceSelectionUrl='@Url.Action("ServiceSelection")/'+@ViewBag.ContractId;
+        $("#linkServiceSelection").prop("href", serviceSelectionUrl);
+        CheckIsEdit();
+    });
+
+    function CheckIsEdit() {
+        if (hdnIsAdded.val() == "True") {
+            if ('@ViewBag.IsCustomerContract' == "False") {
+                spnMassage.text("The Vendor Contract is Added Successfully");
+            }
+            else {
+                spnMassage.text("The Customer Contract is Added Successfully");
+            }
+        }
+        else {
+            if ('@ViewBag.IsCustomerContract' == "False") {
+                spnMassage.text("The Vendor Contract is Updated Successfully");
+            }
+            else {
+                spnMassage.text("The Customer Contract is Updated Successfully");
+            }
+        }
+        return false;
+    }
+
+    function OnEditClick() {
+        window.location.href = "@Url.Action("Update")/" + '@ViewBag.ContractId';
+        return false;
+    }
+
+    function OnDetailsClick() {
+        window.location.href = "@Url.Action("Details")/" + '@ViewBag.ContractId';
+        return false;
+    }
+
+    function ViewReport() {
+        var prmList = [{ Name: "ContractId", Value: '@ViewBag.ContractId' }];
+        var reportInfo = { PrmList: prmList, Name: 'CustomerContractView', Description: 'Customer Contract View' };
+        return ShowReport(reportInfo);
+    }
+</script>
+

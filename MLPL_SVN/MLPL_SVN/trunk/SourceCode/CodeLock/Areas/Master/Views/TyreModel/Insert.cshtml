@@ -1,0 +1,87 @@
+﻿@model CodeLock.Models.MasterTyreModel
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "TyreModel Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "TyreModel", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.TyreModelId)
+    @Html.Hidden("TyreModelId", 0)
+
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.TyreModelNo, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.TyreModelNo, new { @class = "form-control", @id = "txtTyreModelNo" })
+                </div>
+                @Html.ValidationMessageFor(model => model.TyreModelNo)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.TyreModelDescription, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.TyreModelDescription, new { @class = "form-control", @id = "txtTyreModelDescription" })
+                </div>
+                @Html.ValidationMessageFor(model => model.TyreModelDescription)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.AverageTreadDepth, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.AverageTreadDepth, new { @class = "form-control", @id = "txtAverageTreadDepth" })
+                </div>
+                @Html.ValidationMessageFor(model => model.AverageTreadDepth)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ManufacturerId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.ManufacturerId, new SelectList(ViewBag.ManufacturerTypeList, "Value", "Name"), "Select Vehicle Type", new { @class = "form-control", @id = "ddlManufacturerId" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.ManufacturerId)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.TyreSizeId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.TyreSizeId, new SelectList(ViewBag.TyreSizeTypeList, "Value", "Name"), "Select PositionCategory", new { @class = "form-control", @id = "ddlTyreSizeId" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.TyreSizeId)
+            </div>
+        </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TyrePatternId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.TyrePatternId, new SelectList(ViewBag.TyrePatternTypeList, "Value", "Name"), "Select PositionCategory", new { @class = "form-control", @id = "ddlTyrePatternId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TyrePatternId)
+
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+ }
+    <script>
+    $(document).ready(function () {
+        SetPageLoad('TyrePosition', 'Create', 'ddlVehicleType', 'Goto List', '@Url.Action("Index")');
+    });
+    </script>
+

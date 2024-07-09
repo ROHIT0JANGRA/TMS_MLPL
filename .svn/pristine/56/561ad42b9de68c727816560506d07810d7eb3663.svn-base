@@ -1,0 +1,426 @@
+﻿@model CodeLock.Models.CustomerContractBillingInfo
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("BillingInfo", "CustomerContract", FormMethod.Post, new {@id= "j-forms", @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.ContractId)
+    @Html.HiddenFor(model => model.ContractId, new { @id = "hdncontract" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Contract ID", new { @id = "lblCustomer", @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.ManualContractId
+                    </div>
+                </div>
+            </div>
+            @if (@ViewBag.isCustomerContract == false)
+            {
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Vendor", new { @id = "lblCustomer", @class = "label-bold" })
+                        <div class="clearfix">
+                            @ViewBag.CustomerCode : @ViewBag.CustomerName
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Customer", new { @id = "lblCustomer", @class = "label-bold" })
+                        <div class="clearfix">
+                            @ViewBag.CustomerCode : @ViewBag.CustomerName
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillLocationRule, new { @class = "label" })
+                    <label class="radio">
+                        @Html.RadioButtonFor(model => model.BillLocationRule, 0, new { @id = "rdb1", @checked = "checked" })
+                        <i></i>
+                        @Html.LabelFor(model => model.BillLocationRule, "Billing Location same as Booking Location", new { @for = "rdb1" })
+                    </label>
+                    <label class="radio">
+                        @Html.RadioButtonFor(model => model.BillLocationRule, 1, new { @id = "rdb2" })
+                        <i></i>
+                        @Html.LabelFor(model => model.BillLocationRule, "Billing Location as per Contract - Single Billing Location", new { @for = "rdb2" })
+                    </label>
+                    <label class="radio">
+                        @Html.RadioButtonFor(model => model.BillLocationRule, 2, new { @id = "rdb3" })
+                        <i></i>
+                        @Html.LabelFor(model => model.BillLocationRule, "Billing Location as per Contract - Location Combination wise Billing Location", new { @for = "rdb3" })
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4" id="divBillGeneration">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillGenerationLocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.BillGenerationLocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control", @id = "ddlBillGenerationLocationId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BillGenerationLocationId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillSubmissionLocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.BillSubmissionLocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control", @id = "ddlBillSubmissionLocationId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BillSubmissionLocationId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillCollectionLocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.BillCollectionLocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control", @id = "ddlBillCollectionLocationId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BillCollectionLocationId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CreditDays, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CreditDays, new { @class = "form-control numeric", @id = "txtCreditDays" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CreditDays)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CreditLimit, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CreditLimit, new { @class = "form-control numeric", @id = "txtCreditLimit" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CreditLimit)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UseCommunicationAddressAsBillingAddress, new { @class = "label", @for = "chkCopyAddress" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.UseCommunicationAddressAsBillingAddress, new { @id = "chkCopyAddress" })
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Address1, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Address1, new { @class = "form-control", @id = "txtAddress1" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Address1)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Address2, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Address2, new { @class = "form-control", @id = "txtAddress2" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Address2)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CountryId, new { @class = "label" })
+                    <div class="select">
+                        @Html.HiddenFor(model => model.CountryId, new { id = "hdnCountryId" })
+                        @Html.DropDownListFor(model => model.CountryId, new SelectList(ViewBag.CountryList, "Value", "Name"), "Select Country", new { @class = "form-control", @id = "ddlCountry" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CountryId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StateId, new { @class = "label" })
+                    <div class="select">
+                        @Html.HiddenFor(model => model.StateId, new { id = "hdnStateId" })
+                        @Html.DropDownListFor(model => model.StateId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlState" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StateId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CityId, new { @class = "label" })
+                    <div class="select">
+                        @Html.HiddenFor(model => model.CityId, new { id = "hdnCityId" })
+                        @Html.DropDownListFor(model => model.CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control", @id = "ddlCity" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CityId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Pincode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Pincode, new { @class = "form-control", @id = "txtPincode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Pincode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MobileNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MobileNo, new { @class = "form-control", @id = "txtMobileNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MobileNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BankName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BankName, new { @class = "form-control", @id = "txtBankName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BankName)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BranchName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BranchName, new { @class = "form-control", @id = "txtBranchName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BranchName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BankAccountNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BankAccountNo, new { @class = "form-control", @id = "txtBankAccount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BankAccountNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TurnOver, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.TurnOver, new { @class = "form-control numeric", @id = "txtTurnOver" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TurnOver)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn">Submit</button>
+        </div>
+    </div>
+}
+<script>
+    var addressList = [];
+    $(document).ready(function () {
+        if ('@ViewBag.isCustomerContract' == "False") {
+            SetPageLoad('Vendor Contract Billing Info', 'Add', 'BillLocationRule','Go To Step Selection', '@Url.Action("StepSelection", new { id = Model.ContractId })');
+        }
+        else {
+            SetPageLoad('Customer Contract Billing Info', 'Add', 'BillLocationRule', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = Model.ContractId })');
+        }
+        $('#ddlCountry').change(OnCountryChange);
+        $('#ddlState').change(OnStateChange);
+        $("#chkCopyAddress").change(CopyAddress);
+        addressList = jQuery.parseJSON('@Html.Raw(ViewBag.AddressList)');
+        $('#divBillGeneration').hide();
+        $('#rdb1,#rdb2,#rdb3').change(PercentWiseChange);
+        $('#btnSubmit').click(OnSubmit);
+        Init();
+       
+    });
+
+    function Init() {
+        if ($('#chkCopyAddress').IsChecked) {
+            $('#txtAddress1').val(addressList[0].Address1);
+            $('#txtAddress2').val(addressList[0].Address2);
+            $('#txtPincode').val(addressList[0].Pincode);
+            SetDropDownValue($("#ddlCountry"), addressList[0].CountryId);
+            OnCountryChange();
+            SetDropDownValue($("#ddlState"), addressList[0].StateId);
+            OnStateChange();
+            SetDropDownValue($("#ddlCity"), addressList[0].CityId);
+            SetDisable();
+        }
+        else
+            GetBillingAddress();
+        AddRange($("#txtCreditLimit"), "Credit Limit value greater than 1 and less than 999999999", 1, 1000000000);
+        AddRange($("#txtTurnOver"), "Turn Over value greater than 1 and less than 999999999", 1, 1000000000);
+    }
+
+    function OnCountryChange() {
+        if ($('#ddlCountry').val() != "") {
+            var requestData = { countryId: $('#ddlCountry').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetStateListByCountryId", "State",new {@Area = "Master" })', JSON.stringify(requestData), GetStateListSuccess, ErrorFunction, false);
+        }
+        else {
+            GetStateListSuccess([]);
+            GetCityListSuccess([]);
+        }
+    }
+
+    function GetStateListSuccess(responseData) {
+        BindDropDownList('ddlState', responseData, 'Value', 'Name', '', 'Select State');
+    }
+
+    function OnStateChange() {
+        if ($('#ddlState').val() != "") {
+            var requestData = { stateId: $('#ddlState').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetCityListByStateId", "City", new { @Area = "Master" })', JSON.stringify(requestData), GetCityListSuccess, ErrorFunction, false);
+        }
+        else
+            GetCityListSuccess([]);
+    }
+
+    function GetCityListSuccess(responseData) {
+        BindDropDownList('ddlCity', responseData, 'Value', 'Name', '', 'Select City');
+    }
+    function CopyAddress() {
+        if ($('#chkCopyAddress').IsChecked) {
+            GetAddress();
+        }
+        else {
+            GetBillingAddress();
+        }
+    }
+
+    function GetAddress() {
+        Init();
+        SetDisable();
+    }
+
+    function SetDisable() {
+        $('#txtAddress1').attr('readOnly', true);
+        $('#txtAddress2').attr('readOnly', true);
+        $('#txtPincode').attr('readOnly', true);
+        $('#ddlCountry').attr('disabled', true);
+        $('#ddlState').attr('disabled', true);
+        $('#ddlCity').attr('disabled', true);
+    }
+
+    function PercentWiseChange() {
+        if ($('#rdb1').is(":checked")) {
+            $('#divBillGeneration').hide();
+            RemoveRequired($('#ddlBillGenerationLocationId'));
+        }
+        else if ($('#rdb2').is(":checked")) {
+            $('#divBillGeneration').show();
+            AddRequired($('#ddlBillGenerationLocationId'), "Please select Bill Generation Location");
+        }
+        else if ($('#rdb3').is(":checked")) {
+            $('#divBillGeneration').hide();
+            RemoveRequired($('#ddlBillGenerationLocationId'));
+        }
+    }
+
+    function OnSubmit() {
+        if ($('#ddlCountry').prop('disabled', true)) {
+            $('#hdnCountryId').val($('#ddlCountry').val());
+        }
+        if ($('#ddlState').prop('disabled', true)) {
+            $('#hdnStateId').val($('#ddlState').val());
+        }
+        if ($('#ddlCity').prop('disabled', true)) {
+            $('#hdnCityId').val($('#ddlCity').val());
+        }
+
+    }
+
+    function GetBillingAddress() {
+        if ($('#hdncontract').val() != "") {
+            if (!$('#chkCopyAddress').IsChecked) {
+                var requestData = { contractId: $('#hdncontract').val() };
+                AjaxRequestWithPostAndJson('@Url.Action("GetBillingDetails")', JSON.stringify(requestData), GetDetailSuccess, false);
+            }
+        }
+    }
+    function GetDetailSuccess(responseData) {
+        if (!IsObjectNullOrEmpty(responseData))
+        {
+            $('#txtCreditDays').val(responseData.CreditDays);
+            $('#txtCreditLimit').val(responseData.CreditLimit);
+            $('#txtAddress1').val(responseData.Address1);
+            $('#txtAddress2').val(responseData.Address2);
+            $('#txtPincode').val(responseData.Pincode);
+            $('#txtMobileNo').val(responseData.MobileNo);
+            $('#txtBankName').val(responseData.BankName);
+            $('#txtBranchName').val(responseData.BranchName);
+            $('#txtBankAccount').val(responseData.BankAccountNo);
+            $('#txtTurnOver').val(responseData.TurnOver);
+            SetDropDownValue($("#ddlCountry"), responseData.CountryId);
+            OnCountryChange();
+            SetDropDownValue($("#ddlState"), responseData.StateId);
+            OnStateChange();
+            SetDropDownValue($("#ddlCity"), responseData.CityId);
+            SetDropDownValue($("#ddlBillGenerationLocationId"), responseData.BillGenerationLocationId);
+            SetDropDownValue($("#ddlBillSubmissionLocationId"), responseData.BillSubmissionLocationId);
+            SetDropDownValue($("#ddlBillCollectionLocationId"), responseData.BillCollectionLocationId);
+            //if (responseData.UseCommunicationAddressAsBillingAddress == true) {
+            //    $('#chkCopyAddress').prop("checked", true);
+            //    SetDisable();
+            //}
+            if (responseData.BillLocationRule == 0) {
+                $('#rdb1').prop("checked", true);
+            }
+            else if (responseData.BillLocationRule == 1) {
+                $('#rdb2').prop("checked", true);
+                $('#divBillGeneration').show();
+                AddRequired($('#ddlBillGenerationLocationId'), "Please select Bill Generation Location");
+            }
+            else {
+                $('#rdb3').prop("checked", true);
+                RemoveRequired($('#ddlBillGenerationLocationId'));
+            }
+        }
+        else {
+            $('#txtAddress1').val('');
+            $('#txtAddress2').val('');
+            $('#txtPincode').val('');
+           
+            SetDropDownValue($("#ddlCountry"), "");
+            SetDropDownValue($("#ddlState"), "");
+            SetDropDownValue($("#ddlCity"), "");
+        }
+        $("#txtAddress1").removeAttr("readOnly");
+        $("#txtAddress2").removeAttr("readOnly");
+        $("#txtPincode").removeAttr("readOnly");
+        $("#ddlCountry").removeAttr("disabled");
+        $('#ddlState').removeAttr("disabled");
+        $('#ddlCity').removeAttr("disabled");
+    }
+</script>

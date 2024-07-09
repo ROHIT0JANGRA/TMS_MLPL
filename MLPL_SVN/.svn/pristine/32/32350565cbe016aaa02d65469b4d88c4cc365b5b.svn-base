@@ -1,0 +1,147 @@
+﻿
+using CodeLock.Areas.WMS.Repository;
+using CodeLock.Models;
+using System;
+using System.Web.Mvc;
+
+namespace CodeLock.Areas.WMS.Controllers
+{
+  public class PickController : Controller
+  {
+    public readonly IPickRepository pickRepository;
+
+    public PickController()
+    {
+
+    }
+
+    public PickController(IPickRepository _pickRepository)
+    {
+      this.pickRepository = _pickRepository;
+    }
+
+    public JsonResult GetOrderListForPick(Order objOrder)
+    {
+      return this.Json((object) this.pickRepository.GetOrderListForPick(objOrder.CompanyId, objOrder.WarehouseId, objOrder.OrderNo.ConvertToString(), objOrder.InvoiceNo.ConvertToString(), objOrder.FromDate, objOrder.ToDate, SessionUtility.FinStartDate, SessionUtility.FinEndDate));
+    }
+
+    public JsonResult GetOrderDetails(byte companyId, short warehouseId, long id)
+    {
+      return this.Json((object) this.pickRepository.GetOrderDetails(companyId, warehouseId, id));
+    }
+
+    public ActionResult Insert()
+    {
+      return (ActionResult) this.View((object) new Pick()
+      {
+        PickDetails = {
+          new PickDetail()
+        }
+      });
+    }
+
+    [ValidateAntiForgeryToken]
+    [HttpPost]
+    public ActionResult Insert(Pick objPick)
+    {
+            if (this.ModelState.IsValid)
+            {
+                objPick.CompanyId = SessionUtility.CompanyId;
+        objPick.WarehouseId = SessionUtility.WarehouseId;
+        objPick.EntryBy = SessionUtility.LoginUserId;
+        objPick.EntryDate = DateTime.Now;
+        Pick pick1 = objPick;
+        DateTime? pickDateTime = objPick.PickDateTime;
+        DateTime dateTime = pickDateTime.Value;
+        DateTime date = dateTime.Date;
+        pick1.PickDate = date;
+        Pick pick2 = objPick;
+        pickDateTime = objPick.PickDateTime;
+        dateTime = pickDateTime.Value;
+        TimeSpan timeOfDay = dateTime.TimeOfDay;
+        pick2.PickTime = timeOfDay;
+        Response response = this.pickRepository.Insert(objPick);
+        if (response.IsSuccessfull)
+          return (ActionResult) this.RedirectToAction("Done", "Asn", (object) new
+          {
+            documentType = "Pick",
+            documentNo = response.DocumentNo,
+            documentId = response.DocumentId,
+            documentTypeId = ModuleHelper.Pick
+          });
+            }
+            return (ActionResult) this.View((object) objPick);
+    }
+
+    public ActionResult Register()
+    {
+      return (ActionResult) this.View((object) new PickRegister());
+    }
+
+    [HttpPost]
+    public JsonResult GetRegisterPickDetail(
+      string pickNo,
+      DateTime fromDate,
+      DateTime toDate)
+    {
+      return this.Json((object) this.pickRepository.GetRegisterPickDetail(pickNo, fromDate, toDate, SessionUtility.FinStartDate, SessionUtility.FinEndDate), JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult GetPickListForUpdate(
+      byte companyId,
+      short warehouseId,
+      string pickNo,
+      string orderNo,
+      string invoiceNo,
+      DateTime fromDate,
+      DateTime toDate)
+    {
+      return this.Json((object) this.pickRepository.GetPickListForUpdate(companyId, warehouseId, pickNo.ConvertToString(), orderNo.ConvertToString(), invoiceNo.ConvertToString(), fromDate, toDate, SessionUtility.FinStartDate, SessionUtility.FinEndDate));
+    }
+        public JsonResult GetPickDetails(
+          byte companyId,
+          short warehouseId,
+          string id)
+        {
+            return this.Json((object)this.pickRepository.GetPickDetails(companyId, warehouseId, id.ConvertToString()));
+        }
+        public ActionResult Update()
+    {
+      return (ActionResult) this.View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult Update(Pick objPick)
+    {
+
+      if (this.ModelState.IsValid)
+    {
+        objPick.CompanyId = SessionUtility.CompanyId;
+      objPick.WarehouseId = SessionUtility.WarehouseId;
+      objPick.EntryBy = SessionUtility.LoginUserId;
+      objPick.PickDate = objPick.PickDateTime.Value.Date;
+      objPick.PickTime = objPick.PickDateTime.Value.TimeOfDay;
+        for(int i=0; i < objPick.PickDetails.Count; i++)
+        {
+            objPick.PickDetails[i].PickId = objPick.PickId;
+            for (int j = 0; j < objPick.PickDetails[i].PickBin.Count; j++)
+            {
+                objPick.PickDetails[i].PickBin[j].SkuId = objPick.PickDetails[i].SkuId;
+                objPick.PickDetails[i].PickBin[j].OrderId = objPick.PickDetails[i].OrderId;
+                objPick.PickDetails[i].PickBin[j].PickId = objPick.PickDetails[i].PickId;
+            }
+         }
+        Response response = this.pickRepository.Update(objPick);
+        return (ActionResult)this.RedirectToAction("Done", "Asn", (object)new
+        {
+            documentType = "PickUpdate",
+            documentNo = response.DocumentNo,
+            documentId = response.DocumentId,
+            documentTypeId = ModuleHelper.Pick
+        });
+       }
+         return (ActionResult)this.View((object)objPick);
+    }
+  }
+}

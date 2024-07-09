@@ -1,0 +1,167 @@
+﻿@using CodeLock.Models
+@model GeneralLedger
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CompanyId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.CompanyId, new SelectList(ViewBag.CompanyList, "Value", "Name"), new { @class = "form-control", @id = "ddlCompanyId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CompanyId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.AccountId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.AccountId, new SelectList(ViewBag.AccountList, "Value", "Name"), new { @class = "form-control", @id = "ddlAccountId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.AccountId)
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="dvIsIndividual">
+                <div class="col-sm-4">
+                    @Html.Label("Voucher Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            <div class="clearfix">
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.IsIndividual, true, new { @id = "rdIndividual", @tabindex = "0", @checked = "checked" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsIndividual, "Individual", new { @for = "rdIndividual" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.IsIndividual, false, new { @id = "rdCumulative", @tabindex = "0" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsIndividual, "Cumulative(Transaction includes all branches)", new { @for = "rdCumulative" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            <div class="clearfix">
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.IsNormal, "1", new { @id = "rdIsNormal", @tabindex = "0", @checked = "checked" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsNormal, "Normal", new { @for = "rdIsNormal" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.IsNormal, "2", new { @id = "rdMonthWise", @tabindex = "0" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsNormal, "Month Wise", new { @for = "rdMonthWise" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    var selectedReportType = "1", selectedSubLedger = "1";
+    var ddlCompanyId, rdGenLedger, rdSubLedger, rdDocument, hdnAccountId, txtAccountCode, txtCode, rdIndividual, rdCumulative, ddlLocationId, ddlAccountCategoryId, rdIsNormal, drDate, btnSubmit, lblCode;
+    var dvSubLedger, dvDocument, dvIsIndividual, dvAccount, dvLocation;
+    $(document).ready(function () {
+        SetPageLoad('Finance Report', 'Cash Bank Statement Register', '', '', '');
+        locationId = '@SessionUtility.LoginLocationId';
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        ddlCompanyId = $('#ddlCompanyId');
+        ddlAccountId = $('#ddlAccountId');
+        rdIndividual = $('#rdIndividual');
+        rdCumulative = $('#rdCumulative');
+        ddlLocationId = $('#ddlLocationId');
+        rdIsNormal = $('#rdIsNormal');
+        dvSubLedger = $('#dvSubLedger');
+        dvIsIndividual = $('#dvIsIndividual');
+
+        $('#ddlAccountId option').eq(0).before($('<option>', { value: '0', text: 'All' }));
+        ddlAccountId.val(0);
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        ddlCompanyId.val(1);
+    }
+
+    function AttachEvents() {
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    }
+
+    function ViewReport() {
+        var prmList = [{ Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+            { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+            { Name: "FinYear", Value: '@SessionUtility.CalenderYear' },
+            { Name: "FinYearOpn", Value: '@SessionUtility.FinYear' },
+            { Name: "IsCumulative", Value: rdCumulative.IsChecked },
+            { Name: "AccountId", Value:  ddlAccountId.val()  },
+            { Name: "AccountGroupId", Value: 0 },
+            { Name: "Category", Value: 'All' },
+            { Name: "CostCenter", Value:  'All' },
+            { Name: "LocationId", Value: ddlLocationId.val() },
+            { Name: "ReportType", Value: 1 },
+            { Name: "ReportSubType", Value: 'All' },
+            { Name: "DataType", Value: 'All' },
+            { Name: "IsInclusive", Value: true },
+            { Name: "DocumentNo", Value: 'All'},
+            { Name: "DataSubType", Value: rdIsNormal.IsChecked ? '1':'2' },
+            { Name: "ChequeNo", Value:  'All' },
+            { Name: "Company", Value: ddlCompanyId.val() }];
+        /* alert(prmList[0].Value);
+         alert(prmList[1].Value);
+         alert(prmList[2].Value);
+         alert(prmList[3].Value);
+        
+         
+         alert(prmList[4].Value);
+         alert(prmList[5].Value);
+         alert(prmList[6].Value);
+         alert(prmList[7].Value);
+         alert(prmList[8].Value);
+         alert(prmList[9].Value);
+         alert(prmList[10].Value);
+         alert(prmList[11].Value);
+         alert(prmList[12].Value);
+         alert(prmList[13].Value);
+         alert(prmList[14].Value);
+         alert(prmList[15].Value);
+         alert(prmList[16].Value);*/
+
+        var reportInfo = { PrmList: prmList, Name: 'CashBankStatementRegister', Description: 'Cash Bank Statement Register' };
+        return ShowReport(reportInfo);
+    }
+</script>

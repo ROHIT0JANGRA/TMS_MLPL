@@ -1,0 +1,162 @@
+﻿@model CodeLock.Models.CustomerContract
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerContractBasicInfo.ManualContractId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerContractBasicInfo.ManualContractId, new { @class = "form-control", @id = "txtContractId", @readOnly = true })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.ManualContractId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerCode, new { @class = "form-control", @id = "txtCustomerCode" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control", @id = "txtCustomerName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer" id="divSubmit">
+            <input type="submit" class="btn btn-success primary-btn" id="btnSubmit" />
+        </div>
+        <div class="overflow-table">
+            <table class="display" id="dtCustomerContract"></table>
+        </div>
+        <div class="row form-buttons" id="divSubmit">
+            <div class="col-sm-offset-5 col-sm-7">
+                <input type="submit" value="Save" class="btn btn-primary" id="btnSave" />
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    var customerMasterUrl, hdnCustomerId, txtContractId, dtCustomerContract, btnSubmit, txtCustomerCode, txtCustomerName, btnSave, contractId, freightManualContractId, freightContractId;
+    $(document).ready(function () {
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        contractId = GetUrlValue()["contractId"];
+        txtContractId = $('#txtContractId');
+        hdnCustomerId = $('#hdnCustomerId');
+        hdnCustomer = $('#hdnCustomer');
+        txtCustomerCode = $('#txtCustomerCode');
+        txtCustomerName = $('#txtCustomerName');
+        btnSubmit = $('#btnSubmit');
+        btnSave = $('#btnSave');
+
+        AutoComplete('txtCustomerCode', customerMasterUrl + '/GetAutoCompleteListByCompanyId', 'customerCode', 'l', 'l', 'l', 'd', '', 'hdnCustomerId', '', '');
+        txtCustomerCode.blur(function () { return CheckValidCustomerCode(txtCustomerCode, hdnCustomerId); });
+
+        AutoComplete('txtCustomerName', customerMasterUrl + '/GetAutoCompleteCustomerNameList', 'customerName', 'l', 'l', 'l', 'd', '', 'hdnCustomer', '', '');
+        txtCustomerName.blur(function () { return CheckValidCustomerName(txtCustomerName, hdnCustomer); });
+
+        btnSave.click(OnSaveButtonClick);
+        btnSubmit.click(OnButtonClick);
+
+        dtCustomerContract = LoadDataTable('dtCustomerContract', false, false, false, null, null, [],
+            [
+                { title: '@Html.DisplayNameFor(model => model.CustomerContractBasicInfo.ManualContractId)', data: "CustomerContractBasicInfo.ManualContractId" },
+                { title: '@Html.DisplayNameFor(model => model.CustomerCode)', data: "CustomerCode" },
+                { title: '@Html.DisplayNameFor(model => model.CustomerName)', data: "CustomerName" }
+            ]);
+        SetPageLoad('Customer Contract', 'List');
+    });
+
+    function OnButtonClick() {
+        if (txtContractId.val() == "" && txtCustomerCode.val() == "" && txtCustomerName.val() == "") {
+            var requestData = { contractId: contractId };
+            AjaxRequestWithPostAndJson('@Url.Action("GetDetailsForFreightContract")', JSON.stringify(requestData), OnButtonClickSuccess, ErrorFunction, false);
+        }
+        else {
+            var requestData = { contractId: contractId, ManualContractId: txtContractId.val(), CustomerCode: txtCustomerCode.val(), CustomerName: txtCustomerName.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetFreightContractDetailsByManualContractId")', JSON.stringify(requestData), OnButtonClickSuccess, ErrorFunction, false);
+        }
+        return false;
+    }
+
+
+    function OnSaveButtonClick() {
+        if (window.opener != null && !window.opener.closed) {
+            var txtFreightManualContractId = window.opener.document.getElementById('txtFreightManualContractId');
+            var hdnFreightContractId = window.opener.document.getElementById('hdnFreightContractId');
+            hdnFreightContractId.value = selectedContrcatId;
+            txtFreightManualContractId.value = selectedManualContrcatId
+            window.close();
+        }
+    }
+
+    var selectedContrcatId = 0, selectedManualContrcatId = '';
+    function OnButtonClickSuccess(responseData) {
+        dtCustomerContract.fnClearTable()
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.CustomerContractBasicInfo.ManualContractId =
+                    item.PutAway = '<div class="clearfix">' +
+                                    '<div class="radioer">' +
+                                        '<input type="radio" name=\'Contract\' value=\'' + item.ContractId + '\' onclick="SetContractDetail(this)" tabindex="0" id="chkContractId' + i + '"/>' +
+                                          '<label for="chkContractId' + i + '" id="lblContractId' + i + '">' + item.CustomerContractBasicInfo.ManualContractId + '</label>' +
+                                    '</div>' +
+                                '</div>';
+            });
+            dtCustomerContract.fnAddData(responseData);
+        }
+    }
+
+    function SetContractDetail(rd) {
+        selectedContrcatId = rd.value;
+        var lblContractId = $('#' + rd.getAttribute('id').replace('chkContractId', 'lblContractId'));
+        selectedManualContrcatId = lblContractId.text();
+    }
+
+    function CheckValidCustomerCode(txtCustomerCode, hdnCustomerId) {
+        if (txtCustomerCode.val() != "") {
+            var requestData = { customerCode: txtCustomerCode.val() };
+            AjaxRequestWithPostAndJson(customerMasterUrl + '/CheckValidCustomerCodeByCompanyId', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    hdnCustomerId.val(result.Value);
+                    txtCustomerCode.val(result.Name);
+                }
+                else {
+                    ShowMessage('Customer Code is not exist');
+                    txtCustomerCode.val('');
+                    hdnCustomerId.val('');
+                    txtCustomerCode.focus();
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function CheckValidCustomerName(txtCustomerName, hdnCustomer) {
+        if (txtCustomerName.val() != "") {
+            var requestData = { customerName: txtCustomerName.val() };
+            AjaxRequestWithPostAndJson(customerMasterUrl + '/CheckValidCustomerName', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    hdnCustomer.val(result.Value);
+                    txtCustomerName.val(result.Name);
+                }
+                else {
+                    ShowMessage('Customer is not exist');
+                    txtCustomerName.val('');
+                    hdnCustomer.val('');
+                    txtCustomerName.focus();
+                }
+            }, ErrorFunction, false);
+        }
+    }
+</script>

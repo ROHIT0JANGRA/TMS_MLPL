@@ -1,0 +1,92 @@
+﻿@model CodeLock.Models.MasterIssueApproval
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Approval", "Issue", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.IssueId)
+    @Html.HiddenFor(m => m.IssueId, new { @id = "hdnIssueId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-2" id="dvIssueDocument">
+                <div class="form-group">
+                    <label>Issue Document</label>
+                    <div class="input-wrapper">
+                        @{ var fileNamelnkId = "lnkAttachment1";}
+                        <a href="#" id=@fileNamelnkId onclick="return ViewIssueDocumentAttachment();">View</a>
+                        @Html.HiddenFor(model => model.IssueDocument, new { id = "hdnIssueDocument", @Name = "IssueDocument" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2" id="dvResolvedDocument">
+                <div class="form-group">
+                    <label>Resolved Document</label>
+                    <div class="input-wrapper">
+                        @{ var fileNamelnkId2 = "lnkAttachment2";}
+                        <a href="#" id=@fileNamelnkId2 onclick="return ViewResolvedDocumentAttachment();">View</a>
+                        @Html.HiddenFor(model => model.IssueDocument, new { id = "hdnResolvedDocument", @Name = "ResolvedDocument" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ApprovalComment, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ApprovalComment, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ApprovalComment)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                @Html.LabelFor(model => model.ApprovedById, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.ApprovedById, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Select",Value=""},
+                        new SelectListItem() {Text = "Malik", Value="1"},
+                        new SelectListItem() {Text = "Saroj", Value="2"},
+                        new SelectListItem() {Text = "Vinay", Value="3"},
+                        new SelectListItem() {Text = "Deepak", Value="4"},}, new { @class = "form-control", @id = "ddlApprovedById" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.ApprovedById)
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Issue', 'Approval', '', 'GoTo List', '@Url.Action("Index")');
+        $('#dvIssueDocument').showHide($('#hdnIssueDocument').val() != '');
+        $('#dvResolvedDocument').showHide($('#hdnResolvedDocument').val() != '');
+    });
+
+    function ViewIssueDocumentAttachment() {
+        var hdnIssueDocument = $('#hdnIssueDocument');
+        var filePath = '';
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = "@ConfigHelper.LocalStoragePath" + '/Issue';
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+        window.open(filePath + hdnIssueDocument.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+        return false;
+    }
+
+    function ViewResolvedDocumentAttachment() {
+        var hdnResolvedDocument = $('#hdnResolvedDocument');
+        var filePath = '';
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = "@ConfigHelper.LocalStoragePath" + '/Issue';
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+        window.open(filePath + hdnResolvedDocument.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+        return false;
+    }
+</script>

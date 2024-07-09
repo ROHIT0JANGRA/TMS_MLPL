@@ -1,0 +1,801 @@
+﻿@model CodeLock.Models.MasterODA
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("ODA", "CustomerContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.ContractId, new { @id = "hdnContractId" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OdaSlabType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.OdaSlabType, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Select", Value = ""},
+                        new SelectListItem() {Text = "Per Kg", Value="3"},
+                        new SelectListItem() {Text = "Per Package", Value="6"},}, new { @class = "form-control", @id = "ddlOdaSlabType" })<i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.OdaSlabType)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OdaRateType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.OdaRateType, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Select", Value = ""},
+                        new SelectListItem() {Text = "Per Kg.", Value="3"},
+                        new SelectListItem() {Text = "Per Package", Value="6"},
+                        new SelectListItem() {Text = "Flat Rate", Value="1"},}, new { @class = "form-control", @id = "ddlOdaRateType" })<i></i>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(model => model.OdaRateType)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MinimumOdaCharge, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MinimumOdaCharge, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MinimumOdaCharge)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaximumOdaCharge, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MaximumOdaCharge, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MaximumOdaCharge)
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Define Distance (in km)</div>
+        <div class="row">
+            <div class="col-sm-4"><center>Slab 1</center></div>
+            <div class="col-sm-4"><center>Slab 2</center></div>
+            <div class="col-sm-4"><center>Slab 3</center></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ODA1From, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ODA1From, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ODA1From)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ODA1To, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ODA1To, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ODA1To)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ODA2From, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ODA2From, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ODA2From)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ODA2To, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ODA2To, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ODA2To)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ODA3From, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ODA3From, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ODA3From)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ODA3To, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ODA3To, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ODA3To)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4"><center>Slab 4</center></div>
+            <div class="col-sm-4"><center>Slab 5</center></div>
+            <div class="col-sm-4"><center>Slab 6</center></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ODA4From, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ODA4From, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ODA4From)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ODA4To, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ODA4To, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ODA4To)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ODA5From, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ODA5From, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ODA5From)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ODA5To, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ODA5To, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ODA5To)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ODA6From, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ODA6From, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ODA6From)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ODA6To, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ODA6To, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ODA6To)
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Define Weight/Package Slab</div>
+        <div class="row">
+            <div class="col-sm-4"><center>Slab 1</center></div>
+            <div class="col-sm-4"><center>Slab 2</center></div>
+            <div class="col-sm-4"><center>Slab 3</center></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SLAB1From, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SLAB1From, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SLAB1From)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SLAB1To, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SLAB1To, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SLAB1To)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SLAB2From, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SLAB2From, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SLAB2From)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SLAB2To, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SLAB2To, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SLAB2To)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SLAB3From, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SLAB3From, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SLAB3From)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SLAB3To, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SLAB3To, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SLAB3To)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4"><center>Slab 4</center></div>
+            <div class="col-sm-4"><center>Slab 5</center></div>
+            <div class="col-sm-4"><center>Slab 6</center></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SLAB4From, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SLAB4From, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SLAB4From)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SLAB4To, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SLAB4To, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SLAB4To)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SLAB5From, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SLAB5From, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SLAB5From)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SLAB5To, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SLAB5To, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SLAB5To)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SLAB6From, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SLAB6From, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SLAB6From)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SLAB6To, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SLAB6To, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SLAB6To)
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Define Charges</div>
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th width="200px">
+                            Distance From Delivery Location
+                        </th>
+                        <th>
+                            Extra Transit Days
+                        </th>
+                        <th>
+                            SLAB 1
+                        </th>
+                        <th>
+                            SLAB 2
+                        </th>
+                        <th>
+                            SLAB 3
+                        </th>
+                        <th>
+                            SLAB 4
+                        </th>
+                        <th>
+                            SLAB 5
+                        </th>
+                        <th>
+                            SLAB 6
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <center>1</center>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.ODA1TransitDays, new { @class = "form-control numeric" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.ODA1TransitDays)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix1, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix1)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix2, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix2)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix3, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix3)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix4, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix4)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix5, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix5)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix6, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix6)
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center>2</center>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.ODA2TransitDays, new { @class = "form-control numeric" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.ODA2TransitDays)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix7, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix7)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix8, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix8)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix9, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix9)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix10, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix10)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix11, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix11)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix12, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix12)
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center>3</center>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.ODA3TransitDays, new { @class = "form-control numeric" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.ODA3TransitDays)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix13, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix13)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix14, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix14)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix15, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix15)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix16, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix16)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix17, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix17)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix18, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix18)
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center>4</center>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.ODA4TransitDays, new { @class = "form-control numeric" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.ODA4TransitDays)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix19, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix19)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix20, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix20)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix21, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix21)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix22, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix22)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix23, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix23)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix24, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix24)
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center>5</center>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.ODA5TransitDays, new { @class = "form-control numeric" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.ODA5TransitDays)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix25, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix25)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix26, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix26)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix27, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix27)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix28, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix28)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix29, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix29)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix30, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix30)
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center>6</center>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.ODA6TransitDays, new { @class = "form-control numeric" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.ODA6TransitDays)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix31, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix31)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix32, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix32)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix33, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix33)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix34, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix34)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix35, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix35)
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Matrix36, new { @class = "form-control numeric2" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Matrix36)
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('ODA', 'Create', '', 'Go to Charge Criteria', '@Url.Action("StandardChargeCriteria", new { id = Model.ContractId })');
+    });
+</script>

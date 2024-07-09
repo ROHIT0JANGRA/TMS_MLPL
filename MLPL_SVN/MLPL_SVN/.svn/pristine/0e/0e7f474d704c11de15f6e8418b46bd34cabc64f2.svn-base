@@ -1,0 +1,74 @@
+﻿@model IEnumerable<CodeLock.Models.MasterGeneral>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtGeneral">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CodeType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UsedIn)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CodeType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UsedIn)
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Insert", new { id = item.CodeTypeId })"><span class="zmdi zmdi-plus"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("List", new { id = item.CodeTypeId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+            
+<script>
+    $(document).ready(function () {
+        SetPageLoad('General', 'List', 'filter');
+        LoadDataTable('dtGeneral', true, true, true);
+    });
+</script>
+

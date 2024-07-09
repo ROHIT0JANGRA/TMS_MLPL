@@ -1,0 +1,105 @@
+﻿@model CodeLock.Models.VendorPerformance
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("VendorPerformance", "Operation", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Label("THC Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drDate"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                        @Html.TextBoxFor(model => model.VendorCode, new { @class = "form-control", @id = "txtVendorCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorName, " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.LabelFor(model => model.VendorName, " ", new { @class = "label-bold", @id = "lblVendorName" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ThcNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ThcNo, new { @class = "form-control", @id = "txtThcNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ThcNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "txtVehicleNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RouteId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.RouteId, new SelectList(ViewBag.RouteList, "Value", "Name"), "All", new { @class = "form-control", @id = "ddlRouteId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.RouteId)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDate, ddlLocationId, hdnVendorId, txtVendorCode, lblVendorName, txtThcNo, txtVehicleNo, ddlRouteId, btnSubmit, vendorMasterUrl;
+
+    $(document).ready(function () {
+        SetPageLoad('Vendor Performance', 'Report', '', '', '');
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        ddlLocationId = $('#ddlLocationId');
+        hdnVendorId = $('#hdnVendorId');
+        txtVendorCode = $('#txtVendorCode');
+        lblVendorName = $('#lblVendorName');
+        txtThcNo = $('#txtThcNo');
+        txtVehicleNo = $('#txtVehicleNo');
+        ddlRouteId = $('#ddlRouteId');
+        btnSubmit = $('#btnSubmit');
+
+        VendorAutoComplete(txtVendorCode.Id, hdnVendorId.Id);
+        txtVendorCode.blur(function () { IsVendorCodeExist(txtVendorCode, hdnVendorId, lblVendorName) });
+        btnSubmit.click(ViewReport);
+    });
+
+    function ViewReport() {
+        var prmList = [{ Name: "LocationId", Value: ddlLocationId.val() }, { Name: "FromDate", Value: drDate.startDate }, { Name: "ToDate", Value: drDate.endDate }, { Name: "VendorId", Value: hdnVendorId.val() == '' ? 0 : hdnVendorId.val() }, { Name: "ThcNo", Value: txtThcNo.val() == '' ? " " : txtThcNo.val() }, { Name: "VehicleNo", Value: txtVehicleNo.val() == '' ? " " : txtVehicleNo.val()}, { Name: "RouteId", Value: ddlRouteId.val() == '' ? 0 : ddlRouteId.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'VendorPerformanceMis', Description: 'Vendor Performance Mis' };
+        return ShowReport(reportInfo);
+    }
+</script>

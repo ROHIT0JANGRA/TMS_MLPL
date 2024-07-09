@@ -1,0 +1,75 @@
+﻿
+using CodeLock.Areas.Master.Repository;
+using CodeLock.Areas.WMS.Repository;
+using CodeLock.Models;
+using System;
+using System.Linq;
+using System.Web.Mvc;
+
+namespace CodeLock.Areas.WMS.Controllers
+{
+  public class InspectionController : Controller
+  {
+    private readonly IInspectionRepository inspectionRepository;
+    private readonly IGeneralRepository generalRepository;
+
+    public InspectionController()
+    {
+    }
+
+    public InspectionController(
+      IInspectionRepository _inspectionRepository,
+      IGeneralRepository _generalRepository)
+    {
+      this.inspectionRepository = _inspectionRepository;
+      this.generalRepository = _generalRepository;
+    }
+
+    public ActionResult Put()
+    {
+      return (ActionResult) this.View((object) new Inspection());
+    }
+
+    [HttpPost]
+    public ActionResult Put(Inspection objInspection)
+    {
+      objInspection.CompanyId = SessionUtility.CompanyId;
+      objInspection.WarehouseId = SessionUtility.WarehouseId;
+      objInspection.EntryBy = SessionUtility.LoginUserId;
+      objInspection.EntryDate = DateTime.Now;
+      objInspection.Details.RemoveAll((Predicate<InspectionDetail>) (m => !m.IsChecked));
+      objInspection.Details.ForEach((Action<InspectionDetail>) (m => m.Remarks = m.Remarks.ConvertToString()));
+      Response response = this.inspectionRepository.Insert(objInspection);
+      if (response.IsSuccessfull)
+        return (ActionResult) this.RedirectToAction("Done", "Asn", (object) new
+        {
+          documentType = "Inspection",
+          documentNo = response.DocumentNo,
+          documentId = response.DocumentId,
+          documentTypeId = ModuleHelper.Inspection
+        });
+      this.TempData["result"] = (object) response;
+      return (ActionResult) this.View((object) objInspection);
+    }
+
+    public JsonResult GetInspectionList(
+      byte warehouseId,
+      byte companyId,
+      DateTime fromDate,
+      DateTime toDate,
+      string invoiceNos,
+      string grnNos)
+    {
+      return this.Json((object) this.inspectionRepository.GetInspectionList(warehouseId, companyId, fromDate, toDate, invoiceNos, grnNos));
+    }
+
+    [HttpPost]
+    public JsonResult GetRejectReasonList()
+    {
+      return this.Json((object) new RejectReasonList()
+      {
+        Reject = this.generalRepository.GetByGeneralList((short) 64).ToList<MasterGeneral>()
+      }, JsonRequestBehavior.AllowGet);
+    }
+  }
+}

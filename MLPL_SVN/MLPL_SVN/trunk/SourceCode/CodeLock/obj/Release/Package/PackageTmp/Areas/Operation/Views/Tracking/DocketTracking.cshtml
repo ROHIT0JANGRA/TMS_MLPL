@@ -1,0 +1,239 @@
+﻿@model CodeLock.Models.DocketTracking
+@{
+    Layout = "~/Views/Shared/_Empty.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        baseUrl = '@Url.Action("", "Tracking", new { Area = "Operation" })';
+    })
+</script>
+<div class="widget-wrap">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+    {
+        @Html.HiddenFor(model => model.DocketId, new { @id = "hdnDocketId" })
+        @Html.HiddenFor(model => model.StatusId, new { @id = "hdnStatusId" })
+
+        <div class="row">
+            <div class="col-sm-12" align="center">
+                <div id="imagediv"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("Status", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblStatus1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("Booking Date", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblBookingDate1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("Docket Number", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblDocket1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("EDD", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblEdd1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("Billing Party", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblBillingParty1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("ADD", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblDeliveryDate1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("Payment Type", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblPaymentType1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("Current Location", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblCurrentLocation1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("from", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblFromCity1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("To", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblToCity1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("Destination", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblDestination1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("Consignor", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblConsignor1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("Remarks", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblRemarks1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("Consignee", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblConsignee1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("No. of Box", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblPackages1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("Mode", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @id = "lblTransportMode1", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer" align="right">
+            <div id="podViewdiv"></div>
+            @*<button type="submit" class="btn btn-success primary-btn" tabindex="0">Create</button>*@
+        </div>
+    }
+</div>
+<script>
+    var hdnDocketId, baseUrl, transitDetails;
+    $(document).ready(function () {
+        SetPageLoad('Tracking', '', '');
+    
+        baseUrl = '@Url.Action("", "Tracking", new { Area = "Operation" })';
+        filePath = '';
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = "@ConfigHelper.LocalStoragePath";
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+    
+        hdnDocketId = $('#hdnDocketId');
+        GetDocketTransitSummary();
+        SetStatusBar();
+    });
+    
+    function SetStatusBar() {
+            var img = $('<img id="dynamic" style="max-width: 100%;height: auto;">');
+            if ($('#hdnStatusId').val() <= 3) { img.attr('src', '../../../assets/images/Track1.png'); }
+            else if ($('#hdnStatusId').val() <= 6) { img.attr('src', '../../../assets/images/Track2.png'); }
+            else if ($('#hdnStatusId').val() <= 7) { img.attr('src', '../../../assets/images/Track3.png'); }
+            else if ($('#hdnStatusId').val() == 8) { img.attr('src', '../../../assets/images/Track4.png'); }
+            else if ($('#hdnStatusId').val() <= 9) { img.attr('src', '../../../assets/images/Track5.png'); }
+            img.appendTo('#imagediv');
+        }
+    
+    function ViewPod(documentName) {
+            window.open(filePath + documentName, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+            return false;
+        }
+    
+    function GetDocketTransitSummary() {
+            if (hdnDocketId.val() >= 4) {
+                var requestData = { docketId: hdnDocketId.val() };
+                AjaxRequestWithPostAndJson(baseUrl + '/GetDocketTransitSummary', JSON.stringify(requestData), GetDocketTransitSummarySuccess, ErrorFunction, false);
+            }
+        }
+    
+    function GetDocketTransitSummarySuccess(result) {
+            if (IsObjectNullOrEmpty(result)) {
+                isStepValid = false;
+                ShowMessage('No Record Found');
+                return false;
+            }
+            else {
+                transitDetails = result;
+                $('#hdnStatusId').val(result.StatusId);
+                $('#lblStatus1').text(transitDetails.Status);
+                $('#lblBookingDate1').text($.displayDate(result.DocketDate));
+                $('#lblDocket1').text(result.DocketNo);
+                $('#lblEdd1').text($.displayDate(result.Edd));
+                $('#lblBillingParty1').text(result.BillingParty);
+                $('#lblDeliveryDate1').text($.displayDate(result.DeliveryDate));
+                $('#lblPaymentType1').text(result.PaymentType);
+                $('#lblCurrentLocation1').text(result.CurrentLocation);
+                $('#lblFromCity1').text(result.FromCity);
+                $('#lblToCity1').text(result.ToCity);
+                $('#lblDestination1').text(result.Destination);
+                $('#lblConsignor1').text(result.Consignor);
+                $('#lblRemarks1').text(result.Remarks);
+                $('#lblConsignee1').text(result.Consignee);
+                $('#lblPackages1').text(result.Packages);
+                $('#lblTransportMode1').text(result.TransportMode);
+                var podBtnClass = '';
+                var podSpanClass = '';
+                //podSpanClass = IsObjectNullOrEmpty(result.PodDocumentName) ? 'glyphicon glyphicon-eye-close' : 'glyphicon glyphicon-eye-open';
+                podBtnClass = IsObjectNullOrEmpty(result.PodDocumentName) ? 'btn btn-primary btn-sm disabled' : 'btn btn-primary btn-sm';
+                var btn = $('<button type="button" id="btnPodView" onclick="return ViewPod(\'' + result.PodDocumentName + '\')"  class="' + podBtnClass + '">' +
+                    '<span class="' + podSpanClass + '">View POD</span>' +
+                    '</button>');
+                btn.appendTo('#podViewdiv');
+                podViewdiv
+            }
+        }
+</script>

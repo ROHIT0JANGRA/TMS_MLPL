@@ -1,0 +1,44 @@
+﻿@model CodeLock.Models.MasterRole
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "Role Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "Role", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("RoleId", 0)
+    @Html.AntiModelInjectionFor(m => m.RoleId)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RoleName, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.RoleName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.RoleName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Role', 'Create', 'RoleName', 'Go To List', '@Url.Action("Index")');
+    });
+</script>

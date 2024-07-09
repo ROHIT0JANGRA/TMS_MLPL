@@ -1,0 +1,100 @@
+﻿@model CodeLock.Models.MasterFuelBrand
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Insert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "FuelBrand", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.FuelBrandId)
+    @Html.HiddenFor(m => m.FuelBrandId, new { @id = "hdnFuelBrandId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FuelBrandName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.FuelBrandName, null, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FuelBrandName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                        @Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(model => model.VendorName, new { @id = "hdnVendorName" })
+                        @Html.Label("VendorName", " ", new { @class = "label-bold", @id = "lblVendorName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="unit">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.FuelType, new { @class = "label-bold" })
+                        @for (var i = 0; i < Model.FuelType.Count(); i++)
+                        {
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(m => m.FuelType[i].IsChecked, new { @id = "chkFuelType" + i.ToString() })
+                                <i></i>
+                                @Html.LabelFor(m => m.FuelType[i].IsChecked, Model.FuelType[i].Name, new { @class = "label", @For = "chkFuelType" + i.ToString() })
+                            </label>
+                            @Html.HiddenFor(m => m.FuelType[i].Value)
+                            @Html.HiddenFor(m => m.FuelType[i].Name)
+                        }
+                        @Html.ValidationMessageFor(model => model.FuelType)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit"></button>
+        </div>
+    </div>
+}
+<script>
+    var isAdd = true;
+    $(document).ready(function () {
+        hdnFuelBrandId = $('#hdnFuelBrandId');
+        btnSubmit = $('#btnSubmit');
+
+        if (hdnFuelBrandId.val() != 0)
+            isAdd = false;
+
+        if (isAdd == false) {
+            SetPageLoad('Fuel Brand', 'Edit', 'FuelBrandName', 'Go To List', '@Url.Action("Index")');
+            $('#lblVendorName').text($('#hdnVendorName').val());
+        }
+        else
+            SetPageLoad('Fuel Brand', 'Add', 'FuelBrandName', 'Go To List', '@Url.Action("Index")');
+
+        btnSubmit.html((isAdd ? 'Create' : 'Update'));
+
+        VendorAutoComplete('txtVendorCode', 'hdnVendorId', '', 6);
+        $('#txtVendorCode').blur(function () { IsVendorCodeExist($('#txtVendorCode'), $('#hdnVendorId'), $('#lblVendorName'), '', 6); });
+    });
+</script>

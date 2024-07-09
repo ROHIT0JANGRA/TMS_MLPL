@@ -1,0 +1,168 @@
+﻿@model CodeLock.Models.MasterAccountOpeningBalance
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "AccountOpeningBalance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        accountMasterUrl = '@Url.Action("", "Account", new { Area = "Master" })';
+        baseUrl = '@Url.Action("", "AccountOpeningBalance", new { Area = "Master" })';
+    });
+</script>
+@using (Html.BeginForm("AccountOpeningBalance", "AccountOpeningBalance", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-12">
+                @Html.HiddenFor(model => model.FinYear, new { @id = "hdnFinYear", @Value = SessionUtility.FinYear })
+                @Html.Label(" ", new { @class = "label-bold", @id = "lblCurrentFinYear" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @Html.Label(" ", new { @class = "label-bold", @id = "lblOpeningBalanceFinYear" })
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LedgerBalanceTransferTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.LedgerBalanceTransferTypeId, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Ledger", Value="1"},
+                        new SelectListItem() {Text = "Sub Ledger", Value="2"},
+                        new SelectListItem() {Text = "Profit and Loss Ledger", Value="3" }}, new { @class = "form-control", @id = "ddlLedgerBalanceTransferType" })<i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LedgerBalanceTransferTypeId)
+                </div>
+            </div>
+        </div>
+
+        <div id="dvLedgerType" style="display:none">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            @Html.LabelFor(model => model.LedgerTypeId, new { @class = "label" })
+                            <div class="clearfix">
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.LedgerTypeId, "1", new { @id = "rdLedgerAll", @tabindex = "0", @checked = "checked" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.LedgerTypeId, "All", new { @for = "rdLedgerAll" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.LedgerTypeId, "2", new { @id = "rdLedgerAsset", @tabindex = "0" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.LedgerTypeId, "Asset", new { @for = "rdLedgerAsset" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.LedgerTypeId, "3", new { @id = "rdLedgerLiability", @tabindex = "0" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.LedgerTypeId, "Liability", new { @for = "rdLedgerLiability" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div id="dvSubLedgerType" style="display:none">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            @Html.LabelFor(model => model.SubLedgerTypeId, new { @class = "label" })
+                            <div class="clearfix">
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.SubLedgerTypeId, "1", new { @id = "rdSubLedgerAll", @tabindex = "0", @checked = "checked" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.SubLedgerTypeId, "All", new { @for = "rdSubLedgerAll" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.SubLedgerTypeId, "2", new { @id = "rdSubLedgerCustomer", @tabindex = "0" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.SubLedgerTypeId, "Customer", new { @for = "rdSubLedgerCustomer" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.SubLedgerTypeId, "3", new { @id = "rdSubLedgerVendor", @tabindex = "0" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.SubLedgerTypeId, "Vendor", new { @for = "rdSubLedgerVendor" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.SubLedgerTypeId, "4", new { @id = "rdSubLedgerUser", @tabindex = "0" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.SubLedgerTypeId, "User", new { @for = "rdSubLedgerUser" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.SubLedgerTypeId, "5", new { @id = "rdSubLedgerDriver", @tabindex = "0" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.SubLedgerTypeId, "Driver", new { @for = "rdSubLedgerDriver" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div id="dvProfitLossLedgerType" style="display:none">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            @Html.LabelFor(model => model.ProfitLossLedgerTypeId, new { @class = "label" })
+                            <div class="clearfix">
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.ProfitLossLedgerTypeId, "1", new { @id = "rdProfitLossLedgerAll", @tabindex = "0", @checked = "checked" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.ProfitLossLedgerTypeId, "All (Profit/Loss Ledger)", new { @for = "rdProfitLossLedgerAll" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Transfer Balance</button>
+        </div>
+    </div>
+}
+
+<script>
+    var ddlLedgerBalanceTransferType, lblCurrentFinYear, lblOpeningBalanceFinYear, dvLedgerType, dvSubLedgerType, dvProfitLossLedgerType, btnSubmit;
+    $(document).ready(function () {
+        SetPageLoad('Set Opening Balance', 'Ledger Wise', '', '', '');
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        ddlLedgerBalanceTransferType = $('#ddlLedgerBalanceTransferType');
+        lblCurrentFinYear = $('#lblCurrentFinYear');
+        lblOpeningBalanceFinYear = $('#lblOpeningBalanceFinYear');
+        dvLedgerType = $('#dvLedgerType');
+        dvSubLedgerType = $('#dvSubLedgerType');
+        dvProfitLossLedgerType = $('#dvProfitLossLedgerType');
+        btnSubmit = $('#btnSubmit');
+
+        lblCurrentFinYear.text("You are in financial year : " + @SessionUtility.FinStartDate.ToString("yyyy") + " - " + @SessionUtility.FinEndDate.ToString("yyyy"));
+        lblOpeningBalanceFinYear.text("System will set the closing balance of finacial year : " + (parseInt(@SessionUtility.FinStartDate.ToString("yyyy")) - 1).toString() + " - " + @SessionUtility.FinStartDate.ToString("yyyy") + " as opening balance of financial year : " + @SessionUtility.FinStartDate.ToString("yyyy") + " - " + @SessionUtility.FinEndDate.ToString("yyyy"));
+    }
+
+    function AttachEvents() {
+        ddlLedgerBalanceTransferType.change(OnLedgerBalanceTransferTypeChange).change();
+    }
+
+    function OnLedgerBalanceTransferTypeChange() {
+        dvLedgerType.showHide(ddlLedgerBalanceTransferType.val() == 1);
+        dvSubLedgerType.showHide(ddlLedgerBalanceTransferType.val() == 2);
+        dvProfitLossLedgerType.showHide(ddlLedgerBalanceTransferType.val() == 3);
+    }
+</script>

@@ -1,0 +1,77 @@
+﻿@model IEnumerable<CodeLock.Models.MasterDcr>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtDcr">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DocumentTypeName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BookCode)
+                </th>
+                <th  data-hide="phone">
+                    @Html.DisplayNameFor(model => model.SeriesFrom)
+                </th>
+                <th  data-hide="phone">
+                    @Html.DisplayNameFor(model => model.SeriesTo)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.AllotedCategoryName)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.AllotedToName)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.Total)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.Used)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DocumentTypeName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BookCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SeriesFrom)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SeriesTo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AllotedCategoryName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AllotedToName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Total)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Used)
+                    </td>
+                   
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('DCR', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtDcr', true, true, true);
+    });
+</script>

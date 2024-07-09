@@ -1,0 +1,124 @@
+﻿@using CodeLock.Models
+@model Dispatch
+@{
+    ViewBag.Title = "Insert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    baseUrl = '@Url.Action("", "Dispatch" ,new { Area = "WMS" })';
+    companyId = '@SessionUtility.CompanyId';
+    warehouseId = '@SessionUtility.WarehouseId';
+</script>
+<script src="@Url.Content("~/Areas/WMS/Views/Dispatch/Insert.js")"></script>
+<div class="row" id="dvWizard">
+    <div class="panel-body">
+       @using (Html.BeginForm("Insert", "Dispatch", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.DispatchId)
+            <div class="tab-content">
+                <div class="tab-pane active" id="1">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Order Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drOrderDate"></div>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("OrderNo", new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBox("txtOrderNo", "", new { @class = "form-control", @id = "txtOrderNo" })
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("InvoiceNo", new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBox("txtInvoiceNo", "", new { @class = "form-control", @id = "txtInvoiceNo" })
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="2">
+                    <div class="row" id="dvList">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtOrderList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="3">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.DispatchNo, new { @class = "label" })
+                                <div class="system-label">
+                                    @Html.LabelFor(m => m.DispatchNo, "<System Generated>")
+                                    @Html.HiddenFor(m => m.OrderId, new { @id = "hdnOrderId" })
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() {  FieldName = "DispatchDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DispatchDateTime), IsDateOnly = false, IsRequired = true, AllowFutureDate = false, AllowPastDate = false, MinDate = DateTime.Now.Date, MaxDate = DateTime.Now.Date.AddDays(1) })
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.OrderNo, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.OrderNo, " ", new { @id = "lblOrderNo", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.OrderDate, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.OrderDate, " ", new { @id = "lblOrderDate", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.InvoiceNo, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.InvoiceNo, " ", new { @id = "lblInvoiceNo", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.InvoiceDate, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.InvoiceDate, " ", new { @id = "lblInvoiceDate", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtProductList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div></div>
+       }
+            </div>
+    
+</div>
+

@@ -1,0 +1,54 @@
+﻿@model IList<CodeLock.Models.ServiceTypeToSacMapping>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    <div class="widget-wrap">
+        <div class="widget-wrap material-table-widget">
+            <table id="dtMapping">
+                <thead>
+                    <tr>
+                        <th>
+                            Service Type
+                        </th>
+                        <th>
+                            SAC
+                        </th>
+                    </tr>
+                <tbody>
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Html.HiddenFor(model => Model[i].ServiceTypeId, new { @id = "hdnServiceTypeId" + i })
+                                @Html.DisplayFor(model => Model[i].ServiceType)
+                            </td>
+                            <td>
+                                <div class="select">
+                                    @Html.DropDownListFor(model => Model[i].SacId, new SelectList(ViewBag.SacList, "Value", "Name", Model[i].SacId), "Select SAC", new { @class = "form-control" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => Model[i].SacId)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Save</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Service Type To SAC Mapping', '', '');
+        LoadDataTable('dtMapping', false, false, false);
+    });
+</script>
+
+
+

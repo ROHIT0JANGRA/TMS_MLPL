@@ -1,0 +1,96 @@
+﻿@model CodeLock.Models.MasterSkuLocationMapping
+
+@{
+    ViewBag.Title = "SkuLocation Mapping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "SkuLocationMapping", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SkuId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.SkuId, new SelectList(ViewBag.SkuList, "Value", "Name"), "Select Sku", new { @class = "form-control", @id = "ddlSkuId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SkuId)
+                </div>
+            </div>
+        </div>
+        <div class="overflow-table">
+            <table class="display" id="dtMapping"></table>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+<script>
+    var dtMapping, ddlSkuId;
+    $(document).ready(function () {
+        dtMapping = LoadDataTable('dtMapping', false, false, false, null, null, [],
+            [
+                { title: '@Html.DisplayNameFor(model => model.LocationCode)', data: "LocationId" },
+            ]);
+
+
+        ddlSkuId = $('#ddlSkuId');
+        $('#ddlSkuId').change(GetLocationList);
+        SetPageLoad('Sku to Location', 'Mapping', ddlSkuId.attr('id'), 'Go To List', '@Url.Action("Index")');
+        if (('@ViewBag.Message') == 'True') {
+            ShowMessage("Successfully Saved");
+        }
+        GetLocationList();
+        $('#btnSubmit').click(OnSubmit);
+    });
+
+    function GetLocationList() {
+        if (($('#ddlSkuId').val() != "")) {
+            var requestData = { skuId: $('#ddlSkuId').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetSkuLocationMappingList", "SkuLocationMapping")', JSON.stringify(requestData), GetLocationListSuccesss, ErrorFunction, false);
+        }
+        else GetLocationListSuccesss([])
+    }
+
+    function GetLocationListSuccesss(responseData) {
+        dtMapping.fnClearTable();
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.LocationId =
+                    "<label class='checkbox'>" +
+                    "<input type='checkbox' class='locationRow' name='LocationList[" + i + "].IsActive' id='LocationList[" + i + "].IsActive'  onclick='SetCheck(this)' value='" + item.IsActive + "'" + (item.IsActive ? "checked" : "") + "/><i></i>  " +
+                    "<input type='hidden' name='LocationList[" + i + "].LocationId' value='" + item.LocationId + "' />" +
+                    "<label class='label' for='LocationList[" + i + "].IsActive'>" + item.LocationCode + "</label>" +
+                    "</label>"
+            });
+            dtMapping.fnAddData(responseData);
+        }
+        else
+        {
+            if ($('#ddlSkuId').val() != "") {
+                ShowMessage("Please enter Location for selected Sku");
+                return false;
+            }
+        }
+    }
+
+    function SetCheck(obj) {
+        obj.value = obj.checked;
+    }
+
+    function OnSubmit()
+    {
+        if ($('#ddlSkuId').val() != "") {
+            var table = $('#dtMapping').DataTable();
+            if (!table.data().any()) {
+                ShowMessage("Please enter Location for selected Sku");
+                return false;
+            }
+        }
+
+    }
+</script>

@@ -1,0 +1,177 @@
+﻿@using CodeLock.Models
+@model Cheque
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        baseUrl = '@Url.Action("", "Banking", new { Area = "Finance" })';
+    });
+</script>
+
+<script src="@Url.Content("~/Areas/Finance/Views/Banking/ChequeDeposit.js")"></script>
+
+<div class="row" id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("ChequeDeposit", "Banking", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ChequeNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ChequeNo, new { @class = "form-control", @id = "txtChequeNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ChequeNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "ChequeDateCriteria", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.ChequeDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ChequeNo, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.ChequeNo, " ", new { @id = "lblChequeNo" })
+                                    @Html.HiddenFor(m => m.ChequeId, new { @id = "hdnChequeId" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ChequeDate, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblChequeDate" })
+                                    @Html.HiddenFor(m => m.ChequeDate, new { @id = "hdnChequeDate" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ChequeAmount, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.TextBoxFor(m => m.ChequeAmount, new { @class = "form-control textlabel numeric", @id = "txtChequeAmount" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.IsOnAccount, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.IsOnAccount, " ", new { @id = "lblIsOnAccount" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.CollectionAmount, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.TextBoxFor(m => m.CollectionAmount, new { @class = "form-control textlabel numeric", @id = "txtCollectionAmount" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.BalanceAmount, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.TextBoxFor(m => m.BalanceAmount, new { @class = "form-control textlabel numeric", @id = "txtBalanceAmount" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.PartyCode, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.PartyCode, " ", new { @id = "lblPartyCode" })
+                                    @Html.HiddenFor(m => m.PartyCode, new { @id = "hdnPartyCode" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.PartyName, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.PartyName, " ", new { @id = "lblPartyName" })
+                                    @Html.HiddenFor(m => m.PartyName, new { @id = "hdnPartyName" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.EntryDate, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.EntryDate, " ", new { @id = "lblEntryDate" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.BankName, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.BankName, " ", new { @id = "lblBankName" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.BranchName, new { @class = "control-label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.BranchName, " ", new { @id = "lblBranchName" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BankAccountId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(m => m.BankAccountId, Enumerable.Empty<SelectListItem>(), "Select Bank", new { @class = "form-control", @id = "ddlBankAccountId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.BankAccountId)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Narration, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.Narration, new { @class = "form-control", @id = "txtNarration" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.Narration)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        AddRequired($('#txtNarration'), 'Please enter Narration');
+        BindAccountDropDown($('#ddlBankAccountId'), 6, 'Bank');
+    });
+    function BindAccountDropDown(ddl, category, type) {
+        AjaxRequestWithPostAndJson('@Url.Action("GetListByCategory","Account",new{ Area="Master"})', JSON.stringify({ categoryId: category }), function (result) {
+            BindDropDownList(ddl.Id, result, 'Value', 'Description', '', type + ' Account');
+        }, ErrorFunction, false);
+    }
+</script>

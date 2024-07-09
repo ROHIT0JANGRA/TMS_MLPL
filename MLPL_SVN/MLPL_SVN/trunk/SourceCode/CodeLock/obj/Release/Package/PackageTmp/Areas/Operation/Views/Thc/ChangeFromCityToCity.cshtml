@@ -1,0 +1,207 @@
+﻿@model CodeLock.Models.Thc
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("ChangeVehicleNo", "Thc", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.HiddenFor(model => model.ThcId)
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FromCityName, new { @class = "label" })
+                <div class="input">
+                    @Html.HiddenFor(model => model.FromCityId, new { @id = "hdnFromCityId" })
+                    @Html.TextBoxFor(model => model.FromCityName, null, new { @class = "form-control", @id = "txtFromCityName" })
+                </div>
+                @Html.ValidationMessageFor(model => model.FromCityName)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ToCityName, new { @class = "label" })
+                <div class="input">
+                    @Html.HiddenFor(model => model.ToCityId, new { @id = "hdnToCityId" })
+                    @Html.TextBoxFor(model => model.ToCityName, null, new { @class = "form-control", @id = "txtToCityName" })
+
+                </div>
+                @Html.ValidationMessageFor(model => model.ToCityName)
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-footer">
+        <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+    </div>
+    <div class="page-separator">Thc Details</div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ThcNo, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.ThcNo, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ThcDate, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.ThcDate, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FromCityName, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.FromCityName, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ToCityName, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.ToCityName, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VendorCode, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.VendorCode, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VendorName, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.VendorName, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VehicleNo, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.VehicleNo, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-separator">Invoice Details</div>
+    <table id="dtInvoice">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].InvoiceNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].InvoiceDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].Length)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].Breadth)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].Height)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].VolumetricWeight)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].ChargedWeight)
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.InvoiceList)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.InvoiceNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.InvoiceDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Length)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Breadth)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Height)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VolumetricWeight)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ChargedWeight)
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>
+                    
+                </th>
+                <th>
+                    
+                </th>
+                <th>
+                   
+                </th>
+                <th>
+                    
+                </th>
+                <th>
+                   
+                </th>
+                <th>
+                    
+                </th>
+                <th>
+                    @Html.DisplayFor(model => model.ChargedWeight)
+                </th>
+
+            </tr>
+
+        </tfoot>
+    </table>
+
+</div>
+}
+
+<script>
+    var docketId, docketFieldList, txtDocketNo, btnSubmit, isFinancialUpdate = false;
+
+    $(document).ready(function () {
+        docketFieldList = JSON.parse('@DisplayName.GetList("Docket")'.replace(/&quot;/g, '"'));
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        SetPageLoad('Change City ', 'Update', '', '', '');
+        txtDocketNo = $('#txtDocketNo');
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+        LoadDataTable('dtInvoice', false, false, false);
+
+        CityAutoComplete('txtFromCityName', 'hdnFromCityId', 'From City');
+        CityAutoComplete('txtToCityName', 'hdnToCityId', 'To City');
+    });
+
+    function OnSubmit() {
+
+        if ($('#txtVehicleNo').val() == "") {
+            ShowMessage('Vehicle No  is not valid for Update');
+            $('#txtVehicleNo').focus();
+            return false;
+        }
+
+        return true;
+    }
+
+</script>
+

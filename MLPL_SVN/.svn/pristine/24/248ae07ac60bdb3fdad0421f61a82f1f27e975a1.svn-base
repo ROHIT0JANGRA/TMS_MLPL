@@ -1,0 +1,246 @@
+﻿@model CodeLock.Models.GstRegistration
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Gst Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Gst", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.GstId, new { id = "hdnGstId" })
+    @Html.HiddenFor(model => model.OwnerType, new { @id = "hdnOwnerType" })
+    @Html.HiddenFor(model => model.OwnerId, new { @id = "hdnOwner" })
+    @Html.AntiModelInjectionFor(m => m.GstId)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.OwnerCode, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(model => model.OwnerCode, new { @id = "hdnOwnerCode" })
+                        @Html.LabelFor(m => m.OwnerCode, Model.OwnerCode, new { @id = "lblOwnerCode", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.OwnerName, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.OwnerName, Model.OwnerName, new { @id = "lblOwnerName", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StateName, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.StateId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlState" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StateId)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Address, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.Address, new { @class = "form-control", @id = "txtAddress" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Address)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CityName, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.HiddenFor(model => model.CityId, new { @id = "hdnCityId" })
+                        @Html.TextBoxFor(model => model.CityName, new { @class = "form-control", @id = "txtCityName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CityName)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ProvisionalId, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.ProvisionalId, new { @class = "form-control", @id = "txtProvisionalId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProvisionalId)
+                </div>
+            </div>
+
+            @*<div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("GstType", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @id = "lblGstType", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>*@
+
+            <div class="col-sm-4" id="dvgsttinno" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GstTinNo, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.GstTinNo, new { @class = "form-control", @id = "txtGstTinNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GstTinNo)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RegistrationType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.RegistrationType, new SelectList(ViewBag.RegistrationTypeList, "Value", "Name"), "Select Registration Type", new { @class = "form-control", @id = "ddlRegistrationType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.RegistrationType)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Pincode, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.Pincode, new { @class = "form-control", @id = "txtPincode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Pincode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PanNo, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.PanNo, new { @class = "form-control", @id = "txtPanNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PanNo)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+
+<script>
+    var cityMasterUrl;
+    $(document).ready(function () {
+        SetPageLoad('GST', 'Create', 'StateName', 'Go To List', '@Url.Action("Index",new { @ownerType = Model.OwnerType})');
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        txtStateName = $('#txtStateName'); txtOwnerCode = $('#txtOwnerCode'); lblOwnerName = $('#lblOwnerName');
+        hdnOwnerType = $('#hdnOwnerType'); hdnOwner = $('#hdnOwner'); txtStateName = $('#txtStateName'); ddlState = $('#ddlState');
+        txtCityName = $('#txtCityName'); hdnCityId = $('#hdnCityId'); lblGstType = $('#lblGstType'); hdnGstId = $('#hdnGstId');
+        txtAddress = $('#txtAddress'); txtGstTinNo = $('#txtGstTinNo'); lblOwnerCode = $('#lblOwnerCode'); txtProvisionalId = $('#txtProvisionalId');
+        spnMassage = $('#spnMassage');
+        txtPanNo = $('#txtPanNo');
+        cityMasterUrl = '@Url.Action("", "City", new { Area = "Master" })';
+        baseUrl = '@Url.Action("", "Gst", new { Area = "Master" })';
+    }
+
+    function AttachEvents() {
+ /*       StateAutoComplete('txtStateName', 'hdnStateId');*/
+        ddlState.change(function () {
+            if (ddlState.val() != '') {
+                txtCityName.val('');
+                hdnCityId.val('');
+                var requestData = { GstId: hdnGstId.val(), OwnerId: hdnOwner.val(), StateId: ddlState.val(),OwnerType: hdnOwnerType.val() };
+                AjaxRequestWithPostAndJson(baseUrl + '/ValidateGSTState', JSON.stringify(requestData), function (result) {
+                    if (!result.IsSuccessfull) {
+                        ShowMessage(result.ErrorMessage);
+                        ddlState.val('');
+                        lblGstType.text('');
+                        ddlState.focus();
+                        isStepValid = false;
+                        return false;
+                    }
+
+                }, ErrorFunction, false);
+            }
+
+            /*var result = IsStateNameExist(txtStateName, hdnStateId);*/
+            GetGstTypeByStateId(ddlState, lblGstType);
+            /* return result;*/
+
+        });
+
+        AutoComplete('txtCityName', cityMasterUrl + '/GetAutoCompleteCityNameListByStateId', 'cityName', 'l', 'l', 'l', 'd', '', 'hdnCityId', '', '', true, function () {
+            return [{ Key: 'stateId', Value: ddlState.val() }];
+        });
+        txtCityName.blur(function () { return IsCityNameExist(txtCityName, hdnCityId); });
+        GetGstTypeByStateId(ddlState, lblGstType);
+        $("#ddlRegistrationType").change(RegistrationTypeChange);
+        RegistrationTypeChange();
+    }
+
+    function CheckDuplicate() {
+        if (ddlState.val() != '') {
+            $('[id*="ddlState"]').each(function () {
+                var ddlState = $(this);
+                if (ddlState.val() == ddlState.val()) {
+                    ShowMessage('Please remove Duplicate State : ' + ddlState.val());
+                    ddlState.val('');
+                    ddlState.focus();
+                    return false;
+                }
+                return true;
+            });
+        }
+    }
+
+    function GetGstTypeByStateId(ddlState, lblGstType) {
+        if (ddlState.val() != 0 && ddlState.val() != '') {
+            var requestData = { stateId: ddlState.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("CheckIsStateOrUnionTerritory","State")', JSON.stringify(requestData), function (result) {
+                if (result)
+                    lblGstType.text('SGST');
+                else
+                    lblGstType.text('UGST');
+
+            }, ErrorFunction, false);
+        }
+        else
+            lblGstType.text('');
+    }
+    //function RegistrationTypeChange() {
+    //    $("#dvgsttinno").showHide($("#ddlRegistrationType").val() == 2)
+    //    if ($("#ddlRegistrationType").val() == 2) {
+    //        RemoveRequired($('#txtGstTinNo'));
+
+    //    } else {
+    //        AddRequired($('#txtGstTinNo'), 'Please Enter Gst No');
+    //    }
+    //}
+    function RegistrationTypeChange() {
+        $("#dvgsttinno").showHide($("#ddlRegistrationType").val() != 2)
+        if ($("#ddlRegistrationType").val() != 2) {
+            if (hdnOwnerType.val() == 3) {
+                    var requestData = { CustomerId: hdnOwnerId.val() };
+                    AjaxRequestWithPostAndJson('@Url.Action("GetById", "Customer")', JSON.stringify(requestData), function (result) {
+                        if (result.MasterCustomerDetail.IsTruckForwardNote) {
+                            RemoveRequired(txtGstTinNo);
+                            AddRequired($('#txtPanNo'), 'Please PAN No');
+                        }
+                    }, ErrorFunction, false);
+                }
+                else
+                    AddRequired($('#txtGstTinNo'), 'Please Enter Gst No');
+        } else {
+            RemoveRequired($('#txtGstTinNo'));
+            $("#txtGstTinNo").val('');
+
+        }
+    }
+</script>
+

@@ -1,0 +1,114 @@
+﻿@using CodeLock.Helper
+@model CodeLock.Models.VehicleMaintenanceStatus
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "VehicleMaintenance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    baseUrl = '@Url.Action("", "Tripsheet")';
+    
+</script>
+<script src="@Url.Content("~/Areas/FMS/Views/Tripsheet/VehicleMaintenance.js")"></script>
+@using (Html.BeginForm("VehicleMaintenance", "Tripsheet", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        <div class="page-separator"><span class="page-separator" id="spnMassage">Vehicle Maintanance Update </span></div>
+        <div class="row">
+            
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                        @Html.TextBoxFor(model => model.VehicleNo, null, new { @class = "form-control", @maxlength = "15", @id = "txtVehicleNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleNo)
+                </div>
+            </div>
+
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleStatus, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VehicleStatus, new List<SelectListItem> {
+                                            new SelectListItem() {Text = "Select",Value=""},
+                                            new SelectListItem() {Text = "Work in Progress", Value="1"},
+                                            new SelectListItem() {Text = "Ready on road", Value="2"},
+
+                                    }, new { @class = "form-control", @id = "ddlVehicleStatus" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleStatus)
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CurrDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.CurrDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, MinDate = DateTime.Now.Date.AddDays(-3), MaxDate = DateTime.Now, IsDateOnly = false })
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Remarks, null, new { @class = "form-control", @maxlength = "100", @id = "txtRemarks" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SpareParts, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SpareParts, null, new { @class = "form-control", @maxlength = "200", @id = "txtSpareParts" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "ExpectdDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.ExpectdDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = true, MinDate = DateTime.Now.Date.AddDays(-3), MaxDate = DateTime.Now, IsDateOnly = false })
+                </div>
+            </div>
+            
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ExpenseAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ExpenseAmount, null, new { @class = "form-control", @maxlength = "6", @id = "txtExpenseAmount" })
+                    </div>
+                   
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillDocument, new { @class = "label" })
+                    <div class="input prepend-big-btn">
+                        <label class="icon-right" for="prepend-big-btn">
+                            <i class="fa fa-download"></i>
+                        </label>
+                        <div class="file-button">
+                            Browse
+                            <input class="form-control" id="fuPhotoAttachment" type="file" name="BillDocument" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                        </div>
+                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                    </div>
+                </div>
+            </div>
+         </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Update</button>
+        </div>
+            @*<div class="row">
+                <div class="widget-wrap material-table-widget">
+                    <table id="dtDetails1" class="table-bordered"></table>
+                </div>
+            </div>*@
+        </div>
+}

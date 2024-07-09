@@ -1,0 +1,93 @@
+﻿@using CodeLock.Models
+@model VendorBillFinalization
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        vendorPaymentUrl = '@Url.Action("", "VendorPayment", new { Area = "Finance" })';
+        locationId = '@SessionUtility.LoginLocationId';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Finance/Views/VendorPayment/BillFinalization.js")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("BillFinalization", "VendorPayment", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.LocationId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(m => m.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name", SessionUtility.LoginLocationId), new { @class = "form-control", @id = "ddlLocationId" })
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            @Html.Label("Select Transaction Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drTransactionDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorCode, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                                    @Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.VendorCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorCode, " ", new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.VendorCode, " ", new { @class = "label-bold", @id = "lblVendorName" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.BillNo, new { @class = "form-control", @id = "txtBillNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    @Html.Label(" ", new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.Label("(seperated by comma if multiple)", new { @class = "label" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtBillList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

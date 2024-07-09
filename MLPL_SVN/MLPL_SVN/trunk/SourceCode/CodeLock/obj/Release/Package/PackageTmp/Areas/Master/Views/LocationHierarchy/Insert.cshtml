@@ -1,0 +1,73 @@
+﻿@model CodeLock.Models.MasterLocationHierarchy
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Insert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "LocationHierarchy", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.LocationHierarchyId)
+    @Html.HiddenFor(m => m.LocationHierarchyId, new { @id = "hdnLocationHierarchyId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationHierarchyName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.LocationHierarchyName, new { @class = "form-control", @id = "txtLocationHierarchyName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationHierarchyName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationRank, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.LocationRank, new { @class = "form-control numeric", @id = "txtLocationRank" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationRank)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    var hdnLocationHierarchyId, btnSubmit;
+    $(document).ready(function () {
+        hdnLocationHierarchyId = $('#hdnLocationHierarchyId');
+        btnSubmit = $('#btnSubmit');
+
+        var isAdd = true;
+        if (hdnLocationHierarchyId.val() != 0) {
+            isAdd = false;
+            $('#txtLocationHierarchyName').readOnly(true);
+        }
+
+
+        if (isAdd == false) {
+            SetPageLoad('LocationHierarchy', 'Edit', 'LocationHierarchyName', 'Go To List', '@Url.Action("Index")');
+        }
+        else {
+            SetPageLoad('LocationHierarchy', 'Create', 'LocationHierarchyName', 'Go To List', '@Url.Action("Index")');
+
+        }
+
+        btnSubmit.html(isAdd ? 'Create' : 'Update');
+
+    });
+</script>

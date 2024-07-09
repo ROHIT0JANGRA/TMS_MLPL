@@ -1,0 +1,102 @@
+﻿@model CodeLock.Models.MasterUnitTemperature
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "Unit Temperature Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "UnitTemperature", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @*@Html.AntiModelInjectionFor(m => m.UnitId)*@
+    @Html.Hidden("UnitId")
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ProductName, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label("ProductName", Model.ProductName, new { @class = "label-bold", @id = "lblProductName" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ModelNumber, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ModelNumber, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ModelNumber)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ModelSerialNumber, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ModelSerialNumber, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ModelSerialNumber)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MinimumTemperature, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MinimumTemperature, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MinimumTemperature)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaximumTemperature, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MaximumTemperature, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MaximumTemperature)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StandardTemperature, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.StandardTemperature, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StandardTemperature)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txtRemarks" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Remarks)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-footer">
+                <button type="submit" id="btnsubmit" class="btn btn-success primary-btn" tabindex="0">Update</button>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Unit', 'Temperature Update', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.UnitId })');
+    });
+</script>

@@ -1,0 +1,277 @@
+﻿@model CodeLock.Models.FinanceDayWiseReport
+@using CodeLock.Models
+@{
+	ViewBag.Title = "DayWise Report";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("FinanceDayWiseReport", "Finance", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+	@Html.AntiForgeryToken()
+	<div class="widget-wrap">
+
+        <div class="row">
+            <div class="col-sm-3">
+                @Html.Label("Select Document Date", new { @class = "label" })
+                <div id="drDocumentDate"></div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ModuleTypeId, new { @class = "label" })
+                    @Html.DropDownListFor(model => model.ModuleTypeId, new SelectList(ViewBag.ModuleTypeList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlModuleTypeId", @multiple = "multiple", @placeholder = "Select ModuleType" })
+                    @Html.ValidationMessageFor(model => model.ModuleTypeId)
+                </div>
+            </div>
+        </div>
+		<div class="row">
+			<div class="col-sm-3">
+				<div class="form-group">
+					@Html.LabelFor(model => model.PartyType, new { @class = "label" })
+					<div class="select">
+						@Html.DropDownListFor(model => model.PartyType, new SelectList(ViewBag.PartyTypeList, "Value", "Name"), new { @class = "form-control", @id = "ddlPartyTypeId" })
+						<i></i>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="form-group">
+					@Html.LabelFor(model => model.PartyId, new { @class = "label" })
+					<div class="input">
+						@Html.HiddenFor(model => model.PartyId, new { @id = "hdnPartyId" })
+						@Html.TextBoxFor(model => model.PartyCode, null, new { @class = "form-control", @id = "txtPartyCode" })
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="form-group">
+					@Html.Label(" ", new { @class = "label" })
+					<div class="clearfix">
+						@Html.Label(" ", new { @class = "label-bold", @id = "lblPartyName" })
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3" id="dvOther" style="display:none">
+				<div class="form-group">
+					@Html.Label(" ", new { @class = "label", @id = "lblParty" })
+					<div class="input">
+						@Html.TextBox("txtPartyName", null, new { @class = "form-control", @id = "txtPartyName" })
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-separator">OR</div>
+		<div class="row">
+			<div class="col-sm-3">
+				<div class="form-group">
+					@Html.LabelFor(model => model.DocumentNos, new { @class = "label" })
+					<div class="input">
+						@Html.TextBoxFor(model => model.DocumentNos, new { @class = "form-control", @id = "txtDocumentNos" })
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="form-group">
+					@Html.Label(" ", new { @class = "label" })
+					<div class="clearfix">
+						@Html.Label("(seperated by comma if multiple)")
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-separator">OR</div>
+		<div class="row">
+			<div class="col-sm-3">
+				<div class="form-group">
+					@Html.LabelFor(model => model.ManualDocumentNos, new { @class = "label" })
+					<div class="input">
+						@Html.TextBoxFor(model => model.ManualDocumentNos, new { @class = "form-control", @id = "txtManualDocumentNos" })
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					@Html.Label(" ", new { @class = "label" })
+					<div class="clearfix">
+						@Html.Label("(seperated by comma if multiple)")
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-separator">OR</div>
+		<div class="row">
+			<div class="col-sm-4">
+				<div class="form-group">
+					@Html.LabelFor(model => model.VoucherNo, new { @class = "label" })
+					<div class="input">
+						@Html.TextBoxFor(model => model.VoucherNo, new { @class = "form-control", @id = "txtVoucherNos" })
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					@Html.Label(" ", new { @class = "label" })
+					<div class="clearfix">
+						@Html.Label("(seperated by comma if multiple)")
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-footer">
+			<button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+		</div>
+	</div>
+}
+<script>
+	var drDocumentDate, ddlLocationId, ddlModuleTypeId, lblDocumentTypeId, ddlPartyTypeId, ddlPartyType, txtPartyCode, lblPartyName, txtDocumentNos, txtManualDocumentNos, txtVoucherNos, btnSubmit;
+	var hdnPartyId, lblParty, txtPartyName;
+	$(document).ready(function () {
+		SetPageLoad('Report', 'Finance Day Wise Report', '', '', '');
+
+		drDocumentDate = InitDateRange('drDocumentDate', DateRange.LastWeek);
+		ddlLocationId = $('#ddlLocationId');
+		ddlModuleTypeId = $('#ddlModuleTypeId');
+		lblDocumentTypeId = $('#lblDocumentTypeId');
+		ddlPartyTypeId = $('#ddlPartyTypeId');
+		ddlPartyType = $('#ddlPartyType');
+		txtPartyCode = $('#txtPartyCode');
+		lblPartyName = $('#lblPartyName');
+		txtDocumentNos = $('#txtDocumentNos');
+		txtManualDocumentNos = $('#txtManualDocumentNos');
+		txtVoucherNos = $('#txtVoucherNos');
+		hdnPartyId = $('#hdnPartyId');
+		btnSubmit = $('#btnSubmit');
+		lblParty = $('#lblParty');
+		txtPartyName = $('#txtPartyName');
+		btnSubmit.click(ViewReport);
+
+        InitMultiSelect(ddlModuleTypeId.Id, true, false,true);
+		OnDocumentTypeChange();
+		ddlPartyTypeId.change(OnDocumentTypeChange);
+		txtPartyCode.blur(function () { return IsCodeExist(txtPartyCode, hdnPartyId, lblPartyName); });
+	});
+
+	function OnDocumentTypeChange() {
+		txtPartyCode.val('');
+		hdnPartyId.val('');
+		lblPartyName.text('');
+		lblParty.text('');
+		txtPartyName.val('');
+		if (ddlPartyTypeId.val() == 1) {
+			UserAutoComplete('txtPartyCode', 'hdnPartyId');
+		}
+		else if (ddlPartyTypeId.val() == 2) {
+			lblParty.text("Customer");
+			CustomerAutoComplete('txtPartyCode', 'hdnPartyId');
+		}
+		else if (ddlPartyTypeId.val() == 3) {
+			lblParty.text("Vendor");
+			VendorAutoComplete('txtPartyCode', 'hdnPartyId');
+		}
+		else if (ddlPartyTypeId.val() == 4) {
+			lblParty.text("Vendor");
+			VendorAutoComplete('txtPartyCode', 'hdnPartyId', '', 4);
+		}
+		else if (ddlPartyTypeId.val() == 5) {
+			lblParty.text("Driver");
+			DriverCodeAutoCompleteByLocation('txtPartyCode', 'hdnPartyId');
+		}
+		else if (ddlPartyTypeId.val() == 6) {
+			lblParty.text("Vehicle");
+			VehicleAutoComplete('txtPartyCode', 'hdnPartyId');
+		}
+		else if (ddlPartyTypeId.val() == 7) {
+			CompanyAutoComplete('txtPartyCode', 'hdnPartyId');
+		}
+		else if (ddlPartyTypeId.val() == 8) {
+			LocationAutoComplete('txtPartyCode', 'hdnPartyId');
+		}
+		else if (ddlPartyTypeId.val() == 9) {
+			txtPartyCode.autocomplete("destroy");
+		}
+		else {
+			txtPartyCode.autocomplete("destroy");
+		}
+	}
+
+	function IsCodeExist(txtPartyCode, hdnPartyId, lblPartyName) {
+		if (ddlPartyTypeId.val() == 1) {
+			return IsUserCodeExist(txtPartyCode, hdnPartyId, lblPartyName);
+		}
+		else if (ddlPartyTypeId.val() == 2) {
+			$('#dvOther').showHide(hdnPartyId.val() == 1);
+			IsCustomerCodeExist(txtPartyCode, hdnPartyId, lblPartyName);
+			if (hdnPartyId.val() != 1 && hdnPartyId.val() != '') {
+				txtPartyName.val(lblPartyName.text());
+			}
+			else {
+				txtPartyName.val('');
+			}
+		}
+		else if (ddlPartyTypeId.val() == 3) {
+			$('#dvOther').showHide(hdnPartyId.val() == 1);
+			IsVendorCodeExist(txtPartyCode, hdnPartyId, lblPartyName);
+			if (hdnPartyId.val() != 1 && hdnPartyId.val() != '') {
+				txtPartyName.val(objLbl.text());
+			}
+			else {
+				txtPartyName.val('');
+			}
+		}
+		else if (ddlPartyTypeId.val() == 4) {
+			return IsVendorCodeExist(txtPartyCode, hdnPartyId);
+		}
+		else if (ddlPartyTypeId.val() == 5) {
+			$('#dvOther').showHide(hdnPartyId.val() == 1);
+			IsDriverCodeExistByLocation(txtPartyCode, hdnPartyId, lblPartyName);
+			if (hdnPartyId.val() != 1 && hdnPartyId.val() != '') {
+				txtPartyName.val(objLbl.text());
+			}
+			else {
+				txtPartyName.val('');
+			}
+		}
+		else if (ddlPartyTypeId.val() == 6) {
+			$('#dvOther').showHide(hdnPartyId.val() == 1);
+			IsVehicleNoExist(txtPartyCode, hdnPartyId);
+			if (hdnPartyId.val() != 1 && hdnPartyId.val() != '') {
+				txtPartyName.val(objLbl.text());
+			}
+			else {
+				txtPartyName.val('');
+			}
+		}
+		else if (ddlPartyTypeId.val() == 7) {
+			return IsCompanyCodeExist(txtPartyCode, hdnPartyId, lblPartyName);
+		}
+		else if (ddlPartyTypeId.val() == 8) {
+			return IsLocationCodeExist(txtPartyCode, hdnPartyId);
+		}
+		else if (ddlPartyTypeId.val() == 9) {
+			return txtPartyCode.autocomplete("destroy");
+		}
+		else {
+			return txtPartyCode.autocomplete("destroy");
+		}
+
+	}
+	function ViewReport() {
+        var prmList = [{ Name: "FromDate", Value: $.displayDate(drDocumentDate.startDate) },
+            { Name: "ToDate", Value: $.displayDate(drDocumentDate.endDate) },
+		{ Name: "LocationId", Value: ddlLocationId.val() },
+        { Name: "ModuleTypeId", Value: ddlModuleTypeId.multiVal() },
+		{ Name: "PartyTypeId", Value: ddlPartyTypeId.val() },
+		{ Name: "PartyId", Value: hdnPartyId.val() == '' ? 0 : hdnPartyId.val() },
+		{ Name: "PartyName", Value: txtPartyName.val() },
+		{ Name: "DocumentNos", Value: txtDocumentNos.val() },
+		{ Name: "ManualDocumentNos", Value: txtManualDocumentNos.val() },
+		{ Name: "VoucherNo", Value: txtVoucherNos.val() }
+		];
+		var reportInfo = { PrmList: prmList, Name: 'FinanceDayWiseReport', Description: 'Finance DayWise Report' };
+		return ShowReport(reportInfo);
+	}
+</script>

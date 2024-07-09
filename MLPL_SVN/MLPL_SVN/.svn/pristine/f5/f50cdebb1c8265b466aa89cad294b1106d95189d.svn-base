@@ -1,0 +1,105 @@
+﻿@using CodeLock.Models
+@model MasterAccountOpening
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "AccountOpening";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        accountMasterUrl = '@Url.Action("", "Account", new { Area = "Master" })';
+        baseUrl = '@Url.Action("", "AccountOpening", new { Area = "Master" })';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Master/Views/AccountOpening/AccountOpening.js")"></script>
+
+<div class="row" id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("AccountOpening", "AccountOpening", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="inline-group">
+                                    @Html.LabelFor(model => model.IsLocationWise, " ", new { @class = "label" })
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.IsLocationWise, true, new { @id = "rdLocationWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.IsLocationWise, "Location Wise ", new { @for = "rdLocationWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.IsLocationWise, false, new { @id = "rdAccountWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.IsLocationWise, "Account Wise", new { @for = "rdAccountWise" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Code, new { @class = "label", @id = "lblCode" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.CodeId, new { @id = "hdnCodeId" })
+                                    @Html.TextBoxFor(model => model.Code, null, new { @class = "form-control", @id = "txtCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Code)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @class = "label-bold",@id="lblName" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="dvAccount">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AccountCategoryId, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.AccountCategoryId, new SelectList(ViewBag.AccountCategoryList, "Value", "Name"), "Select Account Category", new { @class = "form-control", @id = "ddlAccountCategoryId" })<i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.AccountCategoryId)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AccountId, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.AccountId, Enumerable.Empty<SelectListItem>(), "Select Account", new { @class = "form-control", @id = "ddlAccountId" })<i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.AccountId)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" id="dvLocation">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control", @id = "ddlLocationId" })<i></i>
+                                </div>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.LocationId)
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtAccountOpeningList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

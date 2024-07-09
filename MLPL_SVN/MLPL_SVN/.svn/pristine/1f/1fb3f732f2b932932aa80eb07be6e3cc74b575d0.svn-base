@@ -1,0 +1,85 @@
+﻿@using CodeLock.Models
+@model WarehouseStock
+@{
+    ViewBag.Title = "StockReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        companyId = '@SessionUtility.CompanyId';
+        warehouseId = '@SessionUtility.WarehouseId';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Reports/Views/WMS/StockReports.js")"></script>
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CompanyId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CompanyId, new SelectList(ViewBag.CompanyList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "multiple", @placeholder = "Select Company", @id = "ddlCompanyId" })
+                        <i></i>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(model => model.CompanyId)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.WarehouseId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.WarehouseId, new SelectList(ViewBag.WarehouseList, "WarehouseId", "WarehouseName"), new { @class = "form-control select2-multiple", @multiple = "multiple", @placeholder = "Select Company", @id = "ddlWarehouseId" })
+                        <i></i>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(model => model.WarehouseId)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("ProductCode", "Product Code", new { @class = "label" })
+                    <div class="input">
+                        @Html.Hidden("ProductId", "ProductId", new { @id = "hdnProductId" })
+                        @Html.TextBox("ProductCode", null, new { @class = "form-control", @id = "txtProductCode" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="input">
+                        @Html.Hidden("Uom", "Uom", new { @id = "hdnUom" })
+                        @Html.TextBox("ProductName", null, new { @class = "form-control textlabel", @id = "txtProductName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("BinCode", "Bin Code", new { @class = "label" })
+                    <div class="input">
+                        @Html.Hidden("BinId", "BinId", new { @id = "hdnBinId" })
+                        @Html.TextBox("BinCode", null, new { @class = "form-control", @id = "txtBinCode" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("BinName", " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.Label("BinName", " ", new { @class = "label", @id = "lblBinName" })
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+

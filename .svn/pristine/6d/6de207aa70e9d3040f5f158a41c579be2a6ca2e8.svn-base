@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Docket Re-Assign Done";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><h5><span id="spnMassage"> Docket status has changed successfully</span></h5></div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Docket', 'Change docket status', '', 'Go To Change Docket Status ', '@Url.Action("DocketChangeStatus")');
+    });
+</script>
+
+

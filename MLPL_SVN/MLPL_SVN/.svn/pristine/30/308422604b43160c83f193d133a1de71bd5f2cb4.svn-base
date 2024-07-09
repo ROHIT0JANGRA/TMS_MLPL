@@ -1,0 +1,670 @@
+﻿@using CodeLock.Models
+@model TripBilling
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "TripBill";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var txtCustomerCode, ddlPaybasId, hdnCustomerId, lblCustomerName, ddlServiceTypeId, ddlFtlTypeId, ddlPrimaryBillingTypeId, ddlTransactionTypeId, ddlGstServiceTypeId,
+        txtBillDate, txtDueDate, drTransactionDate, dtDocketList, selectedDocketList, customerMasterUrl, customerBillGenerationUrl, ddlCustomerGstStateId,
+        lblLocationCode, loginLocationCode, docketTotal, docketNomenclature, gstMasterUrl, ddlCompanyGstStateId, customerContractMasterUrl, customerSupBillUrl,
+        fromcityid, tocityid, hdnGstServiceTypeId, hdnFromCityId, txtFromCity, hdnToCityId, txtToCity, loginLocationId, ddlGenerationCityId;
+    var allowMandatoryManualBillNo = false, ddlSubmissionCityId, btnStep1, btnSubmit, dvStep1, dvStep2;
+
+    $(document).ready(function () {
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        customerBillGenerationUrl = '@Url.Action("", "CustomerBill", new { Area = "Finance" })';
+        customerContractMasterUrl = '@Url.Action("", "CustomerContract", new { Area = "Contract" })';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+        gstMasterUrl = '@Url.Action("", "Gst", new { Area = "Master" })';
+        customerSupBillUrl = '@Url.Action("MiscellaneousBill", "CustomerBill")';
+        cityMasterUrl = '@Url.Action("", "City", new { Area = "Master" })';
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+               
+        loginLocationId = '@SessionUtility.LoginLocationId';
+        SetPageLoad('Customer', 'Billing', 'ddlGstServiceTypeId', '', '');
+   
+        InitObjects();
+        AttachEvents();              
+    });
+
+    function InitObjects() {
+        txtCustomerCode = $('#txtCustomerCode');
+        lblCustomerName = $('#lblCustomerName');
+        ddlPrimaryBillingTypeId = $('#ddlPrimaryBillingTypeId');
+        hdnCustomerId = $('#hdnCustomerId');
+        ddlCustomerGstStateId = $('#ddlCustomerGstStateId');
+        ddlGstServiceTypeId = $('#ddlGstServiceTypeId');
+        ddlTransactionTypeId = $('#ddlTransactionTypeId');
+
+        hdnGstServiceTypeId = $('#hdnGstServiceTypeId');
+        ddlCompanyGstStateId = $('#ddlCompanyGstStateId');
+        ddlGenerationCityId = $('#ddlGenerationCityId');
+        ddlSubmissionCityId = $('#ddlSubmissionCityId');
+
+        drTransactionDate = InitDateRange('drTransactionDate', DateRange.LastWeek, false);
+        GetCompanyGstState();
+        ddlGstServiceTypeId.change(OnGstServiceTypeChange).change();
+        btnStep1 = $('#btnStep1');
+        btnSubmit = $('#btnSubmit');
+
+        dvStep1 = $('#dvStep1');
+        dvStep2 = $('#dvStep2');
+    }
+    function OnGstServiceTypeChange() {
+        var gstServiceType = ddlGstServiceTypeId.val().split('~');
+
+        if (!IsObjectNullOrEmpty(gstServiceType)) {
+            hdnGstServiceTypeId.val(gstServiceType[0]);
+        }
+        else {
+            hdnGstServiceTypeId.val('');
+        }
+    }
+
+    function GetCompanyGstState() {
+        var requestData = { ownerType: 1, ownerId: loginCompanyId, locationId: 0 };
+        AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstStateList', JSON.stringify(requestData), function (responseData) {
+            BindDropDownList(ddlCompanyGstStateId.Id, responseData, 'Description', 'Name', '', (responseData.length > 1 ? 'Select Company GST State' : ''));
+        }, ErrorFunction, false);
+
+        ddlPrimaryBillingTypeId.append($("<option></option>").val(1).html('Inter-State'));
+        ddlPrimaryBillingTypeId.append($("<option></option>").val(0).html('Intra-State'));
+    }
+
+    function AttachEvents() {
+
+        $('#chkIsExemptGst').click(function () {
+            SelectDocket();
+        });
+
+
+        btnStep1.click(function () {
+
+            if (IsStepValid(dvStep1)) {
+                GetGstDetail();
+                GetCompanyGstDetailsByOwnerTypeAndOwnerAndStateAndCity();
+                GetCustomerGstDetailsByOwnerTypeAndOwnerAndStateAndCity();
+            }
+        });
+
+
+
+        btnSubmit.click(function () {
+        });
+
+        CustomerAutoCompleteByLocationPaybas('txtCustomerCode', 'hdnCustomerId', loginLocationId, 0, true);
+        txtCustomerCode.blur(function () {
+
+            if (txtCustomerCode.val() == "") {
+                return;
+            }
+
+            IsCustomerCodeExistByLocationPaybas(txtCustomerCode, hdnCustomerId, lblCustomerName, loginLocationId, 0, true);
+            if (hdnCustomerId.val() > 0) {
+                GetCustomerGstState();
+                //OnGstStateChange();
+            }
+            else {
+                BindDropDownList('ddlCustomerGstStateId', [], null, null, '', 'Select State');
+                txtCustomerCode.focus();
+            }
+        });
+
+        ddlCustomerGstStateId.change(GetCustomerGstDetailsByOwnerTypeAndOwnerAndStateAndCity);
+        ddlCompanyGstStateId.change(GetCompanyGstDetailsByOwnerTypeAndOwnerAndStateAndCity);
+    }
+
+    function GetCustomerGstState() {
+        ddlPrimaryBillingTypeId.enable();
+        var requestData = { ownerType: 3, ownerId: hdnCustomerId.val(), locationId: 0 };
+        AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstStateList', JSON.stringify(requestData), function (responseData) {
+            BindDropDownList(ddlCustomerGstStateId.Id, responseData, 'Description', 'Name', '', (responseData.length > 1 ? 'Select Party GST State' : ''));
+        }, ErrorFunction, false);
+    }
+    function OnGstStateChange() {
+        ddlPrimaryBillingTypeId.enable();
+        if (ddlCustomerGstStateId.val() != '') {
+            if (ddlCompanyGstStateId.val() == ddlCustomerGstStateId.val())
+                ddlPrimaryBillingTypeId.val(0).disable();
+            else
+                ddlPrimaryBillingTypeId.val(1).disable();
+        }
+    }
+    var creditDays = 0;
+    function GetGstDetail() {
+
+        if (ddlTransactionTypeId.val() == 1) {
+            try {
+                selectedDocketList = [];
+
+                var requestData = { customerId: hdnCustomerId.val(), fromDate: drTransactionDate.startDate, toDate: drTransactionDate.endDate, GstServiceTypeId: hdnGstServiceTypeId.val() == '' ? 0 : hdnGstServiceTypeId.val() };
+                AjaxRequestWithPostAndJson(customerBillGenerationUrl + '/GetTripCustomerBillDetailsNew', JSON.stringify(requestData), function (result) {
+
+                    if (dtDocketList == null)
+                        dtDocketList = LoadDataTable('dtDocketList', false, false, false, null, null, [],
+                            [
+                                { title: SelectAll.GetChkAll('chkDocketAll', SelectDocket), data: "TripsheetId" },
+                                { title: 'Tripsheet No', data: 'TripSheetNo' },
+                                { title: 'Manual Tripsheet No', data: 'ManualTripsheetNo' },
+                                { title: 'TripSheet Date', data: 'TripSheetDate' },
+                                { title: 'Vehicle No', data: 'VehicleNo' },
+                                { title: 'From - To City', data: 'From_To' },
+                                { title: 'THC No', data: 'THCNo' },
+                                { title: 'THC Date', data: 'ThcDate' },
+                                { title: 'Freight Amount', data: 'FreightAmount' },
+                                { title: 'Labour Charge', data: 'LabourCharge' },
+                                { title: 'Other Charge', data: 'OtherCharge' },
+                                { title: 'Sub Total', data: 'TotalAmount' },
+                                { title: 'GST Rate(%)', data: 'TaxRate' },
+                                { title: 'GST Amount', data: 'TaxTotal' },
+                                { title: 'THC Total', data: 'DocketTotal' }
+                            ]);
+
+                    dtDocketList.fnClearTable();
+
+                    if (result.length == 0) {
+                        isStepValid = false;
+                        ShowMessage('No Record Found');
+                        return false;
+                    }
+                    else {
+
+                        dvStep2.showHide(true);
+                        dvStep1.pointerEvent(false);
+
+                        $.each(result, function (i, item) {
+                            item.TripsheetId = "<div class='checkboxer'>" + SelectAll.GetChk('chkDocketAll', 'chkChieldDocket' + i, 'Details[' + i + '].IsChecked', SelectDocket) +
+                            "<input type='hidden' value='" + item.TripsheetId + "' name='Details[" + i + "].TripsheetId' id='hdnTripsheetId" + i + "'/>" +
+                            "</div>";
+
+                            item.FreightAmount = '<input type=\'text\' name="Details[' + i + '].FreightAmount" id="txtFreightAmount' + i + '" value=' + item.FreightAmount.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                            item.LabourCharge = '<input type=\'text\' name="Details[' + i + '].LabourCharge" id="txtLabourCharge' + i + '" value=' + item.LabourCharge.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                            item.OtherCharge = '<input type=\'text\' name="Details[' + i + '].OtherCharge" id="txtOtherCharge' + i + '" value=' + item.OtherCharge.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                            item.TotalAmount = '<input type=\'text\' name="Details[' + i + '].TotalAmount" id="txtTotalAmount' + i + '" value=' + item.TotalAmount.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                            item.TaxTotal = '<input type=\'text\' name="Details[' + i + '].TaxTotal" id="txtTaxTotal' + i + '" value=' + item.TaxTotal.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                            item.TaxRate = '<input type=\'text\' name="Details[' + i + '].TaxRate" id="txtTaxRate' + i + '" value=' + item.TaxRate.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                            item.DocketTotal = '<input type=\'text\' name="Details[' + i + '].DocketTotal" id="txtDocketTotal' + i + '" value=' + item.DocketTotal.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>' +
+                                "<input type='hidden' value='" + item.Igst + "' name='Details[" + i + "].Igst' id='hdnIgst" + i + "'/>" +
+                                "<input type='hidden' value='" + item.Cgst + "' name='Details[" + i + "].Cgst' id='hdnCgst" + i + "'/>" +
+                                "<input type='hidden' value='" + item.Sgst + "' name='Details[" + i + "].Sgst' id='hdnSgst" + i + "'/>";
+                        });
+                        dtDocketList.dtAddData(result);
+                    }
+                }, ErrorFunction, false);
+
+                $('#lblCustomer').text(txtCustomerCode.val() + " : " + lblCustomerName.text());
+                $('#lblInterState').text(ddlCustomerGstStateId.val() == ddlCompanyGstStateId.val() ? "Intra State" : "Inter State");
+                $('#lblSacName').text($("#ddlGstServiceTypeId option:selected").text());
+
+            } catch (e) { alert(e.message) }
+        }
+    }
+
+    function CalculateDueDate() {
+        if (txtBillDate.val() != '') {
+            var days = parseInt(creditDays);
+            var dueDate = $.setDateTime(txtBillDate.val()).add(creditDays, 'd');
+            txtDueDate.val($.entryDate(dueDate));
+        }
+    }
+
+    function CheckValidDueDate() {
+        if ($.setDateTime(txtDueDate.val()) < $.setDateTime(txtBillDate.val())) {
+            ShowMessage('Please select Due Date greater than Or equal to Bill Date');
+            txtDueDate.val('');
+            return false;
+        }
+    }
+
+    function SelectDocket() {
+        selectedDocketList = [];
+        var subTotal = 0, gstTotal = 0, total = 0, totalIgst = 0, totalCgst = 0, totalSgst = 0, totalUgst = 0;
+        var TaxTotal = 0;
+
+        $('[id*="chkChieldDocket"]').each(function () {
+            var chkChieldDocket = $(this);
+            var txtTaxTotal = $('#' + chkChieldDocket.Id.replace('chkChieldDocket', 'txtTaxTotal'));
+            var txtSubTotal = $('#' + chkChieldDocket.Id.replace('chkChieldDocket', 'txtTotalAmount'));
+            var txtDocketTotal = $('#' + chkChieldDocket.Id.replace('chkChieldDocket', 'txtDocketTotal'));
+            var hdnIgst = $('#' + chkChieldDocket.Id.replace('chkChieldDocket', 'hdnIgst'));
+            var hdnCgst = $('#' + chkChieldDocket.Id.replace('chkChieldDocket', 'hdnCgst'));
+            var hdnSgst = $('#' + chkChieldDocket.Id.replace('chkChieldDocket', 'hdnSgst'));
+            var hdnTripsheetId = $('#' + chkChieldDocket.Id.replace('chkChieldDocket', 'hdnTripsheetId'));
+            var txtTaxRate = $('#' + chkChieldDocket.Id.replace('chkChieldDocket', 'txtTaxRate'));
+            TaxTotal = 0;
+
+            if ($('#chkIsExemptGst').is(":checked")) {
+                txtTaxTotal.val(0);
+                hdnIgst.val(0);
+                hdnCgst.val(0);
+                hdnSgst.val(0);
+                txtDocketTotal.val(txtSubTotal.val());
+            }
+            else
+            {
+                TaxTotal = parseFloat(txtTaxRate.val()) * parseFloat(txtSubTotal.val());
+                TaxTotal = TaxTotal / 100;
+                txtTaxTotal.val(TaxTotal);
+                txtDocketTotal.val(parseFloat(txtSubTotal.val()) + parseFloat(TaxTotal));
+
+                if ($('#ddlPrimaryBillingTypeId').val() == 1) {
+
+                    hdnIgst.val(TaxTotal);
+                    hdnCgst.val(0);
+                    hdnSgst.val(0);
+                }
+                else
+                {
+                    hdnIgst.val(0);
+                    hdnCgst.val(TaxTotal / 2);
+                    hdnSgst.val(TaxTotal / 2);
+                }
+            }
+
+            if (chkChieldDocket.IsChecked) {
+                subTotal = subTotal + parseFloat(txtSubTotal.val());
+
+                if ($('#chkIsExemptGst').is(":checked"))
+                {
+                    totalIgst = 0;
+                    totalCgst = 0;
+                    totalSgst = 0;
+                    gstTotal = 0;
+                    total = total + parseFloat(txtSubTotal.val());
+                }
+                else
+                {
+                    total = total + parseFloat(txtDocketTotal.val());
+                    gstTotal = gstTotal + parseFloat(txtTaxTotal.val());
+                    totalIgst = totalIgst + parseFloat(hdnIgst.val());
+                    totalCgst = totalCgst + parseFloat(hdnCgst.val());
+                    totalSgst = totalSgst + parseFloat(hdnSgst.val());
+                }
+
+            }
+        });
+
+        totalCgst = totalCgst.toFixed(2);
+        totalIgst = totalIgst.toFixed(2);
+        totalSgst = totalSgst.toFixed(2);
+        gstTotal = gstTotal.toFixed(2);
+        total = total.toFixed(2);
+
+        $('#lblGstTotal').text(gstTotal);
+        $('#hdnGstTotal').val(gstTotal);
+        $('#lblSubTotal').text(subTotal.toFixed(2));
+        $('#hdnSubTotal').val(subTotal);
+        $('#lblTotal').text(total);
+        $('#hdnTotal').val(total);
+
+        $('#lblSgst').text(totalSgst);
+        $('#hdnSgst').val(totalSgst);
+
+        $('#lblCgst').text(totalCgst);
+        $('#hdnCgst').val(totalCgst);
+
+        $('#lblIgst').text(totalIgst);
+        $('#hdnIgst').val(totalIgst);
+
+        //
+
+    }
+
+    function GetBillGenerationDetails() {
+        if (selectedDocketList.length == 0) {
+            isStepValid = false;
+            ShowMessage('Please select at least one ' + docketNomenclature);
+            return false;
+        }
+        else if (!ValidateModuleDateWithPreviousDocumentDate('dtDocketList', 'chkChieldDocket', 'hdnDocketDate', 'txtBillDate', 'Bill Date')) return false;
+    }
+
+    function GetCustomerGstDetailsByOwnerTypeAndOwnerAndStateAndCity() {
+        if (ddlCustomerGstStateId.val() != '' && hdnCustomerId.val() != 1) {
+            requestData = { ownerType: 3, ownerId: hdnCustomerId.val(), stateId: ddlCustomerGstStateId.val(), cityId: 0 };
+            AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstDetailsByOwnerTypeAndOwnerAndStateAndCity', JSON.stringify(requestData), function (result) {
+                $('#hdnCustomerGstId').val(result.GstId);
+                $('#txtCustomerGstStateGstTinNo').val(result.GstTinNo);
+                $('#txtBillingAddress').val(result.Address);
+                $('#txtCustomerGstStateGstTinNo').readOnly(true);
+                $('#txtBillingAddress').readOnly(true);
+            }, ErrorFunction, false);
+        }
+        OnGstStateChange();
+    }
+
+    function GetCompanyGstDetailsByOwnerTypeAndOwnerAndStateAndCity() {
+
+        if (ddlCompanyGstStateId.val() != '') {
+            requestData = { ownerType: 1, ownerId: loginCompanyId, stateId: ddlCompanyGstStateId.val(), cityId: 0 };
+            AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstDetailsByOwnerTypeAndOwnerAndStateAndCity', JSON.stringify(requestData), function (result) {
+                $('#hdnCompanyGstId').val(result.GstId);
+                $('#txtCompanyGstStateGstTinNo').val(result.GstTinNo);
+                $('#txtSubmissionBillingAddress').val(result.Address);
+                $('#txtCompanyGstStateGstTinNo').readOnly(true);
+                $('#txtSubmissionBillingAddress').readOnly(true);
+            }, ErrorFunction, false);
+        }
+        OnGstStateChange();
+    }
+</script>
+        @using (Html.BeginForm("TripBillNew", "CustomerBill", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.AntiModelInjectionFor(model => model.BillId)
+            @Html.Hidden("BillId", 0)
+
+
+           <div class="widget-wrap">
+                <div id="dvStep1">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Transaction Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drTransactionDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerBusinessType, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.CustomerBusinessType,
+                                   new List<SelectListItem>
+                                   {
+                                       new SelectListItem() {Text = "Select Business Type", Value=""},
+                                       new SelectListItem() {Text = "Fleet Billing", Value="1"}
+                                   },
+                                   new { @class = "form-control", @id = "ddlTransactionTypeId" })
+
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CustomerBusinessType)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ServiceType, new { @class = "label" })
+                                <div class="select">
+                                    @Html.HiddenFor(model => model.ServiceType, new { @id = "hdnGstServiceTypeId" })
+                                    @Html.DropDownList("ddlGstServiceTypeId", new SelectList(ViewBag.TransactionCategoryList, "Value", "Name"), new { @class = "form-control", @id = "ddlGstServiceTypeId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ServiceType)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+
+                                    @Html.TextBoxFor(model => model.CustomerCode, null, new { @class = "form-control", @id = "txtCustomerCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CustomerCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-footer">
+                        <button id="btnStep1" type="button" class="btn btn-primary primary-btn" tabindex="0">Step 1</button>
+                    </div>
+                </div>
+                <div id="dvStep2" style="display:none">
+                    <div class="page-separator">Trip & Invoice Details</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomer" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillNo, new { @class = "label" })
+                                <div class="system-label">
+                                    @Html.Label("<System Generated>")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualBillNoForTripBill, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualBillNoForTripBill, new { @class = "form-control", @id = "txtManualBillNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualBillNoForTripBill)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "BillDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.BillDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "DueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DueDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">GST Details</div>
+
+                <div class="row">
+                    <div class="col-sm-3" id="dvCustomerState">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CustomerGstStateId, new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.CustomerGstStateId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlCustomerGstStateId" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.CustomerGstStateId)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CustomerGstStateGstTinNo, new { @class = "label" })
+                            <div class="input">
+                                @Html.HiddenFor(m => m.CustomerGstId, new { @id = "hdnCustomerGstId" })
+                                @Html.TextBoxFor(model => model.CustomerGstStateGstTinNo, new { @class = "form-control", @id = "txtCustomerGstStateGstTinNo" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.BillingAddress, new { @class = "label" })
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.BillingAddress, new { @class = "form-control", @id = "txtBillingAddress" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CompanyGstStateId, new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.CompanyGstStateId, Enumerable.Empty<SelectListItem>(), new { @id = "ddlCompanyGstStateId", @class = "form-control" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.CompanyGstStateId)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CompanyGstStateGstTinNo, new { @class = "label" })
+                            <div class="input">
+                                @Html.HiddenFor(m => m.CompanyGstId, new { @id = "hdnCompanyGstId" })
+                                @Html.TextBoxFor(model => model.CompanyGstStateGstTinNo, new { @class = "form-control", @id = "txtCompanyGstStateGstTinNo" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Label("SubmissionBillingAddress", "Billing Address", new { @class = "label" })
+                            <div class="input">
+                                @Html.TextBox("SubmissionBillingAddress", " ", new { @class = "form-control", @id = "txtSubmissionBillingAddress" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3" style="display:none">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.SubmissionLocationCode, new { @class = "label" })
+                            <div class="clearfix">
+                                @Html.HiddenFor(m => m.SubmissionLocationId, new { @id = "hdnBillSubmissionLocationId" })
+                                @Html.LabelFor(m => m.SubmissionLocationCode, " ", new { @id = "lblBillSubmissionLocationCode", @class = "label-bold" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.InterState, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.DropDownListFor(model => model.PrimaryBillingTypeId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlPrimaryBillingTypeId" })
+                                        <i></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.SacName, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(m => m.SacId, new { @id = "hdnSacId" })
+                                        @Html.LabelFor(m => m.SacName, " ", new { @id = "lblSacName", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Itc, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.LabelFor(m => m.Itc, " ", new { @id = "lblItc", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.IsExemptGst, new { @class = "label" })
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(model => model.IsExemptGst, new { @id = "chkIsExemptGst" })
+                                    <i></i>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                        <div class="page-separator">Transaction Details</div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div>
+                                    <table id="dtDocketList"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-separator">Summary of Transactions</div>
+
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.SubTotal, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(model => model.SubTotal, new { @id = "hdnSubTotal" })
+                                        @Html.LabelFor(model => model.SubTotal, "0.00", new { @id = "lblSubTotal", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Sgst, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(model => model.Sgst, new { @id = "hdnSgst" })
+                                        @Html.LabelFor(model => model.Sgst, "0.00", new { @id = "lblSgst", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Cgst, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(model => model.Cgst, new { @id = "hdnCgst" })
+                                        @Html.LabelFor(model => model.Cgst, "0.00", new { @id = "lblCgst", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Igst, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(model => model.Igst, new { @id = "hdnIgst" })
+                                        @Html.LabelFor(model => model.Igst, "0.00", new { @id = "lblIgst", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Ugst, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(model => model.Ugst, new { @id = "hdnUgst" })
+                                        @Html.LabelFor(model => model.Ugst, "0.00", new { @id = "lblUgst", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.GstTotal, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(model => model.GstTotal, new { @id = "hdnGstTotal" })
+                                        @Html.LabelFor(model => model.GstTotal, "0.00", new { @id = "lblGstTotal", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.TotalAmount, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(model => model.TotalAmount, new { @id = "hdnTotal" })
+                                        @Html.LabelFor(model => model.TotalAmount, "0.00", new { @id = "lblTotal", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-footer">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Create Bill</button>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+        }

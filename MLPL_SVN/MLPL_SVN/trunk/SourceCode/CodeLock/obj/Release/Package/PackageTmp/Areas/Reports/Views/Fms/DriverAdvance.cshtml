@@ -1,0 +1,77 @@
+﻿@model CodeLock.Models.DriverAdvanceReport
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="@Url.Content("~/Areas/Reports/Views/FMS/DriverAdvance.js")"></script>
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label("Tripsheet Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drTripsheetDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VehicleId, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                            @Html.TextBoxFor(model => model.VehicleNo, null, new { @class = "form-control", @id = "txtVehicleNo" })
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.TripsheetNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(m => m.TripsheetNo, new { @class = "form-control", @id = "txtTripsheetNo" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label("(seperated by comma if multiple)")
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DriverId, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.DriverName, null, new { @class = "form-control", @id = "txtDriverName" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @class = "label-bold", @id = "labelName" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+            </div>
+        </div>
+    </div>
+}
+

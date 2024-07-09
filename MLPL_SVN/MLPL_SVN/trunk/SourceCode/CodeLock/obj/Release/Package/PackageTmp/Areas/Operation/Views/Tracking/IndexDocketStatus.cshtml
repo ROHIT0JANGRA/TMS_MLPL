@@ -1,0 +1,69 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.DocumentTracking
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+
+        trackingUrl = '@Url.Action("", "Tracking", new { Area = "Operation" })';
+        docketUrl = '@Url.Action("Details", "Docket", new { Area = "Operation" })';
+        currentDomain = '@Url.Content("~")';
+    });
+
+</script>
+<script src="@Url.Content("~/Areas/Operation/Views/Tracking/IndexDocketStatus.js")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("IndexDocketStatus", "Tracking", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DocumentNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.DocumentNo, null, new { @class = "form-control", @id = "txtDocumentNo" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.DocumentNo)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("DocketStatus", new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.DocketStatus, new SelectList(ViewBag.DocumentTypeList, "Value", "Name"), "Select Status", new { @class = "form-control", @id = "ddlDocketStatus" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.DocketStatus)
+                        </div>
+                        <div class="col-sm-4">
+                            @Html.Label("LocationId", new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control select2", @id = "ddlLocationId" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.LocationId)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDocketDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+</div>

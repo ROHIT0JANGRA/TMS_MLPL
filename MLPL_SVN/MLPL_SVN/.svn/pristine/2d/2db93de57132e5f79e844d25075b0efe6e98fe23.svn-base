@@ -1,0 +1,89 @@
+﻿@model IEnumerable<CodeLock.Models.TaxProGetEwayDetailsForTransporterByStateApiResponse>
+@{
+    ViewBag.Title = "eWay Bill List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtCustomer">
+        <thead>
+            <tr>
+                <th>
+                    eWay Bill No.
+                </th>
+                <th>
+                    eWay Bill Date
+                </th>
+                <th>
+                    Valid Date
+                </th>
+                <th>
+                    Bill Status
+                </th>
+                <th>
+                    User Gstin
+                </th>
+                <th>
+                    Document No.
+                </th>
+
+                <th>
+                    Document Date
+                </th>
+
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ewbNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ewayBillDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.validUpto)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.status)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.userGstin)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.docNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.docDate)
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("eWayBillViewTaxPro", new { ewbNo = item.ewbNo })"><span class="fa fa-file"></span></a>
+                            </div>
+                            @*<div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("eWayBillExtend", new { Eway_bill_number = item.ewbNo })"><span class="glyphicon glyphicon-eye-open"></span></a>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("eWayBillUpdateVehicle", new { Eway_bill_number = item.ewbNo })"><span class="glyphicon glyphicon-arrow-up"></span></a>
+                            </div>*@
+                        </div>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('eWay Bill', 'List', 'filter', '', '');
+        LoadDataTable('dtCustomer', true, true, true);
+    });
+</script>
+

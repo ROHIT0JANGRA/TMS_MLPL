@@ -1,0 +1,208 @@
+﻿@using CodeLock.Helper
+@model CodeLock.Models.Docket
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "Insert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        @*step1Details =  @Html.Raw(ViewBag.Step1Details)
+        baseUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        customerAddressUrl = '@Url.Action("", "CustomerAddress", new { Area = "Master" })';
+        locationMasterUrl = '@Url.Action("", "Location", new { Area = "Master" })';
+        gstMasterUrl = '@Url.Action("", "Gst", new { Area = "Master" })';
+        vehicleMasterUrl = '@Url.Action("", "Vehicle", new { Area = "Master" })';
+
+        var isWms = '@Request.QueryString.Get("Type")';
+        if (!IsObjectNullOrEmpty(isWms)) {
+            $('#dvWmsInvoice').showHide(true);
+            AddRequired($('#txt_InvoiceNo'), "Please enter Invoice No");
+        }
+        else
+            $('#dvWmsInvoice').showHide(false);
+        createTripsheet = '@ViewBag.CreateTripsheet.ToString()';
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';*@
+    });
+</script>
+
+<script src="~/Areas/Operation/Views/Docket/Insert.js?v42"></script>
+<script src="~/Areas/Operation/Views/Docket/GST.js?v25"></script>
+
+@using (Html.BeginForm("Insert", "Docket", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+{
+<div class="widget-wrap">
+
+    <div id="dvStep1">
+        <div class="page-separator">Basic Details</div>
+        @*<div class="row">
+            <div class="col-sm-4" id="dvEntryType">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.DocketType, new { @class = "label" })
+                        <label class="radio" id="lblComputerizedEntry">
+                            @Html.RadioButtonFor(model => model.DocketType, "CMP", new { @id = "rdComputerized", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DocketType, "Computerized", new { @for = "rdComputerized" })
+                        </label>
+                        <label class="radio" id="lblManualEntry">
+                            @Html.RadioButtonFor(model => model.DocketType, "DKT", new { @id = "rdManual" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DocketType, "Manual", new { @for = "rdManual" })
+                        </label>
+                        @Html.ValidationMessageFor(model => model.DocketType)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsOld, new { @class = "label", @for = "chkIsOld" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsOld, new { @id = "chkIsOld" })
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-2" id="dvManual">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                        @Html.HiddenFor(m => m.UsePreviousHistory, new { id = "hdnUsePreviousHistory" })
+                        @Html.HiddenFor(m => m.DocketId, new { id = "hdnDocketId" })
+                        @Html.HiddenFor(m => m.ContractId, new { id = "hdnContractId" })
+                        @Html.HiddenFor(m => m.FreightContractId, new { id = "hdnFreightContractId" })
+                        @Html.HiddenFor(m => m.IsAdd, new { id = "hdnIsAdd" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocketNo)
+                </div>
+            </div>
+            <div class="col-sm-2" id="divDisplayDocketNo">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.DocketNo, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.DocketNo, " ", new { @id = "lblDocketNo", @class = "label-bold" })
+                        @Html.HiddenFor(m => m.DocketNo, new { id = "hdnDocketNo" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2" id="dvComputerized">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                    <div class="system-label">
+                        @Html.LabelFor(model => model.DocketNo, "<System Generated>")
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "DocketDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName("Docket", "DocketDateTime"), IsRequired = true, IsDateOnly = false, AllowFutureDate = false, AllowPastDate = true })
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.PaybasId, new SelectList(ViewBag.PaybasList, "Value", "Name"), "Select Paybas", new { @class = "form-control", @id = "ddlPaybas" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PaybasId)
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                        @Html.TextBoxFor(model => model.CustomerCode, null, new { @class = "form-control", @id = "txtCustomerCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerName, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromLocation, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(m => m.FromLocationId, new { @Value = @SessionUtility.LoginLocationId, @id = "hdnFromLocationId" })
+                        @Html.LabelFor(model => model.FromLocation, @SessionUtility.LoginLocationCode, new { @id = "lblFromLocation", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToLocation, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.ToLocationId, new { @id = "hdnToLocationId" })
+                        @Html.TextBoxFor(model => model.ToLocation, null, new { @class = "form-control", @id = "txtToLocation" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ToLocation)
+                </div>
+            </div>
+            <div class="col-sm-2" id="dvWmsInvoice">
+                <div class="form-group">
+                    @Html.Label("InvoiceNo", "Invoice No", new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.WmsInvoiceNo, "", new { @class = "form-control", @id = "txtWmsInvoiceNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.WmsInvoiceNo)
+                </div>
+            </div>
+            @*<div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VehicleId, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                            @Html.TextBoxFor(model => model.VehicleNo, null, new { @class = "form-control", @id = "txtVehicleNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.VehicleNo)
+                    </div>
+                </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2" id="dvVendorType">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorTypeId, new SelectList(ViewBag.VendorTypeList, "Value", "Name"), "Select Vendor Type", new { @class = "form-control", @id = "ddlVendorTypeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorTypeId)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                        @Html.TextBoxFor(model => model.VehicleNo, null, new { @class = "form-control", @maxlength = "15", @id = "txtVehicleNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleNo)
+                </div>
+            </div>
+        </div>*@
+        <div class="form-footer">
+            <button id="btnStep1" type="button" class="btn btn-primary primary-btn" tabindex="0">Step 1</button>
+            &nbsp;&nbsp;
+            <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Create Docket</button>
+
+        </div>
+    </div>
+
+</div> 
+        
+ }

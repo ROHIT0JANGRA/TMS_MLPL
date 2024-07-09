@@ -1,0 +1,210 @@
+﻿@model LabourDCModule
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "LabourDC";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var baseUrl = '@Url.Action("GetManifestListForLabourDC")';
+</script>
+<script src="~/areas/operation/views/manifest/LabourDC.js"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("LabourDC", "Manifest", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.LabourDCId, 0)
+
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label("Document Date", new { @class = "label" })
+                            </div>
+                            <div id="drDocketDate"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                                @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2", @id = "ddlLocationId", @placeholder = "Select Location" })
+                                @Html.ValidationMessageFor(model => model.LocationId)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocumentType, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.DocumentType, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="DRS", Value = "1" },
+                                                                            new SelectListItem{ Text="PRS", Value = "2" },
+                                                                            new SelectListItem{ Text="THC", Value = "3" },
+                                                                         }, new { @class = "form-control", @id = "ddlDocumentType" })
+
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.DocumentType)
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row" id="divTHCType">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.THCType, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.THCType, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Load", Value = "1" },
+                                                                            new SelectListItem{ Text="Unload", Value = "2" },
+                                                                         }, new { @class = "form-control", @id = "ddlTHCType" })
+
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.Label("lblDocumentName", " ", new { @class = "label", @id = "lblDocumentName" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManifestsNo, new { @class = "form-control", @id = "txtManifestsNo" })
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocumentType, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("DocumentTypeName", " ", new { @class = "label-bold", @id = "lblDocumentTypeName" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorCode, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                                    @Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.VendorCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.VendorName, new { @id = "hdnVendorName" })
+                                    @Html.Label("VendorName", " ", new { @class = "label-bold", @id = "lblVendorName" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "LabourDCDate", FieldCaption = "Labour DC Date", IsDateOnly = true, IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">Document Details</div>
+
+                    <div class="row">
+                        <table id="dtDocketDetails">
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 3%"></th>
+                                    <th style="min-width: 20%"></th>
+                                    <th style="min-width: 20%;"></th>
+                                    <th style="min-width: 20%;"></th>
+                                    <th style="min-width: 20%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="8">
+                                        Total
+                                        @*@Html.HiddenFor(m => m.TotalDocket, new { @id = "hdnTotalDocket", @value = "0" })*@
+                                    </th>
+                                    @*<th>
+                                            @Html.TextBoxFor(model => model.TotalPackages, "0", new { @class = "form-control textlabel numeric", id = "txtTotalPackages" })
+                                        </th>*@
+                                    <th>
+                                        @*  @Html.TextBoxFor(model => model.TotalActualWeight, "0.00", new { @class = "form-control textlabel numeric3", id = "txtTotalActualWeight" })*@
+                                    </th>
+                                    <th>
+                                        @Html.TextBoxFor(model => model.TotalAmount, "0.00", new { @class = "form-control textlabel numeric3", id = "txtTotalAmount" })
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div class="row">
+                        <table id="dtThcDetails">
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 3%"></th>
+                                    <th style="min-width: 20%"></th>
+                                    <th style="min-width: 20%;"></th>
+                                    <th style="min-width: 20%;"></th>
+                                    <th style="min-width: 20%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                    <th style="min-width: 11%;"></th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="9">
+                                        Total
+                                        @*@Html.HiddenFor(m => m.TotalDocket, new { @id = "hdnTotalDocket", @value = "0" })*@
+                                    </th>
+                                    @*<th>
+                                            @Html.TextBoxFor(model => model.TotalPackages, "0", new { @class = "form-control textlabel numeric", id = "txtTotalPackages" })
+                                        </th>*@
+                                    <th>
+                                        @*  @Html.TextBoxFor(model => model.TotalActualWeight, "0.00", new { @class = "form-control textlabel numeric3", id = "txtTotalActualWeight" })*@
+                                    </th>
+                                    <th>
+                                        @Html.TextBoxFor(model => model.TotalAmount, "0.00", new { @class = "form-control textlabel numeric3", id = "txtThcTotalAmount" })
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillLocationId, new { @class = "label" })
+                                @Html.DropDownListFor(model => model.BillLocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2", @id = "ddlLocationId", @placeholder = "Select Location" })
+                                @Html.ValidationMessageFor(model => model.BillLocationId)
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+
+</div>

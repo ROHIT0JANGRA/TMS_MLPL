@@ -1,0 +1,45 @@
+﻿//  
+// Type: CodeLock.Areas.WMS.Repository.IAsnRepository
+//  
+//  
+//  
+
+using CodeLock.Models;
+using System;
+using System.Collections.Generic;
+
+namespace CodeLock.Areas.WMS.Repository
+{
+  public interface IAsnRepository : IDisposable
+  {
+    Asn GetById(long id, short warehouseId, byte companyId);
+
+    Response Insert(Asn objAsn);
+
+    IEnumerable<Asn> GetAsnDetails(long id, short warehouseId, byte companyId);
+
+    IEnumerable<AsnRegister> GetRegisterAsnDetail(
+      string asnNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate);
+
+    IEnumerable<Asn> GetListForGrn(
+      byte companyId,
+      short warehouseId,
+      short supplierType,
+      short supplierId,
+      string asnNo,
+      string poNo,
+      string invoiceNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate);
+
+    Asn GetAsn(long asnId, short warehouseId, byte companyId);
+
+    IEnumerable<GatePass> GetDockNumberFromGatePassIn(byte GatepassInId);
+  }
+}

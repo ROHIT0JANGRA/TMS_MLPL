@@ -1,0 +1,143 @@
+﻿@model CodeLock.Models.MasterState
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "State Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "State", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.StateId)
+    @Html.HiddenFor(model => model.StateId)
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StateName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.StateName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StateName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StateCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.StateCode, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StateCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CountryId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CountryId, new SelectList(ViewBag.CountryList, "Value", "Name"), "Select Country", new { @class = "form-control", @id = "ddlCountry" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CountryId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsServiceTaxExempted, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsServiceTaxExempted)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsUnionTerritory, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsUnionTerritory)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="">
+                    <input type="text" id="txtAddRow" value="1" onblur="AddRow()" style="visibility:hidden" />
+                    <table class="table" id="dtStateDocument">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.MasterStateDocumentList.FirstOrDefault().DocumentName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.MasterStateDocumentList.FirstOrDefault().IsInbound)
+                                </th>
+                                <th>
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.MasterStateDocumentList.Count; i++)
+                            {
+                                var item = Model.MasterStateDocumentList.ToList()[i];
+                                <tr>
+                                    <td>
+                                        <div class="input">
+                                            @Html.TextBoxFor(m => item.DocumentName, new { @class = "form-control", id = "txtDocumentName" + i.ToString(), @Name = "MasterStateDocumentList[" + i + "].DocumentName", })
+                                        </div>
+                                        @Html.ValidationMessage("MasterStateDocumentList[" + i + "].DocumentName")
+                                    </td>
+                                    <td>
+                                        <div class="select">
+                                            @Html.DropDownList("MasterStateDocumentList[" + i + "].IsInbound",
+                                                new List<SelectListItem>
+                                                {
+                                                    new SelectListItem(){ Text="Inbound",Value="true"},
+                                                    new SelectListItem(){Text="Outbound",Value="false"}
+                                                },
+                                             new { @class = "form-control", @id = "ddlIsInbound" + i.ToString() })
+                                            <i></i>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+
+}
+<script>
+
+    var selected = [];
+    $(document).ready(function () {
+        SetPageLoad('State', 'Update', 'StateName', 'Add New', '@Url.Action("Insert")', 'Details', '@Url.Action("View", new { id = Model.StateId })', 'Go To List', '@Url.Action("Index")');
+        InitGrid('dtStateDocument', true, 2, CheckDuplicateStateDocument);
+    });
+
+    function CheckDuplicateStateDocument() {
+        $('[id*="txtDocumentName"]').each(function () {
+            var txtDocumentName = $(this);
+            txtDocumentName.blur(function () {
+                if (!CheckDuplicateInTable('dtStateDocument', 'txtDocumentName', 'Document Name', txtDocumentName)) return false;
+            });
+        });
+    }
+</script>

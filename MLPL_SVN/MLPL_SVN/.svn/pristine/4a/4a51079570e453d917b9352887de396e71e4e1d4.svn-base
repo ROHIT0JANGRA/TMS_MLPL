@@ -1,0 +1,190 @@
+﻿@model CodeLock.Models.VendorContractDocketBased
+
+@{
+    ViewBag.Title = "DocketBasedCriteria";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.ContractId, new { @id = "hdnContractId" })
+
+    <div class="widget-wrap">
+		<div class="row">
+			<div class="col-sm-3">
+				<div class="form-group">
+					<div class="inline-group">
+						@Html.LabelFor(model => model.IsBooking, new { @class = "label" })
+						<label class="radio">
+							@Html.RadioButtonFor(model => model.IsBooking, true, new { @id = "rdIsBooking", @checked = "checked" })
+							<i></i>
+							@Html.LabelFor(model => model.IsBooking, "Booking", new { @for = "rdIsBooking" })
+						</label>
+						<label class="radio">
+							@Html.RadioButtonFor(model => model.IsBooking, false, new { @id = "rdIsDelivery" })
+							<i></i>
+							@Html.LabelFor(model => model.IsBooking, "Delivery", new { @for = "rdIsDelivery" })
+						</label>
+						@Html.ValidationMessageFor(model => model.IsBooking)
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2" id="divBaContract">
+				<div class="form-group">
+					@Html.LabelFor(model => model.BaContractTypeId, new { @class = "label" })
+					<div class="select">
+						@Html.DropDownListFor(model => model.BaContractTypeId, new SelectList(ViewBag.BaContractList, "Value", "Name"), "Select BA Contract Type", new { @class = "form-control", @id = "ddlBaContractTypeId" })
+						<i></i>
+					</div>
+					@Html.ValidationMessageFor(model => model.BaContractTypeId)
+				</div>
+			</div>
+			<div id="divLocation">
+				<div class="col-sm-3">
+					<div class="form-group">
+						@Html.LabelFor(model => model.FromLocationId, new { @class = "label", @id = "lblFromLocationCode" })
+						<div class="input">
+							@Html.TextBoxFor(model => model.FromLocationCode, new { @class = "form-control", @id = "txtFromLocationCode" })
+							@Html.HiddenFor(model => model.FromLocationId, new { @id = "hdnFromLocationId" })
+						</div>
+						@Html.ValidationMessageFor(model => model.FromLocationCode)
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="form-group">
+						@Html.LabelFor(model => model.ToLocationId, new { @class = "label", @id = "lblToLocationCode" })
+						<div class="input">
+							@Html.TextBoxFor(model => model.ToLocationCode, new { @class = "form-control", @id = "txtToLocationCode" })
+							@Html.HiddenFor(model => model.ToLocationId, new { @id = "hdnToLocationId" })
+						</div>
+						@Html.ValidationMessageFor(model => model.ToLocationCode)
+					</div>
+				</div>
+			</div>
+		</div>
+        <div class="row">
+            @*<div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.PaybasId, new SelectList(ViewBag.PayBasList, "Value", "Name"), "Select PayBas", new { @class = "form-control", @id = "ddlPayBasId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PaybasId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name"), "Select Transport", new { @class = "form-control", @id = "ddlTransportModeId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.TransportModeId)
+                    </div>
+                </div>*@
+        </div>
+        <div class="form-footer" id="divSubmit">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0">Submit</button>
+        </div>
+    </div>
+}
+<script>
+	var btnSubmit, hdnContractId, hdnFromLocationId, hdnToLocationId, txtFromLocationCode, txtToLocationCode, ddlPayBasId, ddlTransportModeId, ddlIsBooking, ddlBaContractTypeId, divBaContract, divLocation;
+    $(document).ready(function () {
+        SetPageLoad('Vendor Contract', 'Docket Based', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { contractId = Model.ContractId, vendorTypeId = Model.VendorTypeId })');
+        btnSubmit = $('#btnSubmit');
+        hdnContractId = $('#hdnContractId');
+        hdnFromLocationId = $('#hdnFromLocationId');
+        txtFromLocationCode = $('#txtFromLocationCode');
+        hdnToLocationId = $('#hdnToLocationId');
+        txtToLocationCode = $('#txtToLocationCode');
+        lblFromLocationCode = $('#lblFromLocationCode');
+        lblToLocationCode = $('#lblToLocationCode');
+		ddlBaContractTypeId = $('#ddlBaContractTypeId');
+        //ddlPayBasId = $('#ddlPayBasId');
+        //ddlTransportModeId = $('#ddlTransportModeId');
+        rdIsBooking = $('#rdIsBooking');
+        rdIsDelivery = $('#rdIsDelivery');
+        divBaContract = $('#divBaContract');
+		divLocation = $('#divLocation');
+        //AddItemDropDownList(ddlPayBasId, 0, '0', 'All');
+        rdIsBooking.click(ManageLocation);
+        rdIsDelivery.click(ManageLocation).click();
+        ddlBaContractTypeId.change(ChangeBaContract);
+        btnSubmit.click(OnSubmit);
+        ManageLocation();
+    });
+
+    function ManageLocation() {
+        hdnFromLocationId.val('');
+        hdnToLocationId.val('');
+        txtFromLocationCode.val('');
+        txtToLocationCode.val('');
+        txtFromLocationCode.off("blur");
+        txtToLocationCode.off("blur");
+        if (!rdIsDelivery.IsChecked) {
+			divBaContract.hide();
+            lblFromLocationCode.text('From City');
+            lblToLocationCode.text('To Location');
+            CityAutoComplete('txtFromLocationCode', 'hdnFromLocationId');
+            LocationAutoComplete('txtToLocationCode', 'hdnToLocationId');
+
+            RemoveRequired(txtFromLocationCode);
+            RemoveRequired(txtToLocationCode);
+            AddRequired(txtFromLocationCode, "Please enter From City Name");
+            AddRequired(txtToLocationCode, "Please enter To Location Code");
+
+            txtFromLocationCode.blur(function () { return IsCityNameExist(txtFromLocationCode, hdnFromLocationId); });
+            txtToLocationCode.blur(function () { return IsLocationCodeExist(txtToLocationCode, hdnToLocationId); });
+        }
+        else {
+            divBaContract.show();
+            lblFromLocationCode.text('From Location');
+            lblToLocationCode.text('To City');
+            CityAutoComplete('txtToLocationCode', 'hdnToLocationId');
+            LocationAutoComplete('txtFromLocationCode', 'hdnFromLocationId');
+
+            RemoveRequired(txtFromLocationCode);
+            RemoveRequired(txtToLocationCode);
+            AddRequired(txtFromLocationCode, "Please enter From Location Code");
+            AddRequired(txtToLocationCode, "Please enter To City Name");
+
+            txtFromLocationCode.blur(function () { return IsLocationCodeExist(txtFromLocationCode, hdnFromLocationId); });
+            txtToLocationCode.blur(function () { return IsCityNameExist(txtToLocationCode, hdnToLocationId); });
+        }
+        ChangeBaContract();
+    }
+
+    function ChangeBaContract() {
+		divLocation.showHide(ddlBaContractTypeId.val() == 1);
+    }
+
+    function OnSubmit() {
+        var baContractTypeId = ddlBaContractTypeId.val() == "" ? 0 : ddlBaContractTypeId.val();
+        var contractId = hdnContractId.val();
+        var toLocationId = hdnToLocationId.val() == '' ? 0 : hdnToLocationId.val();
+        var toLocationCode = txtToLocationCode.val();
+        var fromCityId = hdnFromLocationId.val() == '' ? 0 : hdnFromLocationId.val();
+        var fromCityName = txtFromLocationCode.val();
+        // var payBasId = ddlPayBasId.val() == '' ? 0 : ddlPayBasId.val();
+        //var transportModeId = ddlTransportModeId.val() == '' ? 0 : ddlTransportModeId.val();
+        var isBooking = rdIsBooking.IsChecked;
+        //if (toLocationId == 0 && fromCityId == 0 && payBasId == 0 && transportId == 0)
+        if (toLocationId == 0 && fromCityId == 0 && ddlBaContractTypeId.val() == 1) {
+            ShowMessage("Please enter or select at least one criteria");
+            $('#txtFromLocationCode').focus();
+            return false;
+        }
+        else {
+
+            if (baContractTypeId == "" && !rdIsBooking.IsChecked) {
+                ShowMessage("Please Select BA Contract Type");
+                return false;
+            }
+            window.location.href = "@Url.Action("DocketBased")/" + contractId + "?fromLocationId=" + fromCityId + "&fromLocationCode=" + fromCityName + "&toLocationId=" + toLocationId + "&toLocationCode=" + toLocationCode + "&isBooking=" + isBooking + "&baContractTypeId=" + baContractTypeId;
+            return false;
+        }
+
+    }
+</script>

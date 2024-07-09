@@ -1,0 +1,135 @@
+﻿@model CodeLock.Models.MasterVehicleColdChainRate
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VehicleNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VehicleNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsActive)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <table id="dtVehicle">
+            <thead>
+                <tr>
+                    <th>Movement Type</th>
+                    <th>Dry KMPL</th>
+                    <th>Reefer KMPL</th>
+                    <th>Empty KMPL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>Outside City</th>
+                    <td>
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.OutsideCityDryKmpl, new { @class = "form-control textlabel numeric2", @id = "txtOutsideCityDryKmpl" })
+                        </div>
+                        @Html.ValidationMessageFor(m => Model.OutsideCityDryKmpl)
+                    </td>
+                    <td>
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.OutsideCityReeferKmpl, new { @class = "form-control textlabel numeric2", @id = "txtOutsideCityReeferKmpl" })
+                        </div>
+                        @Html.ValidationMessageFor(m => Model.OutsideCityReeferKmpl)
+                    </td>
+                    <td>
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.OutsideCityEmptyKmpl, new { @class = "form-control textlabel numeric2", @id = "txtOutsideCityEmptyKmpl" })
+                        </div>
+                        @Html.ValidationMessageFor(m => Model.OutsideCityEmptyKmpl)
+                    </td>
+                </tr>
+                <tr>
+                    <th>Within City</th>
+                    <td>
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.WithinCityDryKmpl, new { @class = "form-control textlabel numeric2", @id = "txtWithinCityDryKmpl" })
+                        </div>
+                        @Html.ValidationMessageFor(m => Model.WithinCityDryKmpl)
+                    </td>
+                    <td>
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.WithinCityReeferKmpl, new { @class = "form-control textlabel numeric2", @id = "txtWithinCityReeferKmpl" })
+                        </div>
+                        @Html.ValidationMessageFor(m => Model.WithinCityReeferKmpl)
+                    </td>
+                    <td>
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.WithinCityEmptyKmpl, new { @class = "form-control textlabel numeric2", @id = "txtWithinCityEmptyKmpl" })
+                        </div>
+                        @Html.ValidationMessageFor(m => Model.WithinCityEmptyKmpl)
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EntryByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </dt>
+                <dd>
+                    @Model.EntryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.UpdateDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vehicle Document', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Insert", new { id = Model.VehicleId })');
+        LoadDataTable('dtVehicle', false, false, false);
+    });
+</script>

@@ -1,0 +1,36 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="page-separator">Cheque is Deposited Successfully</div>
+    <div class="col-sm-3">
+        <h4>Voucher No</h4>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+            @Html.Hidden("hdnDocumentId")
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <button onclick="return ViewReport();" class="btn btn-info">
+            <i class="fa fa-eye"></i>
+        </button>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Cheque Deposit', 'Done', 'Cheque Deposit', 'Go To Cheque Deposit', '@Url.Action("ChequeDeposit")');
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+
+        lblDocumentNo.html(GetUrlValue()["voucherNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+    });
+
+    function ViewReport() {
+        return ShowViewPrint('@ModuleHelper.Voucher', hdnDocumentId.val());
+    }
+</script>
+

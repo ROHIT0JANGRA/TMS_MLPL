@@ -1,0 +1,233 @@
+﻿@model  List<CodeLock.Models.VendorContractCrossingBased>
+
+@{
+    ViewBag.Title = "CrossingBased";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "j-forms", @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Contract ID", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.ManualContractId
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vendor Type", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.VendorType
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vendor Name", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.VendorCode : @ViewBag.VendorName
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <table id="dtCrossingBased">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].FromLocationId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].ToCityId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].RateTypeId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].Rate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].DoorDeliveryRate)
+                    </th>
+                    <th id="thAction">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.HiddenFor(model => Model[i].ContractId, new { @id = "hdnContractId" + i })
+                            @Html.HiddenFor(model => Model[i].FromLocationId, new { @id = "hdnFromLocationId" + i })
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model[i].FromLocationCode, new { @class = "form-control", id = "txtFromLocationCode" + i })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].FromLocationCode)
+                        </td>
+                        <td>
+                            @Html.HiddenFor(model => Model[i].ToCityId, new { @id = "hdnToCityId" + i })
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model[i].ToCityName, new { @class = "form-control", id = "txtToCityName" + i })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].ToCityName)
+                        </td>
+                        <td>
+                            <div class="select">
+                                @Html.DropDownListFor(m => Model[i].RateTypeId, new SelectList(ViewBag.DocketRateTypeList, "Value", "Name", Model[i].RateTypeId), "Select", new { @class = "form-control", id = "ddlRateTypeId" + i.ToString() })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].RateTypeId)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model[i].Rate, new { @class = "form-control numeric2", id = "txtRate" + i.ToString() })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].Rate)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model[i].DoorDeliveryRate, new { @class = "form-control numeric2", id = "txtDoorDeliveryRate" + i.ToString() })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].DoorDeliveryRate)
+                            @Html.HiddenFor(model => Model[i].EntryBy, new { @id = "hdnEntryBy" + i })
+                            @Html.HiddenFor(model => Model[i].EntryDate, new { @id = "hdnEntryDate" + i })
+                        </td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="form-footer">
+            <button id="btnSubmit" type="submit" class="btn btn-success primary-btn" tabindex="0">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var fromLocationId, fromLocationCode, toCityId, toCityName;
+
+    $(document).ready(function () {
+        SetPageLoad('Vendor Contract', 'Crossing Based', '', 'Go To Step Selection', '@Url.Action("StepSelection")');
+        fromLocationId = '@Html.Raw(ViewBag.FromLocationId)';
+        fromLocationCode = '@Html.Raw(ViewBag.FromLocationCode)';
+        toCityId = '@Html.Raw(ViewBag.ToCityId)';
+        toCityName = '@Html.Raw(ViewBag.ToCityName)';
+
+        if (fromLocationId != '0' && toCityId != '0') {
+            InitGrid('dtCrossingBased', false, 5, InitAutoComplete, true);
+            $('#thAction').hide();
+            $('td:nth-child(6)').hide();
+        }
+        else
+            InitGrid('dtCrossingBased', false, 5, InitAutoComplete);
+    });
+
+    function InitAutoComplete() {
+        $('#dtCrossingBased tr:not(:first)').each(function () {
+            var tr = $(this);
+            var txtFromLocationCode = tr.find('[id*="txtFromLocationCode"]');
+            var hdnFromLocationId = tr.find('[id*="hdnFromLocationId"]');
+            var txtToCityName = tr.find('[id*="txtToCityName"]');
+            var hdnToCityId = tr.find('[id*="hdnToCityId"]');
+
+            AutoComplete(txtToCityName.attr('id'), '@Url.Action("GetAutoCompleteList", "City")', 'cityName', 'l', 'l', 'l', '', '', hdnToCityId.attr('id'), '', '');
+            AutoComplete(txtFromLocationCode.attr('id'), '@Url.Action("GetAutoCompleteList", "Location")', 'locationCode', 'l', 'l', 'l', '', '', hdnFromLocationId.attr('id'), '', '');
+
+            if (fromLocationId != 0) {
+                txtFromLocationCode.attr("readOnly", true);
+                hdnFromLocationId.val(fromLocationId);
+                txtFromLocationCode.val(fromLocationCode);
+            }
+            if (toCityId != 0) {
+                txtToCityName.attr("readOnly", true);
+                hdnToCityId.val(toCityId)
+                txtToCityName.val(toCityName);
+            }
+
+            txtToCityName.blur(function () { return CheckValidCityName(txtToCityName, hdnToCityId); });
+            txtFromLocationCode.blur(function () { return CheckValidLocationCode(txtFromLocationCode, hdnFromLocationId); });
+
+            txtFromLocationCode.blur(function () {
+                try {
+                    IsCrossingBasedContractExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            txtToCityName.blur(function () {
+                try {
+                    IsCrossingBasedContractExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+        });
+    }
+
+    function CheckValidCityName(objCity, objHdnCityId) {
+        if (objCity.val() != "") {
+            var requestData = { cityName: objCity.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("IsCityNameExist", "City")', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    objCity.val(result.Name);
+                    objHdnCityId.val(result.Value);
+                }
+                else {
+                    ShowMessage('City is not exist');
+                    objCity.val('');
+                    objHdnCityId.val('');
+                    objCity.focus();
+                }
+            }, ErrorFunction, false);
+        }
+        return false;
+    }
+
+    function CheckValidLocationCode(objLocation, objhdnLocationId) {
+        if (objLocation.val() != "") {
+            var requestData = { locationCode: objLocation.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("CheckValidLocationCode", "Location")', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    objLocation.val(result.Name);
+                    objhdnLocationId.val(result.Value);
+                }
+                else {
+                    ShowMessage('Origin is not exist');
+                    objLocation.val('');
+                    objhdnLocationId.val('');
+                    objLocation.focus();
+                }
+            }, ErrorFunction, false);
+        }
+        return false;
+    }
+
+    function IsCrossingBasedContractExist(obj) {
+        if (obj.val() != '' && !obj.is('[readonly]')) {
+            var outertr = obj.closest('tr');
+            var outertxtFromLocationCode = outertr.find('[id*="txtFromLocationCode"]');
+            var outertxtToCityName = outertr.find('[id*="txtToCityName"]');
+
+            $('#dtCrossingBased tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innertxtFromLocationCode = innertr.find('[id*="txtFromLocationCode"]');
+                var innertxtToCityName = innertr.find('[id*="txtToCityName"]');
+
+                if (innertxtFromLocationCode.attr('id') != outertxtFromLocationCode.attr('id') && innertxtFromLocationCode.val() == outertxtFromLocationCode.val() && innertxtToCityName.val() == outertxtToCityName.val()) {
+                    ShowMessage("Crossing contract is already exist");
+                    throw (true);
+                }
+            });
+        }
+    }
+</script>

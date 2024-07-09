@@ -1,0 +1,121 @@
+﻿@model CodeLock.Models.Docket
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    Docket No.
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNoSearch, new { @class = "form-control", @id = "txtDocketNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StepSelection, new { @class = "label-bold" })
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "1", new { @id = "rdChangeDocketCustomer", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change Customer Detail", new { @class = "label" })
+                        </label>
+                    </div>
+                    @*<div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "2", new { @id = "rdChangeDimension" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change Dimension / Charged Weight", new { @class = "label" })
+                        </label>
+                    </div>*@
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "3", new { @id = "rdChangeDocketAmount" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change Docket Amount", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "4", new { @id = "rdChangeVehicleType"})
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change Vehicle Type ", new { @class = "label" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Search</button>
+        </div>
+
+    </div>
+}
+
+<script>
+
+    var selectedStep = "1";
+    var docketId, docketFieldList, txtDocketNo, btnSubmit, isFinancialUpdate = false;
+
+    $(document).ready(function () {
+        $('[id*="rd"]').each(function () { $(this).click(function () { selectedStep = $(this).val(); }); });
+        docketFieldList = JSON.parse('@DisplayName.GetList("Docket")'.replace(/&quot;/g, '"'));
+        SetPageLoad('Docket', 'Update', '', '', '');
+        txtDocketNo = $('#txtDocketNo');
+        //txtPickID = $('#txtPickID');
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+    });
+
+
+    function OnSubmit() {
+        var index = 0;
+
+        if (txtDocketNo.val() != "") {
+            index = 1;
+        }
+
+        if (index == 0) {
+            ShowMessage('Docket No/ Pick ID  can not be blank');
+            return false;
+        }
+
+
+        if (txtDocketNo.val() != "") {
+            var requestData;
+
+            requestData = { docketNo: txtDocketNo.val(), isFinancialUpdate: isFinancialUpdate, searchType: "1" };
+
+            AjaxRequestWithPostAndJson('@Url.Action("CheckValidDocketNoForUpdate", "Docket")', JSON.stringify(requestData), function (result) {
+                docketId = result;
+                if (result == 0) {
+                    ShowMessage('Docket No is not valid for Update');
+                    txtDocketNo.val('').focus();
+                    return false;
+                }
+
+                if (docketId != 0) {
+
+                    var url ="";
+
+                    switch (selectedStep) {
+                        case "1": url = "@Url.Action("ChangeDocketCustomer", "Thc")?DocketId=" + docketId; break;
+                        case "2": url = "@Url.Action("ChangeDimension", "Thc")?DocketId=" + docketId; break;
+                        case "3": url = "@Url.Action("ChangeDocketAmount", "Thc")?DocketId=" + docketId; break;
+                        case "4": url = "@Url.Action("ChangeVehicleType", "Thc")?DocketId=" + docketId; break;
+                    }
+                    window.location.href = url;
+                    return false;
+                }
+            }, ErrorFunction, false);
+        }
+        return false;
+    }
+
+</script>
+

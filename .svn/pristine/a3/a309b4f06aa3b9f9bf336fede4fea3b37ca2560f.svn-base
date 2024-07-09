@@ -1,0 +1,134 @@
+﻿@model  CodeLock.Models.CustomerContractChargeMatrixLTLHeader
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("RateMatrix", "CustomerContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.ContractId)
+    @Html.HiddenFor(m => m.TransportModeId)
+    @Html.HiddenFor(m => m.IsBooking)
+    @Html.HiddenFor(m => m.BaseOn1)
+    @Html.HiddenFor(m => m.BaseCode1)
+    @Html.HiddenFor(m => m.BaseOn2)
+    @Html.HiddenFor(m => m.BaseCode2)
+    @Html.HiddenFor(m => m.MatrixType)
+    <div class="widget-wrap">
+        <div class="widget-container">
+            <div class="widget-content">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="">
+                            <table id="dtRateMatrix">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            From
+                                        </th>
+                                        <th>
+                                            To
+                                        </th>
+                                        <th>
+                                            Rate
+                                        </th>
+                                        <th>
+                                            Rate Type
+                                        </th>
+                                        <th>
+                                            Transit Days
+                                        </th>
+                                        <th>
+                                            Billing Location
+                                        </th>
+                                        <th>
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.Details.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].FromLocation, new { @class = "form-control", id = "txtFromLocation" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].FromLocation)
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].ToLocation, new { @class = "form-control", id = "txtToLocation" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].ToLocation)
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].Rate, new { @class = "form-control numeric2", id = "txtRate" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].Rate)
+                                            </td>
+                                            <td>
+                                                @Html.DropDownListFor(m => Model.Details[i].RateType, new SelectList(ViewBag.RateTypeList, "CodeId", "CodeDescription", Model.Details[i].RateType), new { @class = "form-control", @id = "ddlRateType" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].RateType)
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].TransitDays, new { @class = "form-control numeric", id = "txtTransitDays" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].TransitDays)
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].BillLocationId, new { @class = "form-control", id = "txtBillLocationId" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].BillLocationId)
+                                            </td>
+                                            <td>
+                                                <button type="button" id="btnAdd" onclick="return AddRow(this.id)" class="btn btn-primary btn-xs dt-edit btn-ripple"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                                                <button type="button" id="btnRemove" onclick="return RemoveRow(this)" class="btn btn-danger btn-xs dt-delete btn-ripple"><span class="glyphicon glyphicon-trash"></span></button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Save</button>
+        </div>
+    </div>
+}
+
+<script>
+    function AddRow() {
+        AddTableRow('dtRateMatrix', true);
+    }
+
+    function RemoveRow(btn) {
+        RemoveTableRow($(btn), true);
+    }
+
+    function InitTable() {
+        ManageTableAddRemove('dtRateMatrix', true);
+    }
+
+    $(document).ready(function () {
+        $('#dtRateMatrix tr:last').attr('data-row-id', '0');
+        SetPageLoad('Customer Contract', 'Rate Matrix', '', 'Go To List', '@Url.Action("Index")');
+        InitTable();
+        $('#btnSubmit').click(function () {
+            //selected = [];
+            //var duplicateCount = false;
+            //var fromLocation = '';
+            //$('#dtRateMatrix tr:not(:first)').each(function () {
+            //    var txtFromLocation = $(this).find('[id*=txtFromLocation]');
+            //    if (txtFromLocation.length > 0) {
+            //        fromLocation = txtFromLocation.val()
+            //        if ($.inArray(fromLocation, selected) == -1)
+            //            selected.push(fromLocation);
+            //        else
+            //            duplicateCount = true;
+            //    }
+            //});
+            //if (duplicateCount) {
+            //    ShowMessage('Please remove Duplicate Document Name : ' + documentName);
+            //    return false;
+            //}
+        });
+    });
+</script>
+

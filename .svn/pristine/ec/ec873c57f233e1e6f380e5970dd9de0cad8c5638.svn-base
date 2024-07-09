@@ -1,0 +1,81 @@
+﻿@model CodeLock.Models.ChangePassword
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+        @using (Html.BeginForm("ChangePassword", "User", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.UserId, new { @id = "hdnUserId" })
+            <div class="widget-wrap">
+                <div class="row">
+                    @*<div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="inputer floating-label">
+                                    <div class="input-wrapper">
+                                        <input type="password" style="display:none;">
+                                        @Html.PasswordFor(model => model.OldPassword, new { @class = "form-control",@id="txtOldPassword" })
+                                        @Html.LabelFor(model => model.OldPassword, new { @class = "control-label" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.OldPassword)
+                                </div>
+                            </div>
+                        </div>*@
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NewPassword, new { @class = "label" })
+                            <div class="input">
+                                <input type="password" style="display:none;">
+                                @Html.PasswordFor(model => model.NewPassword, new { @class = "form-control", @id = "txtNewPassword" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.NewPassword)
+
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ConfirmPassword, new { @class = "label" })
+                            <div class="input">
+                                <input type="password" style="display:none;">
+                                @Html.PasswordFor(model => model.ConfirmPassword, new { @class = "form-control", @id = "txtConfirmPassword" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.ConfirmPassword)
+                        </div>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">Change</button>
+                </div>
+            </div>
+        }
+
+                <script>
+
+    $(document).ready(function () {
+        SetPageLoad('User', 'Change Password', '', '', '');
+        hdnUserId = $('#hdnUserId');
+        //txtOldPassword= $('#txtOldPassword');
+        $('#btnSubmit').click(OnSubmit);
+        $('#txtNewPassword').focus();
+    });
+
+    function OnSubmit() {
+        @*var requestData = { id: hdnUserId.val(), oldPassword: txtOldPassword.val() };
+        AjaxRequestWithPostAndJson('@Url.Action("CheckValidOldPassword")', JSON.stringify(requestData), function (result) {
+            if (!result) {
+                ShowMessage('Old Password not match');
+                txtOldPassword.val('');
+                txtOldPassword.focus();
+                return false;
+            }
+        }, ErrorFunction, false);*@
+
+        if ($('#txtNewPassword').val() != $('#txtConfirmPassword').val()) {
+            ShowMessage('New Password and Confirm Password not match');
+            return false;
+        }
+    }
+                </script>
+
+

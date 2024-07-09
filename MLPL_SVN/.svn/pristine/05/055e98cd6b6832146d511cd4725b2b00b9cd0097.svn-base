@@ -1,0 +1,119 @@
+﻿@model CodeLock.Models.MasterCustomerBillFormat
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("MappingV1", "CustomerBillFormat", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GroupCode, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.GroupCode, new SelectList(ViewBag.GroupCodeList, "Value", "Name"), "Select Group Code", new { @class = "form-control", @id = "ddlGroupCode" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GroupCode)
+                </div>
+            </div>
+        </div>
+        <div class="overflow-table">
+            <table class="display" id="dtCustomerDetails"></table>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSave">Save</button>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    var ddlGroupCode, dtCustomerDetails;
+    $(document).ready(function () {
+        ddlGroupCode = $('#ddlGroupCode');
+        ddlGroupCode.change(OnCustomerGroupChange);
+        dtCustomerDetails = LoadDataTable('dtCustomerDetails', false, false, false, null, null, [],
+            [
+                { title: '@Html.DisplayNameFor(model => model.CustomerCode)', data: "CustomerCode" },
+                { title: '@Html.DisplayNameFor(model => model.CustomerName)', data: "CustomerName" },
+                { title: "Bill Format", data: "ListDetail" },
+                { title: '@Html.DisplayNameFor(model => model.PaybasId)', data: "PaybasId" },
+                { title: '@Html.DisplayNameFor(model => model.TransportModeId)', data: "TransportModeId" },
+                { title: '@Html.DisplayNameFor(model => model.ServiceTypeId)', data: "ServiceTypeId" }
+            ]);
+        SetPageLoad('Customer Bill Format', 'List');
+    });
+
+    function OnCustomerGroupChange() {
+        if (ddlGroupCode.val() != "") {
+            var requestData = { GroupCode: ddlGroupCode.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetAll")', JSON.stringify(requestData), GetCustomerDetailsSuccess, ErrorFunction, false);
+        }
+    }
+
+    var formatList = JSON.parse('@Html.Raw(ViewBag.List)');
+    var paybasList = JSON.parse('@Html.Raw(ViewBag.PaybasList)');
+    var transportModeList = JSON.parse('@Html.Raw(ViewBag.TransportModeList)');
+    var serviceTypeList = JSON.parse('@Html.Raw(ViewBag.ServiceTypeList)');
+
+    function GetCustomerDetailsSuccess(responseData) {
+        dtCustomerDetails.fnClearTable()
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.ListDetail =
+                    "<div class='select'>" +
+                    "<select class='form-control' name='CustomerBillFormatList[" + i + "].FormatId' id='ddlBillFormat" + i + "' > " + "</select><i></i>" +
+                    "<input type='hidden'  name='CustomerBillFormatOldList[" + i + "].FormatId' value='" + item.FormatId + "' id='hdnFormatId" + i + "' />" +
+                    "<input type='hidden' name='CustomerBillFormatList[" + i + "].CustomerId' value='" + item.CustomerId + "' id='hdnCustomerId" + i + "' />" +
+                    "<input type='hidden' name='CustomerBillFormatOldList[" + i + "].CustomerId' value='" + item.CustomerId + "' id='hdnCustomerOldId" + i + "' />" +
+                "<i></i></div>";
+
+                item.PaybasId = "<div class='select'>" +
+                    "<select class='form-control' name='CustomerBillFormatList[" + i + "].PaybasId' id='ddlPaybas" + i + "' > " + "</select><i></i>" +
+                    "<input type='hidden'  name='CustomerBillFormatOldList[" + i + "].PaybasId' value='" + item.PaybasId + "' id='hdnPaybasId" + i + "' />" +
+                "<i></i></div>";
+
+                item.TransportModeId = "<div class='select'>" +
+                    "<select class='form-control' name='CustomerBillFormatList[" + i + "].TransportModeId' id='ddlTransportMode" + i + "' > " + "</select><i></i>" +
+                    "<input type='hidden'  name='CustomerBillFormatOldList[" + i + "].TransportModeId' value='" + item.TransportModeId + "' id='hdnTransportModeId" + i + "' />" +
+                "<i></i></div>";
+
+                item.ServiceTypeId = "<div class='select'>" +
+                    "<select class='form-control' name='CustomerBillFormatList[" + i + "].ServiceTypeId' id='ddlServiceTypeId" + i + "' > " + "</select><i></i>" +
+                    "<input type='hidden'  name='CustomerBillFormatOldList[" + i + "].ServiceTypeId' value='" + item.ServiceTypeId + "' id='hdnServiceTypeId" + i + "' />" +
+                "<i></i></div>";
+            });
+            dtCustomerDetails.fnAddData(responseData);
+            $("#dtCustomerDetails tr:not(:first)").each(function () {
+
+                var ddlBillFormat = $(this).find('[id*="ddlBillFormat"]');
+                var hdnFormatId = $(this).find('[id*="hdnFormatId"]');
+                BindDropDownList(ddlBillFormat.attr('id'), formatList, 'Value', 'Name');
+                ddlBillFormat.val(hdnFormatId.val());
+
+                var ddlPaybas = $(this).find('[id*="ddlPaybas"]');
+                var hdnPaybasId = $(this).find('[id*="hdnPaybasId"]');
+                BindDropDownList(ddlPaybas.attr('id'), paybasList, 'Value', 'Name');
+                ddlPaybas.append($("<option></option>").val(0).html('All'));
+                ddlPaybas.val(hdnPaybasId.val());
+
+                var ddlTransportMode = $(this).find('[id*="ddlTransportMode"]');
+                var hdnTransportModeId = $(this).find('[id*="hdnTransportModeId"]');
+                BindDropDownList(ddlTransportMode.attr('id'), transportModeList, 'Value', 'Name');
+                ddlTransportMode.append($("<option></option>").val(0).html('All'));
+                ddlTransportMode.val(hdnTransportModeId.val());
+
+                var ddlServiceTypeId = $(this).find('[id*="ddlServiceTypeId"]');
+                var hdnServiceTypeId = $(this).find('[id*="hdnServiceTypeId"]');
+                BindDropDownList(ddlServiceTypeId.attr('id'), serviceTypeList, 'Value', 'Name');
+                ddlServiceTypeId.append($("<option></option>").val(0).html('All'));
+                ddlServiceTypeId.val(hdnServiceTypeId.val());
+
+            });
+        }
+    }
+    function SetCheck(obj) {
+        obj.value = obj.checked;
+    }
+</script>

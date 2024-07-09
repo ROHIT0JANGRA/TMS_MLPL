@@ -1,0 +1,175 @@
+﻿@model CodeLock.Models.MasterIssue
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "Issue", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.IssueId)
+    @Html.HiddenFor(m => m.IssueId, new { @id = "hdnIssueId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ClientId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.ClientId, new SelectList(ViewBag.ClientList, "Value", "Name"), "Select Client", new { @class = "form-control", @id = "ddlClientId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ClientId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "IssueDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.IssueDateTime),IsDateOnly = false, IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsValidateFinYear = true })
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MainMenuId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.MainMenuId, new SelectList(ViewBag.MainMenuList, "Value", "Name"), "Select Main Menu", new { @class = "form-control", @id = "ddlMainMenuId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MainMenuId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ParentMenuId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.ParentMenuId, Enumerable.Empty<SelectListItem>(), "Select Parent Menu", new { @class = "form-control", @id = "ddlParentMenuId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ParentMenuId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ChildMenuId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.ChildMenuId, Enumerable.Empty<SelectListItem>(), "Select Child Menu", new { @class = "form-control", @id = "ddlChildMenuId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ChildMenuId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IssueDescription, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.IssueDescription, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.IssueDescription)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.IssueTypeId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.IssueTypeId, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Select Issue Type",Value=""},
+                        new SelectListItem() {Text = "Change", Value="1"},
+                        new SelectListItem() {Text = "Data Entry Mistake", Value="2"},
+                        new SelectListItem() {Text = "Error", Value="3"},}, new { @class = "form-control", @id = "ddlIssueTypeId" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.IssueTypeId)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IssueAttachment, new { @class = "label" })
+                    <div class="input prepend-big-btn">
+                        <label class="icon-right" for="prepend-big-btn">
+                            <i class="fa fa-download"></i>
+                        </label>
+                        <div class="file-button">
+                            Browse
+                            <input class="form-control" id="fuIssueAttachment" type="file" name="IssueAttachment" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                        </div>
+                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.IssuePriorityId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.IssuePriorityId, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Select Issue Priority",Value=""},
+                        new SelectListItem() {Text = "High", Value="1"},
+                        new SelectListItem() {Text = "Medium", Value="2"},
+                        new SelectListItem() {Text = "Low", Value="3"},}, new { @class = "form-control", @id = "ddlIssuePriorityId" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.IssuePriorityId)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.IssueRaisedById, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.IssueRaisedById, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Select",Value=""},
+                        new SelectListItem() {Text = "Malik", Value="1"},
+                        new SelectListItem() {Text = "Saroj", Value="2"},
+                        new SelectListItem() {Text = "Vinay", Value="3"},
+                        new SelectListItem() {Text = "Deepak", Value="4"},}, new { @class = "form-control", @id = "ddlIssueRaisedById" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.IssueRaisedById)
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0"></button>
+        </div>
+    </div>
+}
+
+<script>
+    var isAdd = true;
+    $(document).ready(function () {
+        hdnIssueId = $('#hdnIssueId');
+        btnSubmit = $('#btnSubmit');
+        $('#ddlMainMenuId').change(OnMainMenuChange);
+        $('#ddlParentMenuId').change(OnParentMenuChange);
+        OnMainMenuChange();
+        OnParentMenuChange();
+
+        if (hdnIssueId.val() != 0)
+            isAdd = false;
+
+        if (isAdd == false)
+            SetPageLoad('Issue', 'Update', 'ClientId', 'GoTo List', '@Url.Action("Index")');
+        else
+            SetPageLoad('Issue', 'Create', 'ClientId', 'GoTo List', '@Url.Action("Index")');
+
+        btnSubmit.html((isAdd ? 'Create' : 'Update'));
+    });
+
+    function OnMainMenuChange() {
+        if ($('#ddlMainMenuId').val() != "") {
+            var requestData = { parentMenuId: $('#ddlMainMenuId').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetMenuListByParentMenuId", "Menu")', JSON.stringify(requestData), GetParentMenuListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetParentMenuListSuccess(responseData) {
+        BindDropDownList('ddlParentMenuId', responseData, 'Value', 'Name', '', 'Select Parent Menu');
+    }
+
+    function OnParentMenuChange() {
+        if ($('#ddlParentMenuId').val() != "") {
+            var requestData = { parentMenuId: $('#ddlParentMenuId').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetMenuListByParentMenuId", "Menu")', JSON.stringify(requestData), GetChildMenuListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetChildMenuListSuccess(responseData) {
+        BindDropDownList('ddlChildMenuId', responseData, 'Value', 'Name', '', 'Select Child Menu');
+    }
+
+</script>

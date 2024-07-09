@@ -1,0 +1,183 @@
+﻿@using CodeLock.Models
+@model DownloadFinanceReport
+@{
+    ViewBag.Title = "DownloadFinanceReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("DownloadExcel", "Finance", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", enctype = "multipart/form-data" }))
+        {
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            @Html.Label("Select Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                Report Type
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.ReportTypeId, new SelectList(ViewBag.ReportList, "Value", "Name"), "Select", new { @class = "form-control", @placeholder = "Select Reprot Type", @id = "ddlReportType" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ReportTypeId)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerCode, " ", new { @class = "label", @id = "lblCustomerCaption" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                                    @Html.TextBoxFor(model => model.CustomerCode, null, new { @class = "form-control", @id = "txtCustomerCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CustomerCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="row" id="dvIsIndividual">
+                        @*<div class="col-sm-6">
+                                <div class="form-group">
+                                    <div class="inline-group">
+                                        @Html.Label(" ", new { @class = "label" })
+                                        <label class="radio">
+                                            @Html.RadioButtonFor(model => model.IsIndividual, true, new { @id = "rdIndividual" })
+                                            <i></i>
+                                            @Html.LabelFor(model => model.IsIndividual, "Individual", new { @for = "rdIndividual" })
+                                        </label>
+                                        <label class="radio">
+                                            @Html.RadioButtonFor(model => model.IsIndividual, false, new { @id = "rdCumulative" })
+                                            <i></i>
+                                            @Html.LabelFor(model => model.IsIndividual, "Cumulative(Transaction includes all branches)", new { @for = "rdCumulative" })
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>*@
+                        @*<div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.LocationId, Enumerable.Empty<SelectListItem>(), " ", new { @class = "form-control", @id = "ddlLocationId" })
+                                        <i></i>
+                                    </div>
+                                </div>
+
+                            </div>*@
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                                @Html.ValidationMessageFor(model => model.LocationId)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div>
+                        <button id="btnDownloadExcel" onclick="OnDownloadReport()" class="btn btn-primary" role="button" type="button">Download Excel</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script>
+    var ddlReportType;
+    $(document).ready(function () {
+        SetPageLoad('Download Finance Report', ' Report', '', '', '');
+        drDate = InitDateRange('drDate', DateRange.LastWeek, false);
+        btnDownloadExcel = $('#btnDownloadExcel');
+        ddlReportType = $('#ddlReportType');
+        txtCustomerCode = $('#txtCustomerCode');
+        hdnCustomerId = $('#hdnCustomerId');
+        lblCustomerName = $('#lblCustomerName');
+        ddlReportType.change(BindCustomer).change();
+        txtCustomerCode.blur(CheckValidCustomer);
+
+
+        InitObjects();
+        AttachEvents();
+        InitWizard('dvWizard', [
+            { StepName: 'Criteria', StepFunction: GetDocumentList },
+            { StepName: 'Export Detail' }
+        ], '');
+    });
+
+    function GetDocumentList() {
+        var requestData = { fromDate: $.displayDate(drDate.startDate), toDate: $.displayDate(drDate.endDate), reportTypeId: ddlReportType.val() == '' ? 0 : ddlReportType.val(), locationId: ddlLocationId.val(), isCumulative: true };
+        AjaxRequestWithPostAndJson('@Url.Action("IsFinanceReportDataExistByReportTypeId", "Finance")', JSON.stringify(requestData), function (result) {
+            if (!result) {
+                isStepValid = false;
+                ShowMessage('No Record Found');
+                return false;
+            }
+        }, ErrorFunction, false);
+    }
+
+    function OnDownloadReport() {
+        location.href = '@Url.Action("DownloadExcel")?fromDate=' + $.displayDate(drDate.startDate) + '&toDate=' + $.displayDate(drDate.endDate) + '&reportTypeId=' + ddlReportType.val() + '&locationId=' + ddlLocationId.val() + '&isCumulative=true&CustomerId=' + hdnCustomerId.val();
+        return false;
+    }
+    function InitObjects() {
+        ddlLocationId = $('#ddlLocationId');
+        //rdIndividual = $('#rdIndividual');
+        //rdCumulative = $('#rdCumulative');
+        locationUrl = '@Url.Action("", "Location", new { Area = "Master" })';
+    }
+
+    function AttachEvents() {
+        //OnIsIndividualChange();
+        //rdIndividual.change(OnIsIndividualChange);
+        //rdCumulative.change(OnIsIndividualChange);
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    }
+    function CheckValidCustomer() {
+        if (txtCustomerCode.val() != '')
+            if (ddlReportType.val() == "" || ddlReportType.val() == "1" || ddlReportType.val() == "3" || ddlReportType.val() == "6")
+                IsCustomerCodeExist(txtCustomerCode, hdnCustomerId, lblCustomerName);
+            else {
+                IsVendorCodeExist(txtCustomerCode, hdnCustomerId, lblCustomerName);
+            }
+    }
+    function BindCustomer() {
+
+        txtCustomerCode.val("");
+        hdnCustomerId.val("0");
+        lblCustomerName.text("");
+
+        $('#lblCustomerCaption').text("Customer");
+
+        if (ddlReportType.val() == "" || ddlReportType.val() == "1" || ddlReportType.val() == "3" || ddlReportType.val() == "6" || ddlReportType.val() == "7" || ddlReportType.val() == "8") {
+            CustomerAutoComplete('txtCustomerCode', 'hdnCustomerId');
+        }
+        else {
+            $('#lblCustomerCaption').text("Vendor");
+            VendorAutoComplete('txtCustomerCode', 'hdnCustomerId');
+        }
+
+    }
+    function OnIsIndividualChange() {
+        var requestData = { isRegion: rdIndividual.IsChecked }
+        AjaxRequestWithPostAndJson(locationUrl + '/GetLocationByHierarchyId', JSON.stringify(requestData), function (responseData) {
+            BindDropDownList('ddlLocationId', responseData, 'Value', 'Name', '', 'Select Location');
+        }, ErrorFunction, false);
+    }
+
+    function ViewReport() {
+        var prmList = [{ Name: "IsCumulative", Value: rdCumulative.IsChecked },
+            { Name: "LocationId", Value: ddlLocationId.val() }];
+    }
+</script>

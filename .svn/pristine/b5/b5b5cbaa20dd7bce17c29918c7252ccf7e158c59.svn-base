@@ -1,0 +1,94 @@
+﻿@model IEnumerable<CodeLock.Models.MasterIssue>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtIssue">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(m => m.ClientId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.IssueDateTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.MainMenuId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.ParentMenuId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.ChildMenuId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.IssueTypeId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.IssuePriorityId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.IssueRaisedById)
+                </th>
+                <th>Edit</th>
+                <th></th>
+            </tr>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <th>
+                        @Html.DisplayFor(m => item.ClientName)
+                    </th>
+                    <td>
+                        @item.IssueDateTime.ToDisplayDateTime()
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.MainMenu)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.ParentMenu)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.ChildMenu)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.IssueType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.IssuePriority)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.IssueRaisedBy)
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Insert", new { id = item.IssueId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.IssueId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("History", new { id = item.IssueId })">History</a><br />
+                                <a href="@Url.Action("Close", new { id = item.IssueId })">Resolved</a><br />
+                                <a href="@Url.Action("Approval", new { id = item.IssueId })">Approval</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Issue', 'List', '', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtIssue', true, true, true);
+        $('[id=dtIssue_filter]').find('input').focus();
+    });
+</script>

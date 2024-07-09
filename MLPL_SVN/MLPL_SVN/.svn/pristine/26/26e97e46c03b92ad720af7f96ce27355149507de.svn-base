@@ -1,0 +1,351 @@
+﻿using ExpressiveAnnotations.Attributes;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace CodeLock.Models
+{
+    public class ThcTrispeed : BaseModel
+    {
+        public ThcTrispeed()
+        {
+            this.IsEmptyVehicle = false;
+            this.IsAdhoc = false;
+            this.AdvBalPmtDtl = new List<ThcAdvBalPaymnt_Details>();
+
+        }
+
+
+        [Display(Name = "Transport Mode")]
+        [Required(ErrorMessage = "Please select Transport Mode")]
+        public byte TransportModeId { get; set; }
+
+        [Display(Name = "Route")]
+        [Required(ErrorMessage = "Please select Transport Route")]
+        public short RouteId { get; set; }
+
+        public long ThcId { get; set; }
+
+        [Display(Name = "THC No")]
+        public string ThcNo { get; set; }
+
+        [Required(ErrorMessage = "Please select THC Date and Time")]
+        [DisplayFormat(DataFormatString = "{0:dd MM yyyy}")]
+        [Display(Name = "THC Date")]
+        [DataType(DataType.DateTime)]
+        public DateTime ThcDateTime { get; set; }
+
+        public DateTime ThcDate { get; set; }
+
+        [StringLength(50, ErrorMessage = "Manual THC No must be minimum 2 and maximum 50 character long", MinimumLength = 2)]
+        [Display(Name = "THC Manual/Vendor Docket No")]
+        public string ManualThcNo { get; set; }
+
+        public short LocationId { get; set; }
+
+        public string LocationCode { get; set; }
+
+        public string RouteName { get; set; }
+
+        public DateTime? ExpectedDepartureDate { get; set; }
+
+        public DateTime? ActualDepartureDate { get; set; }
+
+        public DateTime? ExpectedArrivalDate { get; set; }
+
+        public DateTime? ActualArrivalDate { get; set; }
+
+        public short FromLocationId { get; set; }
+
+        public string FromLocationCode { get; set; }
+
+        [Display(Name = "Location")]
+        public string ToLocationCode { get; set; }
+
+        public short ToLocationId { get; set; }
+
+        public byte TransitTimeHour { get; set; }
+
+        public int? FromCityId { get; set; }
+
+        [NameAnnotation]
+        [RequiredIf("IsSelectCity == true", ErrorMessage = "Please enter City Name")]
+        [Display(Name = "From City")]
+        public string FromCityName { get; set; }
+
+        public int? ToCityId { get; set; }
+
+        [NameAnnotation]
+        [RequiredIf("IsSelectCity == true", ErrorMessage = "Please enter City Name")]
+        [Display(Name = "To City")]
+        public string ToCityName { get; set; }
+
+        [Display(Name = "Is Empty Vehicle")]
+        public bool IsEmptyVehicle { get; set; }
+
+        [Display(Name = "Is Adhoc")]
+        public bool IsAdhoc { get; set; }
+
+        [Display(Name = "Vendor Type")]
+        [Required(ErrorMessage = "Please select Vendor Type")]
+        public short VendorTypeId { get; set; }
+
+        [Display(Name = "Vendor")]
+        [Required(ErrorMessage = "Please select Vendor")]
+        public short VendorId { get; set; }
+
+        [Display(Name = "Is Market Vehicle")]
+        public bool IsMarketVehicle { get; set; }
+
+        [Display(Name = "Select City")]
+        public bool IsSelectCity { get; set; }
+
+        [Display(Name = "Vehicle")]
+        [RequiredIf("TransportModeId == 2", ErrorMessage = "Please select Vehicle")]
+        public short? VehicleId { get; set; }
+
+        [RequiredIf("VendorId == 1", ErrorMessage = "Please enter Vendor Name")]
+        [NameAnnotation]
+        [Display(Name = "Vendor Name")]
+        public string VendorName { get; set; }
+
+        [NameAnnotation]
+        [RequiredIf("VendorId == 1", ErrorMessage = "Please enter Supplier Name")]
+        [Display(Name = "Supplier Name")]
+        public string SupplierName { get; set; }
+
+        [MobileAnnotation]
+        [RequiredIf("VendorId == 1", ErrorMessage = "Please enter Supplier Mobile No")]
+        [Display(Name = "Supplier Mobile No")]
+        public string SupplierMobileNo { get; set; }
+
+        [Display(Name = "Vehicle No")]
+        [RequiredIf("VehicleId == 1", ErrorMessage = "Please enter Vehicle No")]
+        public string VehicleNo { get; set; }
+
+        [Display(Name = "Tripsheet No")]
+        public long TripsheetId { get; set; }
+
+        [RequiredIf("TransportModeId == 2", ErrorMessage = "Please select Vehicle Type")]
+        [Display(Name = "Vehicle Type")]
+        public short? VehicleTypeId { get; set; }
+
+        [Display(Name = "FTL Type")]
+        [RequiredIf("TransportModeId == 2", ErrorMessage = "Please select FTL Type")]
+        public short? FtlTypeId { get; set; }
+
+        [Display(Name = "Vehicle Registration No")]
+        public string VehicleRegistrationNo { get; set; }
+
+        [DataType(DataType.DateTime)]
+        [Display(Name = "Vehicle Registration Date")]
+        [Required(ErrorMessage = "Please select Registration Date")]
+        public DateTime RegistrationDate { get; set; }
+
+        [RequiredIf("TransportModeId == 2", ErrorMessage = "Please enter Engine No")]
+        [Display(Name = "Engine No")]
+        public string EngineNo { get; set; }
+
+        [RequiredIf("TransportModeId == 2", ErrorMessage = "Please enter Chasis No")]
+        [Display(Name = "Chasis No")]
+        public string ChassisNo { get; set; }
+
+        [RequiredIf("TransportModeId == 2", ErrorMessage = "Please enter RC Book No")]
+        [Display(Name = "RC Book No")]
+        public string RcBookNo { get; set; }
+
+        [Required(ErrorMessage = "Please select Insurance Validity Date")]
+        [DataType(DataType.DateTime)]
+        [Display(Name = "Insurance Validity Date")]
+        public DateTime InsuranceValidityDate { get; set; }
+
+        [Required(ErrorMessage = "Please select Fitness Validity Date")]
+        [Display(Name = "Fitness Validity Date")]
+        [DataType(DataType.DateTime)]
+        public DateTime FitnessValidityDate { get; set; }
+
+        [DataType(DataType.DateTime)]
+        [Display(Name = "Vehicle Permit Validity Date")]
+        [Required(ErrorMessage = "Please select Vehicle Permit Validity Date")]
+        public DateTime PermitValidityDate { get; set; }
+
+        public string EwayBillNo { get; set; }
+
+        public DateTime? EwayBillIssueDate { get; set; }
+
+        public DateTime? EwayBillExpiryDate { get; set; }
+
+        [StringLength(50, ErrorMessage = "Driver Name must be minimum 2 and maximum 50 character long", MinimumLength = 2)]
+        [Display(Name = "First Driver Name")]
+        [NameAnnotation]
+        [Required(ErrorMessage = "Please enter Driver Name")]
+        public string FirstDriverName { get; set; }
+
+        [Required(ErrorMessage = "Please enter Mobile No")]
+        [MobileAnnotation]
+        [Display(Name = "Mobile No")]
+        public string FirstDriverMobileNo { get; set; }
+
+        [StringLength(25, ErrorMessage = "License No must be minimum 2 and maximum 25 character long", MinimumLength = 2)]
+        [Display(Name = "License No")]
+        [Required(ErrorMessage = "Please enter License No")]
+        public string FirstDriverLicenseNo { get; set; }
+
+        [StringLength(50, ErrorMessage = "RTO Name must be minimum 2 and maximum 50 character long", MinimumLength = 2)]
+        [Required(ErrorMessage = "Please enter RTO Name")]
+        [NameAnnotation]
+        [Display(Name = "Issue By RTO")]
+        public string FirstDriverLicenseIssueBy { get; set; }
+
+        [DataType(DataType.DateTime)]
+        [Display(Name = "License Validity Date")]
+        [Required(ErrorMessage = "Please select License Validity Date")]
+        public DateTime FirstDriverLicenseValidityDate { get; set; }
+
+        [Display(Name = "Second Driver Name")]
+        [StringLength(50, ErrorMessage = "Driver Name must be minimum 2 and maximum 50 character long", MinimumLength = 2)]
+        [NameAnnotation]
+        public string SecondDriverName { get; set; }
+
+        [MobileAnnotation]
+        [Display(Name = "Mobile No")]
+        public string SecondDriverMobileNo { get; set; }
+
+        [Display(Name = "License No")]
+        [StringLength(25, ErrorMessage = "License No must be minimum 2 and maximum 25 character long", MinimumLength = 2)]
+        public string SecondDriverLicenseNo { get; set; }
+
+        [StringLength(50, ErrorMessage = "RTO Name must be minimum 2 and maximum 50 character long", MinimumLength = 2)]
+        [Display(Name = "Issue By RTO")]
+        [NameAnnotation]
+        public string SecondDriverLicenseIssueBy { get; set; }
+
+        [Display(Name = "License Validity Date")]
+        [DataType(DataType.DateTime)]
+        public DateTime? SecondDriverLicenseValidityDate { get; set; }
+
+        [RequiredIf("TransportModeId == 1", ErrorMessage = "Please Select AirPort")]
+        [Display(Name = "Airport")]
+        public byte? AirportId { get; set; }
+
+        [Display(Name = "Airline")]
+        [RequiredIf("TransportModeId == 1", ErrorMessage = "Please Select Airline")]
+        public byte? AirlineId { get; set; }
+
+        [Display(Name = "Flight")]
+        [RequiredIf("TransportModeId == 1", ErrorMessage = "Please Select Flight")]
+        public byte? FlightId { get; set; }
+
+        [Display(Name = "AWB No")]
+        [RequiredIf("TransportModeId == 1", ErrorMessage = "Please Select AWB no")]
+        public string AwbNo { get; set; }
+
+        [Display(Name = "Schedule Departure Time")]
+        public TimeSpan ScheduleDepartureTime { get; set; }
+
+        [Display(Name = "Train Name")]
+        [NameAnnotation]
+        [RequiredIf("TransportModeId == 3", ErrorMessage = "Please enter Train Name")]
+        public string TrainName { get; set; }
+
+        [Display(Name = "Train No")]
+        [RequiredIf("TransportModeId == 3", ErrorMessage = "Please Select Train no")]
+        public string TrainNo { get; set; }
+
+        [Required(ErrorMessage = "Please enter Contract Amount")]
+        [Range(1.0, 9999999999.0, ErrorMessage = "Please enter Contract Amount must be greater then 0")]
+        [Display(Name = "Contract Amount")]
+        public Decimal ContractAmount { get; set; }
+
+        [Display(Name = "Balance Paid At")]
+        public short BalanceLocationId { get; set; }
+
+        [Display(Name = "Advance Amount")]
+        [Range(0.0, 9999999999.0, ErrorMessage = "Please enter Advance Amount between 0 to 9999999999")]
+        [AssertThat("ContractAmount >= AdvanceAmount", ErrorMessage = "Advance Amount is must be less than or equal to Contract Amount")]
+        public Decimal AdvanceAmount { get; set; }
+
+
+        [Display(Name = "Advance Paid At")]
+        [RequiredIf("AdvanceAmount > 0", ErrorMessage = "Please enter Advance Paid Location")]
+        public short? AdvanceLocationId { get; set; }
+
+        public string FinacialStatus { get; set; }
+
+        public bool IsCancelled { get; set; }
+
+        public DateTime? CancelledDate { get; set; }
+
+        public string CancelledReason { get; set; }
+
+        public bool IsThcUpdated { get; set; }
+
+        [Display(Name = "Arrival Date")]
+        public string ArrivalDate { get; set; }
+
+        [Display(Name = "Arrival Location")]
+        public string ArrivalLocationCode { get; set; }
+
+        [Display(Name = "Vehicle Capacity")]
+        [Range(1.0, 999999999999.0, ErrorMessage = "Please enter Valid Vehicle Capacity")]
+        public Decimal VehicleCapacity { get; set; }
+
+        [Required(ErrorMessage = "Please enter Balance Paid Location")]
+        public string BalanceLocationCode { get; set; }
+
+        [RequiredIf("AdvanceAmount > 0", ErrorMessage = "Please enter Advance Paid Location")]
+        public string AdvanceLocationCode { get; set; }
+
+        [Display(Name = "Telephone Charge")]
+        public Decimal TelephoneCharge { get; set; }
+
+        [Display(Name = "Humali Charge")]
+        public Decimal HumaliCharge { get; set; }
+
+        [Display(Name = "Mamul Charge")]
+        public Decimal MamulCharge { get; set; }
+
+        [AssertThat("ManifestCount > 0", ErrorMessage = "Please select any one Manifest")]
+        public short ManifestCount { get; set; }
+
+        [Display(Name = "Total Manifest")]
+        [AssertThat("TotalManifest > 0", ErrorMessage = "Manifest Not Available")]
+        public short TotalManifest { get; set; }
+
+        public short TotalDocket { get; set; }
+
+        public Decimal OtherAmount { get; set; }
+
+        public int StartKm { get; set; }
+
+        [Required(ErrorMessage = "Please enter Outgoing Seal No. 1")]
+        [Display(Name = "Outgoing Seal No. 1")]
+        public string OutgoingSealNo { get; set; }
+
+
+        public string OutgoingRemark { get; set; }
+
+        public bool IsOverLoaded { get; set; }
+
+        public byte? OverLoadedReasonId { get; set; }
+
+        public ThcSummary ThcSummary { get; set; }
+
+        public List<ThcManifestDetail> ThcManifestDetailList { get; set; }
+
+        public List<MasterCharge> ChargeList { get; set; }
+
+        public List<ThcAdvBalPaymnt_Details> AdvBalPmtDtl { get; set; }
+
+        [Display(Name = "Document Type")]
+        public byte DocumentTypeId { get; set; }
+
+        [Display(Name = "Document No")]
+        public string DocumentNo { get; set; }
+
+        [Display(Name = "Manual Document No")]
+        public string ManualDocumentNo { get; set; }
+        [Display(Name = "Is Multiadvance Apply")]
+        public bool IsMultiAdvApply { get; set; }
+    }
+}

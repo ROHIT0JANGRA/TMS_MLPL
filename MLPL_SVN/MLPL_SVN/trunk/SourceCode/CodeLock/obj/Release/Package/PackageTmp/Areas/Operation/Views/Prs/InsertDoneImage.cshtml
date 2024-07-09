@@ -1,0 +1,54 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap" style="height:300px">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                Document No
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+                @Html.Hidden("hdnFileName")
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <a href="#" onclick="return ViewAttachment();" class="btckn btn-default btn-sm">
+                <span class="fa fa-download"></span>
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        spnMassage = $('#spnMassage');
+        hdnFileName = $('#hdnFileName');
+        //
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+        hdnFileName.val(GetUrlValue()["DocumentFile"]);
+        spnMassage.text("File Upload Successfully");
+    }
+    function ViewAttachment() {
+
+        var filePath = '';
+        filePath = '@Url.Content("~")' + 'Storage/DocumentPrint/';
+        window.open(filePath + hdnFileName.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+        return false;
+    }
+
+</script>
+

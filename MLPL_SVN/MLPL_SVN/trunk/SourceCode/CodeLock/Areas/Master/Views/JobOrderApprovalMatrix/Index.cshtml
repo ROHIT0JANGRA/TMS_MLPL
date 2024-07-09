@@ -1,0 +1,57 @@
+﻿@model IEnumerable<CodeLock.Models.MasterJobOrderApprovalMatrix>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="overflow-table">
+    <table class="display" id="dtTask">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.JobOrderType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LocationHierarchyId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Amount)
+                </th>
+                <th>Edit</th>
+            </tr>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <th>
+                        @Html.DisplayFor(modelItem => item.JobOrder)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LocationHierarchy)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Amount)
+                    </td>
+                    <td>
+                        <button onclick="@("window.location.href='" + @Url.Action("Create", new { jobOrderType = item.JobOrderType, locationHierarchyId = item.LocationHierarchyId }) + "'");" class="btn btn-primary btn- class=" btn btn-primary btn-xs dt-edit">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                        <button onclick="@("window.location.href='" + @Url.Action("Details", new { jobOrderType = item.JobOrderType, locationHierarchyId = item.LocationHierarchyId }) + "'");" class="btn btn-primary btn- class=" btn btn-primary btn-xs dt-edit">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Approval Amount', 'List', '', 'Add New', '@Url.Action("Create")');
+        LoadDataTable('dtTask', true, true, true);
+        $('[id=dtTask_filter]').find('input').focus();
+    });
+</script>
+
+
+

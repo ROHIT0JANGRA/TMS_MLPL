@@ -1,0 +1,82 @@
+﻿@model ManifestCancellation
+@using CodeLock.Models
+@{
+    ViewBag.Title = "Cancellation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    baseUrl = '@Url.Action("", "Manifest")';
+    currentDate = '@DateTime.Now';
+    dateTimeFormat = '@ConfigHelper.JsDateFormat' + ' ' + '@ConfigHelper.TimeFormat';
+</script>
+<script src="~/areas/operation/views/manifest/cancellation.js"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Cancellation", "Manifest", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label("Manifest Date", new { @class = "label" })
+                            </div>
+                            <div id="drManifestDate"></div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManifestNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManifestNo, new { @class = "form-control", @id = "txtManifestNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManifestNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualManifestNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualManifestNo, new { @class = "form-control", @id = "txtManualManifestNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualManifestNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtManifestDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

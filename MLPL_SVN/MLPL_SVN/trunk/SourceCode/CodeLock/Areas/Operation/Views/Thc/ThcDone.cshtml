@@ -1,0 +1,225 @@
+﻿@using CodeLock.Models
+@model List<ThcManifestDetail>
+@{
+    ViewBag.Title = "Thc Done";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("ThcDone", "Thc", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+{
+<div class="widget-wrap">
+    <div class="alert alert-success"><h5><label id="lblMessage"></label></h5></div>
+    <div class="row">
+        <div class="col-sm-3">
+            <h4>THC No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return ViewReport( @ModuleHelper.Thc,$('#hdnDocumentId').val());" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+
+    </div>
+    <div class="row" id="dvBillDetails" style="display:none">
+        <div class="col-sm-3">
+            <h4>Bill No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo2", @for = "DocumentNo2", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId2")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return ViewBillReport()" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+    <div class="row" id="dveWayBillDetails" style="display:none">
+        <div class="col-sm-3">
+            <h4>Consolidate eWay Bill No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo3", @for = "DocumentNo3", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId3")
+            </div>
+        </div>
+        <div class="col-sm-2" id="dveWayBillDetailsLink" >
+          
+        </div>
+    </div>
+
+    <div class="row" id="dvAdvanceDetails" style="display:none">
+        <div class="col-sm-3">
+            <h4>Advance</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo3", @for = "DocumentNo3", @class = "label-bold" })
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return ViewAdvanceReport()" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+    <div class="page-separator">Manifest List</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <table id="dtMrDocketList">
+                <thead>
+                    <tr>
+                        <th width="300px">
+                            Manifest No
+                        </th>
+                        <th>
+                            View/Print
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => item.ManifestNo)
+                            </td>
+                            <td>
+                                <button onclick='return ViewReport( @ModuleHelper.Manifest, @Html.DisplayFor(model => item.ManifestId));' class="btn btn-primary">
+                                    <i class="glyphicon glyphicon-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="dvUploadFile">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    File
+                    <div class="input prepend-big-btn">
+                        <label class="icon-right" for="prepend-big-btn">
+                            <i class="fa fa-download"></i>
+                        </label>
+                        <div class="file-button">
+                            Browse
+                            @Html.TextBox("fuFileName", null, new { @class = "form-control", @id = "fuFileName", @type = "file", @onchange = "$('#prepend-big-btn').val($(this).val())" })
+                            @Html.Hidden("hdnFileName", new { @id = "hdnFileName" })
+                            @Html.Hidden("hdnDocumentType", new { @id = "hdnDocumentType" })
+                        </div>
+                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <button type="submit" class="btn btn-success primary-btn" tabindex="3">Upload</button>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+}
+<script>
+    $(document).ready(function () {
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        SetPageLoad('THC', 'Done', '', 'Go To Create', '@Url.Action("Insert")');
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        lblDocumentNo2 = $('#lblDocumentNo2');
+        hdnDocumentId2 = $('#hdnDocumentId2');
+
+        lblDocumentNo3 = $('#lblDocumentNo3');
+        hdnDocumentId3 = $('#hdnDocumentId3');
+
+
+        dvUploadFile = $('#dvUploadFile');
+        hdnDocumentType = $('#hdnDocumentType');
+        hdnDocumentType.val('THC');
+
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+
+        lblDocumentNo2.html(GetUrlValue()["documentNo2"]);
+        hdnDocumentId2.val(GetUrlValue()["documentId2"]);
+
+        lblDocumentNo3.html(GetUrlValue()["documentNo3"]);
+        hdnDocumentId3.val(GetUrlValue()["documentId3"]);
+
+        $('#dvBillDetails').showHide(parseInt(hdnDocumentId2.val()) > 0);
+        $('#dvAdvanceDetails').showHide(parseInt(hdnDocumentId2.val()) > 0);
+
+        baseUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+
+       if (hdnDocumentId3.val() != "") {
+            $('#dveWayBillDetails').showHide(parseInt(hdnDocumentId3.val()) > 0);
+
+                // Assuming you have the 'tripNo' variable defined
+          var tripNo = hdnDocumentId3.val();
+           // Construct the base URL and action name
+           var actionName = 'DownloadConsolidateeWayBillPdf';
+
+           // Construct the complete URL with the tripNo parameter
+           var completeUrl = baseUrl + '/' + actionName + '?tripNo=' + tripNo;
+
+                // Create the link element
+           var link = $('<a>', {
+               class: 'btn btn-primary',
+               href: completeUrl
+           });
+
+                // Create the icon element
+                var icon = $('<span>', {
+                    class: 'glyphicon glyphicon-print'
+                });
+
+                // Append the icon element to the link element
+                link.append(icon);
+
+                // Append the link element to a target element (e.g., a container in your HTML)
+            $('#dveWayBillDetailsLink').append(link);
+        }
+
+        //
+
+        var type = "generated";
+        $('#lblMessage').html("THC is " + (GetUrlValue()["type"] == "D" ? "Departed" : "Genereated") + " Successfully");
+
+        var request1 = { moduleId: 1, ruleId: 74 };
+        AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(request1), function (result) {
+            if (result == "N") { dvUploadFile.hide(); }
+        }, ErrorFunction, false);
+    });
+
+    function ViewReport(documentTypeId,documentId) {
+        return ShowViewPrint(documentTypeId, documentId);
+    }
+
+    function ViewBillReport() {
+        var prmList = [{ Name: "BillId", Value: hdnDocumentId2.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'VendorBillDetailViewPrint', Description: 'Vehicle Hire Bill Entry View' };
+        return ShowReport(reportInfo);
+    }
+
+    function ViewAdvanceReport() {
+        var prmList = [{ Name: "DocumentTypeId", Value: @ModuleHelper.Thc }, { Name: "DocumentId", Value: hdnDocumentId.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'AdvanceVehicleHireSlip', Description: 'Vehicle Hire Advance Entry View' };
+        return ShowReport(reportInfo);
+    }
+</script>

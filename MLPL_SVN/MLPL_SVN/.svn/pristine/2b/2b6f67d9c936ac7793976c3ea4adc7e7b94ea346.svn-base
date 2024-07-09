@@ -1,0 +1,112 @@
+﻿@model CodeLock.Models.ThcSummary
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "DepsUpdate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<SelectListItem> items = new List<SelectListItem>();
+
+    items.Add(new SelectListItem
+    {
+        Text = "DEPS Date",
+        Value = "1",
+
+    });
+
+    items.Add(new SelectListItem
+    {
+        Text = SessionUtility.DocketNomenClature + " Date",
+        Value = "2",
+
+    });
+}
+<script>
+    $(document).ready(function () {
+        sepdUrl = '@Url.Action("", "Thc", new { Area = "Operation" })';
+        docketNomenClature = '@SessionUtility.DocketNomenClature';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Operation/Views/THC/DepsUpdate.js")"></script>
+@*<script src="~/Areas/Operation/Views/THC/DepsUpdate.js"></script>*@
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <div class="inline-group">
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(m => m.IsUpdate, true, new { @id = "rdUpdate", @tabindex = "0", @checked = "checked" })
+                                        <i></i>
+                                        @Html.Label("Action", "Update DEPS", new { @for = "rdUpdate" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(m => m.IsUpdate, false, new { @id = "rdClose", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.Label("Action", "Close DEPS", new { @for = "rdClose" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Select Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drDepsDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("Date Type", new { @class = "control-label" })
+                                <div class="select">
+                                    @Html.DropDownList("Date", new SelectList(items, "Value", "Text"), new { @class = "form-control", @id = "ddlselectDate" })
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("DocketNo", SessionUtility.DocketNomenClature + " No", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBox("DocketNo", "", new { @class = "form-control", @id = "txtDocketNo" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("DepsNo", "DEPS No", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBox("DepsNo", "", new { @class = "form-control", @id = "txtDepsNo" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDepsDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+

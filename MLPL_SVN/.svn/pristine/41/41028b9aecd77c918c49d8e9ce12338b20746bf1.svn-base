@@ -1,0 +1,79 @@
+﻿@model CodeLock.Models.MasterFinancialYearRight
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Right Financial Year";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "FinancialYearRight", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @*@Html.AntiForgeryToken()
+        @Html.Hidden("UserId");
+        @Html.AntiModelInjectionFor(m => m.UserId)*@
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UserId, new { @class = "label-bold" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.UserId, new { @id = "hdnUserId" })
+                        @Html.TextBoxFor(model => model.UserName, new { @class = "form-control", @id = "txtUserName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UserName)
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="unit">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.FinanceYearList, new { @class = "label-bold" })
+                        @for (var i = 0; i < Model.FinanceYearList.Count(); i++)
+                        {
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(m => m.FinanceYearList[i].IsActive, new { @id = "chkFinYear" + i.ToString() })
+                                <i></i>
+                                @Html.LabelFor(m => m.FinanceYearList[i].IsActive, Model.FinanceYearList[i].Name, new { @class = "label", @For = "chkFinYear" + i.ToString() })
+                            </label>
+                            @Html.HiddenFor(m => m.FinanceYearList[i].Name)
+                            @Html.HiddenFor(m => m.FinanceYearList[i].Value)
+                        }
+                        @Html.ValidationMessageFor(model => model.FinanceYearList)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Financial Year Right', 'Insert', 'txtUserName', 'Goto List', '@Url.Action("Index")');
+
+        hdnUserId = $("#hdnUserId");
+        txtUserName = $("#txtUserName");
+
+        if (('@ViewBag.Message') == 'True') {
+            ShowMessage("Successfully Saved");
+        }
+
+        UserAutoComplete('txtUserName', 'hdnUserId');
+        txtUserName.blur(function () { IsUserNameExist(txtUserName, hdnUserId, 'User'); });
+        txtUserName.blur(CheckFinYear);
+    });
+
+    function CheckFinYear() {
+        var requestData = { loginUserId: hdnUserId.val() }
+        AjaxRequestWithPostAndJson('@Url.Action("GetVirtualLoginFinanceYearListByUserId", "Company")' , JSON.stringify(requestData), function (result) {
+            if (result.length > 0) {
+                $.each(result, function (i, item) {
+                    var chkFinyearId = "chkFinYear" + i;
+                    $('#' + chkFinyearId).check(i.IsActive);
+                });
+            }
+        }, ErrorFunction, false);
+    }
+
+
+</script>
+

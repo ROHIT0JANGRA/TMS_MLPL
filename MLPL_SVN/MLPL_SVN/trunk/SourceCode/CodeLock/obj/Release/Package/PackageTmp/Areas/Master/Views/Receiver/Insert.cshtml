@@ -1,0 +1,52 @@
+﻿@model CodeLock.Models.MasterReceiver
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "Receiver Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "Receiver", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("ReceiverId", 0)
+    @Html.AntiModelInjectionFor(m => m.ReceiverId)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiverName, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.ReceiverName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReceiverName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control", @id = "ddlLocation" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.LocationId)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Receiver', 'Create', 'ReceiverName', 'Go To List', '@Url.Action("Index")');
+    });
+</script>

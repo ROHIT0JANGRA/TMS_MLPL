@@ -1,0 +1,132 @@
+﻿@model CodeLock.Models.CustomerContract
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "CustomerContract Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "CustomerContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.ContractId, new { @id = "hdnContractId" })
+    @Html.HiddenFor(m => m.CustomerId, new { @id = "hdnCustomerId" })
+    @Html.HiddenFor(m => m.IsCustomerContract, new { @id = "hdnIsCustomerContract" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Contract ID", new { @id = "lblCustomer", @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.ManualContractId
+                    </div>
+                </div>
+            </div>
+            @if (@ViewBag.isCustomerContract == false)
+            {
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Vendor", new { @id = "lblCustomer", @class = "label-bold" })
+                        <div class="clearfix">
+                            @ViewBag.CustomerCode : @ViewBag.CustomerName
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Customer", new { @id = "lblCustomer", @class = "label-bold" })
+                        <div class="clearfix">
+                            @ViewBag.CustomerCode : @ViewBag.CustomerName
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StepSelection, new { @class = "label-bold" })
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "1", new { @id = "rdBasicInformation", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Basic Information", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "2", new { @id = "rdServiceSelection" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Service Selection", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "3", new { @id = "rdBillingInformation" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Billing Information", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "4", new { @id = "rdModewiseServices" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Modewise Services", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "5", new { @id = "rdDefineChargeMatrix" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Define Charge Matrix", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "6", new { @id = "rdRateMatrixCriteria" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Rate Matrix", new { @class = "label" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3" id="btnSubmit">Next</button>
+        </div>
+    </div>
+}
+<script>
+    var selectedStep = "1";
+
+    $(document).ready(function () {
+        $('[id*="rd"]').each(function () { $(this).click(function () { selectedStep = $(this).val(); }); });
+        $('#btnSubmit').click(OnButtonClick);
+
+        SetPageLoad('Customer Contract', 'Step Selection');
+         if ('@ViewBag.isCustomerContract' == "False") {
+             SetPageLoad('Vendor Contract', 'Step Selection', '', 'Go To Contract List', '@Url.Action("Index")');
+        }
+        else {
+             SetPageLoad('Customer Contract', 'Step Selection', '', 'Go To Contract List', '@Url.Action("Index")');
+        }
+    });
+
+    function OnButtonClick() {
+        var contractId = $('#hdnContractId').val();
+        var customerId = $('#hdnCustomerId').val();
+        var isCustomerContract = $('#hdnIsCustomerContract').val();
+        var url = "";
+        switch (selectedStep) {
+            case "1": url = "@Url.Action("Update")/" + contractId + "?isCustomerContract=" + isCustomerContract; break;
+            case "2": url = "@Url.Action("ServiceSelection")/" + contractId; break;
+            case "3": url = "@Url.Action("BillingInfo")/" + contractId; break;
+            case "4": url = "@Url.Action("ModewiseServices")/" + contractId; break;
+            case "5": url = "@Url.Action("DefineChargeMatrix")/" + contractId; break;
+            case "6": url = "@Url.Action("StandardChargeCriteria")/" + contractId; break;
+        }
+        window.location.href = url;
+        return false;
+    }
+</script>

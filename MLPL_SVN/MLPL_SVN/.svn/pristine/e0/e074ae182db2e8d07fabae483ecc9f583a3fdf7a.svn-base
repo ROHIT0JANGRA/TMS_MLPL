@@ -1,0 +1,70 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:250px">
+    <div class="alert alert-success"><h5><span id="spnMassage">Advice is Generated Successfully</span></h5></div>
+    <div class="row" id="dvAdviceDetails">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.Label("Advice No", new { @class = "label-bold" })
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return PrintReport();" class="btn btn-primary">
+                <i class="glyphicon glyphicon-print"></i>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.Label("Voucher No", new { @class = "label-bold" })
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo2", @for = "DocumentNo2", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId2")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return PrintVoucherView();" class="btn btn-primary">
+                <i class="glyphicon glyphicon-print"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad("Advice", 'Done', '', 'Go To Generate Advice', '@Url.Action("Advice")');
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        spnMassage = $('#spnMassage');
+        lblDocumentNo2 = $('#lblDocumentNo2');
+        hdnDocumentId2 = $('#hdnDocumentId2');
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+        lblDocumentNo2.html(GetUrlValue()["documentNo2"]);
+        hdnDocumentId2.val(GetUrlValue()["documentId2"]);
+    }
+
+    function PrintReport() {
+        return ShowViewPrint('@ModuleHelper.Advice', hdnDocumentId.val());
+    }
+
+    function PrintVoucherView() {
+        return ShowViewPrint('@ModuleHelper.Voucher', hdnDocumentId2.val());
+    }
+</script>
+

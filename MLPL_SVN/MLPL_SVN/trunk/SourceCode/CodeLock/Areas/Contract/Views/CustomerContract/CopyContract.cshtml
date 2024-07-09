@@ -1,0 +1,195 @@
+﻿@model CodeLock.Models.CopyCustomerContract
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Copy Contract";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("CopyContract", "CustomerContract", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("ContractId", 0, new { @id = "hdnContractId" })
+    @Html.AntiModelInjectionFor(m => m.ContractId)
+    @Html.HiddenFor(m => m.IsCustomerContract, new { id = "hdnIsCustomerContract" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.PaybasId, new SelectList(ViewBag.PayBasList, "Value", "Name"), "Select Paybas", new { @class = "form-control", @id = "ddlPaybasId" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.PaybasId)
+            </div>
+            <div class="col-sm-4">
+                @Html.Label("Customer ID", new { @id = "lblCustomerId", @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.CustomerId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Customer", new { @class = "form-control", @id = "ddlCustomerId" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.CustomerId)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ManualContractId, new { @class = "label" })
+                    <div class="system-label">
+                        @Html.Label("", "<System Generated>")
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "StartDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.StartDate), IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "EndDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.EndDate), IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "CustomerContractBasicInfo.ContractDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.ContractDate), IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true, IsValidateFinYear = false })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                @Html.LabelFor(model => model.ExistingContractId, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.ExistingManualContractId, new { @class = "form-control", @id = "txtFreightManualContractId", @readOnly = "readOnly" })
+                    @Html.HiddenFor(model => model.ExistingContractId, new { id = "hdnFreightContractId" })
+                </div>
+                @Html.ValidationMessageFor(model => model.ExistingManualContractId)
+            </div>
+            <div class="col-sm-1">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="inputer floating-label">
+                        <button id="btnPopUp" onclick="OnPopUpClick()" class="btn btn-primary btn-xs dt-edit" type="button">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    var isCustomerContract=@Model.IsCustomerContract.ToString().ToLower();
+    $(document).ready(function () {
+        SetPageLoad('Customer Contract Services', 'Copy Contract', 'ddlPaybasId', 'Go To List', '@Url.Action("Index")');
+        var txtStartDate = $('#txtStartDate');
+        var txtEndDate = $('#txtEndDate');
+        var txtCustomerCode, txtCustomerName;
+        ddlCustomerId = $('#ddlCustomerId');
+        $('#ddlPaybasId').change(GetCustomerList);
+        $('#ddlPaybasId').change(CheckDate);
+        $('#ddlCustomerId').change(CheckDate);
+        $('#txtStartDate').blur(CheckDate);
+        txtStartDate.blur(function () { return CheckContractDateRange(txtStartDate); });
+        txtEndDate.blur(function () { return CheckContractDateRange(txtEndDate); });
+        txtStartDate.blur(function () { return CheckDateIsValid(txtStartDate); });
+        txtEndDate.blur(function () { return CheckDateIsValid(txtEndDate); });
+
+        lblCustomerId = $('#lblCustomerId');
+        lblCustomerId.text("Customer Name");
+
+        $('#btnSubmit').click(OnSubmit);
+        ddlCustomerId.enable($('#hdnIsCustomerContract').val() == 'true');
+        customerUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+    });
+    function OnPopUpClick() {
+        var popup;
+        if($('#ddlPaybasId').val() != null && $('#ddlPaybasId').val() != ''){
+            popup = window.open("../../Contract/CustomerContract/PopUp?contractId="+$('#ddlPaybasId').val(), "Popup", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=600,width=1300,height=650");
+            popup.focus();
+        }
+        else{ShowMessage("Select Paybas first");}
+        return false;
+    }
+
+    function CheckDate() {
+        if ($('#ddlCustomerId').val() != null && $('#ddlPaybasId').val() != null && $('#txtStartDate').val() != null && $('#txtEndDate').val() != null) {
+            if ($('#ddlCustomerId').val() != "" && $('#ddlPaybasId').val() != "" && $('#txtStartDate').val() != "" && $('#txtEndDate').val() != "") {
+                var requestData = { contractId: $('#hdnContractId').val(), customerId: $('#ddlCustomerId').val(), paybasId: $('#ddlPaybasId').val(), isCustomerContract:isCustomerContract, startDate: $('#txtStartDate').val(), endDate: $('#txtEndDate').val() };
+                AjaxRequestWithPostAndJson('@Url.Action("CheckDate")', JSON.stringify(requestData), function (result) {
+                    if (!result) {
+                        ShowMessage("Contract is already exist on this Date");
+                        $('#txtStartDate').val('');
+                        $('#txtEndDate').val('');
+                    }
+                }, ErrorFunction, false);
+            }
+            else if ($('#ddlCustomerId').val() != "" && $('#ddlPaybasId').val() != "" && $('#txtStartDate').val() != "") {
+                var requestData = { contractId: $('#hdnContractId').val(), customerId: $('#ddlCustomerId').val(), paybasId: $('#ddlPaybasId').val(), isCustomerContract: isCustomerContract, contractDate: $('#txtStartDate').val() };
+                AjaxRequestWithPostAndJson('@Url.Action("CheckDateIsValid")', JSON.stringify(requestData), function (result) {
+                    if (!result) {
+                        ShowMessage("Contract is already exist on this Date");
+                        $('#txtStartDate').val('');
+                    }
+                }, ErrorFunction, false);
+            }
+            else if ($('#ddlCustomerId').val() != "" && $('#ddlPaybasId').val() != "" && $('#txtEndDate').val() != "") {
+                var requestData = { contractId: $('#hdnContractId').val(), customerId: $('#ddlCustomerId').val(), paybasId: $('#ddlPaybasId').val(), isCustomerContract: isCustomerContract, contractDate: $('#txtEndDate').val() };
+                AjaxRequestWithPostAndJson('@Url.Action("CheckDateIsValid")', JSON.stringify(requestData), function (result) {
+                    if (!result) {
+                        ShowMessage("Contract is already exist on this Date");
+                        $('#txtEndDate').val('');
+                    }
+                }, ErrorFunction, false);
+            } else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    function CheckDateIsValid(objDate) {
+        if ($('#ddlCustomerId').val() != "" && $('#ddlPaybasId').val() != "" && (objDate.val() != "")) {
+            var requestData = { contractId: $('#hdnContractId').val(), customerId: $('#ddlCustomerId').val(), paybasId: $('#ddlPaybasId').val(), isCustomerContract: isCustomerContract, contractDate: objDate.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("CheckDateIsValid")', JSON.stringify(requestData), function (result) {
+                if (!result) {
+                    ShowMessage("Contract is already exist on this Date");
+                    objDate.val('');
+                    objDate.focus();
+                }
+            }, ErrorFunction, false);
+        }
+        return false;
+    }
+
+    function CheckContractDateRange(obj) {
+        var txtStartDate = $('#txtStartDate');
+        var txtEndDate = $('#txtEndDate');
+
+        if (txtStartDate.val() != "" && txtEndDate.val() != "") {
+            if (txtEndDate.toDate() <= txtStartDate.toDate()) {
+                ShowMessage("End Date must be greater than Start Date");
+                obj.val('');
+                obj.focus();
+                return false;
+            }
+        }
+    }
+
+    function GetCustomerList(){
+        var requestData = { payBasId: $('#ddlPaybasId').val() }
+        if(isCustomerContract)
+            AjaxRequestWithPostAndJson(customerUrl + '/GetCustomerListByPaybasId', JSON.stringify(requestData), function (responseData) {
+                BindDropDownList('ddlCustomerId', responseData, 'Value', 'Name', '', 'Select Customer');
+            }, ErrorFunction, false);
+    }
+
+    function OnSubmit() {
+        CheckDate();
+        ddlCustomerId.removeAttr('disabled');
+    }
+</script>
+

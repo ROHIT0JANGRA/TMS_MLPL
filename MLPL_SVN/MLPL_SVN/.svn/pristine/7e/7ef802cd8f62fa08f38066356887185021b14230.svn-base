@@ -1,0 +1,504 @@
+﻿@model CodeLock.Models.MasterVehicle
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VehicleNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VehicleNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VehicleTypeId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VehicleTypeName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VendorTypeId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VendorTypeName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VendorId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VendorName)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.FtlTypeId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.FtlTypeName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsActive)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LocationId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.LocationName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.NoOfDrivers)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.NoOfDrivers
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.IsGpsEnabled)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.MasterVehicleDetail.IsGpsEnabled)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.GpsDeviceId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.GpsDeviceId)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.VehicleBroker)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.VehicleBroker)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.NoOfTyres)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.NoOfTyres
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.RcBookNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.RcBookNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.RegistrationNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.RegistrationNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.RegistrationDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.RegistrationDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.VehicleMileage)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.VehicleMileage)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.InsuranceNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.InsuranceNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.InsuranceIssueDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.InsuranceIssueDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.InsuranceExpiryDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.InsuranceExpiryDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.FitnessCertificateNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.FitnessCertificateNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.FitnessCertificateIssueDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.FitnessCertificateIssueDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.FitnessCertificateExpiryDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.FitnessCertificateExpiryDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.NationalPermitNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.NationalPermitNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.NationalPermitIssueDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.NationalPermitIssueDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.NationalPermitExpiryDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.NationalPermitExpiryDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.PollutionCertificateNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.PollutionCertificateNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.PollutionCertificateIssueDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.PollutionCertificateIssueDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.PollutionCertificateExpiryDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.PollutionCertificateExpiryDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.RoadTaxNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.RoadTaxNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.RoadTaxIssueDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.RoadTaxIssueDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.RoadTaxExpiryDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.RoadTaxExpiryDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.AuthorisationNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.AuthorisationNo)
+                </dd>
+            </dl>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.AuthorisationIssueDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.AuthorisationIssueDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.AuthorisationExpiryDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.AuthorisationExpiryDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.AttachingDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.AttachingDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.ChasisNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.ChasisNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.EngineNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.EngineNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.RtoName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.RtoName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.StartKm)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.StartKm)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.LocalPermitNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.LocalPermitNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.LocalPermitIssueDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.LocalPermitIssueDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.LocalPermitExpiryDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.LocalPermitExpiryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.EntryByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.EntryByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.EntryDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.EntryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.UpdateByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVehicleDetail.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVehicleDetail.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.MasterVehicleDetail.UpdateDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vehicle', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { id = Model.VehicleId })');
+    });
+</script>
+

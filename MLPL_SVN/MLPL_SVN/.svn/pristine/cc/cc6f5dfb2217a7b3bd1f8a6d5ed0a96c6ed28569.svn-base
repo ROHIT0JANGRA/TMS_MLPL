@@ -1,0 +1,128 @@
+﻿@model CodeLock.Models.MasterAddress
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Address Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Address", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.AddressId)
+    @Html.HiddenFor(model => model.AddressId)
+
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.AddressCode, new { @class = "label", @id = "txtAddressCode" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.AddressCode, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.AddressCode)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Address1, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.Address1, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Address1)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Address2, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.Address2, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Address2)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.CityId, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.HiddenFor(model => model.CityId, new { @id = "hdnCityId" })
+                    @Html.TextBoxFor(model => model.CityName, null, new { @class = "form-control", @id = "txtCityName" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Pincode, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.Pincode, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Pincode)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MobileNo, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.MobileNo, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MobileNo)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.EmailId, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.EmailId, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.EmailId)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.StatisticalChargesCode, new { @class = "label" })
+                <div class="input-wrapper">
+                    @Html.TextBoxFor(model => model.StatisticalChargesCode, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.StatisticalChargesCode)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.IsActive)
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsMreNoApplicable, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsMreNoApplicable)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+
+    }
+    <script>
+    $(document).ready(function () {
+        SetPageLoad('Address', 'Update', 'txtAddressCode', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.AddressId })');
+        hdnCityId = $('#hdnCityId');
+        txtCityName = $('#txtCityName');
+        CityAutoComplete('txtCityName', 'hdnCityId');
+        txtCityName.blur(function () { return IsCityNameExist(txtCityName, hdnCityId, 'City') });
+    });
+    </script>
+

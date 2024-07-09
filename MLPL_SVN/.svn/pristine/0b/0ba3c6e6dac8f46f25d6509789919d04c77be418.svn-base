@@ -1,0 +1,454 @@
+﻿@model CodeLock.Models.DeliverOrder
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .bootstrap-datetime-widget {
+        z-index: 100 !important;
+    }
+
+    #sig-canvas {
+        border: 2px dotted #CCCCCC;
+        border-radius: 15px;
+        cursor: crosshair;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        orderDeliveryUrl = '@Url.Action("", "DRS", new { Area = "Operation" })';
+        currentDate = '@DateTime.Now';
+        dateTimeFormat = '@ConfigHelper.JsDateFormat' + ' ' + '@ConfigHelper.TimeFormat';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Operation/Views/DRS/DeliverOrder.js?v6")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("DeliverOrder", "Drs", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+        {
+            @Html.HiddenFor(model => model.DocketId, new { @id = "hdnDocketId" })
+            @Html.HiddenFor(model => model.DocketNo, new { @id = "hdnDocketNo" })
+            @Html.HiddenFor(model => model.InvoiceId, new { @id = "hdnInvoiceId" })
+            @Html.HiddenFor(model => model.PartId, new { @id = "hdnPartId" })
+            @Html.HiddenFor(model => model.OrderDeliveryStatusId, new { @id = "hdnOrderDeliveryStatusId" })
+            
+            @Html.AntiForgeryToken()
+
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label("Docket Date", new { @class = "label" })
+                            </div>
+                            <div id="drDocketDate"></div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                @Html.Label("(seperated by comma if multiple)")
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDocketList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtPartList">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ConsigneeName, new { @class = "label-bold" })
+                                @Html.Label(" ", new { @id = "lblConsigneeName", @class = "label" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocketNo, new { @class = "label-bold" })
+                                @Html.Label(" ", new { @id = "lblDocketNo", @class = "label" })
+                                @Html.HiddenFor(model => model.DocketSuffix, new { @id = "hdnDocketSuffix" })
+
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ConsigneeAddress1, new { @class = "label-bold" })
+                                @Html.Label(" ", new { @id = "lblConsigneeAddress1", @class = "label" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TotalPartQuantity, new { @class = "label-bold" })
+                                @Html.Label(" ", new { @id = "lblTotalPartQuantity", @class = "label" })
+                                @Html.HiddenFor(model => model.TotalPartQuantity, new { @id = "hdnTotalPartQuantity" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TotalPartAmount, new { @class = "label-bold" })
+                                @Html.Label(" ", new { @id = "lblTotalPartAmount", @class = "label" })
+                                @Html.HiddenFor(model => model.TotalPartAmount, new { @id = "hdnTotalPartAmount" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ConsigneeMobileNo, new { @class = "label-bold" })
+                                @Html.Label(" ", new { @id = "lblConsigneeMobileNo", @class = "label" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="inline-group">
+                                    @Html.LabelFor(model => model.DeliveryStatusId, new { @class = "label-bold" })
+                                    <div>
+                                        <label class="radio">
+                                            @Html.RadioButtonFor(model => model.DeliveryStatusId, "1", new { @id = "rdSuccess", @checked = "checked" })
+                                            <i></i>
+                                            @Html.LabelFor(model => model.DeliveryStatusId, "Success", new { @class = "label" })
+                                        </label>
+                                        @*<label class="radio">
+                                                @Html.RadioButtonFor(model => model.Status, "2", new { @id = "rdPartial" })
+                                                <i></i>
+                                                @Html.LabelFor(model => model.Status, "Partial", new { @class = "label" })
+                                            </label>*@
+                                        <label class="radio">
+                                            @Html.RadioButtonFor(model => model.DeliveryStatusId, "0", new { @id = "rdFailure" })
+                                            <i></i>
+                                            @Html.LabelFor(model => model.DeliveryStatusId, "Failure", new { @class = "label" })
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "DeliveryDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DeliveryDateTime), IsRequired = true, IsDateOnly = false, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                        @*<div class="col-sm-4" id="dvDeliverPackages">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DeliverPackages, new { @class = "label-bold" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.DeliverPackages, new { @class = "form-control", @id = "txtDeliverPackages" })
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div id="dvReceiver">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ReceiverTypeId, new { @class = "label-bold" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.ReceiverTypeId, new List<SelectListItem> {
+                                            new SelectListItem() {Text = "Self",Value="1"},
+                                            new SelectListItem() {Text = "Other", Value="2"},}, new { @class = "form-control", @id = "ddlReceiverType" })
+                                        <i></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ReceiverName, new { @class = "label-bold" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.ReceiverName, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Remarks, new { @class = "label-bold" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control" })
+                                    @*<a href="#" onclick="javascript:OpenSignature(true);">Take Signature</a>*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DeliveryPersonName, new { @class = "label-bold" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.DeliveryPersonName, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" style="display:none">
+                            <div class="form-group">
+                                <div class="input" style="margin-top:7%;">
+                                    <a href="#" class="btn btn-white mb" data-toggle="modal" title="" data-target='#dvModel'>
+                                        <i class="fa fa-pencil"></i>Take Signature
+                                    </a>
+                                </div>
+                                @*<label class="label-bold"></label>
+                                    <label class="radio-toggle">
+                                    <input type="checkbox" id="chkTakeSignature">
+                                    <i></i>
+                                    </label>*@
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <!--<div class="row" id="dvSignature" style="display:none">
+
+                    <canvas id="sig-canvas" width="200" height="140">
+                        Get a better browser
+                    </canvas>-->
+                    @*<button type="button" class="btn-primary" id="sig-submitBtn">Submit Signature</button>*@
+                    <!--<button type="button" class="btn btn-default" id="sig-clearBtn">Clear Signature</button>
+                    <br />
+                    <br />
+                    <div class="col-sm-4" style="display:none">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SignatureImage, new { @class = "label-bold" })
+                            <div class="input">
+                                <img id="sig-image" src="" alt="Your signature will go here!" />
+
+                            </div>
+                        </div>
+                    </div>
+
+                    @Html.HiddenFor(model => model.Signature, new { @class = "form-control", @id = "sig-dataUrl" })
+                    <div class="col-sm-4" style="display:none">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SignatureImage, new { @class = "label-bold", @id = "sig-image" })
+                            <div class="input prepend-big-btn">
+                                <label class="icon-right" for="prepend-big-btn">
+                                    <i class="fa fa-download"></i>
+                                </label>
+                                <div class="file-button">
+                                    Browse
+                                    <input class="form-control" id="sig-image" type="file" name="SignatureImage" onchange="document.getElementById('prepend-big-btn').value = this.value;">-->
+                    @*@Html.HiddenFor(model => model.DeclarationDocumentName, new { @id = "hdnDeclarationDocumentName", @Value = Model.DeclarationDocumentName })*@
+                    <!--</div>
+                                    <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>-->
+                    @Html.HiddenFor(model => model.Signature, new { @class = "form-control", @id = "sig-dataUrl" })
+                    <div class="row" style="display:none">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.POD, new { @class = "label-bold" })
+                                <div class="input prepend-big-btn">
+                                    <label class="icon-right" for="prepend-big-btn">
+                                        <i class="fa fa-download"></i>
+                                    </label>
+                                    <div class="file-button">
+                                        Browse
+                                        <input class="form-control" id="fuPhotoAttachment" type="file" name="POD" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                                        @*@Html.HiddenFor(model => model.DeclarationDocumentName, new { @id = "hdnDeclarationDocumentName", @Value = Model.DeclarationDocumentName })*@
+                                    </div>
+                                    <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="modal fade" id="dvModel" tabindex="-1" role="dialog" aria-labelledby="dvModelLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" id="dvSignature">
+
+                            <canvas id="sig-canvas" width="200" height="140">
+                                Get a better browser
+                            </canvas>
+                            <button type="button" class="btn btn-default" id="sig-clearBtn">Clear Signature</button>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-toggle='modal' data-target='#dvModel' onclick="SubmitSignature()">Submit Signature</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        window.requestAnimFrame = (function (callback) {
+            return window.requestAnimationFrame ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.oRequestAnimationFrame ||
+                window.msRequestAnimaitonFrame ||
+                function (callback) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
+        })();
+
+        var canvas = document.getElementById("sig-canvas");
+        var ctx = canvas.getContext("2d");
+        ctx.strokeStyle = "#222222";
+        ctx.lineWidth = 4;
+
+        var drawing = false;
+        var mousePos = {
+            x: 0,
+            y: 0
+        };
+        var lastPos = mousePos;
+
+        canvas.addEventListener("mousedown", function (e) {
+            drawing = true;
+            lastPos = getMousePos(canvas, e);
+        }, false);
+
+        canvas.addEventListener("mouseup", function (e) {
+            drawing = false;
+        }, false);
+
+        canvas.addEventListener("mousemove", function (e) {
+            mousePos = getMousePos(canvas, e);
+        }, false);
+
+        // Add touch event support for mobile
+        canvas.addEventListener("touchstart", function (e) {
+
+        }, false);
+
+        canvas.addEventListener("touchmove", function (e) {
+            var touch = e.touches[0];
+            var me = new MouseEvent("mousemove", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(me);
+        }, false);
+
+        canvas.addEventListener("touchstart", function (e) {
+            mousePos = getTouchPos(canvas, e);
+            var touch = e.touches[0];
+            var me = new MouseEvent("mousedown", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(me);
+        }, false);
+
+        canvas.addEventListener("touchend", function (e) {
+            var me = new MouseEvent("mouseup", {});
+            canvas.dispatchEvent(me);
+        }, false);
+
+        function getMousePos(canvasDom, mouseEvent) {
+            var rect = canvasDom.getBoundingClientRect();
+            return {
+                x: mouseEvent.clientX - rect.left,
+                y: mouseEvent.clientY - rect.top
+            }
+        }
+
+        function getTouchPos(canvasDom, touchEvent) {
+            var rect = canvasDom.getBoundingClientRect();
+            return {
+                x: touchEvent.touches[0].clientX - rect.left,
+                y: touchEvent.touches[0].clientY - rect.top
+            }
+        }
+
+        function renderCanvas() {
+            if (drawing) {
+                ctx.moveTo(lastPos.x, lastPos.y);
+                ctx.lineTo(mousePos.x, mousePos.y);
+                ctx.stroke();
+                lastPos = mousePos;
+            }
+        }
+
+        // Prevent scrolling when touching the canvas
+        document.body.addEventListener("touchstart", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, false);
+        document.body.addEventListener("touchend", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, false);
+        document.body.addEventListener("touchmove", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, false);
+
+        (function drawLoop() {
+            requestAnimFrame(drawLoop);
+            renderCanvas();
+        })();
+
+        function clearCanvas() {
+            canvas.width = canvas.width;
+        }
+
+        // Set up the UI
+        var sigText = document.getElementById("sig-dataUrl");
+        var sigImage = document.getElementById("sig-image");
+        var clearBtn = document.getElementById("sig-clearBtn");
+        // var submitBtn = document.getElementById("sig-submitBtn");
+        clearBtn.addEventListener("click", function (e) {
+            clearCanvas();
+            sigText.innerHTML = "Data URL for your signature will go here!";
+            sigImage.setAttribute("src", "");
+        }, false);
+        //submitBtn.addEventListener("click", function (e) {
+        //    var dataUrl = canvas.toDataURL();
+        //    /*sigText.innerHTML = dataUrl;*/
+        //    sigText.value = dataUrl;
+        //    sigImage.setAttribute("src", dataUrl);
+
+        //}, false);
+
+    })();
+</script>

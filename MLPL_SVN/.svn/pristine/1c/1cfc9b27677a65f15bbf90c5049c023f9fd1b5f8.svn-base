@@ -1,0 +1,195 @@
+﻿@using CodeLock.Models
+@model BankReconcilation
+@{
+    ViewBag.Title = "BankReconciliation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        BankUrl = '@Url.Action("GetListByCategory", "Account", new { Area = "Master" })';
+        //locationUrl = '@Url.Action("", "Location", new { Area = "Master" })';
+        BankReconciliationUrl = '@Url.Action("", "Banking", new { Area = "Finance" })';
+    });
+</script>
+<script src="~/Areas/Finance/Views/Banking/BankReconcilation.js"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("BankReconciliation", "Banking", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                 @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.BankAccountId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(m => m.BankAccountId, new List<SelectListItem> { new SelectListItem { Text = "HDFC Bank", Value = "H" } }, "Select Bank", new { @class = "form-control", @id = "ddlBankAccount" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(m => m.BankAccountId)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            @Html.Label("Transaction Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drTransactionDate"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="inline-group">
+                                    @Html.Label(" ", new { @class = "label" })
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReconcileStatus, "ALL", new { @id = "rdAll", @checked = "checked"})
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReconcileStatus, "ALL", new { @for = "rdAll" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReconcileStatus, "R", new { @id = "rdReconciled"})
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReconcileStatus, "Reconciled", new { @for = "rdReconciled" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReconcileStatus, "NR", new { @id = "rdNotReconciled" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReconcileStatus, "NotReconciled", new { @for = "rdNotReconciled" })
+                                    </label>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ReconcileStatus)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                               <span class="label-bold">Balance As per bank book</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.TextBox("Bank Book Balance", "0~DR/CR", new { @id = "txtBankBookBalance", @class = "form-control textlabel", @style = "text-align: right" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <span class="label-bold">Add:- Cheques Issued  but not presented</span>
+                                    
+                           </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 table-responsive">
+                            <div>
+                                <table id="dtChequeIssueDetailsDebit" class="table-bordered">
+                                    <tfoot>
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th><b>Total Amount</b></th>
+                                            <th class="align-right">
+                                                <div class="input">
+                                                    @Html.TextBox("TotalAmount", "0", new { @id = "txtTotalChequeAmountDebit", @class = "form-control textlabel numeric2", @style = "text-align: right" })
+                                                </div>
+                                            </th>
+                                            <th></th>
+                                            <th></th>
+                                            <th>Balance</th>
+                                            <th>
+                                                <div class="input">
+                                                    @Html.TextBox("Balance", "0~DrCR", new { @id = "txtBankBookBalanceDebit", @class = "form-control textlabel", @style = "text-align: right" })
+                                                </div>
+                                            </th>
+
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                       <div class="row">
+                           <div class="col-sm-4">
+                               <div class="form-group">
+                                   <span class="label-bold">Less: Cheque Deposited But not cleared</span>
+                               </div>
+                           </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 table-responsive">
+                                <div>
+                                    <table id="dtChequeIssueDetailsCredit" class="table-bordered">
+                                        <tfoot>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th><b>Total Amount</b></th>
+                                                <th class="align-right">
+                                                    <div class="input">
+                                                        @Html.TextBox("TotalAmount", "0", new { @id = "txtTotalChequeAmountCredit", @class = "form-control textlabel numeric2", @style = "text-align: right" })
+                                                    </div>
+                                                </th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <span class="label-bold">Balance As per Bank Statement</span>
+                             </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.TextBox("Statement Balance", "0~DR/CR", new { @id = "txtBankBookBalanceCredit", @class = "form-control textlabel", @style = "text-align: right" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <span class="label-bold">ACCOUNTANT</span>
+                               
+                            </div>
+                        </div>
+                        <div class="col-sm-8 align-right ">
+                            <div class="form-group">
+                                <span class="label-bold align-right">DGM(ACCOUNTANT)</span>
+                                                                
+                            </div>
+                        </div>
+                                               
+                    </div>
+                    </div>
+            </div>
+        }
+
+    </div>
+</div>

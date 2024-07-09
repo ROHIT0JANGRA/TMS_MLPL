@@ -1,0 +1,197 @@
+﻿@model CodeLock.Models.RateInquiry
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "Rate Enquiry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("RateEnquiry", "CustomerContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerCode, new { @class = "form-control", @id = "txtCustomerCode" })
+                        @Html.HiddenFor(m => m.CustomerId, new { @id = "hdnCustomerId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4" id="divMatrixType">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MatrixType, new { @class = "label" })
+                    <div class="select">
+                        @Html.HiddenFor(model => model.MatrixType, new { @id = "hdnMatrixType" })
+                        @Html.DropDownListFor(model => model.MatrixType, new SelectList(ViewBag.MatrixTypeList, "Value", "Name"), "Select Matrix Type", new { @class = "form-control", @id = "ddlMatrixType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MatrixType)
+                </div>
+            </div>
+            <div class="col-sm-4" id="divFromLocation">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromLocation, new { @class = "label" })
+                    @Html.HiddenFor(model => model.FromLocationId, new { @id = "hdnFromLocation" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.FromLocation, null, new { @class = "form-control", @id = "txtFromLocation" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FromLocation)
+                </div>
+            </div>
+            <div class="col-sm-4" id="divToLocation">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToLocation, new { @class = "label" })
+                    @Html.HiddenFor(model => model.ToLocationId, new { @id = "hdnToLocation" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ToLocation, null, new { @class = "form-control", @id = "txtToLocation" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ToLocation)
+                </div>
+
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="button" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0">Submit</button>
+        </div>
+        <div id="dvRateDetails" style="display:none">
+            <div class="page-separator">Contract Details</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Customer Name ", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCutomer" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("From ", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.LabelFor(model => model.FromLocation, " ", new { @class = "label-bold", @id = "lblFrom" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("To ", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.LabelFor(model => model.ToLocation, " ", new { @class = "label-bold", @id = "lblTo" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Rate Available in Contract Master ", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.LabelFor(model => model.Rate, " ", new { @class = "label-bold", @id = "lblRate" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Transport Mode ", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.LabelFor(model => model.Paybas, " ", new { @class = "label-bold", @id = "lblServiceType" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+
+    $(document).ready(function () {
+        SetPageLoad('Customer Contract', 'Rate Inquiry ', '', '', '');
+
+        txtCustomerCode = $('#txtCustomerCode');
+        lblCustomerName = $('#lblCustomerName');
+        hdnCustomerId = $('#hdnCustomerId');
+
+        CustomerAutoComplete('txtCustomerCode', 'hdnCustomerId');
+        txtCustomerCode.blur(function () { return IsCustomerCodeExist(txtCustomerCode, hdnCustomerId, lblCustomerName); });
+
+        ddlMatrixType = $('#ddlMatrixType');
+        hdnMatrixType = $("#hdnMatrixType");
+        hdnFromLocation = $('#hdnFromLocation');
+        txtFromLocation = $('#txtFromLocation');
+        hdnToLocation = $('#hdnToLocation');
+        txtToLocation = $('#txtToLocation');
+        ddlMatrixType.change(OnMatrixTypeChange);
+        OnMatrixTypeChange();
+        $('#btnSubmit').click(OnSubmit);
+
+        txtFromLocation.blur(function () { return CheckIsValid(txtFromLocation, hdnFromLocation); });
+        txtToLocation.blur(function () { return CheckIsValid(txtToLocation, hdnToLocation); });
+
+    });
+
+    function OnMatrixTypeChange() {
+        txtFromLocation.val(''); txtToLocation.val(''); hdnFromLocation.val(''); hdnToLocation.val('');
+        if ($('#ddlMatrixType').val() == '') {
+            txtFromLocation.prop('disabled', true);
+            txtToLocation.prop('disabled', true);
+        }
+        else {
+            txtFromLocation.prop('disabled', false);
+            txtToLocation.prop('disabled', false);
+        }
+        if ($('#ddlMatrixType').val() == 1) {
+            CityAutoComplete('txtFromLocation', 'hdnFromLocation');
+            CityAutoComplete('txtToLocation', 'hdnToLocation');
+        }
+        else if ($('#ddlMatrixType').val() == 2) {
+            LocationAutoComplete('txtFromLocation', 'hdnFromLocation');
+            LocationAutoComplete('txtToLocation', 'hdnToLocation');
+        }
+        else if ($('#ddlMatrixType').val() == 3) {
+            ZoneAutoComplete('txtFromLocation', 'hdnFromLocation');
+            ZoneAutoComplete('txtToLocation', 'hdnToLocation');
+        }
+    }
+
+    function CheckIsValid(objName, objHdnId) {
+        if ($('#ddlMatrixType').val() == 1) {
+            IsCityNameExist(objName, objHdnId);
+        }
+        else if ($('#ddlMatrixType').val() == 2) {
+            IsLocationCodeExist(objName, objHdnId);
+        }
+        else if ($('#ddlMatrixType').val() == 3) {
+            IsZoneNameExist(objName, objHdnId);
+        }
+    }
+
+    function OnSubmit() {
+        $('#dvRateDetails').show();
+        var requestData = { customerId: hdnCustomerId.val(), matrixTypeId: ddlMatrixType.val(), fromLocationId: hdnFromLocation.val(), toLocationId: hdnToLocation.val() };
+        AjaxRequestWithPostAndJson('@Url.Action("GetRateInquiry")', JSON.stringify(requestData), function (result) {
+            if (!IsObjectNullOrEmpty(result)) {
+                $("#lblCutomer").text(lblCustomerName.text());
+                $("#lblFrom").text(txtFromLocation.val());
+                $("#lblTo").text(txtToLocation.val());
+                $("#lblRate").text(result.Rate);
+                $("#lblServiceType").text(result.Paybas);
+            }
+        }, ErrorFunction, false);
+    }
+
+
+
+</script>

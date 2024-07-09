@@ -1,0 +1,393 @@
+﻿@model CodeLock.Models.JobOrder
+@using CodeLock.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    baseUrl = '@Url.Action("", "JobOrder", new { Area = "FMS" })';
+</script>
+
+<script src="@Url.Content("~/Areas/FMS/Views/JobOrder/Close.js")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Close", "JobOrder", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.HiddenFor(model => model.JobOrderId, new { @id = "hdnJobOrderId" })
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.JobOrderNo)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.JobOrderNo)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-xs-4">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.JobOrderDate)
+                                </dt>
+                                <dd>
+                                    @Model.JobOrderDate.ToDisplayDateTime()
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-xs-4">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.VehicleId)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.VehicleNo)
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.JobCardType)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.JobCardType)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-xs-4">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.ServiceCenterType)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.ServiceType)
+                                    @Html.HiddenFor(model => model.ServiceCenterType, new { @id = "hdnServiceCenterType" })
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-xs-4">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.ServiceCenter)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.ServiceCenter)
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.SendDate)
+                                </dt>
+                                <dd>
+                                    @Model.SendDate.ToDisplayDate()
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-xs-4">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.EstimatedReturnDate)
+                                </dt>
+                                <dd>
+                                    @Model.EstimatedReturnDate.ToDisplayDate()
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CurrentKmReading, new { @class = "label", @id = "lblCurrentKmReading" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.CurrentKmReading, new { @class = "form-control textlabel numeric" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CloseKmReading, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.CloseKmReading, new { @class = "form-control numeric" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CloseKmReading)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "ActualReturnDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.ActualReturnDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsDateOnly = true, SetBlank = true })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LabourCostPerHour, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.LabourCostPerHour, new { @class = "form-control textlabel numeric" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TotalEstimatedLabourCost, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.TotalEstimatedLabourCost, new { @class = "form-control textlabel numeric1", @id = "txtTotalEstimatedLabourCost" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TotalActualLabourCost, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.TotalActualLabourCost, new { @class = "form-control textlabel numeric2", @id = "txtTotalActualLabourCost" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="dtTaskDetail">
+                                <thead>
+                                    <tr>
+                                        <th>Work Group</th>
+                                        <th>Task Type</th>
+                                        <th>Task Description</th>
+                                        <th>Estimated Labour Hours</th>
+                                        <th>Estimated Labour Cost</th>
+                                        <th>Remarks</th>
+                                        <th>Action Taken</th>
+                                        <th>AMC/Non-AMC</th>
+                                        <th>Actual Labour Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.TaskDetails.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.HiddenFor(m => Model.TaskDetails[i].WorkGroupId)
+                                                @Html.DisplayFor(m => Model.TaskDetails[i].WorkGroup, new { @class = "control-label" })
+                                            </td>
+                                            <td>
+                                                @Html.HiddenFor(m => Model.TaskDetails[i].TaskTypeId)
+                                                @Html.DisplayFor(m => Model.TaskDetails[i].TaskType, new { @class = "control-label" })
+                                            </td>
+                                            <td>
+                                                @Html.HiddenFor(m => Model.TaskDetails[i].TaskId)
+                                                @Html.DisplayFor(m => Model.TaskDetails[i].TaskDes, new { @class = "control-label" })
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.TaskDetails[i].EstimatedLabourHours, new { @class = "form-control textlabel numeric" })
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.TaskDetails[i].EstimatedLabourCost, new { @class = "form-control textlabel numeric2" })
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(m => Model.TaskDetails[i].Remarks, new { @class = "control-label" })
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.TaskDetails[i].Action, new { @class = "form-control", @id = "txtAction" + i.ToString() })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.TaskDetails[i].Action)
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    @Html.Label("AMC", new { @class = "label" })
+                                                    <label class="checkbox">
+                                                        @Html.CheckBoxFor(model => model.TaskDetails[i].AmcType, new { @id = "chkAmcType" + i.ToString() })
+                                                        <i></i>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.TaskDetails[i].ActualLabourCost, new { @class = "form-control numeric2", @id = "txtLabourCost" + i.ToString() })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.TaskDetails[i].ActualLabourCost)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th>Total</th>
+                                        <th class="align-right">
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => Model.TotalEstimatedLabourHours, new { @class = "form-control textlabel numeric2" })
+                                            </div>
+                                        </th>
+                                        <th class="align-right">
+                                            <div class="input">
+                                                @Html.TextBox("EstimatedLabourCost", "0", new { @id = "txtTotalLabourCost", @class = "form-control numeric2 textlabel", @style = "text-align: right" })
+                                            </div>
+                                        </th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th class="align-right">
+                                            <div class="input">
+                                                @Html.TextBox("ActualLabourCost", "0", new { @id = "txtActualLabourCost", @class = "form-control textlabel numeric2" })
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TotalEstimatedCost, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.TotalEstimatedCost, new { @class = "form-control textlabel numeric2", @id = "txtTotalEstimatedCost" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TotalEstimatedSparePartCost, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.TotalEstimatedSparePartCost, new { @class = "form-control textlabel numeric1", @id = "txtTotalEstimatedSparePartCost" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TotalActualSparePartCost, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.TotalActualSparePartCost, new { @class = "form-control textlabel numeric2", @id = "txtTotalActualSparePartCost" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TotalActualCost, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.TotalActualCost, new { @class = "form-control textlabel numeric2", @id = "txtTotalActualCost" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="dtSparePartDetail">
+                                <thead>
+                                    <tr>
+                                        <th>SKU</th>
+                                        <th id="thTaskType">Task Type</th>
+                                        <th>Requested Quantity</th>
+                                        <th id="thUnit">Cost/Unit</th>
+                                        <th id="thCost">Cost</th>
+                                        <th>Remarks</th>
+                                        <th>Actual Quantity</th>
+                                        <th>Actual Cost/Unit</th>
+                                        <th>Actual Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.SparePartDetails.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.HiddenFor(m => Model.SparePartDetails[i].SkuId)
+                                                @Html.DisplayFor(m => Model.SparePartDetails[i].SkuName, new { @class = "control-label" })
+                                            </td>
+                                            <td id="@("tdTaskType" + i)">
+                                                @Html.HiddenFor(m => Model.SparePartDetails[i].TaskTypeId)
+                                                @Html.DisplayFor(m => Model.SparePartDetails[i].TaskType, new { @class = "control-label" })
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.SparePartDetails[i].RequestedQuantity, new { @class = "form-control textlabel numeric", @id = "txtRequestedQuantity" + i.ToString() })
+                                                </div>
+                                            </td>
+                                            <td id="@("tdCostPerUnit" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.SparePartDetails[i].CostPerUnit, new { @class = "form-control textlabel numeric2", @id = "txtCostPerUnit" + i.ToString() })
+                                                </div>
+                                            </td>
+                                            <td id="@("tdCost" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.SparePartDetails[i].Cost, new { @class = "form-control textlabel numeric", @id = "txtCost" + i.ToString() })
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(m => Model.SparePartDetails[i].Remarks, new { @class = "control-label" })
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.SparePartDetails[i].ActualQuantity, new { @class = "form-control numeric", @id = "txtActualQuantity" + i.ToString() })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.SparePartDetails[i].ActualQuantity)
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.SparePartDetails[i].ActualCostPerUnit, new { @class = "form-control numeric2", @id = "txtActualCostPerUnit" + i.ToString() })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.SparePartDetails[i].ActualCostPerUnit)
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.SparePartDetails[i].ActualCost, new { @class = "form-control textlabel numeric2", @id = "txtQuantityActualCost" + i.ToString() })
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th id="tf2"></th>
+                                        <th class="align-right">
+                                            <div class="input">
+                                                @Html.TextBox("TotalRequestedQuantity", "0", new { @id = "txtTotalRequestedQuantity", @class = "form-control textlabel numeric" })
+                                            </div>
+                                        </th>
+                                        <th id="tf4"></th>
+                                        <th class="align-right">
+                                            <div class="input">
+                                                @Html.TextBox("TotalCost", "0", new { @id = "txtTotalCost", @class = "form-control numeric2 textlabel", @style = "text-align: right" })
+                                            </div>
+                                        </th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th class="align-right">
+                                            <div class="input">
+                                                @Html.TextBox("ActualCost", "0", new { @id = "txtActualCost", @class = "form-control textlabel numeric2" })
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,38 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap">
+    <div class="row example-buttons">
+        <div class="col-md-12">
+            <div class="note note-info note-right-striped">
+                <div class="page-separator"><span class="page-separator" id="spnMassage"></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        var status = GetUrlValue()["status"];
+        var ownerType = GetUrlValue()["ownerType"];
+        var ownerCode = GetUrlValue()["ownerCode"];
+        if (status == "CustomerGstRegistrationDone") {
+            spnMassage.text("Customer GST registered Successfully");
+            SetPageLoad('Customer GST Registration', 'Done', '', 'Add New', '@Url.Action("Insert")?ownerType=' + ownerType + '&ownerCode=' + ownerCode);
+        }
+        else if (status == "VendorGstRegistrationDone") {
+            spnMassage.text("Vendor GST registered Successfully");
+            SetPageLoad('Vendor GST Registration', 'Done', '', 'Add New', '@Url.Action("Insert")?ownerType=' + ownerType + '&ownerCode=' + ownerCode);
+        }
+        else if (status == "CompanyGstRegistrationDone") {
+            spnMassage.text("Company GST registered Successfully");
+            SetPageLoad('Company GST Registration', 'Done', '', 'Add New', '@Url.Action("Insert")?ownerType=' + ownerType + '&ownerCode=' + ownerCode);
+        }
+    }
+</script>
+

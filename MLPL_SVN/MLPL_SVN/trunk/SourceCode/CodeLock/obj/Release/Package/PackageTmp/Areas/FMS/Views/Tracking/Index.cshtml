@@ -1,0 +1,104 @@
+﻿@model CodeLock.Models.FleetDocumentTracking
+@using CodeLock.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    var trackingUrl = '@Url.Action(".","Tracking")';
+    var tripsheetModuleId = '@ModuleHelper.Tripsheet';
+</script>
+
+<script src="@Url.Content("~/Areas/FMS/Views/Tracking/Index.js?version=@DateTime.Now.Ticks")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Select Tripsheet Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drDocumentDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TripsheetNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.TripsheetNo, new { @class = "form-control", @id = "txtTripsheetNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualTripsheetNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualTripsheetNo, new { @class = "form-control", @id = "txtManualTripsheetNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VehicalNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.VehicalNo, new { @class = "form-control", @id = "txtVehicalNo" })
+                                    @Html.HiddenFor(model => model.VehicleNo, new { @id = "hdnVehicalNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtTripsheetDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,274 @@
+﻿@model CodeLock.Models.MasterVehicleDocumentType
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VehicleNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VehicleNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Document)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Document)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DocumentDescription)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.DocumentDescription)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DocumentNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.DocumentNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Notes)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Notes)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsStateWiseApplicable)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsStateWiseApplicable)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.RenewalAuthorityId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.RenewalAuthorityName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsAutoMailRequired)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsAutoMailRequired)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsActive)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Cost)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Cost)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DocumentIssueDate)
+                </dt>
+                <dd>
+                    @Model.DocumentIssueDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DocumentExpiryDate)
+                </dt>
+                <dd>
+                    @Model.DocumentExpiryDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.AutoMailToID)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.AutoMailToID)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.AutoMailCcID)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.AutoMailCcID)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.AutoMailBccID)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.AutoMailBccID)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DocumentAttachment)
+                </dt>
+                <dd>
+                    @{ var fileNamelnkId = "lnkAttachment";}
+                    <a href="#" id=@fileNamelnkId onclick="return ViewAttachment(this);">View</a>
+                    @Html.HiddenFor(model => model.UploadedDocumentName, new { @id = "hdnUploadedDocumentName", @Name = "UploadedDocumentName" })
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ReminderDays)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ReminderDays)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.StateName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.StateName)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Contents)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Contents)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EntryByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </dt>
+                <dd>
+                    @Model.EntryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.UpdateDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vehicle Document', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { id = Model.VehicleDocumentId })');
+        $('#lnkAttachment').showHide($('#hdnUploadedDocumentName').val() != '');
+    });
+
+    function ViewAttachment() {
+        var hdnUploadedDocumentName = $('#hdnUploadedDocumentName');
+        var filePath = '';
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = '@Href("~/storage/VehicleDocument/")';
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+        window.open(filePath + hdnUploadedDocumentName.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+        return false;
+    }
+</script>
+

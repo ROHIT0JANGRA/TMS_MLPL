@@ -1,0 +1,303 @@
+﻿@model CodeLock.Models.DocketDispatch
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        ThcUrl = '@Url.Action("", "Thc", new { Area = "Operation" })';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Operation/Views/Thc/Dispatch.js?v1")"></script>
+@using (Html.BeginForm("Dispatch", "Thc", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div id="dvCriteria">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DispatchNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.DispatchNo, null, new { @class = "form-control", @id = "txtFromCityName" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DispatchNo)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "DispatchDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DispatchDateTime), IsRequired = true, IsDateOnly = false, AllowFutureDate = false, AllowPastDate = true })
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                            @Html.TextBoxFor(model => model.VehicleNo, null, new { @class = "form-control", @id = "txtVehicleNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.VehicleNo)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FromLocationCode, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.HiddenFor(m => m.FromLocationId, new { @Value = @SessionUtility.LoginLocationId, @id = "hdnFromLocationId" })
+                            @Html.LabelFor(model => model.FromLocationCode, @SessionUtility.LoginLocationCode, new { @id = "lblFromLocation", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ToLocationCode, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.ToLocationId, new { @id = "hdnToLocationId" })
+                            @Html.TextBoxFor(model => model.ToLocationCode, null, new { @class = "form-control", @id = "txtToLocationCode" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ToLocationCode)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DriverName, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.DriverId, new { @id = "hdnDriverId" })
+                            @Html.TextBoxFor(model => model.DriverName, null, new { @class = "form-control", @id = "txtDriverName" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DriverName)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.RouteId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.RouteId, new SelectList(ViewBag.RouteList, "Value", "Name"), "Select Route", new { @class = "form-control", @id = "ddlRouteId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.RouteId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ReferenceNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.ReferenceNo, null, new { @class = "form-control", @id = "txtReferenceNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ReferenceNo)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.AccountId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.AccountId, new SelectList(ViewBag.AccountList, "Value", "Name"), "Select Account", new { @class = "form-control", @id = "ddlAccountId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.AccountId)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DestinationLocationCode, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.DestinationLocationId, new { @id = "hdnDestinationLocationId" })
+                            @Html.TextBoxFor(model => model.DestinationLocationCode, null, new { @class = "form-control", @id = "txtDestinationLocationCode" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DestinationLocationCode)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div>
+                    <table id="dtDocketList"></table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Remarks, null, new { @class = "form-control", @id = "txtRemarks" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Remarks)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remarks1, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Remarks1, null, new { @class = "form-control", @id = "txtRemarks1" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Remarks1)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remarks2, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Remarks2, null, new { @class = "form-control", @id = "txtRemarks2" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Remarks2)
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Summary</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.NetPackages, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.NetPackages, "0", new { @class = "form-control textlabel numeric", @id = "txtNetPackages" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToPay, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ToPay, "0", new { @class = "form-control textlabel numeric2", @id = "txtToPay" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TruckFreight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.TruckFreight, "0", new { @class = "form-control textlabel numeric2", @id = "txtTruckFreight" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DisplayPackages, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DisplayPackages, "0", new { @class = "form-control numeric", @id = "txtDisplayPackages" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DeliveryCommission, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DeliveryCommission, "0", new { @class = "form-control numeric2", @id = "txtDeliveryCommission" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AdvanceFreight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.AdvanceFreight, "0", new { @class = "form-control numeric2", @id = "txtAdvanceFreight" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ActualWeight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ActualWeight, "0", new { @class = "form-control textlabel numeric2", @id = "txtTotalActualWeight" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DoCharge, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DoCharge, "0", new { @class = "form-control numeric2", @id = "txtDoCharge" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LabourCharges, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.LabourCharges, "0", new { @class = "form-control textlabel numeric2", @id = "txtLabourCharges" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LabourCharges)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ChargedWeight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ChargedWeight, "0", new { @class = "form-control textlabel numeric2", @id = "txtTotalChargedWeight" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ChargedWeight)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.KatAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.KatAmount, "0", new { @class = "form-control numeric2", @id = "txtKatAmount" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BalanceFreight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BalanceFreight, "0", new { @class = "form-control textlabel numeric2", @id = "txtBalanceFreight" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PrintFreight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PrintFreight, "0", new { @class = "form-control numeric2", @id = "txtPrintFreight" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Pf, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Pf, "0", new { @class = "form-control numeric2", @id = "txtPf" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UnloadingCharge, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.UnloadingCharge, "0", new { @class = "form-control numeric2", @id = "txtUnloadingCharge" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.NetFreight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.NetFreight, "0", new { @class = "form-control textlabel numeric2", @id = "txtNetFreight" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3" id="btnSubmit">Create</button>
+        </div>
+    </div>
+}

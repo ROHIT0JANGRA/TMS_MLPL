@@ -1,0 +1,51 @@
+﻿@model IEnumerable<CodeLock.Models.FuelSurchargeRevision>
+
+@{
+    ViewBag.Title = "PackagingMeasurement List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtFuelSurchargeRivision">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayName("To Date")
+                </th>
+                <th>
+                    @Html.DisplayName("From Date")
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.FromDate.ToDisplayDate()
+                    </td>
+                    <td>
+                        @item.ToDate.ToDisplayDate()
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.RevisionId })"><spa><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.RevisionId })"><spa><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Fuel Surcharge Revision', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtFuelSurchargeRivision', true, true, true);
+    });
+</script>
+

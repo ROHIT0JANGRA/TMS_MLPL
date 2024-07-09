@@ -1,0 +1,94 @@
+﻿@using CodeLock.Models
+@model GSTR2APurchaseReport
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label("Select Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CompanyId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.CompanyId, new SelectList(ViewBag.CompanyList, "Value", "Name"), "Select Company", new { @class = "form-control", @id = "ddlCompanyId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CompanyId)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.GSTType, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.GSTType, new SelectList(ViewBag.GSTTypeList, "Value", "Name"), new { @class = "form-control", @id = "ddlGSTType" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.GSTType)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.StateId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.StateId, new SelectList(ViewBag.StateList, "Value", "Name"),  new { @class = "form-control", @id = "ddlStateId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.StateId)
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    var ddlCompanyId, ddlGSTType, ddlStateId, drDate;
+    $(document).ready(function () {
+       SetPageLoad('Finance Report', 'GST R2A Purchase Report', '', '', '');
+        locationId = '@SessionUtility.LoginLocationId';
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        ddlCompanyId = $('#ddlCompanyId');
+        ddlGSTType = $('#ddlGSTType');
+        ddlStateId = $('#ddlStateId');
+        drDate = InitDateRange('drDate', DateRange.LastWeek,false);
+    }
+
+    function AttachEvents() {
+        $('#ddlGSTType option').eq(0).before($('<option>', { value: 0, text: 'All' }));
+        ddlGSTType.val(0);
+        $('#ddlStateId option').eq(0).before($('<option>', { value: 0, text: 'All' }));
+        ddlStateId.val(0);
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    }
+    
+    function ViewReport() {
+        var prmList = [{ Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+            { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+            { Name: "GstRegistrationType", Value: ddlGSTType.val() },
+            { Name: "CompanyId", Value: ddlCompanyId.val() },
+            { Name: "StateId", Value: ddlStateId.val() }
+        ];
+        var reportInfo = { PrmList: prmList, Name: 'GSTR2APurchaseReport', Description: 'GST R2A Purchase Report' };
+        return ShowReport(reportInfo);
+    }
+</script>

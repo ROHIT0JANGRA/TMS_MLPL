@@ -1,0 +1,570 @@
+﻿@using CodeLock.Models
+@model ChangeAdvanceBalanceLocation
+@{
+    ViewBag.Title = "ChangeAdvanceBalanceLocation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("ChangeAdvanceBalanceLocation", "VendorPayment", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocumentNo, new { @class = "form-control", @id = "txtDocumentNo" })
+                        @Html.HiddenFor(model => model.DocumentType, new { @id = "hdnDocumentType" })
+                        @Html.HiddenFor(model => model.DocumentId, new { @id = "hdnDocumentId" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AdvanceLocationCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.AdvanceLocationCode, new { @class = "form-control", @id = "txtAdvanceAmountLocationCode" })
+                        @Html.HiddenFor(model => model.AdvanceLocationId, new { @id = "hdnAdvanceAmountLocationId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AdvanceLocationCode)
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BalanceLocationCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BalanceLocationCode, new { @class = "form-control", @id = "txtBalanceAmountLocationCode" })
+                        @Html.HiddenFor(model => model.BalanceLocationId, new { @id = "hdnBalanceAmountLocationId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BalanceLocationCode)
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ContractAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ContractAmount, new { @class = "form-control numeric", @id = "txtContractAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ContractAmount)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AdvanceAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.AdvanceAmount, new { @class = "form-control numeric", @id = "txtAdvanceAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AdvanceAmount)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorId, new SelectList(ViewBag.VendorList, "Value", "Name"), "Select Vendor", new { @class = "form-control select2", @id = "ddlVendorId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorId)
+                </div>
+            </div>
+
+        </div>
+        <div id="divtabmultiadv" style="display:none">
+            <div class="page-separator">Multipule advance detail</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsMultiAdvApply, new { @class = "label", @for = "chkIsMultiAdvApply" })
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(model => model.IsMultiAdvApply, new { @id = "chkIsMultiAdvApply" })
+                            @Html.HiddenFor(model => model.IsMultiAdvApplyfix)
+                            <i></i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div id="dvBillingatVendorDocumentGeneration">
+                <div class="page-separator">Guaranteed Weight</div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.TotalActualWeight, new { @class = "label" })
+                            <div class="clearfix">
+                                @Html.LabelFor(model => model.TotalActualWeight, "0.00", new { @id = "lblActualWeight", @class = "label-bold" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.KantaWeight, new { @class = "label" })
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.KantaWeight, new { @class = "form-control numeric2", @id = "txtKantaWeight" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.KantaWeight)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SlipNo, new { @class = "label" })
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.SlipNo, new { @class = "form-control", @id = "txtSlipNo" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.SlipNo)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ReasonForWeightLoss, new { @class = "label" })
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.ReasonForWeightLoss, new { @class = "form-control", @id = "txtReasonForWeightLoss" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.ReasonForWeightLoss)
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div id="divtabmultiadvdtl" style="display:none">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table id="dtAdvBalPmtDtl" style="min-height:5vh">
+                            <thead>
+                                <tr>
+                                    <th>Balance Paid At.</th>
+                                    <th>Amount</th>
+                                    <th width="95px">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.AdvBalPmtDtl.Count; i++)
+                                {
+                                    var item = Model.AdvBalPmtDtl[i];
+                                    var j = i.ToString();
+                                    <tr>
+                                        @if (Model.AdvBalPmtDtl[i].IsAdvanceDone == true)
+                                        {
+                                            <td>
+                                                <div class="form-group">
+                                                    <div class="select">
+                                                        @Html.DropDownListFor(m => Model.AdvBalPmtDtl[i].AdvBalLoc, new SelectList(ViewBag.LocationList, "Value", "Name", Model.AdvBalPmtDtl[i].AdvBalLoc), "Select Location", new { @class = "form-control", @disabled = "disabled", @id = "ddlAdvBalLoc" + i.ToString() })
+                                                        @Html.HiddenFor(model => model.AdvBalPmtDtl[i].AdvBalLoc)
+
+                                                        <i></i>
+                                                        @Html.ValidationMessageFor(m => Model.AdvBalPmtDtl[i].AdvBalLoc)
+                                                    </div>
+                                                </div>
+                                            </td>
+
+
+
+
+                                            <td>
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.AdvBalPmtDtl[i].AdvBalAmount, new { @class = "form-control", @readonly = "readonly", @id = "txtAdvBalAmount" + j, @Name = "AdvBalPmtDtl[" + j + "].AdvBalAmount" })
+                                                    @Html.HiddenFor(model => model.AdvBalPmtDtl[i].IsAdvanceDone)
+                                                    @Html.ValidationMessageFor(m => Model.AdvBalPmtDtl[i].AdvBalAmount)
+                                                </div>
+
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <div class="form-group">
+                                                    <div class="select">
+                                                        @Html.DropDownListFor(m => Model.AdvBalPmtDtl[i].AdvBalLoc, new SelectList(ViewBag.LocationList, "Value", "Name", Model.AdvBalPmtDtl[i].AdvBalLoc), "Select Location", new { @class = "form-control", @id = "ddlAdvBalLoc" + i.ToString() })
+
+                                                        <i></i>
+                                                        @Html.ValidationMessageFor(m => Model.AdvBalPmtDtl[i].AdvBalLoc)
+                                                    </div>
+                                                </div>
+                                            </td>
+
+
+
+
+                                            <td>
+
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.AdvBalPmtDtl[i].AdvBalAmount, new { @class = "form-control", @id = "txtAdvBalAmount" + j, @Name = "AdvBalPmtDtl[" + j + "].AdvBalAmount" })
+                                                    @Html.HiddenFor(model => model.AdvBalPmtDtl[i].IsAdvanceDone)
+                                                    @Html.ValidationMessageFor(m => Model.AdvBalPmtDtl[i].AdvBalAmount)
+                                                </div>
+
+                                            </td>
+                                        }
+
+                                        <td>
+                                        </td>
+                                    </tr>
+
+                                }
+
+                            </tbody>
+
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+            @Html.HiddenFor(model => model.OtherAmount, new { @id = "hdnOtherAmount" })
+            <div class="row" id="dvCharges">
+                <div class="col-sm-6">
+                    <div>
+                        <table id="dtCharges1"></table>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div>
+                        <table id="dtCharges2"></table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-sm-1">
+                    <div class="align-right">
+                        @Html.Label("btnsubmit", " ", new { @class = "label" })
+                        <div class="clearfix">
+                            <button type="submit" class="btn btn-primary m-" id="btnSubmit">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Change Advance Balance Location', '', '', 'Previous', '@Url.Action("GetValidChangeAdvanceBalanceLocation")');
+        InitObjects();
+        AttachEvents();
+        drsUrl = '@Url.Action("", "DRS", new { Area = "Operation" })';
+        prsUrl = '@Url.Action("", "PRS", new { Area = "Operation" })';
+        thcUrl = '@Url.Action("", "THC", new { Area = "Operation" })';
+        CheckValidDocumentNo()
+        InitGrid('dtAdvBalPmtDtl', false, 2, InitdtAdvBalPmtDtl, false);
+        
+    });
+    function AttachEvents() {
+        LocationAutoComplete('txtBalanceAmountLocationCode', 'hdnBalanceAmountLocationId', 'Balance Paid At Location');
+        LocationAutoComplete('txtAdvanceAmountLocationCode', 'hdnAdvanceAmountLocationId', 'Advance Paid At Location');
+        txtBalanceAmountLocationCode.blur(function () { return IsLocationCodeExist(txtBalanceAmountLocationCode, hdnBalanceAmountLocationId, 'Balance Paid At Location'); });
+        txtAdvanceAmountLocationCode.blur(function () { return IsLocationCodeExist(txtAdvanceAmountLocationCode, hdnAdvanceAmountLocationId, 'Advance Paid At Location'); });
+        chkIsMultiAdvApply.change(IsMultiAdvApplyChange);
+        txtDocumentNo.blur(function () { CheckValidDocumentNo(); });
+        btnSubmit.click(function () { CalculateOtherCharges(); });
+
+    }
+
+    function InitObjects() {
+        txtDocumentNo = $("#txtDocumentNo");
+        dtAdvBalPmtDtl = $("#dtAdvBalPmtDtl");
+        hdnAdvanceAmountLocationId = $("#hdnAdvanceAmountLocationId");
+        hdnBalanceAmountLocationId = $("#hdnBalanceAmountLocationId");
+        txtAdvanceAmountLocationCode = $("#txtAdvanceAmountLocationCode");
+        txtBalanceAmountLocationCode = $("#txtBalanceAmountLocationCode");
+        txtAdvanceAmount = $("#txtAdvanceAmount");
+        txtBalanceAmount = $("#txtBalanceAmount");
+        txtContractAmount = $("#txtContractAmount");
+        hdnDocumentType = $("#hdnDocumentType");
+        hdnDocumentId = $("#hdnDocumentId");
+        ddlVendorId = $("#ddlVendorId");
+        chkIsMultiAdvApply = $('#chkIsMultiAdvApply');
+        IsMultiAdvApplyfix = $('#IsMultiAdvApplyfix');
+        dvCharges = $("#dvCharges");
+        btnSubmit = $("#btnSubmit");
+        txtSlipNo = $('#txtSlipNo');
+        txtKantaWeight = $('#txtKantaWeight');
+        lblActualWeight = $('#lblActualWeight');
+        txtReasonForWeightLoss = $('#txtReasonForWeightLoss');
+
+        ServiceUrl = '@Url.Action("", "VendorPayment", new { Area = "Finance" })';
+    }
+
+    function InitdtAdvBalPmtDtl() {
+        $('[id*="txtAdvBalAmount"]').each(function () {
+            var txtAdvBalAmount = $(this);
+            var ddlAdvBalLoc = $('#' + txtAdvBalAmount.attr('id').replace('txtAdvBalAmount', 'ddlAdvBalLoc'));
+            txtAdvBalAmount.blur(function () { return CheckAdvAmount(txtAdvBalAmount, txtAdvanceAmount, ddlAdvBalLoc); });
+            ddlAdvBalLoc.change(function () { return CheckValidLocation(ddlAdvBalLoc); });
+        });
+
+        //AutoSuggestAdvAmountonAddRow();
+
+    }
+    
+    function IsMultiAdvApplyChange() {
+        $("#divtabmultiadvdtl").showHide(chkIsMultiAdvApply.is(":checked"));
+        if (!chkIsMultiAdvApply.IsChecked) {
+            //txtAdvanceAmountLocationCode.readOnly(false);
+            var chktf = chkIsMultiAdvApply.is(":checked");
+            chkIsMultiAdvApply.val(chktf);
+            txtAdvanceAmountLocationCode.pointerEvent(true);
+            IsMultiAdvApplyfix.val(false);
+            ReSetGridAdvBalAmnt();
+
+        }
+        else {
+            var chktf = chkIsMultiAdvApply.is(":checked");
+            chkIsMultiAdvApply.val(chktf);
+            txtAdvanceAmountLocationCode.val('');
+            txtAdvanceAmountLocationCode.pointerEvent(false);
+            IsMultiAdvApplyfix.val(true);
+            SetGridAdvBalAmnt()
+
+        }
+    }
+
+
+    function SetGridAdvBalAmnt() {
+
+        $('#dtAdvBalPmtDtl tbody  tr').each(function (i) {
+            var tr = $('#dtAdvBalPmtDtl > tbody > tr:eq(' + i + ')');
+            if (i == 0)
+            { tr.find('[id*="txtAdvBalAmount"]').val(txtAdvanceAmount.val()); }
+
+        });
+
+    }
+
+
+    function ReSetGridAdvBalAmnt() {
+
+        $('#dtAdvBalPmtDtl tbody  tr').each(function (i) {
+            var tr = $('#dtAdvBalPmtDtl > tbody > tr:eq(' + i + ')');
+            tr.find('[id*="txtAdvBalAmount"]').val(0);
+        });
+
+    }
+
+
+    function AutoSuggestAdvAmountonAddRow() {
+
+        $('#dtAdvBalPmtDtl tr:last').find('[id*="txtAdvBalAmount"]').val(0);
+
+        var TotAdvAmtTxt1 = parseInt(txtAdvanceAmount.val());
+        var txtAdvBalAmountCheck1 = 0;
+        $('[id*="txtAdvBalAmount"]').each(function () {
+            var tal = parseInt($(this).val())
+            if (isNaN(tal)) {
+                var tal = 0;
+            }
+            txtAdvBalAmountCheck1 = tal + parseInt(txtAdvBalAmountCheck1);
+
+        });
+
+        txtAdvBalAmountCheck1 = parseInt(TotAdvAmtTxt1) - parseInt(txtAdvBalAmountCheck1);
+        //auto calaulate suggested advance amount
+        if (txtAdvBalAmountCheck1 >= 0) {
+
+            $('#dtAdvBalPmtDtl tr:last').find('[id*="txtAdvBalAmount"]').val(txtAdvBalAmountCheck1);
+
+        }
+        else {
+
+            $('#dtAdvBalPmtDtl tr:last').find('[id*="txtAdvBalAmount"]').val(0);
+
+        }
+
+
+
+    }
+
+
+    function CheckAdvAmount(txtAdvBalAmount, txtAdvanceAmount, ddlAdvBalLoc) {
+
+        var TotAdvAmtTxt = parseInt(txtAdvanceAmount.val());
+        var txtAdvBalAmountCheck = 0;
+        $('[id*="txtAdvBalAmount"]').each(function () {
+            txtAdvBalAmountCheck = parseInt($(this).val()) + parseInt(txtAdvBalAmountCheck);
+
+        });
+        // alert(txtAdvBalAmountCheck);
+
+        if (TotAdvAmtTxt < txtAdvBalAmountCheck) {
+
+            ShowMessage('Advance amount should not be greater than ' + txtAdvanceAmount.val());
+            txtAdvBalAmount.val(0);
+
+        }
+        CheckValidLocation(ddlAdvBalLoc);
+        return false;
+    }
+
+    function CheckValidLocation(ddlAdvBalLoc) {
+
+        if (!CheckDuplicateDropDownInTable('dtAdvBalPmtDtl', 'ddlAdvBalLoc', 'Location', ddlAdvBalLoc)) { ddlAdvBalLoc.val(''); return false };
+        return false;
+    }
+
+    function CheckValidDocumentNo() {
+        txtDocumentNo.pointerEvent(false);
+        if (txtDocumentNo.val() != '') {
+            var requestData = { DocumentNo: txtDocumentNo.val() };
+            AjaxRequestWithPostAndJson(ServiceUrl + '/ValidateDocumentIdForAdvanceBalanceLocation', JSON.stringify(requestData), function (result) {
+                if (!IsObjectNullOrEmpty(result)) {
+
+                    hdnAdvanceAmountLocationId.val(result.AdvanceLocationId);
+                    txtAdvanceAmountLocationCode.val(result.AdvanceLocationCode);
+                    hdnBalanceAmountLocationId.val(result.BalanceLocationId);
+                    txtBalanceAmountLocationCode.val(result.BalanceLocationCode);
+                    hdnDocumentType.val(result.DocumentType);
+                    hdnDocumentId.val(result.DocumentId);
+                    txtContractAmount.val(result.ContractAmount);
+                    txtAdvanceAmount.val(result.AdvanceAmount);
+                    ddlVendorId.val(result.VendorId);
+                    txtKantaWeight.val(result.KantaWeight);
+                    txtSlipNo.val(result.SlipNo);
+                    txtReasonForWeightLoss.val(result.ReasonForWeightLoss);
+                    lblActualWeight.text(result.TotalActualWeight);
+
+                    if (result.IsMultiAdvApply == "1")
+                    {
+                        txtAdvanceAmountLocationCode.pointerEvent(false);
+                        chkIsMultiAdvApply.check();
+                        $("#divtabmultiadvdtl").showHide(true);
+                        IsMultiAdvApplyfix.val(true);
+                    }
+                    if (result.IsMultiAdvApply == "0") {
+                        chkIsMultiAdvApply.uncheck();
+                        $("#divtabmultiadvdtl").showHide(false);
+                        IsMultiAdvApplyfix.val(false);
+                    }
+
+                    chkIsMultiAdvApply.val(result.IsMultiAdvApply);
+                    $("#divtabmultiadv").showHide(true);
+                    $('#select2-ddlVendorId-container').text(result.VendorName)
+
+                    $('#ddlVendorId option:not(:selected)').prop("disabled", true);
+
+                    if (result.IsValidForBalanceLocChange == "0")
+                    {
+                        ShowMessage("Bill is already made for this document");
+                        txtBalanceAmountLocationCode.val('');
+                        txtAdvanceAmountLocationCode.val('');
+                        txtContractAmount.val('');
+                        txtAdvanceAmount.val('');
+                        txtDocumentNo.val('');
+                        return false;
+                    }
+
+                    
+
+                    if (result.IsValidForAdvanceLocChange == "0")
+                    {
+                        txtAdvanceAmountLocationCode.pointerEvent(false);
+                        txtAdvanceAmount.pointerEvent(false);
+                        chkIsMultiAdvApply.disable()
+                        //IsMultiAdvApplyfix.val(true);
+                        $('#dtAdvBalPmtDtl').pointerEvent(false);
+                    }
+                    if (result.IsValidForBalanceLocChange == "0")
+                    {
+                        txtBalanceAmountLocationCode.pointerEvent(false);
+                        txtContractAmount.pointerEvent(false);
+                        dvCharges.pointerEvent(false);
+                        chkIsMultiAdvApply.disable()
+                        //IsMultiAdvApplyfix.val(true);
+                        $('#dtAdvBalPmtDtl').pointerEvent(false);
+                    }
+
+                    if (result.IsValidForAdvanceLocChange == "1" && result.IsValidForBalanceLocChange == "1")
+                    {
+                        $('#ddlVendorId option:not(:selected)').prop("disabled", false);
+                    }
+
+
+
+                    var requestData = "";
+                    if (hdnDocumentType.val() == "THC") {
+                        requestData = { thcId: hdnDocumentId.val() == '' ? 0 : hdnDocumentId.val() };
+                        Url = thcUrl;
+                    }
+                    if (hdnDocumentType.val() == "PRS") {
+                        requestData = { prsId: hdnDocumentId.val() == '' ? 0 : hdnDocumentId.val() };
+                        Url = prsUrl;
+                    }
+                    if (hdnDocumentType.val() == "DRS") {
+                        requestData = { drsId: hdnDocumentId.val() == '' ? 0 : hdnDocumentId.val() };
+                        Url = drsUrl;
+                    }
+
+                    AjaxRequestWithPostAndJson(Url + '/GetChargeList', JSON.stringify(requestData), function (responseData) {
+                        chargeList = responseData.OtherChargeList.sort(ComparerTax);
+                        chargeCount = 0;
+                        GetChargeDetails(chargeList, dtCharges1, true);
+                        GetChargeDetails(chargeList, dtCharges2, false);
+                    }, ErrorFunction, false);
+
+                    return true;
+                }
+                else {
+                    ShowMessage('Document is not Valid');
+                    $("#divtabmultiadv").showHide(false);
+                    txtDocumentNo.val('');
+                    txtDocumentNo.focus();
+                    return false;
+                }
+            }, ErrorFunction, false);
+        }
+    }
+    var dtCharges1, dtCharges2, chargeCount;
+    function GetChargeDetails(list, dtCharge, isOdd) {
+
+        var tableId = (isOdd ? 'dtCharges1' : 'dtCharges2');
+        if (dtCharge != null)
+            $('#' + tableId).addClass('dataTable');
+
+        if (dtCharge == null)
+            dtCharge = LoadDataTable(tableId, false, false, false, null, null, [],
+                [
+                    { title: 'Charge Name', data: 'ChargeDetail', width: 150 },
+                    { title: 'Charge', data: 'ChargeAmount', width: 60 }
+                ]);
+        dtCharge.fnClearTable();
+
+        var newList = [];
+        if (chargeList.length > 0) {
+            $.each(chargeList, function (i, item) {
+                if ((isOdd && (((i + 1) % 2) != 0)) || (!isOdd && (((i + 1) % 2) == 0))) {
+                    item.ChargeDetail = '<input type="hidden" name="ChargeList[' + chargeCount + '].ChargeCode" id="hdnChargeCode' + chargeCount + '" value="' + item.ChargeCode + '"/>' +
+                        '<input type="hidden" name="ChargeList[' + chargeCount + '].IsOperator" id="hdnOperator' + chargeCount + '" value="' + (item.IsOperator ? '+' : '-') + '"/>' +
+                        '<label class="label" id="lblChargeName' + chargeCount + '">' + item.ChargeName + '(' + (item.IsOperator ? '+' : '-') + ')' + '</label>';
+                    item.ChargeAmount = '<input class="form-control numeric2" data-val="true" data-val-required="Please enter ' + item.ChargeName + '" ' +
+                        'name="ChargeList[' + chargeCount + '].ChargeAmount" value="' + item.ChargeAmount.toFixed(2) + '" id="txtCharge' + chargeCount + '" type="text" />' +
+                        '<span data-valmsg-for="ChargeList[' + chargeCount + '].Charge" data-valmsg-replace="true"></span>'
+                    newList.push(item);
+                    chargeCount++;
+                }
+            });
+            dtCharge.dtAddData(newList);
+        }
+        if (isOdd)
+            dtCharges1 = dtCharge;
+        else
+            dtCharges2 = dtCharge;
+    }
+    function CalculateOtherCharges() {
+        var otherAmount = 0;
+        $('[id*="hdnOperator"]').each(function () {
+            var hdnOperator = $(this);
+            var txtCharge = $('#' + this.id.replace('hdnOperator', 'txtCharge'));
+            if (hdnOperator.val() == '+')
+                otherAmount = otherAmount + parseFloat(txtCharge.val());
+            else
+                otherAmount = otherAmount - parseFloat(txtCharge.val());
+        });
+        $('#hdnOtherAmount').val(otherAmount);
+    }
+
+</script>

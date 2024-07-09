@@ -1,0 +1,1438 @@
+﻿@model CodeLock.Models.CustomerContractServices
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "CustomerContractServices Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("ServiceSelection", "CustomerContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.ContractId)
+    @Html.HiddenFor(m => m.ContractId, new { @id = "hdnContractId" })
+    @Html.HiddenFor(m => m.IsFovApplicable, new { @id = "hdnIsFovApplicable" })
+
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label("Contract ID", new { @id = "lblCustomer", @class = "label-bold" })
+                <div class="clearfix">
+                    @ViewBag.ManualContractId
+                </div>
+            </div>
+        </div>
+        @if (@ViewBag.isCustomerContract == false)
+        {
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vendor", new { @id = "lblCustomer", @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.CustomerCode : @ViewBag.CustomerName
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Customer", new { @id = "lblCustomer", @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.CustomerCode : @ViewBag.CustomerName
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="unit">
+                <div class="inline-group">
+                    @Html.LabelFor(model => model.TransportMode, new { @class = "label-bold" })
+                    @for (var i = 0; i < Model.TransportMode.Count(); i++)
+                    {
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(m => m.TransportMode[i].IsActive, new { @id = "chkTransportMode" + i.ToString() })
+                            <i></i>
+                            @Html.LabelFor(m => m.TransportMode[i].IsActive, Model.TransportMode[i].CodeDescription, new { @class = "label", @For = "chkTransportMode" + i.ToString() })
+                        </label>
+                        @Html.HiddenFor(m => m.TransportMode[i].CodeTypeId)
+                        @Html.HiddenFor(m => m.TransportMode[i].CodeId)
+                        @Html.HiddenFor(m => m.TransportMode[i].CodeDescription)
+                    }
+                    @Html.ValidationMessageFor(model => model.TransportMode)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="unit">
+                <div class="inline-group">
+                    @Html.LabelFor(model => model.ServiceType, new { @class = "label-bold" })
+                    @for (var i = 0; i < Model.ServiceType.Count(); i++)
+                    {
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(m => m.ServiceType[i].IsActive, new { @id = "chkServiceType" + i.ToString() })
+                            <i></i>
+                            @Html.LabelFor(m => m.ServiceType[i].IsActive, Model.ServiceType[i].CodeDescription, new { @class = "label", @For = "chkServiceType" + i.ToString() })
+                        </label>
+                        @Html.HiddenFor(m => m.ServiceType[i].CodeTypeId)
+                        @Html.HiddenFor(m => m.ServiceType[i].CodeId)
+                        @Html.HiddenFor(m => m.ServiceType[i].CodeDescription)
+                    }
+                    @Html.ValidationMessageFor(model => model.ServiceType)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="unit">
+                <div class="inline-group">
+                    @Html.LabelFor(model => model.RateTypes, new { @class = "label-bold" })
+                    @for (var i = 0; i < Model.RateTypes.Count(); i++)
+                    {
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(m => m.RateTypes[i].IsActive, new { @id = "chkRateTypes" + i.ToString() })
+
+                            <i></i>
+                            @Html.LabelFor(m => m.RateTypes[i].IsActive, Model.RateTypes[i].CodeDescription, new { @class = "label", @For = "chkRateTypes" + i.ToString() })
+                        </label>
+                        @Html.HiddenFor(m => m.RateTypes[i].CodeTypeId)
+                        @Html.HiddenFor(m => m.RateTypes[i].CodeId)
+                        @Html.HiddenFor(m => m.RateTypes[i].CodeDescription)
+                    }
+                    @Html.ValidationMessageFor(model => model.RateTypes)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="unit">
+                <div class="inline-group">
+                    @Html.LabelFor(model => model.Matrices, new { @class = "label-bold" })
+                    @for (var i = 0; i < Model.Matrices.Count(); i++)
+                    {
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(m => m.Matrices[i].IsActive, new { @id = "chkMatrices" + i.ToString() })
+                            <i></i>
+                            @Html.LabelFor(m => m.Matrices[i].IsActive, Model.Matrices[i].CodeDescription, new { @class = "label", @For = "chkMatrices" + i.ToString() })
+                        </label>
+                        @Html.HiddenFor(m => m.Matrices[i].CodeTypeId)
+                        @Html.HiddenFor(m => m.Matrices[i].CodeId)
+                        @Html.HiddenFor(m => m.Matrices[i].CodeDescription)
+                    }
+                    @Html.ValidationMessageFor(model => model.Matrices)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="unit">
+                <div class="inline-group">
+                    @Html.LabelFor(model => model.PickupDelivery, new { @class = "label-bold" })
+                    @for (var i = 0; i < Model.PickupDelivery.Count(); i++)
+                    {
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(m => m.PickupDelivery[i].IsActive, new { @id = "chkPickupDelivery" + i.ToString() })
+                            <i></i>
+                            @Html.LabelFor(m => m.PickupDelivery[i].IsActive, Model.PickupDelivery[i].CodeDescription, new { @class = "label", @For = "chkPickupDelivery" + i.ToString() })
+                        </label>
+                        @Html.HiddenFor(m => m.PickupDelivery[i].CodeTypeId)
+                        @Html.HiddenFor(m => m.PickupDelivery[i].CodeId)
+                        @Html.HiddenFor(m => m.PickupDelivery[i].CodeDescription)
+                    }
+                    @Html.ValidationMessageFor(model => model.PickupDelivery)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseVolumetric, new { @class = "label" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseVolumetric, new { @id = "chkUseVolumetric", @onchange = "return UseVolumetricChange();" })
+                    @Html.LabelFor(model => model.UseVolumetric, new { @class = "label", @for = "chkUseVolumetric" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            @Html.LabelFor(model => model.VolumetricWeightType, new { @class = "label" })
+            <div class="select">
+                @Html.DropDownListFor(model => model.VolumetricWeightType, new List<SelectListItem> {
+                    new SelectListItem() {Text = "Select Volumetric Weight Type",Value=""},
+                    new SelectListItem() {Text = "Higher of Volumetric and Actual Weight", Value="M"},
+                    new SelectListItem() {Text = "Alway Actual Weight", Value="A"},
+                    new SelectListItem() {Text = "Alway Volumetric Weight", Value="V"},}, new { @class = "form-control", @id = "ddlVolumetricWeightType" })
+                <i></i>
+            </div>
+            @Html.ValidationMessageFor(model => model.VolumetricWeightType)
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UsePartVolumetric, new { @class = "label" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UsePartVolumetric, new { @id = "chkUsePartVolumetric" })
+                    @Html.LabelFor(model => model.UsePartVolumetric, new { @class = "label", @for = "chkUsePartVolumetric" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    @*<div class="row">
+
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.PartVolumetricWeightType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.PartVolumetricWeightType, new List<SelectListItem> {
+                            new SelectListItem() {Text = "Select Volumetric Weight Type",Value=""},
+                            new SelectListItem() {Text = "Higher of Volumetric and Actual Weight", Value="M"},
+                            new SelectListItem() {Text = "Alway Actual Weight", Value="A"},
+                            new SelectListItem() {Text = "Alway Volumetric Weight", Value="V"},}, new { @class = "form-control", @id = "ddlPartVolumetricWeightType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PartVolumetricWeightType)
+                </div>
+        </div>*@
+
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseInvoiceNo, new { @class = "label", @for = "chkUseInvoiceNo" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseInvoiceNo, new { @id = "chkUseInvoiceNo" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseInvoiceDate, new { @class = "label", @for = "chkUseInvoiceDate" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseInvoiceDate, new { @id = "chkUseInvoiceDate" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div class="inline-group">
+                    @Html.LabelFor(model => model.UseMultipointChargesForChild, new { @class = "label" })
+                    <label class="radio">
+                        @Html.RadioButtonFor(model => model.UseMultipointChargesForChild, true, new { @id = "rdChild", @checked = "checked" })
+                        <i></i>
+                        @Html.LabelFor(model => model.UseMultipointChargesForChild, "Child Only", new { @for = "rdChild" })
+                    </label>
+                    <label class="radio">
+                        @Html.RadioButtonFor(model => model.UseMultipointChargesForChild, false, new { @id = "rdMotherandChild" })
+                        <i></i>
+                        @Html.LabelFor(model => model.UseMultipointChargesForChild, "Mother and Child", new { @for = "rdMotherandChild" })
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-separator">Freight Related Services</div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseDeferement, new { @class = "label", @for = "chkUseDeferement" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseDeferement, new { @id = "chkUseDeferement", @onchange = "return UseDeferementChange()" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.DefermentDays, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.DefermentDays, new { @class = "form-control numeric", @id = "txtDefermentDays", @readonly = "true" })
+                </div>
+                @Html.ValidationMessageFor(model => model.DefermentDays)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseFreightAsInvoicePercentage, new { @class = "label", @for = "chkUseFreightAsInvoicePercentage" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseFreightAsInvoicePercentage, new { @id = "chkUseFreightAsInvoicePercentage", @onchange = "return UseFreightAsInvoicePercentageChange()" })
+                    @Html.Label("chkUseVolumetric", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FreightInvoicePercentage, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.FreightInvoicePercentage, new { @class = "form-control numeric", @id = "txtFreightInvoicePercentage", @readonly = "true" })
+                </div>
+                @Html.ValidationMessageFor(model => model.FreightInvoicePercentage)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseFreightDiscount, new { @class = "label", @for = "chkUseFreightDiscount" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseFreightDiscount, new { @id = "chkUseFreightDiscount", @onchange = "return UseFreightDiscountChange()" })
+                    @Html.Label("chkUseFreightDiscount", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FreightDiscountPercentage, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.FreightDiscountPercentage, new { @class = "form-control numeric", @id = "txtFreightDiscountPercentage", @readonly = "true" })
+                </div>
+                @Html.ValidationMessageFor(model => model.FreightDiscountPercentage)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FreightContractId, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.FreightManualContractId, new { @class = "form-control numeric", @id = "txtFreightManualContractId", @readonly = "true" })
+                    @Html.HiddenFor(model => model.FreightContractId, new { id = "hdnFreightContractId" })
+                </div>
+                @Html.ValidationMessageFor(model => model.FreightContractId)
+            </div>
+        </div>
+        <div class="col-sm-1">
+            <div class="form-group">
+                @Html.Label(" ", new { @class = "label" })
+                <div class="inputer floating-label">
+                    <button id="btnPopUp" onclick="OnPopUpClick()" class="btn btn-primary btn-xs dt-edit" type="button">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseDeliveryReattempt, new { @class = "label", @for = "chkUseDeliveryReattempt" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseDeliveryReattempt, new { @id = "chkUseDeliveryReattempt", @onchange = "return UseDeliveryReattemptChange()" })
+                    @Html.Label("chkUseDeliveryReattempt", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.DeliveryReattemptCount, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.DeliveryReattemptCount, new { @class = "form-control numeric", @id = "txtDeliveryReattemptCount", @readonly = "true" })
+                </div>
+                @Html.ValidationMessageFor(model => model.DeliveryReattemptCount)
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.DeliveryReattemptAmount, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.DeliveryReattemptAmount, new { @class = "form-control numeric2", @id = "txtDeliveryReattemptAmount", @readonly = "true" })
+                </div>
+                @Html.ValidationMessageFor(model => model.DeliveryReattemptAmount)
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div class="inline-group">
+                    @Html.LabelFor(model => model.UseMinimumFreightTypeBaseWise, new { @class = "label" })
+                    <label class="radio">
+                        @Html.RadioButtonFor(model => model.UseMinimumFreightTypeBaseWise, true, new { @id = "rdBaseWise", @checked = "checked" })
+                        <i></i>
+                        @Html.LabelFor(model => model.UseMinimumFreightTypeBaseWise, "Base Wise", new { @for = "rdBaseWise" })
+                    </label>
+                    <label class="radio">
+                        @Html.RadioButtonFor(model => model.UseMinimumFreightTypeBaseWise, false, new { @id = "rdPercentWise" })
+                        <i></i>
+                        @Html.LabelFor(model => model.UseMinimumFreightTypeBaseWise, "Percent Wise", new { @for = "rdPercentWise" })
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="divParcentWise">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseFreightRateLimit, new { @class = "label", @for = "chkUseFreightRateLimit" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseFreightRateLimit, new { @id = "chkUseFreightRateLimit", @onchange = "return UseDeliveryReattemptChange()" })
+                    @Html.Label("chkUseFreightRateLimit", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseSubTotalLimit, new { @class = "label", @for = "chkUseSubTotalLimit" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseSubTotalLimit, new { @id = "chkUseSubTotalLimit", @onchange = "return UseDeliveryReattemptChange()" })
+                    @Html.Label("chkUseSubTotalLimit", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseCod, new { @class = "label", @for = "chkUseCOD" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseCod, new { @id = "chkUseCOD", @onchange = "return UseCODChange()" })
+                    @Html.Label("chkUseCOD", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseDacc, new { @class = "label", @for = "chkUseDACC" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseDacc, new { @id = "chkUseDACC", @onchange = "return UseDACCChange()" })
+                    @Html.Label("chkUseDACC", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-4" style="display:none">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseOctroi, new { @class = "label", @for = "chkUseOctroi" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseOctroi, new { @id = "chkUseOctroi", @onchange = "return UseOctroiChange()" })
+                    @Html.Label("chkUseOctroi", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="divUseCod">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.CodRate, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.CodRate, new { @class = "form-control numeric2", @id = "txtCodRate" })
+                </div>
+                @Html.ValidationMessageFor(model => model.CodRate)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.CodRateType, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.CodRateType, new SelectList(ViewBag.CodDaccRateTypeList, "Value", "Name"), "Select Rate Type", new { @class = "form-control", @id = "ddlCodRateType" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.CodRateType)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MinimumCodAmount, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.MinimumCodAmount, new { @class = "form-control numeric", @id = "txtMinimumCodAmount" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MinimumCodAmount)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MaximumCodAmount, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.MaximumCodAmount, new { @class = "form-control numeric", @id = "txtMaximumCodAmount" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MaximumCodAmount)
+            </div>
+        </div>
+    </div>
+    <div class="row" id="divUseDacc">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.DaccRate, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.DaccRate, new { @class = "form-control numeric", @id = "txtDaccRate" })
+                </div>
+                @Html.ValidationMessageFor(model => model.DaccRate)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.DaccRateType, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.DaccRateType, new SelectList(ViewBag.CodDaccRateTypeList, "Value", "Name"), "Select Rate Type", new { @class = "form-control", @id = "ddlDaccRateType" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.DaccRateType)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MinimumDaccAmount, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.MinimumDaccAmount, new { @class = "form-control numeric", @id = "txtMinimumDaccAmount" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MinimumDaccAmount)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MaximumDaccAmount, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.MaximumDaccAmount, new { @class = "form-control numeric", @id = "txtMaximumDaccAmount" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MaximumDaccAmount)
+            </div>
+        </div>
+    </div>
+    <div class="row" id="divUseOctroi">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.OctroiRate, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.OctroiRate, new { @class = "form-control numeric", @id = "txtOctroiRate" })
+                </div>
+                @Html.ValidationMessageFor(model => model.OctroiRate)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.OctroiRateType, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.OctroiRateType, new SelectList(ViewBag.CodDaccRateTypeList, "Value", "Name"), "Select Rate Type", new { @class = "form-control", @id = "ddlOctroiRateType" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.OctroiRateType)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MinimumOctroiAmount, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.MinimumOctroiAmount, new { @class = "form-control numeric", @id = "txtMinimumOctroiAmount" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MinimumOctroiAmount)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MaximumOctroiAmount, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.MaximumOctroiAmount, new { @class = "form-control numeric", @id = "txtMaximumOctroiAmount" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MaximumOctroiAmount)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseOda, new { @class = "label" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseOda, new { @id = "chkUseOda" })
+                    @Html.Label("chkUseOda", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseFuelSurcharge, new { @class = "label", @for = "chkUseFuelSurcharge" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseFuelSurcharge, new { @id = "chkUseFuelSurcharge" })
+                    @Html.Label("chkUseFuelSurcharge", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="page-separator">Demurrage Information</div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseDeliveryWithoutDemurrage, new { @class = "label", @for = "chkUseDeliveryWithoutDemurrage" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseDeliveryWithoutDemurrage, new { @id = "chkUseDeliveryWithoutDemurrage", @onchange = "return DeliveryWithoutDemurrageChange()" })
+                    @Html.Label("chkUseDeliveryWithoutDemurrage", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div id="divDumerageInformation">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DemurrageRateType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.DemurrageRateType, new List<SelectListItem> {
+                    new SelectListItem() {Text = "Select Demurrage Rate Type", Value = ""},
+                    new SelectListItem() {Text = "% of Invoice", Value="7"},
+                    new SelectListItem() {Text = "Per Kg Per Day", Value="9"},
+                    new SelectListItem() {Text = "Per Pkg Per Day", Value="10"},}, new { @class = "form-control", @id = "ddlDemurrageRateType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DemurrageRateType)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DemurrageFreeStorageDays, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DemurrageFreeStorageDays, new { @class = "form-control numeric", @id = "txtDemurrageFreeStorageDays" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DemurrageFreeStorageDays)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="divDumerageInfo">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MinimumDemurrageAmount, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.MinimumDemurrageAmount, new { @class = "form-control numeric", @id = "txtMinimumDemurrageAmount" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MinimumDemurrageAmount)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.DemurrageRate, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.DemurrageRate, new { @class = "form-control numeric2", @id = "txtDemurrageRate" })
+                </div>
+                @Html.ValidationMessageFor(model => model.DemurrageRate)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MaximumDemurrageAmount, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.MaximumDemurrageAmount, new { @class = "form-control numeric", @id = "txtMaximumDemurrageAmount" })
+                </div>
+                @Html.ValidationMessageFor(model => model.MaximumDemurrageAmount)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UseDemurrageBasInclusiveStorageDays, new { @class = "label" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.UseDemurrageBasInclusiveStorageDays, new { @id = "chkUseDemurrageBasInclusiveStorageDays" })
+                    @Html.Label("chkUseDemurrageBasInclusiveStorageDays", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.IsGstApplicable, new { @class = "label" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.IsGstApplicable, new { @id = "chkIsGstApplicable" })
+                    @Html.Label("chkIsGstApplicable", " ", new { @class = "label" })
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div id="divRiskInformation">
+        <div class="page-separator">Risk Information</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.IsCarrierRisk, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsCarrierRisk, true, new { @id = "rdCarrierRisk", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsCarrierRisk, "Carrier Risk", new { @for = "rdCarrierRisk" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsCarrierRisk, false, new { @id = "rdOwnerrisk" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsCarrierRisk, "Owner Risk", new { @for = "rdOwnerrisk" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12" id="dvCarrierRisk">
+                <div class="page-separator">Carrier Risk</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12" id="dvOwnerRisk">
+                <div class="page-separator">Owner Risk</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12" id="dvCarrierRiskDetails">
+                <div class="flip-scroll overflow-table">
+                    <table class="table table-condensed cf" id="dtCarrierRisk">
+                        <thead class="cf">
+                            <tr>
+                                <th>@Html.DisplayNameFor(m => Model.CarrierDetails.FirstOrDefault().FromFreight)</th>
+                                <th>@Html.DisplayNameFor(m => Model.CarrierDetails.FirstOrDefault().ToFreight)</th>
+                                <th>@Html.DisplayNameFor(m => Model.CarrierDetails.FirstOrDefault().Rate)</th>
+                                <th>@Html.DisplayNameFor(m => Model.CarrierDetails.FirstOrDefault().MinimumChargeAmount)</th>
+                                <th>@Html.DisplayNameFor(m => Model.CarrierDetails.FirstOrDefault().MaximumChargeAmount)</th>
+                                <th>@Html.DisplayNameFor(m => Model.CarrierDetails.FirstOrDefault().RateType)</th>
+                                <th width="85px">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.CarrierDetails.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="input">
+                                            @Html.HiddenFor(model => Model.CarrierDetails[i].ContractId, new { @id = "hdnContractId" + i })
+                                            @Html.TextBoxFor(m => Model.CarrierDetails[i].FromFreight, new { @class = "form-control numeric2", @id = "txtFromFreight" + i.ToString() })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.CarrierDetails[i].FromFreight)
+                                    </td>
+                                    <td>
+                                        <div class="input">
+                                            @Html.TextBoxFor(m => Model.CarrierDetails[i].ToFreight, new { @class = "form-control numeric2", @id = "txtToFreight" + i.ToString() })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.CarrierDetails[i].ToFreight)
+                                    </td>
+                                    <td>
+                                        <div class="input">
+                                            @Html.TextBoxFor(m => Model.CarrierDetails[i].Rate, new { @class = "form-control numeric3", @id = "txtRate" + i.ToString() })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.CarrierDetails[i].Rate)
+                                    </td>
+                                    <td>
+                                        <div class="input">
+                                            @Html.TextBoxFor(m => Model.CarrierDetails[i].MinimumChargeAmount, new { @class = "form-control numeric2", @id = "txtMinimumFreightAmount" + i.ToString() })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.CarrierDetails[i].MinimumChargeAmount)
+                                    </td>
+                                    <td>
+                                        <div class="input">
+                                            @Html.TextBoxFor(m => Model.CarrierDetails[i].MaximumChargeAmount, new { @class = "form-control numeric2", @id = "txtMaximumFreightAmount" + i.ToString() })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.CarrierDetails[i].MaximumChargeAmount)
+                                    </td>
+                                    <td>
+                                        <div class="select">
+                                            @Html.DropDownListFor(model => Model.CarrierDetails[i].RateType, new SelectList(ViewBag.RiskMatrixRateTypeList, "Value", "Name", Model.CarrierDetails[i].RateType), "Select Rate Type", new { @class = "form-control", @id = "ddlRateType" + i.ToString() })
+                                            <i></i>
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.CarrierDetails[i].RateType)
+                                    </td>
+                                    <td width="85px"></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-sm-12" id="dvOwnerRiskDetails">
+                <div class="flip-scroll overflow-table">
+                    <table class="table table-condensed cf" id="dtOwnerRisk">
+                        <thead class="cf">
+                            <tr>
+                                <th>@Html.DisplayNameFor(m => Model.OwnerDetails.FirstOrDefault().FromFreight)</th>
+                                <th>@Html.DisplayNameFor(m => Model.OwnerDetails.FirstOrDefault().ToFreight)</th>
+                                <th>@Html.DisplayNameFor(m => Model.OwnerDetails.FirstOrDefault().Rate)</th>
+                                <th>@Html.DisplayNameFor(m => Model.CarrierDetails.FirstOrDefault().MinimumChargeAmount)</th>
+                                <th>@Html.DisplayNameFor(m => Model.CarrierDetails.FirstOrDefault().MaximumChargeAmount)</th>
+                                <th>@Html.DisplayNameFor(m => Model.OwnerDetails.FirstOrDefault().RateType)</th>
+                                <th width="85px">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.OwnerDetails.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="input">
+                                            @Html.HiddenFor(model => Model.OwnerDetails[i].ContractId, new { @id = "hdnContractId" + i })
+                                            @Html.TextBoxFor(m => Model.OwnerDetails[i].FromFreight, new { @class = "form-control numeric2", @id = "txtOwnerFromFreight" + i.ToString() })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.OwnerDetails[i].FromFreight)
+                                    </td>
+                                    <td>
+                                        <div class="input">
+                                            @Html.TextBoxFor(m => Model.OwnerDetails[i].ToFreight, new { @class = "form-control numeric2", @id = "txtOwnerToFreight" + i.ToString() })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.OwnerDetails[i].ToFreight)
+                                    </td>
+                                    <td>
+                                        <div class="input">
+                                            @Html.TextBoxFor(m => Model.OwnerDetails[i].Rate, new { @class = "form-control numeric3", @id = "txtOwnerRate" + i.ToString() })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.OwnerDetails[i].Rate)
+                                    </td>
+                                    <td>
+                                        <div class="input">
+                                            @Html.TextBoxFor(m => Model.OwnerDetails[i].MinimumChargeAmount, new { @class = "form-control numeric2", @id = "txtOwnerMinimumFreightAmount" + i.ToString() })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.OwnerDetails[i].MinimumChargeAmount)
+                                    </td>
+                                    <td>
+                                        <div class="input">
+                                            @Html.TextBoxFor(m => Model.OwnerDetails[i].MaximumChargeAmount, new { @class = "form-control numeric2", @id = "txtOwnerMaximumFreightAmount" + i.ToString() })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.OwnerDetails[i].MaximumChargeAmount)
+                                    </td>
+                                    <td>
+                                        <div class="select">
+                                            @Html.DropDownListFor(model => Model.OwnerDetails[i].RateType, new SelectList(ViewBag.RiskMatrixRateTypeList, "Value", "Name", Model.OwnerDetails[i].RateType), "Select Rate Type", new { @class = "form-control", @id = "ddlOwnerRateType" + i.ToString() })
+                                            <i></i>
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.OwnerDetails[i].RateType)
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-footer">
+        <button type="submit" class="btn btn-success primary-btn" id="btnSubmit" tabindex="3">Submit</button>
+    </div>
+</div>
+}
+<script>
+    $(document).ready(function () {
+        if ('@ViewBag.isCustomerContract' == "False") {
+            SetPageLoad('Vendor Contract Services', 'Contract Services', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = Model.ContractId })');
+        }
+        else {
+            SetPageLoad('Customer Contract Services', 'Contract Services', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = Model.ContractId })');
+        }
+
+        OnPageLoad();
+        hdnContractId = $("#hdnContractId")
+        $("#chkUseDeferement").trigger("change");
+        $('#chkUseFreightAsInvoicePercentage').trigger("change");
+        $('#chkUseFreightDiscount').trigger("change");
+        $('#chkUseDeliveryReattempt').trigger("change");
+        $('#rdBaseWise,#rdPercentWise').change(PercentWiseChange);
+        PercentWiseChange();
+        $('#btnSubmit').click(ValidateOnSubmit);
+        InitGrid('dtCarrierRisk', false, 6, InitCarrierRisk);
+        InitGrid('dtOwnerRisk', false, 6, InitOwnerRisk);
+        var contractId = $('#hdnContractId').val();
+        $('#rdCarrierRisk').click(OnRiskTypeChange);
+        $('#rdOwnerrisk').click(OnRiskTypeChange);
+        OnRiskTypeChange();
+    });
+
+
+    function OnPageLoad() {
+        var requestData = { id: '@Model.ContractId' };
+        AjaxRequestWithPostAndJson('@Url.Action("GetServicesById")', JSON.stringify(requestData), GetDetailSuccess, ErrorFunction, false);
+        requestData = {};
+        AjaxRequestWithPostAndJson('@Url.Action("IsFovApplicable")', JSON.stringify(requestData), function (result) {
+            if (result) {
+                $("#divRiskInformation").show();
+            }
+            else {
+                $("#divRiskInformation").hide();
+            }
+            $("#hdnIsFovApplicable").val(result);
+        });
+
+    }
+
+    function GetDetailSuccess(responseData) {
+        if (responseData.UseVolumetric)
+            $('#chkUseVolumetric').prop("checked", true);
+
+        if ($('#chkUseVolumetric').is(":checked")) {
+            $('#ddlVolumetricWeightType').enable();
+            $('#ddlVolumetricWeightType').val(responseData.VolumetricWeightType);
+            AddRequired($('#ddlVolumetricWeightType'), "Please select Volumetric Weight Type");
+            $('#chkUsePartVolumetric').enable();
+        }
+        else {
+            $('#ddlVolumetricWeightType').disable();
+            $('#ddlVolumetricWeightType').val('');
+            RemoveRequired($('#ddlVolumetricWeightType'));
+            $('#chkUsePartVolumetric').check(false).disable();
+        }
+
+        if (responseData.UsePartVolumetric)
+           $('#chkUsePartVolumetric').prop("checked", true);
+
+        //if ($('#chkUsePartVolumetric').is(":checked")) {
+        //    $('#ddlPartVolumetricWeightType').enable();
+        //    $('#ddlPartVolumetricWeightType').val(responseData.PartVolumetricWeightType);
+        //    AddRequired($('#ddlPartVolumetricWeightType'), "Please select Part Volumetric Weight Type");
+        //}
+        //else {
+        //    $('#ddlPartVolumetricWeightType').disable();
+        //    $('#ddlPartVolumetricWeightType').val('');
+        //    RemoveRequired($('#ddlPartVolumetricWeightType'));
+        //}
+
+        if (responseData.UseInvoiceNo)
+            $('#chkUseInvoiceNo').prop("checked", true);
+
+        if (responseData.UseInvoiceDate)
+            $('#chkUseInvoiceDate').prop("checked", true);
+
+        if (responseData.UseDeferement)
+            $('#chkUseDeferement').prop("checked", true);
+
+        $('#txtDefermentDays').val(responseData.DefermentDays);
+
+        if (responseData.UseFreightAsInvoicePercentage)
+            $('#chkUseFreightAsInvoicePercentage').prop("checked", true);
+
+        $('#txtFreightInvoicePercentage').val(responseData.FreightInvoicePercentage);
+        $('#txtFreightManualContractId').val(responseData.FreightManualContractId);
+        $('#hdnFreightContractId').val(responseData.FreightContractId);
+
+        if (responseData.UseFreightDiscount)
+            $('#chkUseFreightDiscount').prop("checked", true);
+
+        $('#txtFreightDiscountPercentage').val(responseData.FreightDiscountPercentage);
+        $('#txtFreightContractId').val(responseData.FreightContractId);
+
+        if (responseData.UseDeliveryReattempt)
+            $('#chkUseDeliveryReattempt').prop("checked", true);
+
+        $('#txtDeliveryReattemptCount').val(responseData.DeliveryReattemptCount);
+        $('#txtDeliveryReattemptAmount').val(responseData.DeliveryReattemptAmount);
+
+        if (responseData.UseFreightRateLimit)
+            $('#chkUseFreightRateLimit').prop("checked", true);
+
+        if (responseData.UseSubTotalLimit)
+            $('#chkUseSubTotalLimit').prop("checked", true);
+
+        if (responseData.UseCod)
+            $('#chkUseCOD').prop("checked", true);
+
+        if ($('#chkUseCOD').is(":checked")) {
+            $('#divUseCod').show();
+            $('#ddlCodRateType').enable();
+            SetDropDownValue($('#ddlCodRateType'), responseData.CodRateType);
+            AddRequired($('#ddlCodRateType'), "Please select COD Rate Type");
+        }
+        else {
+            $('#divUseCod').hide();
+            $('#ddlCodRateType').disable();
+            SetDropDownValue($('#ddlCodRateType'), '');
+            RemoveRequired($('#ddlCodRateType'));
+        }
+        $('#txtCodRate').val(responseData.CodRate);
+        $('#txtMinimumCodAmount').val(responseData.MinimumCodAmount);
+        $('#txtMaximumCodAmount').val(responseData.MaximumCodAmount);
+
+        if (responseData.UseDacc)
+            $('#chkUseDACC').prop("checked", true);
+        if ($('#chkUseDACC').is(":checked")) {
+            $('#divUseDacc').show();
+            $('#ddlDaccRateType').enable();
+            SetDropDownValue($('#ddlDaccRateType'), responseData.DaccRateType);
+            AddRequired($('#ddlDaccRateType'), "Please select DACC Rate Type");
+        }
+        else {
+            $('#divUseDacc').hide();
+            $('#ddlDaccRateType').disable();
+            SetDropDownValue($('#ddlDaccRateType'), '');
+            RemoveRequired($('#ddlDaccRateType'));
+        }
+        $('#txtDaccRate').val(responseData.DaccRate);
+        $('#txtMinimumDaccAmount').val(responseData.MinimumDaccAmount);
+        $('#txtMaximumDaccAmount').val(responseData.MaximumDaccAmount);
+
+        if (responseData.UseOctroi)
+            $('#chkUseOctroi').prop("checked", true);
+        if ($('#chkUseOctroi').is(":checked")) {
+            $('#divUseOctroi').show();
+            $('#ddlOctroiRateType').enable();
+            SetDropDownValue($('#ddlOctroiRateType'), responseData.OctroiRateType);
+            AddRequired($('#ddlOctroiRateType'), "Please select Octroi Rate Type");
+        }
+        else {
+            $('#divUseOctroi').hide();
+            $('#ddlOctroiRateType').disable();
+            SetDropDownValue($('#ddlOctroiRateType'), '');
+            RemoveRequired($('#ddlOctroiRateType'));
+        }
+        if (responseData.UseMultipointChargesForChild)
+            $('#rdChild').prop("checked", true);
+        else
+            $('#rdMotherandChild').prop("checked", true);
+
+        if (responseData.UseMinimumFreightTypeBaseWise)
+            $('#rdBaseWise').prop("checked", true);
+        else
+            $('#rdPercentWise').prop("checked", true);
+
+        $('#txtOctroiRate').val(responseData.OctroiRate);
+        $('#txtMinimumOctroiAmount').val(responseData.MinimumOctroiAmount);
+        $('#txtMaximumOctroiAmount').val(responseData.MaximumOctroiAmount);
+
+        if (responseData.UseOda)
+            $('#chkUseOda').prop("checked", true);
+
+        if (responseData.UseFuelSurcharge)
+            $('#chkUseFuelSurcharge').prop("checked", true);
+
+        if (responseData.UseDeliveryWithoutDemurrage)
+            $('#chkUseDeliveryWithoutDemurrage').prop("checked", true);
+
+        if ($('#chkUseDeliveryWithoutDemurrage').is(":checked")) {
+            $('#divDumerageInformation').show();
+            $('#divDumerageInfo').show();
+            SetDropDownValue($('#ddlDemurrageRateType'), responseData.DemurrageRateType);
+            AddRequired($('#ddlDemurrageRateType'), "Please select Demurrage Rate Type");
+        }
+        else {
+            $('#divDumerageInformation').hide();
+            $('#divDumerageInfo').hide();
+            SetDropDownValue($('#ddlDemurrageRateType'), '');
+            RemoveRequired($('#ddlDemurrageRateType'));
+        }
+        $('#txtDemurrageRate').val(responseData.DemurrageRate)
+        $('#txtDemurrageFreeStorageDays').val(responseData.DemurrageFreeStorageDays);
+        $('#txtMinimumDemurrageAmount').val(responseData.MinimumDemurrageAmount);
+        $('#txtMaximumDemurrageAmount').val(responseData.MaximumDemurrageAmount);
+
+        if (responseData.UseDemurrageBasInclusiveStorageDays)
+            $('#chkUseDemurrageBasInclusiveStorageDays').prop("checked", true);
+
+        if (responseData.IsGstApplicable)
+            $('#chkIsGstApplicable').prop("checked", true);
+
+        if (responseData.IsCarrierRisk)
+            $('#rdCarrierRisk').prop("checked", true);
+        else
+            $('#rdOwnerrisk').prop("checked", true);
+    }
+
+    function PercentWiseChange() {
+        if ($('#rdBaseWise').is(":checked")) {
+            $('#divParcentWise').hide();
+            $('#chkUseFreightRateLimit').prop("checked", false);
+            $('#chkUseSubTotalLimit').prop("checked", false);
+        }
+        if ($('#rdPercentWise').is(":checked")) {
+            $('#divParcentWise').show();
+        }
+    }
+
+    function UseVolumetricChange() {
+        if ($('#chkUseVolumetric').is(":checked")) {
+            $('#ddlVolumetricWeightType').enable();
+            $('#ddlVolumetricWeightType').val('');
+            AddRequired($('#ddlVolumetricWeightType'), "Please select Volumetric Weight Type");
+            $('#chkUsePartVolumetric').enable();
+        }
+        else {
+            $('#ddlVolumetricWeightType').disable();
+            $('#ddlVolumetricWeightType').val('');
+            RemoveRequired($('#ddlVolumetricWeightType'));
+            $('#chkUsePartVolumetric').check(false).disable();
+        }
+    }
+
+    //function UsePartVolumetricChange() {
+    //    if ($('#chkUsePartVolumetric').is(":checked")) {
+    //        $('#ddlPartVolumetricWeightType').enable();
+    //        $('#ddlPartVolumetricWeightType').val('');
+    //        AddRequired($('#ddlPartVolumetricWeightType'), "Please select Part Volumetric Weight Type");
+    //    }
+    //    else {
+    //        $('#ddlPartVolumetricWeightType').disable();
+    //        $('#ddlPartVolumetricWeightType').val('');
+    //        RemoveRequired($('#ddlPartVolumetricWeightType'));
+    //    }
+    //}
+
+    function UseCODChange() {
+        if ($('#chkUseCOD').is(":checked")) {
+            $('#divUseCod').show();
+            $('#ddlCodRateType').enable();
+            $('#ddlCodRateType').val('');
+            AddRequired($('#ddlCodRateType'), "Please select COD Rate Type");
+            AddRange($("#txtCodRate"), "COD Rate value greater than 1 and less than 999", 1, 999);
+            AddRange($("#txtMaximumCodAmount"), "Maximum COD Amount greater than 1 and less than 9999999999", 1);
+        }
+        else {
+            $('#divUseCod').hide();
+            $('#txtMinimumCodAmount').val(0);
+            $('#txtMaximumCodAmount').val(0);
+            $('#txtCodRate').val(0);
+            RemoveRange($("#txtMaximumCodAmount"));
+            RemoveRange($("#txtCodRate"));
+            $('#ddlCodRateType').disable();
+            SetDropDownValue($('#ddlCodRateType'), '');
+            RemoveRequired($('#ddlCodRateType'));
+        }
+    }
+
+    function UseDACCChange() {
+        if ($('#chkUseDACC').is(":checked")) {
+            $('#divUseDacc').show();
+            $('#ddlDaccRateType').enable();
+            $('#ddlDaccRateType').val('');
+            AddRequired($('#ddlDaccRateType'), "Please select DACC Rate Type");
+            AddRange($("#txtDaccRate"), "DACC Rate value greater than 1 and less than 999", 1, 999);
+            AddRange($("#txtMaximumDaccAmount"), "Maximum DACC Amount greater than 1 and less than 9999999999", 1);
+        }
+        else {
+            $('#divUseDacc').hide();
+            $('#ddlDaccRateType').disable();
+            $('#ddlDaccRateType').val('');
+            RemoveRequired($('#ddlDaccRateType'));
+            $('#txtMinimumDaccAmount').val(0);
+            $('#txtMaximumDaccAmount').val(0);
+            RemoveRange($("#txtMaximumDaccAmount"));
+            $('#txtDaccRate').val(0);
+            RemoveRange($("#txtDaccRate"));
+        }
+    }
+
+    function UseOctroiChange() {
+        if ($('#chkUseOctroi').is(":checked")) {
+            $('#divUseOctroi').show();
+            $('#ddlOctroiRateType').enable();
+            $('#ddlOctroiRateType').val('');
+            AddRequired($('#ddlOctroiRateType'), "Please select Octroi Rate Type");
+            AddRange($("#txtOctroiRate"), "Octroi Rate value greater than 1 and less than 999", 1, 999);
+            AddRange($("#txtMaximumOctroiAmount"), "Maximum Octroi Amount greater than 1 and less than 9999999999", 1);
+        }
+        else {
+            $('#divUseOctroi').hide();
+            $('#ddlOctroiRateType').disable();
+            $('#ddlOctroiRateType').val('');
+            RemoveRequired($('#ddlOctroiRateType'));
+            $('#txtMinimumOctroiAmount').val(0);
+            $('#txtMaximumOctroiAmount').val(0);
+            RemoveRange($("#txtMaximumOctroiAmount"));
+            $('#txtOctroiRate').val(0);
+            RemoveRange($("#txtOctroiRate"));
+        }
+    }
+
+    function DeliveryWithoutDemurrageChange() {
+        if ($('#chkUseDeliveryWithoutDemurrage').is(":checked")) {
+            $('#divDumerageInformation').show();
+            $('#divDumerageInfo').show();
+            $('#ddlDemurrageRateType').val('');
+            AddRequired($('#ddlDemurrageRateType'), "Please select Demurrage Rate Type");
+            AddRange($("#txtDemurrageRate"), "Demurrage Rate value less than 999.99", 0.01, 999.99);
+            AddRange($("#txtDemurrageFreeStorageDays"), "Demurrage Free Storage Days greater than 1 and less than 255", 1, 255);
+            AddRange($("#txtMaximumDemurrageAmount"), "Maximum Demurrage Amount greater than 1 and less than 9999999999", 1);
+        }
+        else {
+            $('#divDumerageInformation').hide();
+            $('#divDumerageInfo').hide();
+            $('#txtDemurrageRate').val(0);
+            $('#txtDemurrageFreeStorageDays').val(0);
+            $('#txtMinimumDemurrageAmount').val(0);
+            $('#txtMaximumDemurrageAmount').val(0);
+            RemoveRange($("#txtDemurrageRate"));
+            RemoveRange($("#txtDemurrageFreeStorageDays"));
+            RemoveRange($("#txtMaximumDemurrageAmount"));
+            SetDropDownValue($('#ddlDemurrageRateType'), '');
+            RemoveRequired($('#ddlDemurrageRateType'));
+        }
+    }
+
+    function UseDeferementChange() {
+        if ($('#chkUseDeferement').is(":checked")) {
+            $('#txtDefermentDays').attr("readOnly", false);
+            $('#txtDefermentDays').closest("div").removeClass('readonly');
+            $('#txtDefermentDays').focus();
+            AddRange($("#txtDefermentDays"), "Deferment Days greater than 1 and less than 255", 1, 255);
+        }
+        else {
+            $('#txtDefermentDays').val(0);
+            $('#txtDefermentDays').attr("readOnly", true);
+            RemoveRange($("#txtDefermentDays"));
+        }
+    }
+
+    function UseFreightAsInvoicePercentageChange() {
+        if ($('#chkUseFreightAsInvoicePercentage').is(":checked")) {
+            $('#txtFreightInvoicePercentage').attr("readOnly", false);
+            $('#txtFreightInvoicePercentage').closest("div").removeClass('readonly');
+            $('#txtFreightInvoicePercentage').focus();
+            AddRange($("#txtFreightInvoicePercentage"), "Freight Invoice Percentage greater than 1 and less than 999", 1, 999);
+        }
+        else {
+            $('#txtFreightInvoicePercentage').val(0);
+            $('#txtFreightInvoicePercentage').attr("readOnly", true);
+            RemoveRange($("#txtFreightInvoicePercentage"));
+        }
+    }
+
+    function UseFreightDiscountChange() {
+        if ($('#chkUseFreightDiscount').is(":checked")) {
+            $('#txtFreightDiscountPercentage').attr("readOnly", false);
+            $('#txtFreightDiscountPercentage').focus();
+            AddRange($("#txtFreightDiscountPercentage"), "Freight Discount Percentage greater than 1 and less than 999", 1, 999);
+        }
+        else {
+            $('#txtFreightDiscountPercentage').val(0);
+            $('#txtFreightDiscountPercentage').attr("readOnly", true);
+            RemoveRange($("#txtFreightDiscountPercentage"));
+        }
+    }
+
+    function UseDeliveryReattemptChange() {
+        if ($('#chkUseDeliveryReattempt').is(":checked")) {
+            $('#txtDeliveryReattemptCount').attr("readOnly", false);
+            $('#txtDeliveryReattemptAmount').attr("readOnly", false);
+            $('#txtDeliveryReattemptCount').focus();
+            AddRange($("#txtDeliveryReattemptCount"), "Delivery Reattempt Count greater than 1 and less than 255", 1, 255);
+            AddRange($("#txtDeliveryReattemptAmount"), "Delivery Reattempt Amount greater than 1 and less than 2000", 1, 2000);
+
+
+        }
+        else {
+            $('#txtDeliveryReattemptCount').val(0);
+            $('#txtDeliveryReattemptCount').attr("readOnly", true);
+            RemoveRange($("#txtDeliveryReattemptCount"));
+        }
+    }
+
+    function IsValid(obj) {
+        if (parseInt(obj.val()) > 99) {
+            ShowMessage("You can enter maximum 99 rows");
+            obj.val('');
+            return false;
+        }
+    }
+
+    function InitCarrierRisk() {
+        $('[id*="txtFromFreight"]').each(function () {
+            var txtFromFreight = $(this);
+            var txtToFreight = $('#' + txtFromFreight.attr('id').replace('txtFromFreight', 'txtToFreight'));
+            var ddlRateType = $('#' + txtFromFreight.attr('id').replace('txtFromFreight', 'ddlRateType'));
+            txtFromFreight.blur(function () {
+                try {
+                    IsRangeValid($(this), txtToFreight);
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+            txtFromFreight.blur(function () {
+                try {
+                    IsCarrierRiskRangeIsUsed($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+            txtToFreight.blur(function () {
+                try {
+                    IsRangeValid(txtFromFreight, $(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+            txtToFreight.blur(function () {
+                try {
+                    IsCarrierRiskRangeIsUsed($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+            ddlRateType.change(function () {
+                try {
+                    IsCarrierRiskRangeIsUsed($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    SetDropDownValue($(this), '');
+                    SetFormFieldFocus($(this).attr('id'));
+                }
+            });
+        });
+    }
+
+    function InitOwnerRisk() {
+        $('[id*="txtOwnerFromFreight"]').each(function () {
+            var txtOwnerFromFreight = $(this);
+            var txtOwnerToFreight = $('#' + txtOwnerFromFreight.attr('id').replace('txtOwnerFromFreight', 'txtOwnerToFreight'));
+            var ddlOwnerRateType = $('#' + txtOwnerFromFreight.attr('id').replace('txtOwnerFromFreight', 'ddlOwnerRateType'));
+            txtOwnerFromFreight.blur(function () {
+                try {
+                    IsRangeValid($(this), txtOwnerToFreight);
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+            txtOwnerFromFreight.blur(function () {
+                try {
+                    IsOwnerRiskRangeIsUsed($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+            txtOwnerToFreight.blur(function () {
+                try {
+                    IsRangeValid(txtOwnerFromFreight, $(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+            txtOwnerToFreight.blur(function () {
+                try {
+                    IsOwnerRiskRangeIsUsed($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+            ddlOwnerRateType.change(function () {
+                try {
+                    IsOwnerRiskRangeIsUsed($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    SetDropDownValue($(this), '');
+                    SetFormFieldFocus($(this).attr('id'));
+                }
+            });
+        });
+    }
+    function IsRangeValid(objFrom, objTo) {
+        if (parseFloat(objFrom.val()) > parseFloat(objTo.val()) && parseFloat(objTo.val()) != 0) {
+            ShowMessage("From value should be less then To value.");
+            throw (true);
+        }
+    }
+    function IsCarrierRiskRangeIsUsed(obj) {
+        if (obj.val() != '' && obj.val() != '' && obj.val() != 0) {
+            var outertr = obj.closest('tr');
+            var outerhdnContractId = outertr.find('[id*="hdnContractId"]');
+            outerhdnContractId.val(hdnContractId.val());
+            var outertxtFromFreight = outertr.find('[id*="txtFromFreight"]');
+            var outertxtToFreight = outertr.find('[id*="txtToFreight"]');
+            var outerddlRateType = outertr.find('[id*="ddlRateType"]');
+
+            $('#dtCarrierRisk tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innertxtFromFreight = innertr.find('[id*="txtFromFreight"]');
+                var innertxtToFreight = innertr.find('[id*="txtToFreight"]');
+                var innerddlRateType = innertr.find('[id*="ddlRateType"]');
+
+                if (innertxtFromFreight.attr('id') != outertxtFromFreight.attr('id') &&
+                    parseInt(outertxtFromFreight.val()) <= parseInt(innertxtToFreight.val()) &&
+                    parseInt(innertxtFromFreight.val()) <= parseInt(outertxtToFreight.val()) &&
+                    innerddlRateType.val() == outerddlRateType.val()) {
+                    ShowMessage("Range is already used");
+                    throw (true);
+                }
+            });
+        }
+    }
+
+    function IsOwnerRiskRangeIsUsed(obj) {
+        if (obj.val() != '' && obj.val() != '' && obj.val() != 0) {
+            var outertr = obj.closest('tr');
+            var outerhdnContractId = outertr.find('[id*="hdnContractId"]');
+            outerhdnContractId.val(hdnContractId.val());
+            var outertxtFromFreight = outertr.find('[id*="txtOwnerFromFreight"]');
+            var outertxtToFreight = outertr.find('[id*="txtOwnerToFreight"]');
+            var outerddlRateType = outertr.find('[id*="ddlOwnerRateType"]');
+
+            $('#dtOwnerRisk tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innertxtFromFreight = innertr.find('[id*="txtOwnerFromFreight"]');
+                var innertxtToFreight = innertr.find('[id*="txtOwnerToFreight"]');
+                var innerddlRateType = innertr.find('[id*="ddlOwnerRateType"]');
+
+                if (innertxtFromFreight.attr('id') != outertxtFromFreight.attr('id') &&
+                    parseInt(outertxtFromFreight.val()) <= parseInt(innertxtToFreight.val()) &&
+                    parseInt(innertxtFromFreight.val()) <= parseInt(outertxtToFreight.val()) &&
+                    innerddlRateType.val() == outerddlRateType.val()) {
+                    ShowMessage("Range is already used");
+                    throw (true);
+                }
+            });
+        }
+    }
+
+    function ValidateMultiCheckBox(partialId, entityName) {
+        var selected = false, firstCheckBox = null;
+        $('[id*="' + partialId + '"]').each(function () {
+            if (firstCheckBox == null)
+                firstCheckBox = $(this);
+            if ($(this).is(':checked'))
+                selected = true;
+        });
+        if (!selected) {
+            ShowMessage("Please select at-least one " + entityName);
+            firstCheckBox.focus();
+            return false;
+        }
+        return true;
+    }
+
+    function OnRiskTypeChange() {
+        $('#dvCarrierRisk').showHide($('#rdCarrierRisk').IsChecked);
+        $('#dvCarrierRiskDetails').showHide($('#rdCarrierRisk').IsChecked);
+        $('#dvOwnerRisk').showHide(!$('#rdCarrierRisk').IsChecked);
+        $('#dvOwnerRiskDetails').showHide(!$('#rdCarrierRisk').IsChecked);
+    }
+
+    function ValidateOnSubmit() {
+
+        if (!ValidateMultiCheckBox('chkTransportMode', 'Transport Mode')) return false;
+        if (!ValidateMultiCheckBox('chkServiceType', 'Service Type')) return false;
+        if (!ValidateMultiCheckBox('chkRateTypes', 'Rate Type')) return false;
+        if (!ValidateMultiCheckBox('chkMatrices', 'Matrix')) return false;
+        if (!ValidateMultiCheckBox('chkPickupDelivery', 'Pickup Delivery')) return false;
+        var isCustomerContract = $('#hdnIsCustomerContract').val();
+    }
+
+    function OnPopUpClick() {
+        var popup;
+        popup = window.open("../../CustomerContract/PopUp?contractId=" + hdnContractId.val(), "Popup", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=600,width=1300,height=650");
+        popup.focus();
+        return false;
+    }
+
+</script>

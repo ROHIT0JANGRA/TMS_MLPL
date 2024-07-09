@@ -1,0 +1,714 @@
+﻿@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@model GstGeneration
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+
+    $(document).ready(function () {
+        GstRateUrl = '@Url.Action("")';
+        customerContractMasterUrl = '@Url.Action("", "CustomerContract", new { Area = "Contract" })';
+        UnionMasterUrl = '@Url.Action("", "State", new { Area = "Master" })';
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        serviceTypeId = '@ViewBag.ServiceTypeId';
+        vehicleMasterUrl = '@Url.Action("", "Vehicle", new { Area = "Master" })';
+    });
+</script>
+<script src="~/Areas/Finance/views/Customerbill/MiscellaneousBill.js?version=@DateTime.Now.Ticks"></script>
+@using (Html.BeginForm("MiscellaneousBill", "CustomerBill", FormMethod.Post, new { @class = "j-forms j-multistep", @id = "j-forms" }))
+{
+    @Html.AntiModelInjectionFor(m => m.BillId)
+    @Html.HiddenFor(m => m.BillId, new { @id = "hdnBillId" })
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div class="page-separator">Invoice Details</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillNo, new { @class = "label" })
+                    <div class="system-label">
+                        @Html.Label("<System Generated>")
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "BillDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.BillDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "DueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DueDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = false })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.LabelFor(model => model.CustomerName, Model.CustomerName, new { @class = "label-bold", @id = "lblCustomer" })
+                    @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                    @Html.HiddenFor(model => model.CustomerCode, new { @id = "hdnCustomerCode" })
+                    @Html.HiddenFor(model => model.PaybasId, new { @id = "hdnPaybasId" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ManualBillNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ManualBillNo, null, new { @class = "form-control", @id = "txtManualBillNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ManualBillNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txtRemarks" })
+                        @Html.HiddenFor(model => model.Ugst, new { @id = "hdnUgst" })
+                        @Html.HiddenFor(model => model.Cgst, new { @id = "hdnCgst" })
+                        @Html.HiddenFor(model => model.Sgst, new { @id = "hdnSgst" })
+                        @Html.HiddenFor(model => model.Igst, new { @id = "hdnIgst" })
+                        @Html.HiddenFor(model => model.UgstPercentage, new { @id = "hdnUgstPercentage" })
+                        @Html.HiddenFor(model => model.CgstPercentage, new { @id = "hdnCgstPercentage" })
+                        @Html.HiddenFor(model => model.SgstPercentage, new { @id = "hdnSgstPercentage" })
+                        @Html.HiddenFor(model => model.IgstPercentage, new { @id = "hdnIgstPercentage" })
+                        @Html.HiddenFor(model => model.IsInterState, new { @id = "hdnIsInterState" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Remarks)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GenerationState, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(m => m.GenerationStateId, new { @id = "hdnBillGenerationStateId" })
+                        @Html.HiddenFor(m => m.CompanyGstId, new { @id = "hdnCompanyGstId" })
+                        @Html.LabelFor(m => m.GenerationState, Model.GenerationState, new { @id = "lblBillGenerationState", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GenerationCity, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(m => m.GenerationCityId, new { @id = "hdnBillGenerationCityId" })
+                        @Html.LabelFor(m => m.GenerationCity, Model.GenerationCity, new { @id = "lblBillGenerationCity", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CustomerGstStateGstTinNo, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.CustomerGstStateGstTinNo, Model.CustomerGstStateGstTinNo, new { @id = "lblCustomerGstStateGstTinNo", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SubmissionState, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.SubmissionState, Model.SubmissionState, new { @id = "lblBillSubmissionState", @class = "label-bold" })
+                        @Html.HiddenFor(m => m.SubmissionStateId, new { @id = "hdnBillSubmissionStateId" })
+                        @Html.HiddenFor(m => m.PartyGstId, new { @id = "hdnPartyGstId" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SubmissionCity, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(m => m.SubmissionCityId, new { @id = "hdnBillSubmissionCityId" })
+                        @Html.LabelFor(m => m.SubmissionCity, Model.SubmissionCity, new { @id = "lblBillSubmissionCity", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CompanyGstStateGstTinNo, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.CompanyGstStateGstTinNo, Model.CompanyGstStateGstTinNo, new { @id = "lblCompanyGstStateGstTinNo", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SubmissionLocationCode, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(m => m.SubmissionLocationId, new { @id = "hdnBillSubmissionStateId" })
+                        @Html.LabelFor(m => m.SubmissionLocationCode, " ", new { @id = "lblBillSubmissionLocationCode", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CollectionLocationId, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(m => m.CollectionLocationId, new { @id = "hdnBillCollectionLocationId" })
+                        @Html.LabelFor(m => m.CollectionLocationCode, " ", new { @id = "lblBillCollectionLocationCode", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (@ViewBag.ServiceTypeId == 4)
+        {
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VehicleId, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                            @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "txtVehicleNo" })
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(m => Model.VehicleNo)
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VendorName, "Transporter Name", new { @class = "label" })
+                        <div class="clearfix">
+                        </div>
+                        @Html.LabelFor(model => model.VendorName, " ", new { @class = "label-bold", @id = "lblVendorName" })
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="page-separator">Charged Details</div>
+        <div class="row">
+            @if (@ViewBag.ServiceTypeId == 1)
+            {
+                <table id="dtGstSubBill">
+                    <thead>
+                        <tr>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].AccountCode)</th>
+                            <th></th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstSacId)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Narration)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].IsRcm)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Amount)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstRate)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstAmount)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstCharge)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].TotalAmount)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.CustomerBillSupplementryDetail.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].AccountId, new { @id = "hdnAccountId" + i })
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].AccountCode, new { @class = "form-control input-small", @id = "txtAccountCode" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].AccountCode)
+                                </td>
+                                <td>
+                                    @Html.Label("AccountDescription", " ", new { @class = "label-bold", @id = "lblAccountDescription" + i })
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].GstSacId, new { @id = "hdnSacId" + i })
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].ServiceTypeId, new { @id = "hdnServiceTypeId" + i })
+                                    <div class="select">
+                                        @Html.DropDownListFor(m => Model.CustomerBillSupplementryDetail[i].GstSacId, new SelectList(ViewBag.SacList, "Value", "Name", Model.CustomerBillSupplementryDetail[i].GstSacId), "Select SAC", new { @class = "form-control", @id = "ddlSAC" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].GstSacId)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Narration, new { @class = "form-control ", @id = "txtNarration" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Narration)
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].IsRcm, new { @id = "hdnIsRcm" + i.ToString() })
+                                    @Html.Label("lblIsRcm", "NO", new { @class = "label", @id = "lblIsRcm" + i })
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Amount, "0", new { @class = "form-control numeric", @id = "txtAmount" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Amount)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstRate, "0.00", new { @class = "form-control numeric2 textlabel", @id = "txtGstRate" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstAmount, "0", new { @class = "form-control numeric textlabel", @id = "txtGstAmount" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstCharge, "0", new { @class = "form-control numeric textlabel", @id = "txtGstCharge" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].TotalAmount, "0", new { @class = "form-control numeric textlabel", @id = "txtTotalAmt" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else if (@ViewBag.ServiceTypeId == 2)
+            {
+                <table id="dtGstSubBill">
+                    <thead>
+                        <tr>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].AccountCode)</th>
+                            <th></th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Narration)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].AreaSize)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].WarehouseId)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstSacId)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].IsRcm)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Amount)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstRate)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstAmount)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstCharge)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].TotalAmount)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.CustomerBillSupplementryDetail.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].AccountId, new { @id = "hdnAccountId" + i })
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].AccountCode, new { @class = "form-control input-small", @id = "txtAccountCode" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].AccountCode)
+                                </td>
+                                <td>
+                                    @Html.Label("AccountDescription", " ", new { @class = "label-bold", @id = "lblAccountDescription" + i })
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Narration, new { @class = "form-control ", @id = "txtNarration" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Narration)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].AreaSize, new { @class = "form-control ", @id = "txtAreaSize" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].AreaSize)
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(m => Model.CustomerBillSupplementryDetail[i].WarehouseId, new SelectList(ViewBag.WarehouseList, "Value", "Name", Model.CustomerBillSupplementryDetail[i].WarehouseId), "Select Warehouse", new { @class = "form-control", @id = "ddlWarehouseId" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].WarehouseId)
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].GstSacId, new { @id = "hdnSacId" + i })
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].ServiceTypeId, new { @id = "hdnServiceTypeId" + i })
+                                    <div class="select">
+                                        @Html.DropDownListFor(m => Model.CustomerBillSupplementryDetail[i].GstSacId, new SelectList(ViewBag.SacList, "Value", "Name", Model.CustomerBillSupplementryDetail[i].GstSacId), "Select SAC", new { @class = "form-control", @id = "ddlSAC" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].GstSacId)
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].IsRcm, new { @id = "hdnIsRcm" + i.ToString() })
+                                    @Html.Label("lblIsRcm", "NO", new { @class = "label", @id = "lblIsRcm" + i })
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Amount, "0", new { @class = "form-control numeric", @id = "txtAmount" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Amount)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstRate, "0.00", new { @class = "form-control numeric2 textlabel", @id = "txtGstRate" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstAmount, "0", new { @class = "form-control numeric textlabel", @id = "txtGstAmount" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstCharge, "0", new { @class = "form-control numeric textlabel", @id = "txtGstCharge" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].TotalAmount, "0", new { @class = "form-control numeric textlabel", @id = "txtTotalAmt" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else if (@ViewBag.ServiceTypeId == 3)
+            {
+                <table id="dtGstSubBill">
+                    <thead>
+                        <tr>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].AccountCode)</th>
+                            <th></th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Narration)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Quantity)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Packages)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstSacId)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].IsRcm)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Amount)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstRate)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstAmount)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstCharge)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].TotalAmount)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.CustomerBillSupplementryDetail.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].AccountId, new { @id = "hdnAccountId" + i })
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].AccountCode, new { @class = "form-control input-small", @id = "txtAccountCode" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].AccountCode)
+                                </td>
+                                <td>
+                                    @Html.Label("AccountDescription", " ", new { @class = "label-bold", @id = "lblAccountDescription" + i })
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Narration, new { @class = "form-control ", @id = "txtNarration" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Narration)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Quantity, new { @class = "form-control numeric", @id = "txtQuantity" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Quantity)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Packages, new { @class = "form-control numeric", @id = "txtPackages" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Packages)
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].GstSacId, new { @id = "hdnSacId" + i })
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].ServiceTypeId, new { @id = "hdnServiceTypeId" + i })
+                                    <div class="select">
+                                        @Html.DropDownListFor(m => Model.CustomerBillSupplementryDetail[i].GstSacId, new SelectList(ViewBag.SacList, "Value", "Name", Model.CustomerBillSupplementryDetail[i].GstSacId), "Select SAC", new { @class = "form-control", @id = "ddlSAC" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].GstSacId)
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].IsRcm, new { @id = "hdnIsRcm" + i.ToString() })
+                                    @Html.Label("lblIsRcm", "NO", new { @class = "label", @id = "lblIsRcm" + i })
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Amount, "0", new { @class = "form-control numeric", @id = "txtAmount" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Amount)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstRate, "0.00", new { @class = "form-control numeric2 textlabel", @id = "txtGstRate" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstAmount, "0", new { @class = "form-control numeric textlabel", @id = "txtGstAmount" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstCharge, "0", new { @class = "form-control numeric textlabel", @id = "txtGstCharge" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].TotalAmount, "0", new { @class = "form-control numeric textlabel", @id = "txtTotalAmt" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else if (@ViewBag.ServiceTypeId == 4)
+            {
+                <table id="dtGstSubBill">
+                    <thead>
+                        <tr>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].AccountCode)</th>
+                            <th></th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].ItemDescription)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Narration)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Quantity)</th>
+                            @*<th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Packages)</th>*@
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].HsnId)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].IsRcm)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Amount)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstRate)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstAmount)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstCharge)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].TotalAmount)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.CustomerBillSupplementryDetail.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].AccountId, new { @id = "hdnAccountId" + i })
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].AccountCode, new { @class = "form-control input-small", @id = "txtAccountCode" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].AccountCode)
+                                </td>
+                                <td>
+                                    @Html.Label("AccountDescription", " ", new { @class = "label-bold", @id = "lblAccountDescription" + i })
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].ItemDescription, new { @class = "form-control ", @id = "txtItemDescription" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].ItemDescription)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Narration, new { @class = "form-control ", @id = "txtNarration" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Narration)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Quantity, new { @class = "form-control numeric", @id = "txtQuantity" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Quantity)
+                                </td>
+                                @*<td>
+                                        <div class="input">
+                                            @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Packages, new { @class = "form-control numeric", @id = "txtPackages" + i.ToString() })
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Packages)
+                                    </td>*@
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(m => Model.CustomerBillSupplementryDetail[i].HsnId, new SelectList(ViewBag.HsnList, "Value", "Name", Model.CustomerBillSupplementryDetail[i].HsnId), "Select HSN", new { @class = "form-control", @id = "ddlHsnId" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].HsnId)
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].IsRcm, new { @id = "hdnIsRcm" + i.ToString() })
+                                    @Html.Label("lblIsRcm", "NO", new { @class = "label", @id = "lblIsRcm" + i })
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Amount, "0", new { @class = "form-control numeric", @id = "txtAmount" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Amount)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstRate, "0.00", new { @class = "form-control numeric2", @id = "txtGstRate" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstAmount, "0", new { @class = "form-control numeric textlabel", @id = "txtGstAmount" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstCharge, "0", new { @class = "form-control numeric textlabel", @id = "txtGstCharge" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].TotalAmount, "0", new { @class = "form-control numeric textlabel", @id = "txtTotalAmt" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else if (@ViewBag.ServiceTypeId == 5)
+            {
+                <table id="dtGstSubBill">
+                    <thead>
+                        <tr>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].AccountCode)</th>
+                            <th></th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].VehicleId)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Km)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].PurchaseValue)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].PurchaseDate)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].DepreciationValue)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Narration)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].TcsAmount)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Cess)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].IsNocDeclare)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].HsnId)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].IsRcm)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].Amount)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstRate)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstAmount)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].GstCharge)</th>
+                            <th>@Html.LabelFor(m => m.CustomerBillSupplementryDetail[0].TotalAmount)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.CustomerBillSupplementryDetail.Count; i++)
+                        {
+                            var item = Model.CustomerBillSupplementryDetail.ToList()[i];
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].AccountId, new { @id = "hdnAccountId" + i })
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].AccountCode, new { @class = "form-control input-small", @id = "txtAccountCode" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].AccountCode)
+                                </td>
+                                <td>
+                                    @Html.Label("AccountDescription", " ", new { @class = "label-bold", @id = "lblAccountDescription" + i })
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(m => Model.CustomerBillSupplementryDetail[i].VehicleId, new SelectList(ViewBag.VehicleList, "Value", "Name", Model.CustomerBillSupplementryDetail[i].VehicleId), "Select Vehicle", new { @class = "form-control", @id = "ddlVehicleId" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].VehicleId)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Km, new { @class = "form-control numeric", @id = "txtKm" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Km)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].PurchaseValue, new { @class = "form-control numeric", @id = "txtPurchaseValue" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].PurchaseValue)
+                                </td>
+                                <td>
+                                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CustomerBillSupplementryDetail[" + i + "].PurchaseDate", FieldCaption = @Html.DisplayNameFor(m => item.PurchaseDate).ToString(), UseFieldCaption = false, IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true })
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].DepreciationValue, new { @class = "form-control numeric", @id = "txtDepreciationValue" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].DepreciationValue)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Narration, new { @class = "form-control ", @id = "txtNarration" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Narration)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].TcsAmount, "0", new { @class = "form-control numeric", @id = "txtTcsAmount" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].TcsAmount)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Cess, "0", new { @class = "form-control numeric", @id = "txtCess" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Cess)
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <label class="checkbox">
+                                            @Html.CheckBoxFor(model => Model.CustomerBillSupplementryDetail[i].IsNocDeclare, new { @id = "chkIsNocDeclare" + i.ToString() })
+                                            <i></i>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(m => Model.CustomerBillSupplementryDetail[i].HsnId, new SelectList(ViewBag.HsnList, "Value", "Name", Model.CustomerBillSupplementryDetail[i].HsnId), "Select HSN", new { @class = "form-control", @id = "ddlHsnId" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].HsnId)
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => Model.CustomerBillSupplementryDetail[i].IsRcm, new { @id = "hdnIsRcm" + i.ToString() })
+                                    @Html.Label("lblIsRcm", "NO", new { @class = "label", @id = "lblIsRcm" + i })
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].Amount, "0", new { @class = "form-control numeric", @id = "txtAmount" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.CustomerBillSupplementryDetail[i].Amount)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstRate, "0.00", new { @class = "form-control numeric2", @id = "txtGstRate" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstAmount, "0", new { @class = "form-control numeric textlabel", @id = "txtGstAmount" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].GstCharge, "0", new { @class = "form-control numeric textlabel", @id = "txtGstCharge" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.CustomerBillSupplementryDetail[i].TotalAmount, "0", new { @class = "form-control numeric textlabel", @id = "txtTotalAmt" + i.ToString() })
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0">Generate</button>
+        </div>
+
+    </div>
+}

@@ -1,0 +1,117 @@
+﻿@model IEnumerable<CodeLock.Models.MasterCard>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtCard">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(m => m.CardNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.CardType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.Vehicle)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(m => m.IsActive)
+                </th>
+                <th>Edit</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.IssueDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.ExpiryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.AccountId)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.CardLimit)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.BalanceAmount)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+            </tr>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <th>
+                        @Html.DisplayFor(m => item.CardNo)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(m => item.CardType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.Vehicle)
+                    </td>
+                    <td>
+                        @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Insert", new { id = item.CardId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.CardId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @item.IssueDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @item.ExpiryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.AccountCode)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.CardLimit)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.BalanceAmount)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Card', 'List', '', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtCard', true, true, true);
+        $('[id=dtCard_filter]').find('input').focus();
+    });
+</script>
+
+
+

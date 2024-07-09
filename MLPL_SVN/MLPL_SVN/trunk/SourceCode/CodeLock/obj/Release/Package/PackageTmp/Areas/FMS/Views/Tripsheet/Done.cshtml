@@ -1,0 +1,131 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+    <div id="dvTripsheetDetails">
+        <div class="col-sm-3">
+            <h4>Tripsheet No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return ViewReport();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+        <div id="dvVoucher">
+            <div class="col-sm-3">
+                <h4>@Html.Label("Voucher No", new { @class = "label" })</h4>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblVoucherNo", @for = "VoucherNo", @class = "label-bold" })
+                @Html.Hidden("hdnVoucherId")
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var status = "";
+    $(document).ready(function () {
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        spnMassage = $('#spnMassage');
+
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+        status = GetUrlValue()["status"];
+        var voucherNo = GetUrlValue()["voucherNo"];
+        $('#lblVoucherNo').html(GetUrlValue()["voucherNo"]);
+        $('#dvVoucher').showHide(voucherNo != null && voucherNo != '')
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        if (status == "GenerationDone") {
+            spnMassage.text("Tripsheet is Generated Successfully");
+            SetPageLoad('Tripsheet', 'Done', '', 'Add New', '@Url.Action("Insert")');
+        }
+        else if (status == "ClosureDone") {
+            spnMassage.text("Tripsheet is Closed Successfully");
+            SetPageLoad('Tripsheet', 'Close Done', '', 'Add New', '@Url.Action("Closure")');
+        }
+        else if (status == "DriverSettlementDone") {
+            spnMassage.text(" Settlement Done Successfully");
+            SetPageLoad('Tripsheet', 'Driver Settlement Done', '', 'Add New', '@Url.Action("DriverSettlement")');
+        }
+        else if (status == "DriverAdvanceDone") {
+            spnMassage.text("Driver Advance Done Successfully");
+            SetPageLoad('Tripsheet', 'Driver Advance Done', '', 'Add New', '@Url.Action("DriverAdvance")', 'Fuel Slip Entry', '@Url.Action("FuelSlipEntry")');
+        }
+        else if (status == "ExpectedExpenseDone") {
+            spnMassage.text("Tripsheet Expected Expense Done Successfully");
+            SetPageLoad('Tripsheet', 'Expected Expense Done', '', 'Add New', '@Url.Action("ExpectedExpenseEntry")');
+            $('#dvTripsheetDetails').hide();
+        }
+        else if (status == "CancellationDone") {
+            spnMassage.text("Tripsheet Cancelled Successfully");
+            SetPageLoad('Cancellation', 'Done', '', 'Go To Cancellation', '@Url.Action("Cancellation")');
+            $('#dvTripsheetDetails').hide();
+        }
+        else if (status == "FuelSlipEntryDone") {
+            spnMassage.text("Fuel Slip Generated Successfully");
+            SetPageLoad('Tripsheet', 'Fuel Slip Done', '', 'Add New', '@Url.Action("FuelSlipEntry")');
+        }
+        else if (status == "ExpectedDriverAdvanceDone") {
+            spnMassage.text("Expected Driver Advance Successfully inserted");
+            SetPageLoad('Tripsheet', 'Expected Driver Advance', '', 'Add New', '@Url.Action("ExpectedDriverAdvance")');
+        }
+         else if (status == "AdvanceCancellationDone") {
+            spnMassage.text("Tripsheet Driver Advance Cancelled Successfully");
+            SetPageLoad('Advance Cancellation', 'Done', '', 'Go To Advance Cancellation', '@Url.Action("AdvanceCancellation")');
+            $('#dvTripsheetDetails').hide();
+        }
+        else if (status == "MilkRunLog") {
+            spnMassage.text("Milk Run Log Updated Successfully");
+            SetPageLoad('Milk Run Log', 'Done', '', 'Go To Update Milk Run Log', '@Url.Action("TripBillMilkRun")');
+            $('#dvTripsheetDetails').hide();
+        }
+         else if (status == "TripsheetSettlementCancellationDone") {
+            spnMassage.text(" Tripsheet Settlement Cancellation Done Successfully");
+            SetPageLoad('Tripsheet', 'Tripsheet Settlement Cancellation Done', '', 'Add New', '@Url.Action("TripsheetSettlementCancellation")');
+            $('#dvTripsheetDetails').hide();
+        }
+        else if (status == "TripsheetFuelSlipCancellationDone") {
+            spnMassage.text("Tripsheet fuel Slip is Cancelled Successfully");
+            SetPageLoad('Tripsheet Fuel Slip Cancellation', 'Done', '', 'Go To Fuel Slip Cancellation', '@Url.Action("TripsheetFuelSlipCancellation")');
+            $('#dvTripsheetDetails').hide();
+        }
+    }
+
+    function ViewReport() {
+        var prmList = [{ Name: "TripsheetId", Value: hdnDocumentId.val() }];
+        if (status == "GenerationDone") {
+            var reportInfo = { PrmList: prmList, Name: 'TripsheetView', Description: 'Tripsheet View' };
+            return ShowReport(reportInfo);
+        }
+        else if (status == "ClosureDone") {
+            var reportInfo = { PrmList: prmList, Name: 'TripsheetView', Description: 'Tripsheet View' };
+            return ShowReport(reportInfo);
+        }
+        else if (status == "DriverSettlementDone") {
+            var reportInfo = { PrmList: prmList, Name: 'DriverSettlementView', Description: 'Driver Settlement View' };
+            return ShowReport(reportInfo);
+        }
+        else if (status == "DriverAdvanceDone") {
+            var reportInfo = { PrmList: prmList, Name: 'DriverAdvanceView', Description: 'Driver Advance View' };
+            return ShowReport(reportInfo);
+        }
+        else if (status == "MilkRunLog") {
+            var reportInfo = { PrmList: prmList, Name: 'TripsheetView', Description: 'Tripsheet View' };
+            return ShowReport(reportInfo);
+        }
+    }
+</script>

@@ -1,0 +1,34 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><h5><span id="spnMassage">Bill is Generated Successfully</span></h5></div>
+    <div class="col-sm-3">
+        <h4>Bill No</h4>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+            @Html.Hidden("hdnDocumentId")
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <button onclick="return ViewReport(this);" class="btn btn-info">
+            <i class="fa fa-eye"></i>
+        </button>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Tripsheet Bill Generation', 'Done', '', 'Go To Bill Generation', '@Url.Action("BillGeneration")');
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+    });
+
+    function ViewReport() {
+        return false;
+    }
+</script>

@@ -1,0 +1,139 @@
+﻿@model CodeLock.Models.GstBillRegister
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("GstBillRegister", "Finance", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Label("Bill Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drBillDate"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CompanyGstStateId, new { @class = "label" })
+                    @Html.DropDownListFor(model => model.CompanyGstStateId, new SelectList(ViewBag.StateList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlCompanyGstStateId", @multiple = "multiple", @placeholder = "Select Company Gst State" })
+                    @Html.ValidationMessageFor(model => model.CompanyGstStateId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillTypeId, new { @class = "label" })
+                    @Html.DropDownListFor(model => model.BillTypeId, new SelectList(ViewBag.BillTypeList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlBillTypeId", @multiple = "multiple", @placeholder = "Select Bill Type" })
+                    @Html.ValidationMessageFor(model => model.BillTypeId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SacId, new { @class = "label" })
+                    @Html.DropDownListFor(model => model.SacId, new SelectList(ViewBag.SacList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlSacId", @multiple = "multiple", @placeholder = "Select Sac" })
+                    @Html.ValidationMessageFor(model => model.SacId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                        @Html.TextBoxFor(model => model.CustomerCode, new { @class = "form-control", @id = "txtCustomerCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GstRate, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.GstRate, new SelectList(ViewBag.GstRateList, "Value", "Name"), "All", new { @class = "form-control", @id = "ddlGstRate" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BillNo, new { @class = "form-control", @id = "txtBillNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BillNo)
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", "Manual Bill No", new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBox("txtManualBillNo", null, new { @class = "form-control", @id = "txtManualBillNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var ddlCompanyGstStateId, ddlBillTypeId, ddlSacId, hdnCustomerId, txtCustomerCode, lblCustomerName, txtBillNo, txtManualBillNo, btnSubmit;
+
+    $(document).ready(function () {
+        SetPageLoad('GST', 'Bill Register', '', '', '');
+
+        ddlCompanyGstStateId = $('#ddlCompanyGstStateId');
+        ddlBillTypeId = $('#ddlBillTypeId');
+        ddlSacId = $('#ddlSacId');
+        hdnCustomerId = $('#hdnCustomerId');
+        txtCustomerCode = $('#txtCustomerCode');
+        lblCustomerName = $('#lblCustomerName');
+        txtBillNo = $('#txtBillNo');
+        txtManualBillNo = $('#txtManualBillNo');
+        ddlGstRate = $('#ddlGstRate');
+        btnSubmit = $('#btnSubmit');
+
+        drBillDate = InitDateRange('drBillDate', DateRange.LastWeek);
+        InitMultiSelect(ddlCompanyGstStateId.Id, true, true);
+        InitMultiSelect(ddlBillTypeId.Id, true, true);
+        InitMultiSelect(ddlSacId.Id, true, true);
+        btnSubmit.click(ViewReport);
+
+        CustomerAutoComplete(txtCustomerCode.Id, hdnCustomerId.Id);
+        txtCustomerCode.blur(function () { IsCustomerCodeExist(txtCustomerCode, hdnCustomerId, lblCustomerName) });
+    });
+
+    function ViewReport() {
+        var prmList = [{ Name: "FromDate", Value: $.displayDate(drBillDate.startDate)  },
+                       { Name: "ToDate", Value: $.displayDate(drBillDate.endDate)  },
+                       { Name: "CompanyGstStateId", Value: ddlCompanyGstStateId.multiVal() },
+                       { Name: "BillTypeId", Value: ddlBillTypeId.multiVal() },
+                       { Name: "SacId", Value: ddlSacId.multiVal() },
+                       { Name: "GstRate", Value: ddlGstRate.val() == '' ? 100 : ddlGstRate.val() },
+                       { Name: "CustomerId", Value: txtCustomerCode.val() == '' ? 0 : hdnCustomerId.val() },
+                       { Name: "BillNo", Value: txtBillNo.val() == '' ? ' ' : txtBillNo.val() },
+                       { Name: "ManualBillNo", Value: txtManualBillNo.val() == '' ? ' ' : txtManualBillNo.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'GstBillRegister', Description: 'GST Bill Register' };
+        return ShowReport(reportInfo);
+    }
+</script>

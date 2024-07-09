@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Validators xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Validator Type="Docket">
+    <Property Name="BusinessTypeId" Required="true" ErrorMessage="Please enter Business Type" />
+    <Property Name="ChassisNo" ErrorMessage="Please enter Chassis No" />
+    <Property Name="Consignee" ErrorMessage="Please enter Consignee" />
+    <Property Name="ConsigneeCstNo" ErrorMessage="Please enter Consignee CST No" />
+    <Property Name="ConsigneeEmailId" ErrorMessage="Please enter Consignee Email Id" />
+    <Property Name="ConsigneeGstTinNo" Required="true" ErrorMessage="Please enter Consignee GST Tin No" />
+    <Property Name="ConsigneeMobileNo" ErrorMessage="Please enter Consignee Mobile No" />
+    <Property Name="Consignor" ErrorMessage="Please enter Consignor" />
+    <Property Name="ConsignorCstNo" ErrorMessage="Please enter Consignor CST No" />
+    <Property Name="ConsignorEmailId" ErrorMessage="Please enter Consignor Email Id" />
+    <Property Name="ConsignorGstTinNo" Required="true" ErrorMessage="Please enter Consignor GST Tin No" />
+    <Property Name="ConsignorMobileNo" ErrorMessage="Please enter Consignor Mobile No" />
+    <Property Name="CustomerDeliveryNo" ErrorMessage="Please enter Customer Delivery No" />
+    <Property Name="CustomerGatepassNo" ErrorMessage="Please enter Customer Gatepass No" />
+    <Property Name="CustomerReferenceDate" ErrorMessage="Please enter Customer Reference Date" />
+    <Property Name="CustomerReferenceNo" ErrorMessage="Please enter Order No" />
+    <Property Name="DivisionId" ErrorMessage="Please enter Division" />
+    <Property Name="Docket" ErrorMessage="Please enter LR" />
+    <Property Name="DocketDateTime" Required="true" ErrorMessage="Please enter LR Date Time" />
+    <Property Name="DocketNo" Required="true" ErrorMessage="Please enter LR No" />
+    <Property Name="EngineNo" ErrorMessage="Please enter Engine No" />
+    <Property Name="EntrysheetNo" ErrorMessage="Please enter Entrysheet No" />
+    <Property Name="FromCity" Required="true" ErrorMessage="Please enter From City" />
+    <Property Name="FromLocation" Required="true" ErrorMessage="Please enter Origin" />
+    <Property Name="GpsNo" ErrorMessage="Please enter GPS No" />
+    <Property Name="IndustryId" ErrorMessage="Please enter Industry" />
+    <Property Name="InternalCovers" ErrorMessage="Please enter Interna lCovers." />
+    <Property Name="LoadTypeId" ErrorMessage="Please enter Load Type" />
+    <Property Name="Local" ErrorMessage="Please enter Local." />
+    <Property Name="LocalServiceTaxRegisterNo" ErrorMessage="Please enter Local Service Tax Register No" />
+    <Property Name="ModelNo" ErrorMessage="Please enter Model No" />
+    <Property Name="ModvatCovers" ErrorMessage="Please enter Modvat Covers." />
+    <Property Name="MotherDocketNo" ErrorMessage="Please enter Mother LR No" />
+    <Property Name="ObdNo" ErrorMessage="Please enter OBD No" />
+    <Property Name="PackagingTypeId" ErrorMessage="Please enter Packaging Type." />
+    <Property Name="PolicyDate" ErrorMessage="Please enter Policy Date." />
+    <Property Name="PolicyNo" ErrorMessage="Please enter Policy No." />
+    <Property Name="PrivateMark" ErrorMessage="Please enter Private Mark" />
+    <Property Name="ProductTypeId" ErrorMessage="Please enter Content" />
+    <Property Name="Remarks" ErrorMessage="Please enter Description" />
+    <Property Name="RiskType" Required="true" ErrorMessage="Please enter Risk Type" />
+    <Property Name="ServiceTaxRegisterNo" ErrorMessage="Please enter Service Tax Register No" />
+    <Property Name="ToCity" Required="true" ErrorMessage="Please enter To City" />
+    <Property Name="ToLocation" Required="true" ErrorMessage="Please enter Destination" />
+    <Property Name="TPNo" ErrorMessage="Please enter TP No" />
+  </Validator>
+</Validators>

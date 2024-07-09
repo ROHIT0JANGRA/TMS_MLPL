@@ -1,0 +1,113 @@
+﻿@model CodeLock.Models.VendorContractCityBased
+
+@{
+    ViewBag.Title = "CityBasedCriteria";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("CityBasedCriteria", "VendorContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.ContractId, new { @id = "hdnContractId" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name"), new { @class = "form-control", @id = "ddlTransportModeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TransportModeId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FtlTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.FtlTypeId, new SelectList(ViewBag.FtlTypeList, "Value", "Name"), new { @class = "form-control", @id = "ddlFtlTypeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FtlTypeId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VehicleId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlVehicleId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromCityName, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.FromCityId, new { @id = "hdnFromCityId" })
+                        @Html.TextBoxFor(model => model.FromCityName, new { @class = "form-control", @id = "txtFromCityName" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToCityName, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.ToCityId, new { @id = "hdnToCityId" })
+                        @Html.TextBoxFor(model => model.ToCityName, new { @class = "form-control", @id = "txtToCityName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button id="btnSubmit" type="submit" class="btn btn-success primary-btn">Submit</button>
+        </div>
+    </div>
+}
+<script>
+    var btnSubmit, hdnContractId, hdnFromCityId, hdnToCityId, txtFromCityName, txtToCityName, ddlTransportModeId, ddlFtlTypeId;
+    $(document).ready(function () {
+        SetPageLoad('Vendor Contract', 'City Based', 'txtFromCityName', 'Go To Step Selection', '@Url.Action("StepSelection", new { contractId = Model.ContractId, vendorTypeId = Model.VendorTypeId })');
+
+        btnSubmit = $('#btnSubmit');
+        hdnContractId = $('#hdnContractId');
+        hdnFromCityId = $('#hdnFromCityId');
+        txtFromCityName = $('#txtFromCityName');
+        hdnToCityId = $('#hdnToCityId');
+        txtToCityName = $('#txtToCityName');
+        ddlTransportModeId = $('#ddlTransportModeId');
+        ddlFtlTypeId = $('#ddlFtlTypeId');
+        //AddFirstItemDropDownList(ddlTransportModeId, '0', 'All');
+        //AddFirstItemDropDownList(ddlFtlTypeId, '0', 'All');
+        btnSubmit.click(OnSubmit);
+        CityAutoComplete('txtFromCityName', 'hdnFromCityId', 'From City');
+        CityAutoComplete('txtToCityName', 'hdnToCityId', 'To City');
+        txtFromCityName.blur(function () { return IsCityNameExist(txtFromCityName, hdnFromCityId, 'From City'); });
+        txtToCityName.blur(function () { return IsCityNameExist(txtToCityName, hdnToCityId, 'To City'); });
+        RemoveRequired(txtFromCityName);
+        RemoveRequired(txtToCityName);
+        ddlFtlTypeId.change(OnFtlTypeChange);
+        OnFtlTypeChange();
+    });
+
+    function OnFtlTypeChange() {
+        if (ddlFtlTypeId.val() != "") {
+            var requestData = { ftlTypeId: ddlFtlTypeId.val(), vendorId: '@Html.Raw(@ViewBag.VendorId)' };
+            AjaxRequestWithPostAndJson('@Url.Action("GetVehicleByVendorIdFtlTypeId", "Vehicle", new { @Area = "Master" })', JSON.stringify(requestData), GetVehicleListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetVehicleListSuccess(responseData) {
+        BindDropDownList('ddlVehicleId', responseData, 'Value', 'Name', '0', 'All');
+    }
+
+    function OnSubmit() {
+        var fromCityId = txtFromCityName.val() == '' ? 0 : hdnFromCityId.val();
+        var toCityId = txtToCityName.val() == '' ? 0 : hdnToCityId.val();
+        hdnFromCityId.val(fromCityId);
+        hdnToCityId.val(toCityId);
+    }
+</script>

@@ -1,0 +1,211 @@
+﻿@model CodeLock.Models.CustomerContractManagement
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("CustomerContractManagement", "Finance", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.DateTypeId, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.DateTypeId, "1", new { @id = "rdDateTypeEntryDate", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DateTypeId, "Entry Date", new { @for = "rdDateTypeEntryDate" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.DateTypeId, "2", new { @id = "rdDateTypeContractDate" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DateTypeId, "Contract Date", new { @for = "rdDateTypeContractDate" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.DateTypeId, "3", new { @id = "rdDateTypeExpiryDate" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DateTypeId, "Expiry Date", new { @for = "rdDateTypeExpiryDate" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.Label("Select Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drDate"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.ContractTypeId, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ContractTypeId, "1", new { @id = "rdContractTypeWithContract", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ContractTypeId, "With Contract", new { @for = "rdContractTypeWithContract" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ContractTypeId, "2", new { @id = "rdContractTypeWithoutContract" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ContractTypeId, "Without Contract", new { @for = "rdContractTypeWithoutContract" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ContractTypeId, "3", new { @id = "rdContractTypeBoth" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ContractTypeId, "Both", new { @for = "rdContractTypeBoth" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.ContractStatusId, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ContractStatusId, "1", new { @id = "rdContractStatusActive", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ContractStatusId, "Active", new { @for = "rdContractStatusActive" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ContractStatusId, "2", new { @id = "rdContractStatusInactive" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ContractStatusId, "Inactive", new { @for = "rdContractStatusInactive" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ContractStatusId, "3", new { @id = "rdContractStatusExpired" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ContractStatusId, "Expired", new { @for = "rdContractStatusExpired" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.PaybasId, new SelectList(ViewBag.PaybasList, "Value", "Name"), new { @class = "form-control", @id = "ddlPaybasId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PaybasId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.LocationId, new { @id = "hdnLocationId" })
+                        @Html.TextBoxFor(model => model.LocationCode, new { @class = "form-control", @id = "txtLocationCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationCode)
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerId, new { @class = "label", @id = "lblCustomerCode" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                        @Html.TextBoxFor(model => model.CustomerCode, new { @class = "form-control", @id = "txtCustomerCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ContractId, new { @class = "label", @id = "lblCode" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ContractId, new { @class = "form-control", @id = "txtContractId" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var selectedDateType = "1", selectedContractType = "1", selectedContractStatus = "1";
+    var ddlPaybasId, hdnLocationId, txtLocationCode, txtCustomerCode, hdnCustomerId, rdCumulative, drDate, btnSubmit, txtContractId, lblCustomerName;
+    var dvContractType, dvDocument, dvIsIndividual, dvAccount, dvLocation;
+    $(document).ready(function () {
+        SetPageLoad('Finance Report', 'Customer Contract Management', '', '', '');
+        locationId = '@SessionUtility.LoginLocationId';
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        ddlPaybasId = $('#ddlPaybasId');
+        hdnLocationId = $('#hdnLocationId');
+        txtLocationCode = $('#txtLocationCode');
+        txtCustomerCode = $('#txtCustomerCode');
+        hdnCustomerId = $('#hdnCustomerId');
+        lblCustomerName = $('#lblCustomerName');
+        txtContractId = $('#txtContractId');
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        $('#ddlPaybasId option').eq(0).before($('<option>', { value: '0', text: 'All' }));
+        ddlPaybasId.val(0);
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+    }
+
+    function AttachEvents() {
+        LocationAutoComplete('txtLocationCode', 'hdnLocationId');
+        txtLocationCode.blur(function () { return IsLocationCodeExist(txtLocationCode, hdnLocationId); });
+        $('[id*="rdDateType"]').each(function () { $(this).click(function () { selectedDateType = $(this).val(); }); });
+        $('[id*="rdContractType"]').each(function () { $(this).click(function () { selectedContractType = $(this).val(); }); });
+        $('[id*="rdContractStatus"]').each(function () { $(this).click(function () { selectedContractStatus = $(this).val(); }); });
+
+        CustomerAutoComplete(txtCustomerCode.Id, hdnCustomerId.Id);
+        txtCustomerCode.blur(function () { IsCustomerCodeExist(txtCustomerCode, hdnCustomerId, lblCustomerName) });
+
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    }
+
+    function CheckValidCustomerCode(txtCustomerCode, hdnCustomerId) {
+        if (txtCustomerCode.val() != "") {
+            var requestData = { customerCode: txtCustomerCode.val() };
+            AjaxRequestWithPostAndJson(customerMasterUrl + '/CheckValidCustomerCodeByCompanyId', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    hdnCustomerId.val(result.Value);
+                    txtCustomerCode.val(result.Name + ' : ' + result.Description);
+                }
+                else {
+                    ShowMessage('Customer is not exist');
+                    txtCustomerCode.val('');
+                    hdnCustomerId.val('');
+                    txtCustomerCode.focus();
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function ViewReport() {
+        if (hdnLocationId.val() == '')
+            hdnLocationId.val(0);
+
+        var prmList = [
+            { Name: "dateType", Value: selectedDateType }, { Name: "startDate", Value: drDate.startDate }, { Name: "endDate", Value: drDate.endDate }, { Name: "withContract", Value: selectedContractType }, { Name: "contractStatus", Value: selectedContractStatus }, { Name: "paybasId", Value: ddlPaybasId.val() }, { Name: "locationId", Value: hdnLocationId.val() }, { Name: "customerCode", Value: txtCustomerCode.val() == '' ? ' ' : txtCustomerCode.val().split(':')[0].trim() }, { Name: "contractId", Value: txtContractId.val() == '' ? ' ' : txtContractId.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'CCM', Description: 'Customer Contract Management' };
+        return ShowReport(reportInfo);
+    }
+</script>

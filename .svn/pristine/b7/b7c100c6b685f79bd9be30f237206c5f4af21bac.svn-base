@@ -1,0 +1,41 @@
+﻿@using CodeLock.Models
+
+@if (ViewBag.MenuList != null && (ViewBag.MenuList as IEnumerable<MasterMenu>).Count() > 0)
+{
+    foreach (MasterMenu rootLevelMenus in (ViewBag.MenuList as IEnumerable<MasterMenu>).ToList())
+    {
+        if (rootLevelMenus.MenuLevel == 0)
+        {
+            var FirstLevelMenus = from firstMenus in ((ViewBag.MenuList as IEnumerable<MasterMenu>).ToList()) where firstMenus.ParentMenuId == rootLevelMenus.MenuId && firstMenus.MenuLevel == 1 select firstMenus;
+            @:<li><a href="#"><i class="zmdi zmdi-view-dashboard"></i><span class="list-label">@rootLevelMenus.LinkText</span></a>
+            if (FirstLevelMenus.ToList().Count > 0)
+            {
+                @:<ul>
+                        foreach (var FirstLevelMenu in FirstLevelMenus)
+                        {
+                            var SecondLevelMenus = from secondMenus in ((ViewBag.MenuList as IEnumerable<MasterMenu>).ToList()) where secondMenus.ParentMenuId == FirstLevelMenu.MenuId && secondMenus.MenuLevel == 2 select secondMenus;
+                            if (SecondLevelMenus.ToList().Count > 0)
+                            {
+                                @:<li><a href="javascript:;"><i class="zmdi zmdi-widgets"></i>&nbsp;<span class="list-label">@FirstLevelMenu.LinkText</span></a>
+                                    @:<ul>
+                                    {
+                                        foreach (var SecondLevelMenu in SecondLevelMenus)
+                                        {
+                                            var  tmp = Url.Action(SecondLevelMenu.ActionName, SecondLevelMenu.ControllerName, new { area = SecondLevelMenu.AreaName });
+                                            @:<li><a href='@tmp.Replace("%3d","=").Replace("%3f","?")'>@SecondLevelMenu.LinkText</a></li> 
+                                        }
+                                    }
+                                    @:</ul></li>
+                            }
+                            else
+                            {
+                                @:<li><a href='@Url.Action(FirstLevelMenu.ActionName, FirstLevelMenu.ControllerName, new { area = FirstLevelMenu.AreaName })'>@FirstLevelMenu.LinkText</a></li>
+                            }
+                        }
+                        @:</ul>
+            }
+        }@:</li>
+    }
+}
+
+

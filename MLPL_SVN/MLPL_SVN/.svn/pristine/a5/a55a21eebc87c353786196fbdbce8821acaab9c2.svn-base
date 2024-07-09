@@ -1,0 +1,108 @@
+﻿@model CodeLock.Models.VehicleProfitability
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("VehicleProfitability", "Operation", FormMethod.Post, new { @class = "j-forms" }))
+{
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-3">
+            @Html.Label("Vehicle Date", new { @class = "label" })
+            <div class="clearfix">
+                <div id="drDate"></div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "txtVehicleNo" })
+                </div>
+                @Html.ValidationMessageFor(model => model.VehicleNo)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.RouteId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.RouteId, new SelectList(ViewBag.RouteList, "Value", "Name"), "All", new { @class = "form-control", @id = "ddlRouteId" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.RouteId)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.DriverName, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.DriverName, new { @class = "form-control", @id = "txtDriverName" })
+                </div>
+                @Html.ValidationMessageFor(model => model.DriverName)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.TripsheetNo, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.TripsheetNo, new { @class = "form-control", @id = "txtTripsheetNo" })
+                </div>
+                @Html.ValidationMessageFor(model => model.TripsheetNo)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @class = "label" })
+                <div class="clearfix">
+                    @Html.Label("(seperated by comma if multiple)", new { @class = "label" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-footer">
+        <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+    </div>
+</div>
+
+    }
+    <script>
+        var txtVehicleNo, drDate, ddlLocationId, ddlRouteId, txtDriverName, txtTripsheetNo;
+
+        $(document).ready(function () {
+            SetPageLoad('Vehicle Profitability', 'Report', '', '', '');
+            txtVehicleNo = $('#txtVehicleNo');
+            drDate = InitDateRange('drDate', DateRange.LastWeek);
+            ddlLocationId = $('#ddlLocationId');
+            ddlRouteId = $('#ddlRouteId');
+            txtDriverName = $('#txtDriverName');
+            txtTripsheetNo = $('#txtTripsheetNo');
+            btnSubmit = $('#btnSubmit');
+
+            //VendorAutoComplete(txtVendorCode.Id, hdnVendorId.Id);
+            //txtVendorCode.blur(function () { IsVendorCodeExist(txtVendorCode, hdnVendorId, lblVendorName) });
+            btnSubmit.click(ViewReport);
+        });
+
+        function ViewReport() {
+            var prmList = [{ Name: "VehicleNo", Value: txtVehicleNo.val() == '' ? " " : txtVehicleNo.val() },
+                { Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+                { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+                { Name: "LocationId", Value: ddlLocationId.val() },
+                { Name: "RouteId", Value: ddlRouteId.val() == '' ? 0 : ddlRouteId.val() },
+                { Name: "DriverName", Value: txtDriverName.val() == '' ? " " : txtDriverName.val() },
+                { Name: "TripsheetNo", Value: txtTripsheetNo.val() == '' ? " " : txtTripsheetNo.val() }];
+            var reportInfo = { PrmList: prmList, Name: 'VehicleProfitability', Description: 'Vehicle Profitability' };
+            return ShowReport(reportInfo);
+        }
+    </script>

@@ -1,0 +1,179 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.PurchaseOrderAdvancePayment
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        baseUrl = '@Url.Action("", "PurchaseOrder", new { Area = "Finance" })';
+        purchaseOrderModuleId = '@ModuleHelper.PurchaseOrder';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Finance/Views/PurchaseOrder/AdvancePayment.js")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("AdvancePayment", "PurchaseOrder", FormMethod.Post, new { @class = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.LocationId, new { @id = "hdnLocationId", @Value = @SessionUtility.LoginLocationId })
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("PO Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drPoDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorId, new { @class = "label" })
+                                <div class="input-wrapper">
+                                    @Html.HiddenFor(m => m.VendorId, new { @id = "hdnVendorId" })
+                                    @Html.TextBoxFor(model => model.VendorCode, new { @class = "form-control", @id = "txtVendorCode" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorName, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @class = "label-bold", @id = "lblName" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PoNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.PoNo, new { @class = "form-control", @id = "txtPoNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualPoNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualPoNo, new { @class = "form-control", @id = "txtManualPoNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtPoList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane">
+                    <div class="page-separator">Voucher Detail</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VoucherNo, new { @class = "label" })
+                                <div class="system-label">
+                                    @Html.Label("<System Generated>")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "VoucherDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.VoucherDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsDateOnly = false })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">PO Detail</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.PoNo, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.PoNo, " ", new { @class = "label-bold", @id = "lblPoNo" })
+                                    @Html.HiddenFor(m => m.PoId, new { @id = "hdnPoId" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.VendorId, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new {  @class = "label-bold",@id = "lblVendor" })
+                                    @Html.HiddenFor(m => m.VendorCode, new { @id = "hdnVendorCode" })
+                                    @Html.HiddenFor(m => m.VendorName, new { @id = "hdnVendorName" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.PoAmount, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.TextBoxFor(m => m.PoAmount, new { @class = "form-control textlabel numeric label-bold", @id = "txtPoAmount" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.AdvanceAmount, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.TextBoxFor(m => m.AdvanceAmount, new { @class = "form-control textlabel numeric label-bold", @id = "txtAdvanceAmount" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.BalanceAmount, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.TextBoxFor(m => m.BalanceAmount, new { @class = "form-control textlabel numeric label-bold", @id = "txtBalanceAmount" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">Payment Detail</div>
+                    <div class="row">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    @Html.Partial("Payment", new PaymentControl() { })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

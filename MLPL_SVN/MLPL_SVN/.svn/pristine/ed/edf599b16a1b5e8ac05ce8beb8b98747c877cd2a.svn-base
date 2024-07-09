@@ -1,0 +1,662 @@
+﻿
+@{
+    ViewBag.Title = "Common";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .col-md-2 {
+        padding: 5px; /* Optional: Add padding for better appearance */
+        margin: 5px; /* Add margin for space around the elements */
+        margin-left: 15px;
+    }
+
+    .widget-wrap {
+        padding: 10px;
+    }
+
+    .widget-header.block-header {
+        padding-bottom: 10px;
+    }
+
+    .widget-wrap .widget-header h3 {
+        font-size: 12px;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        baseUrl = '@Url.Action("Index", "Dashboard", new { area = "" })';
+    });
+</script>
+@*<ul class="nav nav-tabs">
+        <li style="float: right; margin-right:16px"><div id="drFilterDate"></div></li>
+    </ul>*@
+<div class="row">
+    <div class="col-md-2" style="background:#fff">
+        <div class="Dcard">
+            <b>Total Transactions</b>
+            <br />
+            <span id="spnD_3FWD"></span><span id="spTotalTransactions"></span>
+        </div>
+    </div>
+    <div class="col-md-2" style="background:#fff">
+        <div class="Dcard">
+            <b>Total Sale</b>
+            <br />
+            <span id="spnD_2FWD"></span><span id="spnTotalSale"></span>
+        </div>
+    </div>
+    <div class="col-md-2" style="background:#fff">
+        <div class="Dcard">
+            <b>Sales Per Day</b>
+            <br />
+            <span id="spnD_1FWD"></span><span id="spnSalesPerDay"></span>
+        </div>
+    </div>
+    <div class="col-md-2" style="background:#fff">
+        <div class="Dcard">
+            <b>Billed</b>
+            <br />
+            <span id="spnD_3FWD"></span><span id="spnBilledCount"></span>
+        </div>
+    </div>
+    <div class="col-md-2" style="background:#fff">
+        <div class="Dcard">
+            <b>Un-Billed</b>
+            <br />
+            <span id="spnD_3FWD"></span><span id="spnUnBilledCount"></span>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="widget-wrap">
+            <div class="widget-header block-header margin-bottom-0 clearfix">
+                <div class="pull-left">
+                    <h3>Sales Trend</h3>
+                </div>
+            </div>
+            <div class="widget-container">
+                <div class="widget-content">
+                    <div id="js-line-chart-legend" class="chart-legend"></div>
+                    <div class="canvas-container">
+                        <canvas id="line-canvas"></canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="widget-wrap">
+            <div class="widget-header block-header margin-bottom-0 clearfix">
+                <div class="pull-left">
+                    <h3>Sales Break-Up (PayBasis)</h3>
+                </div>
+            </div>
+            <div class="widget-container">
+                <div class="widget-content">
+                    <div id="js-line-chart-legend" class="chart-legend">
+                        <ul class="line-legend" style="display: inline-block;">
+                            <li>
+                                <span style="background-color: #26a69a"></span>PAID
+                                <span style="background-color: #46BFBD"></span>TBB
+                                <span style="background-color: #FDB45C"></span>TOPAY
+                                <span style="background-color: #949FB1"></span>FOC
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="donut-chart-area"> </canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="widget-wrap">
+            <div class="widget-header block-header margin-bottom-0 clearfix">
+                <div class="pull-left">
+                    <h3>Billed Un-Billed</h3>
+                </div>
+            </div>
+            <div class="widget-container">
+                <div class="widget-content">
+                    <div id="js-line-chart-legend" class="chart-legend">
+                        <ul class="line-legend" style="display: inline-block;">
+                            <li>
+                                <span style="background-color: #26a69a"></span>Billed
+                                <span style="background-color: #FDB45C"></span>Un-Billed
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="billedUnBilled" height="150px"> </canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="row">
+
+    <div class="col-md-2" style="background:#fff">
+        <div class="Dcard">
+            <b>Total Deliveries</b>
+            <br />
+            <span id="spnD_3FWD"></span><span id="spnTotalDeliveryCount">80</span>
+        </div>
+    </div>
+    <div class="col-md-2" style="background:#fff">
+        <div class="Dcard">
+            <b>In-Time To Delivered Ratio</b>
+            <br />
+           <span id="spnD_3FWD"></span><span id="spnInTimeDeliveryRatio">34.85</span>
+        </div>
+    </div>
+    <div class="col-md-2" style="background:#fff">
+        <div class="Dcard">
+            <b>In-Time To Booking Ratio</b>
+            <br />
+            <span id="spnD_3FWD"></span><span id="spnInTimeBookingRatio">33.61</span>
+        </div>
+    </div>
+    <div class="col-md-2" style="background:#fff">
+        <div class="Dcard">
+            <b>In-Time To Late Ratio</b>
+            <br />
+            <span id="spnD_3FWD"></span><span id="spnLateDeliveryRatio">52.71</span>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div class="widget-wrap">
+            <div class="widget-header block-header margin-bottom-0 clearfix">
+                <div class="pull-left">
+                    <h3>Delivery Break-Up (Late Vs In-Time)</h3>
+                </div>
+            </div>
+            <div class="widget-container">
+                <div class="widget-content">
+                    <div id="js-line-chart-legend" class="chart-legend">
+                        <ul class="line-legend" style="display: inline-block;">
+                            <li>
+                                <span style="background-color: #26a69a"></span>In Time
+                                <span style="background-color: #FDB45C"></span>Late
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="pie-chart"></canvas>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="widget-wrap">
+            <div class="widget-header block-header margin-bottom-0 clearfix">
+                <div class="pull-left">
+                    <h3>Location Wise Deliveries</h3>
+                </div>
+            </div>
+            <div class="widget-container">
+                <div class="widget-content">
+                    <div id="js-line-chart-legend" class="chart-legend">
+                        <ul class="line-legend" style="display: inline-block;">
+                            <li>
+                                <span style="background-color: #26a69a"></span>In Time
+                                <span style="background-color: #FDB45C"></span>Late
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="locationWiseDeliveries"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="widget-wrap">
+            <div class="widget-header block-header margin-bottom-0 clearfix">
+                <div class="pull-left">
+                    <h3>Top Customers (Sales)</h3>
+                </div>
+            </div>
+            <div class="widget-container">
+                <div class="widget-content">
+
+                    <div class="canvas-container">
+                        <canvas id="stacked-canvas"></canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="widget-wrap">
+            <div class="widget-header block-header margin-bottom-0 clearfix">
+                <div class="pull-left">
+                    <h3>Top Locations (Sales)</h3>
+                </div>
+            </div>
+            <div class="widget-container">
+                <div class="widget-content">
+
+                    <div class="canvas-container">
+                        <canvas id="locationSalesCanvas"></canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" style="display:none">
+    <div class="col-md-4">
+        <div class="widget-wrap">
+            <div class="widget-header block-header margin-bottom-0 clearfix">
+                <div class="pull-left">
+                    <h3>Vendor Bill</h3>
+                </div>
+            </div>
+            <div class="widget-container">
+                <div class="widget-content">
+
+                    <div class="canvas-container">
+                        <canvas id="stacked-canvasVendor"></canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="widget-wrap">
+            <div class="widget-header block-header margin-bottom-0 clearfix">
+                <div class="pull-left">
+                    <h3>Customer Bill Outstanding</h3>
+                </div>
+            </div>
+            <div class="widget-container">
+                <div class="widget-content">
+                    <div id="js-line-chart-legend" class="chart-legend">
+                        <ul class="line-legend" style="display: inline-block;">
+                            <li>
+                                <span style="background-color:#00C4B2"></span>Bill Amount
+                                <span style="background-color:#00C4B2"></span>Paid Amount
+                                <span style="background-color:#00C4B2"></span>Pending Amount
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="bar-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="widget-wrap">
+            <div class="widget-header block-header margin-bottom-0 clearfix">
+                <div class="pull-left">
+                    <h3>Curved Line Chart</h3>
+                </div>
+            </div>
+            <div class="widget-container">
+                <div class="widget-content">
+                    <div id="js-curved-line-legend" class="chart-legend"></div>
+
+                    <div class="canvas-container">
+                        <canvas id="curved-line-canvas"></canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var pieData, customerBarChartData, vendorBarChartData, lineChartData, stackedhartData, doughnutData, locationSalesData, locationWiseDeliveriesData, billedUnBiledData;
+    var baseUrl;
+
+    $(document).ready(function () {
+        SetPageLoad('Dashboard');
+        drFilterDate = InitDateRange('drFilterDate', DateRange.LastWeek, false);
+        var request = {};
+
+        AjaxRequestWithPostAndJson(baseUrl + '/GetDocketDetails', JSON.stringify(request), function (result) {
+            $('#spTotalTransactions').text(result.TotalTransaction);
+            $('#spnTotalSale').text(result.TotalSale + ' Rs.');
+            $('#spnSalesPerDay').text(result.SalesPerDay);
+            $('#spnBilledCount').text(result.BilledCount);
+            $('#spnUnBilledCount').text(result.UnBilledCount);
+            $('#spnTotalDeliveryCount').text(result.TotalDeliveryCount);
+            $('#spnInTimeDeliveryRatio').text(result.InTimeDeliveryRatio + ' %');
+            $('#spnInTimeBookingRatio').text(result.InTimeBookingRatio + ' %');
+            $('#spnLateDeliveryRatio').text(result.LateDeliveryRatio + ' %');
+        }, ErrorFunction, false);
+
+        AjaxRequestWithPostAndJson(baseUrl + '/GetDocketBillUnBilledDetails', JSON.stringify(request), function (result) {
+            var billedCount = 0;
+            var unBilledCount = 0;
+            billedCount = result[0].BilledCount;
+            unBilledCount = result[0].UnBilledCount;
+
+            billedUnBiledData = [
+                {
+                    value: billedCount,
+                    color: "#26a69a",
+                    highlight: "#009688",
+                    label: "Billed"
+                },
+                {
+                    value: unBilledCount,
+                    color: "#FDB45C",
+                    highlight: "#5AD3D1",
+                    label: "UnBilled"
+                }
+            ];
+        }, ErrorFunction, false);
+
+        AjaxRequestWithPostAndJson(baseUrl + '/GetPaybasWiseDocketCount', JSON.stringify(request), function (result) {
+            var paybas1 = 0; var paybas1DktCount = 0;
+            var paybas2 = 0; var paybas2DktCount = 0;
+            var paybas3 = 0; var paybas3DktCount = 0;
+            var paybas4 = 0; var paybas4DktCount = 0;
+            paybas1 = result[0].Paybas; paybas1DktCount = result[0].DocketCount;
+            paybas2 = result[1].Paybas; paybas2DktCount = result[1].DocketCount;
+            paybas3 = result[2].Paybas; paybas3DktCount = result[2].DocketCount;
+            paybas4 = result[3].Paybas; paybas4DktCount = result[3].DocketCount;
+
+            doughnutData = [
+                {
+                    value: paybas1DktCount,
+                    color: "#26a69a",
+                    highlight: "#009688",
+                    label: paybas1
+                },
+                {
+                    value: paybas2DktCount,
+                    color: "#46BFBD",
+                    highlight: "#5AD3D1",
+                    label: paybas2
+                },
+                {
+                    value: paybas3DktCount,
+                    color: "#FDB45C",
+                    highlight: "#FFC870",
+                    label: paybas3
+                },
+                {
+                    value: paybas4DktCount,
+                    color: "#949FB1",
+                    highlight: "#A8B3C5",
+                    label: paybas4
+                }
+            ];
+        }, ErrorFunction, false);
+
+        AjaxRequestWithPostAndJson(baseUrl + '/GetCustomerSales', JSON.stringify(request), function (result) {
+            customerBarChartData = {
+                labels: result.map(item => item.CustomerName),
+                datasets: [
+                    {
+                        fillColor: "rgba(102, 187, 106,0.5)",
+                        strokeColor: "rgba(102, 187, 106,0.8)",
+                        highlightFill: "rgba(102, 187, 106,0.75)",
+                        highlightStroke: "rgba(102, 187, 106,1)",
+                        data: result.map(item => item.GrandTotal)
+                    }
+                ]
+            };
+        }, ErrorFunction, false);
+
+        AjaxRequestWithPostAndJson(baseUrl + '/GetLocationSales', JSON.stringify(request), function (result) {
+            locationSalesData = {
+                labels: result.map(item => item.Location),
+                datasets: [
+                    {
+                        fillColor: "rgba(102, 187, 106,0.5)",
+                        strokeColor: "rgba(102, 187, 106,0.8)",
+                        highlightFill: "rgba(102, 187, 106,0.75)",
+                        highlightStroke: "rgba(102, 187, 106,1)",
+                        data: result.map(item => item.GrandTotal)
+                    }
+                ]
+            };
+        }, ErrorFunction, false);
+
+        AjaxRequestWithPostAndJson(baseUrl + '/GetDocketDeliveryDetails', JSON.stringify(request), function (result) {
+            var inTimeCount = 0;
+            var lateCount = 0;
+            inTimeCount = result[0].InTimeCount;
+            lateCount = result[0].LateCount;
+            pieData = [
+                {
+                    value: inTimeCount,
+                    color: "#26a69a",
+                    highlight: "#009688",
+                    label: "In Time"
+                },
+                {
+                    value: lateCount,
+                    color: "#FDB45C",
+                    highlight: "#5AD3D1",
+                    label: "Late"
+                }
+            ];
+        }, ErrorFunction, false);
+
+        AjaxRequestWithPostAndJson(baseUrl + '/GetLocationWiseDocketDeliveryDetails', JSON.stringify(request), function (result) {
+            locationWiseDeliveriesData = {
+                labels: result.map(item => item.LocationCode),
+                datasets: [
+                    {
+                        fillColor: "rgba(128, 222, 234,0.5)",
+                        strokeColor: "rgba(128, 222, 234,0.8)",
+                        highlightFill: "rgba(128, 222, 234,0.75)",
+                        highlightStroke: "rgba(128, 222, 234,1)",
+                        data: result.map(item => item.InTimeCount)
+                    },
+                    {
+                        fillColor: "rgba(102, 187, 106,0.5)",
+                        strokeColor: "rgba(102, 187, 106,0.8)",
+                        highlightFill: "rgba(102, 187, 106,0.75)",
+                        highlightStroke: "rgba(102, 187, 106,1)",
+                        data: result.map(item => item.LateCount)
+                    }
+                ]
+            };
+        }, ErrorFunction, false);
+
+        AjaxRequestWithPostAndJson(baseUrl + '/GetVendorBillWiseAmount', JSON.stringify(request), function (result) {
+            vendorBarChartData = {
+                labels: result.map(item => item.VendorName),
+                datasets: [
+                    {
+                        fillColor: "rgba(102, 187, 106,0.5)",
+                        strokeColor: "rgba(102, 187, 106,0.8)",
+                        highlightFill: "rgba(102, 187, 106,0.75)",
+                        highlightStroke: "rgba(102, 187, 106,1)",
+                        data: result.map(item => item.TotalBillAmount)
+                    }
+                ]
+            };
+        }, ErrorFunction, false);
+
+        AjaxRequestWithPostAndJson(baseUrl + '/GetCustomerBillWiseAmount', JSON.stringify(request), function (result) {
+            stackedhartData = {
+                labels: result.map(item => item.CustomerName),
+                datasets: [
+                    {
+                        fillColor: "rgba(128, 222, 234,0.5)",
+                        strokeColor: "rgba(128, 222, 234,0.8)",
+                        highlightFill: "rgba(128, 222, 234,0.75)",
+                        highlightStroke: "rgba(128, 222, 234,1)",
+                        data: result.map(item => item.TotalPaidAmount)
+                    },
+                    {
+                        fillColor: "rgba(77, 182, 172,0.5)",
+                        strokeColor: "rgba(77, 182, 172,0.8)",
+                        highlightFill: "rgba(77, 182, 172,0.75)",
+                        highlightStroke: "rgba(77, 182, 172,1)",
+                        data: result.map(item => item.TotalPendingAmount)
+                    },
+                    {
+                        fillColor: "rgba(102, 187, 106,0.5)",
+                        strokeColor: "rgba(102, 187, 106,0.8)",
+                        highlightFill: "rgba(102, 187, 106,0.75)",
+                        highlightStroke: "rgba(102, 187, 106,1)",
+                        data: result.map(item => item.TotalBillAmount)
+                    }
+                ]
+            };
+        }, ErrorFunction, false);
+
+        AjaxRequestWithPostAndJson(baseUrl + '/GetMonthWiseDocketCount', JSON.stringify(request), function (result) {
+            var res = result;
+            lineChartData = {
+                labels: result.map(item => item.Month),
+                datasets: [
+                    {
+                        label: "@SessionUtility.DocketNomenClature",
+                        fillColor: "rgba(0, 196, 178,.3)",
+                        strokeColor: "#00C4B2",
+                        pointColor: "#00897b",
+                        pointStrokeColor: "#00897b",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "#66bb6a",
+                        data: result.map(item => item.DocketCount)
+                    }
+                ]
+
+            }
+        }, ErrorFunction, false);
+
+        var ctxLine = document.getElementById("line-canvas").getContext("2d");
+        window.myLine = new Chart(ctxLine).Line(lineChartData, {
+            responsive: true,
+            datasetStrokeWidth: 1.5,
+            pointDotRadius: 3,
+            tooltipCornerRadius: 3,
+            bezierCurve: false
+        });
+        var ctxCurvedLine = document.getElementById("curved-line-canvas").getContext("2d");
+        window.myLine = new Chart(ctxCurvedLine).Line(lineChartData, {
+            responsive: true,
+            datasetStrokeWidth: 1.5,
+            pointDotRadius: 3,
+            tooltipCornerRadius: 3,
+            bezierCurve: true
+        });
+        document.getElementById('js-line-chart-legend').innerHTML = window.myLine.generateLegend();
+        document.getElementById('js-curved-line-legend').innerHTML = window.myLine.generateLegend();
+        var ctxPie = document.getElementById("pie-chart").getContext("2d");
+        window.myPie = new Chart(ctxPie).Pie(pieData, {
+            responsive: true,
+            animation: false,
+            tooltipCornerRadius: 3,
+            // Number - Tooltip label font size in pixels
+            tooltipFontSize: 12,
+            // Number - Tooltip title font size in pixels
+            tooltipTitleFontSize: 12,
+            //String - The colour of each segment stroke
+            segmentStrokeColor: "rgba(255,255,255,.01)",
+
+            //Number - The width of each segment stroke
+            segmentStrokeWidth: 1
+        });
+
+        var ctxDonut = document.getElementById("billedUnBilled").getContext("2d");
+        window.myDoughnut = new Chart(ctxDonut).Doughnut(billedUnBiledData, {
+            responsive: true,
+            animation: false,
+            tooltipCornerRadius: 3,
+            // Number - Tooltip label font size in pixels
+            tooltipFontSize: 12,
+            // Number - Tooltip title font size in pixels
+            tooltipTitleFontSize: 12,
+            //String - The colour of each segment stroke
+            segmentStrokeColor: "rgba(255,255,255,.01)",
+
+            //Number - The width of each segment stroke
+            segmentStrokeWidth: 1,
+            //The percentage of the chart that we cut out of the middle.
+            percentageInnerCutout: 70
+        });
+
+        var ctxDonut = document.getElementById("donut-chart-area").getContext("2d");
+        window.myDoughnut = new Chart(ctxDonut).Doughnut(doughnutData, {
+            responsive: true,
+            animation: false,
+            tooltipCornerRadius: 3,
+            // Number - Tooltip label font size in pixels
+            tooltipFontSize: 12,
+            // Number - Tooltip title font size in pixels
+            tooltipTitleFontSize: 12,
+            //String - The colour of each segment stroke
+            segmentStrokeColor: "rgba(255,255,255,.01)",
+
+            //Number - The width of each segment stroke
+            segmentStrokeWidth: 1,
+            //The percentage of the chart that we cut out of the middle.
+            percentageInnerCutout: 70
+        });
+
+        var ctxBar = document.getElementById("locationWiseDeliveries").getContext("2d");
+        window.myBar = new Chart(ctxBar).Bar(locationWiseDeliveriesData, {
+            responsive: true,
+            tooltipCornerRadius: 3,
+            barStrokeWidth: 1
+        });
+
+        var ctxBar = document.getElementById("bar-canvas").getContext("2d");
+        window.myBar = new Chart(ctxBar).Bar(stackedhartData, {
+            responsive: true,
+            tooltipCornerRadius: 3,
+            barStrokeWidth: 1
+        });
+        var ctxStackedBar = document.getElementById("stacked-canvas").getContext("2d");
+        window.myBar = new Chart(ctxStackedBar).StackedBar(customerBarChartData, {
+            responsive: true,
+            tooltipCornerRadius: 3,
+            barStrokeWidth: 1
+        });
+
+        var ctxStackedBar = document.getElementById("locationSalesCanvas").getContext("2d");
+        window.myBar = new Chart(ctxStackedBar).StackedBar(locationSalesData, {
+            responsive: true,
+            tooltipCornerRadius: 3,
+            barStrokeWidth: 1
+        });
+
+        var ctxStackedBar = document.getElementById("stacked-canvasVendor").getContext("2d");
+        window.myBar = new Chart(ctxStackedBar).StackedBar(vendorBarChartData, {
+            responsive: true,
+            tooltipCornerRadius: 3,
+            barStrokeWidth: 1
+        });
+
+
+    });
+</script>
+
+
+<script src="~/assets/js/lib/chart/chart-js/chart.js"></script>
+<script src="~/assets/js/lib/chart/chart-js/chart.stackedbar.js"></script>
+
+@*<script src="~/assets/js/lib/chart.js.init.js"></script>*@

@@ -1,0 +1,47 @@
+﻿@model CodeLock.Models.MasterHolidayDateWise
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "HolidayDateWise Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "HolidayDateWise", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("HolidayId", 0)
+    @Html.AntiModelInjectionFor(m => m.HolidayId)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "HolidayDate", FieldCaption = DataAnnotationHelper.GetDisplayName("Holiday", "HolidayDate"), IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true })
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.HolidayName, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.HolidayName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.HolidayName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Holiday Date Wise', 'Create', 'HolidayDate', 'Go To List', '@Url.Action("Index")');
+    });
+</script>

@@ -1,0 +1,60 @@
+﻿@model CodeLock.Models.MasterTyreSize
+@using Secure_Coding.MvcSecurityExtensions
+@using System
+@{
+    ViewBag.Title = " TyreSize Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "TyreSize", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.TyreSizeId)
+    @Html.HiddenFor(model => model.TyreSizeId)
+<div class="widget-wrap">
+    <div class="row">
+
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.TyreSizeName, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.TyreSizeName, new { @class = "form-control", @id = "txtTyreSizeName" })
+                </div>
+                @Html.ValidationMessageFor(model => model.TyreSizeName)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.TyreTypeCategory, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.TyreTypeCategory, new SelectList(ViewBag.TyreTypeCategoryList, "Value", "Name"), "Select Tyre Type Category", new { @class = "form-control", @id = "ddlTyreTypeCategory" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.TyreTypeCategory)
+            </div>
+        </div>
+
+
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.IsActive)
+                    <i></i>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-footer">
+        <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+    </div>
+
+</div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Tyre Size', 'Update', 'txtTyreSizeName', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.TyreSizeId })');
+    });
+</script>
+

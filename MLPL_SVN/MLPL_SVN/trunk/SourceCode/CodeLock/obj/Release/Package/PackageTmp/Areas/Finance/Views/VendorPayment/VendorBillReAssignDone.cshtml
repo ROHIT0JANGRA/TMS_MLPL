@@ -1,0 +1,13 @@
+﻿@{
+    ViewBag.Title = "Vendor Bill Re-Assign Done";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><h5><span id="spnMassage">Bill Re-Assigned Successfully</span></h5></div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vendor Bill', 'Bill Re-Assigned', '', 'Go To Re-Assign Bill ', '@Url.Action("VendorBillReAssign")');
+    });
+</script>

@@ -1,0 +1,55 @@
+﻿@model CodeLock.Models.BalanceSheetReport
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                @Html.Label("Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drDate"></div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control", @id = "ddlLocationId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationId)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDate, ddlLocationId;
+    $(document).ready(function () {
+        SetPageLoad('Balance Sheet', 'Report', '', '', '');
+        drDate = InitDateRange('drDate', DateRange.LastWeek,false);
+        ddlLocationId = $('#ddlLocationId');
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    });
+
+    function ViewReport() {
+        var prmList = [
+            { Name: "FromDate", Value: drDate.startDate },
+            { Name: "ToDate", Value: drDate.endDate },
+            { Name: "LocationId", Value: ddlLocationId.val() },
+            { Name: "FinYear", Value: '@SessionUtility.FinYear' }
+        ];
+        var reportInfo = { PrmList: prmList, Name: 'BalanceSheet', Description: 'Balance Sheet' };
+        return ShowReport(reportInfo);
+    }
+</script>
+
+

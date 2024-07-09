@@ -1,0 +1,95 @@
+﻿@model CodeLock.Models.GrnRegister
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Grn Date", new { @class = "label" })
+                            <div id="drGRNDate"></div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.GrnNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.GrnNo, new { @class = "form-control", @id = "txtGrnNo" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtGrnDetail"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('GRN', 'Register', '');
+        drGRNDate = InitDateRange('drGRNDate', DateRange.LastWeek);
+        txtGrnNo = $('#txtGrnNo');
+        InitWizard('dvWizard', [
+       { StepName: 'Criteria', StepFunction: GetGrnList },
+       { StepName: 'Document List' }
+        ], '');
+        dtGrnDetail = LoadDataTable('dtGrnDetail', true, true, true, null, null, [],
+               [
+                   { title: 'GRN No', data: "GrnNo" },
+                   { title: 'GRN Date Time', data: "GrnDateTime" },
+                   { title: 'Supplier', data: "SupplierCode" },
+                   { title: 'PO No', data: "PoNo" },
+                   { title: 'PO Date', data: "PoDate" },
+                   { title: 'Invoice No', data: "InvoiceNo" },
+                   { title: 'Invoice Date', data: "InvoiceDate" }
+               ]);
+    });
+
+    function GetGrnList() {
+        var requestData = { grnNo: txtGrnNo.val(), fromDate: drGRNDate.startDate, toDate: drGRNDate.endDate };
+        AjaxRequestWithPostAndJson('@Url.Action("GetRegisterGrnDetail")', JSON.stringify(requestData), OnGrnDetailsSuccess, ErrorFunction, false);
+        return false;
+    }
+
+    function OnGrnDetailsSuccess(responseData) {
+       
+        dtGrnDetail.fnClearTable()
+        if (responseData.length == 0) {
+            isStepValid = false;
+            ShowMessage('No Record Found');
+            return false;
+        }
+        else {
+            if (responseData.length > 0) {
+                $.each(responseData, function (i, item) {
+                    item.GrnDateTime = $.displayDateTime(item.GrnDateTime);
+                    item.PoDate = $.displayDate(item.PoDate);
+                    item.InvoiceDate = $.displayDate(item.InvoiceDate);
+                });
+                dtGrnDetail.dtAddData(responseData);
+            }
+        }
+    }
+</script>
+
+
+

@@ -1,0 +1,209 @@
+﻿@model CodeLock.Models.TripsheetForAdityaBirlaMain
+
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SummaryList[0].tripsheetno)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SummaryList[0].tripsheetno)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SummaryList[0].tripsheetdate)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SummaryList[0].tripsheetdate)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SummaryList[0].lrno)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SummaryList[0].lrno)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SummaryList[0].custcode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SummaryList[0].custcode)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SummaryList[0].custname)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SummaryList[0].custname)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SummaryList[0].fromCity)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SummaryList[0].fromCity)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SummaryList[0].toCity)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SummaryList[0].toCity)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SummaryList[0].toPinCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SummaryList[0].toPinCode)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SummaryList[0].invoiceqty)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SummaryList[0].invoiceqty)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SummaryList[0].noofboxes)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SummaryList[0].noofboxes)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SummaryList[0].weight)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SummaryList[0].weight)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SummaryList[0].invoicevalue)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SummaryList[0].invoicevalue)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EWBNList[0].ewaybillno)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EWBNList[0].ewaybillno)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EWBNList[0].plantcode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EWBNList[0].plantcode)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="page-separator">Carton No List</div>
+    <div class="widget-wrap material-table-widget">
+        <table id="dtCartonNo">
+            <thead>
+                <tr>
+                    <th>
+                        Carton No.
+                    </th>
+                    <th>
+                        No. of Pieces
+                    </th>
+                    <th>
+                        Showroom No.
+                    </th>
+                    <th>
+                        Showroom Name
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.TripsheetList)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.cartonno)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.noofpieces)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.shroomno)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.shroomname)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Tripsheet', 'View', '', 'Goto List', '@Url.Action("GenerateDocketAdityaBirla")', '', '', '', '');
+        LoadDataTable('dtCartonNo', false, false, false);
+    });
+</script>
+
+

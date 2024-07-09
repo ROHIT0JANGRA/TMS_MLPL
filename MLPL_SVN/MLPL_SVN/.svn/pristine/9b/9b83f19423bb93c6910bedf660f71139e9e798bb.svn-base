@@ -1,0 +1,247 @@
+﻿@using CodeLock.Models
+@model CustomerBillCollection
+@{
+    ViewBag.Title = "Collection";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        billGenerationUrl = '@Url.Action("", "CustomerBill", new { Area = "Finance" })';
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        accountUrl = '@Url.Action("", "Accounts", new { Area = "Finance" })';
+    });
+</script>
+<script src="~/areas/finance/views/customerbill/collection.js?version=@DateTime.Now.Ticks"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Collection", "CustomerBill", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Bill Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drBillDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.PaybasId, new SelectList(ViewBag.PaybasList, "Value", "Name"), "Select Bill Type", new { @class = "form-control", @id = "ddlPaybasId" })
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4" id="dvCollection">
+                            <div class="form-group">
+                                <div class="inline-group">
+                                    @Html.LabelFor(model => model.CollectionType, new { @class = "label" })
+                                    <label class="radio" id="dvGroupWise">
+                                        @Html.RadioButtonFor(model => model.CollectionType, "1", new { @id = "rdGroupWise", @checked = "checked" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.CollectionType, "Group Wise", new { @for = "rdGroupWise" })
+                                    </label>
+                                    <label class="radio" id="dvCustomerWise">
+                                        @Html.RadioButtonFor(model => model.CollectionType, "2", new { @id = "rdCustomerWise" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.CollectionType, "Customer Wise", new { @for = "rdCustomerWise" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4" id="dvCustomerGroup">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerGroup, new { @class = "label" })
+                                <div class="select">
+                                    @Html.HiddenFor(model => model.CustomerGroupName, new { @id = "hdnCustomerGroupName" })
+                                    @Html.DropDownListFor(model => model.CustomerGroup, new SelectList(ViewBag.CustomerGroupList, "Value", "Name"), "Select Customer Group", new { @class = "form-control", @id = "ddlCustomerGroup" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CustomerGroup)
+
+                            </div>
+                        </div>
+                        <div id="dvCriteriaCustomerCode">
+                            <div class="col-sm-4" id="dvCustomerType">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CustomerTypeId, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.CustomerTypeId, new SelectList(ViewBag.CustomerTypeList, "Value", "Name"), "Select Customer Type", new { @class = "form-control", @id = "ddlCustomerType" })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.CustomerTypeId)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CriteriaCustomerCode, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                                        @Html.TextBoxFor(model => model.CriteriaCustomerCode, null, new { @class = "form-control", @id = "txtCustomerCode" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.CriteriaCustomerCode)
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CriteriaCustomerCode, " ", new { @class = "label" })
+                                    <div class="clearfix">
+                                    </div>
+                                    @Html.LabelFor(model => model.CriteriaCustomerCode, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                                </div>
+                            </div>
+                        </div>
+
+
+                       
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.BillNo, new { @class = "form-control", @id = "txtBillNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.BillNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualBillNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualBillNo, new { @class = "form-control", @id = "txtManualBillNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualBillNo)
+                            </div>
+                        </div>
+                    </div>
+
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CriteriaCustomerCode, " ", new { @class = "label" })
+                                    <div class="clearfix">
+                                    </div>
+                                    @Html.LabelFor(model => model.CriteriaCustomerCode, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-4" id="cust">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CustomerCode, "Party", new { @class = "label", @id = "lblParty" })
+                                    <div class="clearfix">
+                                    </div>
+                                    @Html.LabelFor(model => model.CustomerCode, " ", new { @class = "label-bold", @id = "lblCustomer" })
+                                    @Html.HiddenFor(model => model.CustomerCode, new { @id = "hdnCustomer" })
+                                    @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CollectionDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.CollectionDateTime), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, MinDate = DateTime.Now.Date.AddDays(-30), MaxDate = DateTime.Now, IsDateOnly = false })
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ManualMrNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.ManualMrNo, new { @class = "form-control", @id = "txtManualBillNo" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.ManualMrNo)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.BillCollectionRemarks, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.BillCollectionRemarks, new { @class = "form-control", @id = "txtBillCollectionRemarks" })
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AdjustmentId, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.AdjustmentId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlAdjustmentId" })
+                                        <i></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12 table-responsive">
+                                <div>
+                                    <table id="dtCustomerBillListForCollection" class="table-bordered">
+                                        <tfoot>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th>Total</th>
+                                                <th class="align-right">
+                                                    <div class="input">
+                                                        @Html.TextBox("TotalBillAmount", "0", new { @id = "txtTotalBillAmount", @class = "form-control textlabel numeric2", @style = "text-align: right" })
+                                                    </div>
+                                                </th>
+                                                <th class="align-right">
+                                                    <div class="input">
+                                                        @Html.TextBox("TotalPendingAmount", "0", new { @id = "txtTotalPendingAmount", @class = "form-control textlabel numeric2", @style = "text-align: right" })
+                                                    </div>
+                                                </th>
+                                                <th class="align-right">
+                                                    <div class="input">
+                                                        @Html.TextBox("TotalCollectionAmount", "0", new { @id = "txtTotalCollectionAmount", @class = "form-control textlabel numeric2", @style = "text-align: right" })
+                                                    </div>
+                                                </th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th class="align-right">
+                                                    <div class="input">
+                                                        @Html.TextBox("TotalNetReceivedAmount", "0", new { @id = "txtTotalNetReceivedAmount", @class = "form-control textlabel numeric2", @style = "text-align: right" })
+                                                    </div>
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    @Html.Partial("Receipt", new CodeLock.Models.ReceiptControl() { })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        }
+    </div>
+</div>
+

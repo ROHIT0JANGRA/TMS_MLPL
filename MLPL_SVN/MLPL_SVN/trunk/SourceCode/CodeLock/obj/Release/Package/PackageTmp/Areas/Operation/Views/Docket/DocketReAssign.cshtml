@@ -1,0 +1,151 @@
+﻿@using CodeLock.Models
+@model DocketReAssign
+@{
+    ViewBag.Title = "Docket Re-Assign";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    baseUrl = '@Url.Action("", "DocketReAssign")';
+    docketNomenclature = '@SessionUtility.DocketNomenClature';
+</script>
+@using (Html.BeginForm("DocketReAssign", "Docket", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="page-separator"><span class="page-separator" id="spnMassage">Re-Assign Docket</span></div>
+
+        <div id="dvStep1">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                            @Html.HiddenFor(model => model.DocketId, new { @id = "hdnDocketId" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DocketNo)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="dvStep2" style="display:none;">
+            <div class="page-separator"><span class="page-separator" id="spnMassage">Docket Detail</span></div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <label class="label-bold">Note :- You can re-assign docket only status Available for LS/MF Or DRS</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Origin, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.Origin, new { @class = "form-control textlabel", @id = "txOrigin" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Destination, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.Destination, new { @class = "form-control textlabel", @id = "txDestination" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocketStatus, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.DocketStatus, new { @class = "form-control textlabel", @id = "txDocketStatus" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ToLocation, new { @class = "label" })
+                        <div class="input">
+                            @Html.DropDownListFor(model => model.ToLocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control select2", @id = "ddlToLocationId", @placeholder = "Select Re-Assign Destination" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ToLocationId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txRemarks" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Remarks)
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-1">
+                    <div class="align-right">
+                        <div class="clearfix">
+                            <button type="submit" class="btn btn-primary m-" id="btnSubmit">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+
+    $(document).ready(function () {
+        InitObjects();
+        AttachEvents();
+    });
+
+    function AttachEvents() {
+        txtDocketNo.blur(function () { CheckValidDocketNo(); });
+    }
+    function InitObjects() {
+        txtDocketNo = $("#txtDocketNo");
+        hdnDocketId = $("#hdnDocketId");
+        txOrigin = $("#txOrigin");
+        txDestination = $("#txDestination");
+        ddlToLocationId = $("#ddlToLocationId");
+        txDocketStatus = $("#txDocketStatus");
+
+        docketUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+    }
+
+    function CheckValidDocketNo() {
+        if (txtDocketNo.val() != '') {
+            var requestData = { docketNo: txtDocketNo.val() };
+            AjaxRequestWithPostAndJson(docketUrl + '/CheckValidDocketNoForReAssign', JSON.stringify(requestData), function (result) {
+
+                if (result != null) {
+
+                    $('#dvStep1').pointerEvent(false);
+                    $('#dvStep2').show();
+                    hdnDocketId.val(result.DocketId);
+                    txOrigin.val(result.Origin);
+                    txDestination.val(result.Destination);
+                    txDocketStatus.val(result.DocketStatus);
+
+                    if (result.Submit == "No")
+                        $("#btnSubmit").hide()
+
+                    return true;
+                }
+                else {
+                    ShowMessage(docketNomenclature + ' is not valid for Re-Assign');
+                    txtDocketNo.val('');
+                    hdnDocketId.val('');
+                    txtDocketNo.focus();
+                    return false;
+                }
+            }, ErrorFunction, false);
+        }
+    }
+</script>
+

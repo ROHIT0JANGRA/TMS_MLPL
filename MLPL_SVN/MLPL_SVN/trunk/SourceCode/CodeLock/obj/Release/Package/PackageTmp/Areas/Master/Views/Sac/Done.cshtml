@@ -1,0 +1,32 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap">
+    <div class="row example-buttons">
+        <div class="col-md-12">
+            <div class="note note-info note-right-striped">
+                <div class="page-separator"><span class="page-separator" id="spnMassage"></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        var status = GetUrlValue()["status"];
+        if (status == "TransportModeToServiceMappingDone") {
+            spnMassage.text("Mapping done Successfully");
+            SetPageLoad('Transport Mode To Service Type Mapping', 'Done', '', 'Go To Mapping', '@Url.Action("TransportModeToService")');
+        }
+        else if (status == "ServiceTypeToSacMappingDone") {
+            spnMassage.text("Mapping done Successfully");
+            SetPageLoad('Service Type To SAC Mapping', 'Done', '', 'Go To Mapping', '@Url.Action("ServiceTypeToSac")');
+        }
+    }
+</script>
+

@@ -1,0 +1,136 @@
+﻿@model CodeLock.Models.Pod
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Scan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        docketUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+        billUrl = '@Url.Action("", "CustomerBill", new { Area = "Finance" })';
+        baseUrl = '@Url.Action("")';
+        PodUrl  = '@Url.Content("~")'
+    });
+
+    function ViewAttachment(obj) {
+        var hdnDocumentName = $('#' + obj.Id.replace('lnkAttachment', 'hdnDocumentName'));
+        var filePath = '';
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = '@ConfigHelper.JsLocalStoragePath' + "POD/";
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+
+        filePath = PodUrl + 'Storage/POD/';
+
+        window.open(filePath + hdnDocumentName.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=600,height=450");
+
+        return false;
+    }
+</script>
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <script src="~/areas/operation/views/pfm/scan.js"></script>
+
+    <div class="widget-wrap">
+
+        <table id="dtScanDetailList" class="table-bordered">
+            <thead>
+                <tr>
+                    <th width="25px">
+                        @Html.DisplayNameFor(model => model.Details[0].DocumentTypeId)
+                        <div class="select">
+                            @Html.DropDownList("DocumentTypeId", new SelectList(ViewBag.DocumentTypeId, "Value", "Name"), "Select Document Type", new { @class = "form-control", @id = "ddlDocumentTypeHeader", @style = "width: 150px;" })
+                            <i></i>
+                        </div>
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Details[0].DocumentNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Details[0].ManualNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Details[0].ScanStatus)
+                    </th>
+                    <th>
+                        View
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Details[0].Attachment)
+                    </th>
+                    <th class="tabindex">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Details.Count; i++)
+                {
+                    var item = Model.Details[i];
+
+                    <tr>
+                        <td style="max-width: 100px">
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.Details[i].DocumentTypeId, new SelectList(ViewBag.DocumentTypeId, "Value", "Name", Model.Details[i].DocumentTypeId), "Select Document Type", new { @class = "form-control", @id = "ddlDocumentTypeDetail" + i.ToString(), @style = "width: 150px;" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].DocumentTypeId)
+                            @Html.HiddenFor(m => item.DocumentType, new { id = "hdnDocumentType" + i.ToString(), @Name = "Details[" + i.ToString() + "].DocumentType" })
+
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model.Details[i].DocumentNo, new { @class = "form-control", id = "txtDocumentNo" + i.ToString(), @style = "width: 200px;" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].DocumentNo)
+                            @Html.HiddenFor(m => item.DocumentId, new { id = "hdnDocumentId" + i.ToString(), @Name = "Details[" + i.ToString() + "].DocumentId" })
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model.Details[i].ManualNo, new { @class = "form-control", id = "txtManualNo" + i.ToString(), @style = "width: 100px;" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].ManualNo)
+                            @Html.Label("lblManualNo", "N/A", new { @class = "label-bold", id = "lblManualNo" + i.ToString() })
+                        </td>
+                        <td>
+                            @Html.Label(" ", new { @id = "lblScanStatus" + i.ToString(), @class = "label-bold" })
+                        </td>
+                        <td>
+                            @{ var DocumentNamelnkId = "lnkAttachment" + @i.ToString(); var DocumentNamelblId = "lblAttachment" + @i.ToString();}
+                            <a href="#" id=@DocumentNamelnkId onclick="return ViewAttachment(this);">View</a>
+                            @Html.HiddenFor(m => Model.Details[i].DocumentName, new { id = "hdnDocumentName" + i.ToString() })
+                        </td>
+                        <td>
+                            <div class="col-sm-12">
+                                <div class="unit">
+                                    <div class="form-group">
+                                        <div class="input prepend-big-btn">
+                                            <label class="icon-right" for="prepend-big-btn">
+                                                <i class="fa fa-download"></i>
+                                            </label>
+                                            <div class="file-button">
+                                                Browse
+                                                @* <input class="form-control" id="fuDeclarationFileName" type="file" name="DeclarationFileName" onchange="$('#prepend-big-btn').val($(this).val())">*@
+
+                                                @{ var dDynamicid = "prepend-big-btn-" + @i.ToString();}
+                                                @Html.TextBoxFor(m => Model.Details[i].Attachment, null, new { @class = "form-control", @id = "fuAttachment" + i.ToString(), @type = "file", @onchange = "$('#" + dDynamicid + "').val($(this).val())" })
+                                            </div>
+                                            <input class="form-control" type="text" id="prepend-big-btn-@i.ToString()" readonly="" placeholder="no file selected">
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model.Details[i].Attachment)
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td></td>
+                    </tr>
+                                                    }
+            </tbody>
+        </table>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn">Upload</button>
+        </div>
+    </div>
+                                                    }

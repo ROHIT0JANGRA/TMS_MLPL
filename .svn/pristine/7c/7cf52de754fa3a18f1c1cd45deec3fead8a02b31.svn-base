@@ -1,0 +1,50 @@
+﻿@using CodeLock.Models
+@model List<Advice>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="alert alert-success"><h5><span>Advice is Acknowledged Successfully</span></h5></div>
+    <div class="page-separator">Advice List</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <table id="dtAdviceList">
+                <thead>
+                    <tr>
+                        <th width="300px">
+                            Advice No
+                        </th>
+                        <th>
+                            View/Print
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => item.AdviceNo)
+                            </td>
+                            <td>
+                                <button onclick='return ViewReport( @ModuleHelper.Advice, @Html.DisplayFor(model => item.AdviceId));' class="btn btn-primary">
+                                    <i class="glyphicon glyphicon-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad("Advice Acknowledgement", 'Done', '', 'Go To Advice Acknowledgement', '@Url.Action("AdviceAcknowledgement")');
+    });
+
+    function ViewReport(documentTypeId, documentId) {
+        return ShowViewPrint(documentTypeId, documentId);
+    }
+</script>

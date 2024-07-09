@@ -1,0 +1,145 @@
+﻿@model IEnumerable<CodeLock.Models.TripsheetForAdityaBirlaSummary>
+@{
+    ViewBag.Title = "GenerationDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{ var i = 0;}
+
+<div class="widget-wrap">
+    <div class="row">
+        
+        <div class="col-sm-12">
+            <div class="widget-wrap material-table-widget">
+                <table id="dtError">
+                    <thead>
+                        <tr>
+                            <th>
+                                S.No.
+                            </th>
+
+                            <th>
+                                @Html.DisplayNameFor(model => model.tripsheetno)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.tripsheetdate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.plantcode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.custcode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.custname)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.totalcount)
+                            </th>
+                            <th>
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <th>
+
+                                    @{
+                                        var j = i;
+                                        var btnPost = "btnPost"+ j;
+                                        i++;}
+                                    @i.
+                                </th>
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.tripsheetno)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.tripsheetdate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.plantcode)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.custcode)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.custname)
+                                </td>
+
+                                <td style="word-wrap: break-word;">
+                                    @Html.TextBoxFor(modelItem => item.totalcount, new { @class = "form-control textlabel", @id = "txtAckNo" + j })
+                                </td>
+
+                                <td class="td-center">
+                                    <div class="btn-toolbar" role="toolbar" id=@btnPost>
+                                        <div class="btn-group" role="group">
+
+                                            @if (@item.ewaybillno == "")
+                                            {
+                                                <a class="btn btn-primary btn-xs dt-edit" title="View Docket" href="@Url.Action("GenerateDocketAdityaBirla", new { tripsheetno = item.tripsheetno })"><span class="glyphicon glyphicon-eye-open"></span></a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-primary btn-xs dt-edit" id="@btnPost" style="margin-right: 10px;" title="Generate Docket" onclick="Invoice('@item.tripsheetno', '@item.tripsheetno', '@j')" href="javascript:void(0)"> <span class="zmdi zmdi-edit"></span> </a>
+
+                                                <a class="btn btn-primary btn-xs dt-edit" title="View Docket" href="@Url.Action("GenerateDocketAdityaBirla", new { tripsheetno = item.tripsheetno })"><span class="glyphicon glyphicon-eye-open"></span></a>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script>
+    var lblDocumentNo;
+    $(document).ready(function () {
+        SetPageLoad('Docket', 'Generate', '', '', '');
+        LoadDataTable('dtError', false, false, false);
+        baseUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+        lblDocumentNo = $('#lblDocumentNo');
+    });
+
+    function Invoice(tripsheetno, BillNo, index) {
+        var requestData = { tripsheetno: tripsheetno };
+
+        let res = window.confirm("Do you generate docket ?");
+
+        if (res == false) {
+            return false;
+        }
+
+
+        AjaxRequestWithPostAndJson(baseUrl + '/GenerateBulkDocketAdityaBirlaById', JSON.stringify(requestData), function (result) {
+
+            $.each(result.BookingDetail, function (i, item) {
+
+                var btnPost = 'btnPost' + index;
+                alert(item.Status);
+                if (item.StatusCode === "OK") {
+                    location.reload();
+                }
+                //if (result.IsPosted) {
+                //    $('#' + txtErrorMessage).val("");
+                //    $('#' + btnPost).hide();
+                //}
+                //else {
+                //    $('#' + txtErrorMessage).val(result.BookingDetail.Status);
+                //}
+
+            });
+
+        }, ErrorFunction, false);
+
+    }
+</script>

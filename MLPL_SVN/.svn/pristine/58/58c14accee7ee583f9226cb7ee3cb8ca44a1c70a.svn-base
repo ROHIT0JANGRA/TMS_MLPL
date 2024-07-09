@@ -1,0 +1,197 @@
+﻿@model CodeLock.Models.MasterCard
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "Card", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.CardId, new { @id = "hdnCardId" })
+    @Html.HiddenFor(m => m.CardTypeId, new { @id = "hdnCardTypeId" })
+
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CardTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CardTypeId, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Fuel Card", Value = "1" },
+                                                                            new SelectListItem{ Text="Cash Card", Value = "2" },
+                                                                            new SelectListItem{ Text="Fuel Cum Cash Card", Value = "3" },
+                                                                            new SelectListItem{ Text="ATM Card", Value = "4" }
+                                                                         }, new { @class = "form-control", @id = "ddlCardTypeId" })
+
+                        <i></i>
+                     </div>
+                    @Html.ValidationMessageFor(model => model.CardTypeId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CardNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CardNo, new { @class = "form-control text-uppercase" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CardNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "IssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.IssueDate), DefaultDate = Model.IssueDate.ConvertToDateTime(), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = false })
+                </div>
+            </div>
+
+        </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "ExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.ExpiryDate), DefaultDate = Model.ExpiryDate.ConvertToDateTime(), IsRequired = true, IsValidateFinYear = false, AllowFutureDate = true, AllowPastDate = true, SetBlank = false })
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Vehicle, new { @class = "label" })
+                        <div class="select">
+                            @Html.HiddenFor(model => model.SavedVehicle, new { @id = "hdnSavedVehicle" })
+                            @Html.HiddenFor(model => model.Vehicle, new { @id = "hdnVehicle" })
+                            @Html.DropDownListFor(model => model.Vehicle, new SelectList(ViewBag.VehicleList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlVehicle", @multiple = "multiple", @placeholder = "Select Vehicle" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Vehicle)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.AccountId, new { @class = "label" })
+                        <div class="select ">
+                            @Html.DropDownListFor(model => model.AccountId, new SelectList(ViewBag.AccountList, "Value", "Name"), "Select", new { @class = "form-control", @id = "ddlAccountId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.AccountId)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div id="dvVendor" style="display:none">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.VendorId, new { @class = "label" })
+                            <div class="input">
+                                @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                                @Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.VendorCode)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Label(" ", new { @class = "label" })
+                            <div class="clearfix">
+                                @Html.HiddenFor(model => model.VendorName, new { @id = "hdnVendorName" })
+                                @Html.Label("VendorName", " ", new { @class = "label-bold", @id = "lblVendorName" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(model => model.IsActive)
+                            <i></i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CardLimit, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.CardLimit, new { @class = "form-control numeric2" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CardLimit)
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0"></button>
+            </div>
+        </div>
+}
+
+<script>
+    var isAdd = true;
+    var savedVehicle = [] ;
+    $(document).ready(function () {
+        hdnCardId = $('#hdnCardId');
+        btnSubmit = $('#btnSubmit');
+        ddlVehicle = $('#ddlVehicle');
+        hdnVendorId = $('#hdnVendorId');
+        txtVendorCode = $('#txtVendorCode');
+        hdnVendorName = $('#hdnVendorName');
+        lblVendorName = $('#lblVendorName');
+        $('#ddlCardTypeId').change(OnCardTypeChange);
+        InitMultiSelect(ddlVehicle.Id, true, false, true);
+
+        VendorAutoComplete('txtVendorCode', 'hdnVendorId', '', 6);
+        txtVendorCode.blur(function () { IsVendorCodeExist(txtVendorCode, hdnVendorId, lblVendorName, '', 6); });
+        btnSubmit.click(OnSubmit);
+        OnCardTypeChange();
+
+        if (hdnCardId.val() != 0)
+            isAdd = false;
+
+        if (isAdd == false) {
+            SetPageLoad('Card', 'Update', 'CardNo', 'Go To List', '@Url.Action("Index")');
+            lblVendorName.text(hdnVendorName.val());
+
+            var selectedValue = $('#hdnSavedVehicle').val();
+
+            $('#hdnVehicle').val(selectedValue);
+            if (selectedValue != "") {
+                selectedValue = selectedValue.split(',');
+                $("#ddlVehicle").val(selectedValue).trigger("change");
+                savedVehicle = selectedValue;
+            }
+        }
+        else {
+            SetPageLoad('Card', 'Create', 'CardNo', 'Go To List', '@Url.Action("Index")');
+            $('#txtIssueDate').val('');
+            $('#txtExpiryDate').val('');
+        }
+
+        function OnCardTypeChange() {
+
+            $('#dvVendor').showHide(false);
+
+            if ($('#ddlCardTypeId').val() == 1 || $('#ddlCardTypeId').val() == 3)
+            {
+                $('#dvVendor').showHide(true);
+            }
+
+            $('#hdnCardTypeId').val($('#ddlCardTypeId').val());
+        }
+
+        DropDownChange('ddlVehicle', function () {
+            $('#hdnVehicle').val($(this).val());
+        });
+
+        btnSubmit.html((isAdd ? 'Create' : 'Update'));
+    });
+
+    function OnSubmit() {
+       /* if (ddlVehicle.val().length > 5) {
+            ShowMessage('Only Five Vehicles are allow');
+            return false;
+        }*/
+        return true;
+    }
+</script>
+
+

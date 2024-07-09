@@ -1,0 +1,290 @@
+﻿@using CodeLock.Models
+@model AdvanceTrialBalance
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row" id="dvIsIndividual">
+                <div class="col-sm-3">
+                    @Html.Label("Voucher Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control", @id = "ddlLocationId" })
+                            <i></i>
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationId)
+                </div>
+                <div class="col-sm-7">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            @Html.Label(" ", new { @class = "label" })
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.IsIndividual, true, new { @id = "rdIndividual" })
+                                <i></i>
+                                @Html.LabelFor(model => model.IsIndividual, "Individual", new { @for = "rdIndividual" })
+                            </label>
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.IsIndividual, false, new { @id = "rdCumulative" })
+                                <i></i>
+                                @Html.LabelFor(model => model.IsIndividual, "Cumulative(Transaction includes all branches)", new { @for = "rdCumulative" })
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="dvReportType">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <div class="inline-group">
+                                @Html.LabelFor(model => model.ReportType, new { @class = "label" })
+                                <div class="clearfix">
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReportType, "1", new { @id = "rdReportTypeCategoryWise", @tabindex = "0", @checked = "checked" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReportType, "Category Wise", new { @for = "rdReportTypeCategoryWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReportType, "2", new { @id = "rdReportTypeGroupWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReportType, "Group Wise", new { @for = "rdReportTypeGroupWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReportType, "3", new { @id = "rdReportTypeAccountWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReportType, "Account Wise", new { @for = "rdReportTypeAccountWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReportType, "4", new { @id = "rdReportTypeLocationWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReportType, "Location Wise", new { @for = "rdReportTypeLocationWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReportType, "5", new { @id = "rdReportTypeCustomerWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReportType, "Customer Wise", new { @for = "rdReportTypeCustomerWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReportType, "6", new { @id = "rdReportTypeVendorWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReportType, "Vendor Wise", new { @for = "rdReportTypeVendorWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReportType, "7", new { @id = "rdReportTypeEmployeeWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReportType, "Employee Wise", new { @for = "rdReportTypeEmployeeWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReportType, "8", new { @id = "rdReportTypeDriverWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReportType, "Driver Wise", new { @for = "rdReportTypeDriverWise" })
+                                    </label>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CodeId, new { @class = "label", @id = "lblCode" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.PartyIds, Enumerable.Empty<SelectListItem>(), "Select Account Category", new { @class = "form-control select2-multiple", @id = "ddlPartyId", @multiple = "multiple" })<i></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <div class="inline-group">
+                                @Html.LabelFor(model => model.ReportSubType, new { @class = "label" })
+                                <div class="clearfix">
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReportSubType, "1", new { @id = "rdReportSubTypeLedgerWise", @tabindex = "0", @checked = "checked" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReportSubType, "Ledger Wise", new { @for = "rdReportSubTypeLedgerWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReportSubType, "2", new { @id = "rdReportSubTypeLocationWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReportSubType, "Location Wise", new { @for = "rdReportSubTypeLocationWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.ReportSubType, "0", new { @id = "rdReportSubTypeNone", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ReportSubType, "None", new { @for = "rdReportSubTypeNone" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="dvAccount">
+                    <div class="col-sm-4">
+						<div class="form-group">
+							@Html.LabelFor(model => model.AccountId, new { @class = "label" })
+							<div class="select">
+								@Html.DropDownListFor(model => model.AccountCode, Enumerable.Empty<SelectListItem>(), "Select Account", new { @class = "form-control select2-multiple", @id = "ddlAccountCode", @multiple = "multiple" })<i></i>
+							</div>
+						</div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Label(" ", new { @class = "label" })
+                            @Html.Label(" ", " ", new { @class = "label-bold", @id = "lblAccountName" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    var selectedReportType = "1", selectedReportSubType = "0";
+	var ddlCompanyId, rdGenLedger, rdReportType, rdDocument, hdnAccountId, txtAccountCode, lblAccountName, txtCode, rdIndividual, rdCumulative, ddlLocationId, ddlAccountCategoryId, ddlAccountCode, rdIsNormal, drDate, btnSubmit, lblCode;
+    var dvReportType, dvDocument, dvIsIndividual, dvAccount, dvLocation;
+    var accountCategoryList, accountGroupList, accountList, locationList, customerList, vendorList, employeeList, driverList;
+    $(document).ready(function () {
+        SetPageLoad('Finance Report', 'Advance Trial Balance', '', '', '');
+        locationId = '@SessionUtility.LoginLocationId';
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        rdReportType = $('#rdReportType');
+        rdIndividual = $('#rdIndividual');
+        rdCumulative = $('#rdCumulative');
+        ddlLocationId = $('#ddlLocationId').select2();
+        dvReportType = $('#dvReportType');
+        dvIsIndividual = $('#dvIsIndividual');
+        lblCode = $('#lblCode');
+        ddlPartyId = $('#ddlPartyId');
+        hdnCodeId = $('#hdnCodeId');
+        lblCodeName = $('#lblCodeName');
+		ddlAccountCode = $('#ddlAccountCode');
+        dvAccount = $('#dvAccount');
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        rdIndividual = $('#rdIndividual');
+        rdCumulative = $('#rdCumulative');
+        locationUrl = '@Url.Action("", "Location", new { Area = "Master" })';
+        accountCategoryList = JSON.parse('@Html.Raw(ViewBag.AccountCategoryList)');
+        accountGroupList = JSON.parse('@Html.Raw(ViewBag.AccountGroupList)');
+        accountList = JSON.parse('@Html.Raw(ViewBag.AccountList)');
+        locationList = JSON.parse('[{"Name":"HQTR","Value":"1"}]');
+        customerList = JSON.parse('@Html.Raw(ViewBag.CustomerList)');
+        vendorList = JSON.parse('@Html.Raw(ViewBag.VendorList)');
+        employeeList = JSON.parse('@Html.Raw(ViewBag.EmployeeList)');
+        driverList = JSON.parse('@Html.Raw(ViewBag.DriverList)');
+    }
+
+    function AttachEvents() {
+		BindDropDownList('ddlPartyId', accountCategoryList, 'Value', 'Name', '', 'All Category');
+		BindDropDownList('ddlAccountCode', accountList, 'Value', 'Name', '', 'All Accounts');
+		InitMultiSelect(ddlPartyId.Id, false, false, true, true);
+		InitMultiSelect(ddlAccountCode.Id, false, false, true, true);
+        $('[id*="rdReportType"]').each(function () { $(this).click(function () { selectedReportType = $(this).val(); OnReportTypeChange(); }); });
+        $('[id*="rdReportSubType"]').each(function () { $(this).click(function () { selectedReportSubType = $(this).val(); }); });
+        OnReportTypeChange();
+		
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    }
+
+    function ManageAccount(isShow) {
+		ddlAccountCode.empty();
+        if (isShow) {
+            dvAccount.show();
+			BindDropDownList('ddlAccountCode', accountList, 'Value', 'Name', '', 'All Accounts');
+        }
+        else
+            dvAccount.hide();
+    }
+
+
+    function OnReportTypeChange() {
+        lblCode.text('');
+        lblCode.show();
+        ddlPartyId.empty();
+        ddlPartyId.enable(true);
+        switch (selectedReportType) {
+            case "1":
+                ManageAccount(false);
+                lblCode.text("Account Category");
+                BindDropDownList('ddlPartyId', accountCategoryList, 'Value', 'Name', '', 'All Category');
+                break;
+            case "2":
+                ManageAccount(false);
+                lblCode.text("Account Group");
+                BindDropDownList('ddlPartyId', accountGroupList, 'Value', 'Name', '', 'All Group');
+                break;
+            case "3":
+                ManageAccount(false);
+                lblCode.text("Account");
+                BindDropDownList('ddlPartyId', accountList, 'Value', 'Name', '', 'All Account');
+                break;
+            case "4":
+                ManageAccount(false);
+                lblCode.text("Location");
+                BindDropDownList('ddlPartyId', locationList, 'Value', 'Name', '', 'All Location');
+                ddlPartyId.enable(false);
+                break;
+            case "5":
+				ManageAccount(true);
+                lblCode.text("Customer");
+                BindDropDownList('ddlPartyId', customerList, 'Value', 'Name', '', 'All Customer');
+                break;
+            case "6":
+				ManageAccount(true);
+                lblCode.text("Vendor");
+                BindDropDownList('ddlPartyId', vendorList, 'Value', 'Name', '', 'All Vendor');
+                break;
+            case "7":
+				ManageAccount(true);
+                lblCode.text("Employee");
+                BindDropDownList('ddlPartyId', employeeList, 'Value', 'Name', '', 'All Employee');
+                break;
+            case "8":
+				ManageAccount(true);
+                lblCode.text("Driver");
+                BindDropDownList('ddlPartyId', driverList, 'Value', 'Name', '', 'All Driver');
+                break;
+        }
+    }
+
+    function ViewReport() {
+        var prmList = [{ Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+            { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+            { Name: "FinYear", Value: '@SessionUtility.FinYear' },
+            { Name: "IsCumulative", Value: rdCumulative.IsChecked ? '1' : '0'},
+			{ Name: "AccountId", Value: selectedReportType < 5 ? 'All' : ddlAccountCode.multiVal() },
+            { Name: "AccountGroupId", Value: 'All' },
+            { Name: "AccountCategoryId", Value: 'All' },
+            { Name: "LocationId", Value: ddlLocationId.val() == 1 ? 'All' : ddlLocationId.val()},
+            { Name: "ReportType", Value: selectedReportType},
+            { Name: "ReportSubType", Value: selectedReportSubType },
+            { Name: "PartyId", Value: ddlPartyId.multiVal() },
+            { Name: "PartyType", Value: 'All' }]
+        var reportInfo = { PrmList: prmList, Name: 'AdvanceTrialBalance', Description: 'Advance Trial Balance' };
+        return ShowReport(reportInfo);
+    }
+</script>

@@ -1,0 +1,26 @@
+﻿@model CodeLock.Models.Docket
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("GstRegister", "Gst", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", enctype = "multipart/form-data" }))
+{
+
+
+    <div class="widget-wrap">
+        <div class="col-sm-12">
+
+            @Html.TextBoxFor(m => m.GstExemptionDeclarationFile, new { @id = "fuGstExemptionDeclarationFile", type = "file", @onchange = "$('#prepend-big-btn').val($(this).val())" })
+
+            @Html.ValidationMessageFor(m => m.GstExemptionDeclarationFile)
+
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+
+<script>
+    
+</script>

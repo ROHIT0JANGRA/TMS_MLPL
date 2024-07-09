@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "ManageResult";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+<div class="widget-wrap">
+    <div class="alert alert-success"><h5>Following series is successfully managed</h5></div>
+    <div class="row">
+        <div class="col-sm-4">
+            <h4>Book Code</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblBookCode", @for = "BookCode", @class = "label-bold" })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <h4>Series From-To</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblSeriesFrom", @for = "SeriesFrom", @class = "label-bold" })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <h4>Action taken</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblAction", @for = "Action", @class = "label-bold" })
+            </div>
+        </div>
+    </div>
+</div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Manage', 'Result', '', 'Go To DCR Manage', '@Url.Action("Manage")');
+        $('#lblBookCode').html(GetUrlValue()["bookCode"]);
+        $('#lblSeriesFrom').html(GetUrlValue()["seriesFrom"] + ' - ' + GetUrlValue()["seriesTo"]);
+        $('#lblAction').html(GetUrlValue()["status"]);
+    });
+</script>
+
+

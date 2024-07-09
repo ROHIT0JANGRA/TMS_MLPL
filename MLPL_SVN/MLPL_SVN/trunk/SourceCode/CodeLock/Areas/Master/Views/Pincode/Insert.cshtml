@@ -1,0 +1,125 @@
+﻿@model CodeLock.Models.MasterPincode
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "Pincode Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "Pincode", FormMethod.Post, new { @class = "j-forms" }))
+{
+
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.PincodeId)
+    @Html.Hidden("PincodeId", 0)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CountryName, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CountryId, new SelectList(ViewBag.CountryList, "Value", "Name"), "Select Country", new { @class = "form-control", @id = "ddlCountry" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CountryId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StateName, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.StateId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlState" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StateId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CityName, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control", @id = "ddlCity" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CityId)
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Pincode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Pincode, new { @class = "form-control", id = "txtPincode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Pincode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Area, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Area, new { @class = "form-control", id = "txtArea" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Area)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationCode, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control", @id = "ddlLocation" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationCode)
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Pincode', 'Create', 'ddlCountry', 'Goto List', '@Url.Action("Index")');
+        $('#ddlCountry').change(OnCountryChange);
+        $('#ddlState').change(OnStateChange);
+    });
+
+    function OnCountryChange() {
+        if ($('#ddlCountry').val() != "") {
+            var requestData = { countryId: $('#ddlCountry').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetStateListByCountryId", "State")', JSON.stringify(requestData), GetStateListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetStateListSuccess(responseData) {
+        BindDropDownList('ddlState', responseData, 'Value', 'Name', '', 'Select State');
+    }
+
+    function OnStateChange() {
+        if ($('#ddlState').val() != "") {
+            var requestData = { stateId: $('#ddlState').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetCityListByStateId", "City")', JSON.stringify(requestData), GetCityListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetCityListSuccess(responseData) {
+        BindDropDownList('ddlCity', responseData, 'Value', 'Name', '', 'Select City');
+    }
+</script>
+

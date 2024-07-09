@@ -1,0 +1,170 @@
+﻿@model CodeLock.Models.MasterAirport
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Insert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "Airport", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.AirportId)
+    @Html.HiddenFor(m => m.AirportId, new { @id = "hdnAirportId" })
+    @Html.HiddenFor(m => m.CompanyId, new { @id = "hdnCompanyId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4" id="divDisplayAirportNo">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AirportNo, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.AirportNo, new { @class = "label" })
+                        @Html.HiddenFor(m => m.AirportNo, new { @id = "hdnAirportNo" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4" id="divAirportNo">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AirportNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBox("airportNo", "", new { @class = "form-control", @id = "txtAirportNo" })
+                    </div>
+                    @Html.ValidationMessage("airportNo")
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AirportName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.AirportName, new { @class = "form-control", @id = "txtAirportName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AirportName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CountryId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CountryId, new SelectList(ViewBag.CountryList, "Value", "Name"), "Select Country", new { @class = "form-control", @id = "ddlCountryId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CountryId)
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StateId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.StateId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlStateId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StateId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CityId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control", @id = "ddlCityId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CityId)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AlternateCityId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.AlternateCityId, new SelectList(ViewBag.AlternateCityList, "Value", "Name"), "Select Alternate City", new { @class = "form-control", @id = "ddlAlternateCityId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AlternateCityId)
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3" id="btnSubmit"></button>
+        </div>
+    </div>
+}
+<script>
+    var isAdd = true;
+    $(document).ready(function () {
+        hdnAirportId = $('#hdnAirportId');
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(Onsubmit);
+
+        if (hdnAirportId.val() != 0)
+            isAdd = false;
+
+        if (isAdd == false) {
+            SetPageLoad('Airport', 'Update', 'AirportName', 'Goto List', '@Url.Action("Index")');
+            $('#divDisplayAirportNo').show();
+            $('#divAirportNo').hide();
+            RemoveRequired($('#txtAirportNo'));
+        }
+        else {
+            SetPageLoad('Airport', 'Create', 'airportNo', 'Goto List', '@Url.Action("Index")');
+            $('#divDisplayAirportNo').hide();
+            $('#divAirportNo').show();
+            AddRequired($('#txtAirportNo'), "Please enter Airport No");
+        }
+
+        btnSubmit.text((isAdd ? 'Create' : 'Update'));
+
+        $('#ddlCountryId').change(OnCountryChange);
+        $('#ddlStateId').change(OnStateChange);
+    });
+
+    function OnCountryChange() {
+        if ($('#ddlCountryId').val() != "") {
+            var requestData = { countryId: $('#ddlCountryId').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetStateListByCountryId", "State")', JSON.stringify(requestData), GetStateListSuccess, ErrorFunction, false);
+            $('#ddlStateId').val('');
+            $('#ddlCityId').val('');
+            $('#ddlAlternateCityId').val('');
+            OnStateChange();
+        }
+    }
+
+    function GetStateListSuccess(responseData) {
+        BindDropDownList('ddlStateId', responseData, 'Value', 'Name', '', 'Select State');
+    }
+
+    function OnStateChange() {
+        if ($('#ddlStateId').val() != "") {
+            var requestData = { stateId: $('#ddlStateId').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetCityListByStateId", "City")', JSON.stringify(requestData), GetCityListSuccess, ErrorFunction, false);
+            $('#ddlCityId').val('');
+            $('#ddlAlternateCityId').val('');
+        }
+    }
+
+    function GetCityListSuccess(responseData) {
+        BindDropDownList('ddlCityId', responseData, 'Value', 'Name', '', 'Select City');
+        BindDropDownList('ddlAlternateCityId', responseData, 'Value', 'Name', '', 'Select Alternate City');
+    }
+
+    function Onsubmit() {
+        if (isAdd == true)
+            $('#hdnAirportNo').val($('#txtAirportNo').val());
+    }
+</script>
+

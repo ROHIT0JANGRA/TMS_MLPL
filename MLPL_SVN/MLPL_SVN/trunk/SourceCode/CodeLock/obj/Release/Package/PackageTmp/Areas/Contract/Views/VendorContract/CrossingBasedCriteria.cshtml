@@ -1,0 +1,73 @@
+﻿@model CodeLock.Models.VendorContractCrossingBased
+
+@{
+    ViewBag.Title = "CrossingBasedCriteria";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "j-forms", @class = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.ContractId, new { @id = "hdnContractId" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromLocationId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.FromLocationCode, new { @class = "form-control numeric", @id = "txtFromCityName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FromLocationId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToCityId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ToCityName, new { @class = "form-control numeric", @id = "txtToCityName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ToCityId)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="0">Submit</button>
+        </div>
+    </div>
+}
+<script>
+    var btnSubmit, hdnContractId, hdnFromLocationId, hdnToCityId, txtFromLocationCode, txtToCityName;
+    $(document).ready(function () {
+        SetPageLoad('Vendor Contract', 'Crossing Based', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { contractId = Model.ContractId, vendorTypeId = Model.VendorTypeId })');
+        btnSubmit = $('#btnSubmit');
+        hdnContractId = $('#hdnContractId');
+        hdnFromLocationId = $('#hdnFromLocationId');
+        txtFromLocationCode = $('#txtFromLocationCode');
+        hdnToCityId = $('#hdnToCityId');
+        txtToCityName = $('#txtToCityName');
+        btnSubmit.click(OnSubmit);
+        LocationAutoComplete('txtFromLocationCode', 'hdnFromLocationId');
+        CityAutoComplete('txtToCityName', 'hdnToCityId');
+        txtToCityName.blur(function () { return IsCityNameExist(txtToCityName, hdnToCityId); });
+        txtFromLocationCode.blur(function () { return IsLocationCodeExist(txtFromLocationCode, hdnFromLocationId); });
+    });
+
+
+    function OnSubmit() {
+        var contractId = hdnContractId.val();
+        var locationId = txtFromLocationCode.val() == '' ? 0 : hdnFromLocationId.val();
+        var locationCode = txtFromLocationCode.val();
+        var cityId = txtToCityName.val() == '' ? 0 : hdnToCityId.val();
+        var cityName = txtToCityName.val();
+
+        if (txtFromLocationCode.val() == "" && txtToCityName.val() == "") {
+            ShowMessage("Please enter or select at least one criteria");
+            $('#txtFromLocationCode').focus();
+            return false;
+        }
+        else {
+            window.location.href = "@Url.Action("CrossingBased")/" + contractId + "?fromLocationId=" + locationId + "&fromLocationCode=" + locationCode + "&toCityId=" + cityId + "&toCityName=" + cityName;
+            return false;
+        }
+    }
+</script>

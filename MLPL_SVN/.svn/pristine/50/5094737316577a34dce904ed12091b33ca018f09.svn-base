@@ -1,0 +1,125 @@
+﻿@using CodeLock.Models
+@model DocketFinalization
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "DocketFinalization";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        loginLocationId = '@SessionUtility.LoginLocationId';
+        loginLocationCode = '@SessionUtility.LoginLocationCode';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        docketFinalizationUrl = '@Url.Action("", "CustomerBill", new { Area = "Finance" })';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+    });
+</script>
+<script src="~/areas/finance/views/customerbill/docketfinalization.js"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("DocketFinalization", "CustomerBill", FormMethod.Post, new { @class = "j-forms j-multistep", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="widget-wrap">
+                <div id="dvStep" class="form-content">
+                    <fieldset>
+                        <div class="row">
+                            <div id="dvConsignorType" class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="inline-group">
+                                        @Html.LabelFor(model => model.FinalizeByDocketDate, new { @class = "label" })
+                                        <label class="radio" id="dvConsignorBillingOn">
+                                            @Html.RadioButtonFor(model => model.FinalizeByDocketDate, true, new { @id = "rdDocketDate", @checked = "checked" })
+                                            <i></i>
+                                            @Html.LabelFor(model => model.FinalizeByDocketDate, "Billing On " + SessionUtility.DocketNomenClature + " Date", new { @for = "rdDocketDate" })
+                                        </label>
+                                        <label class="radio" id="dvConsignorBillingOnFinalizationDate">
+                                            @Html.RadioButtonFor(model => model.FinalizeByDocketDate, false, new { @id = "rdFinalizationDate" })
+                                            <i></i>
+                                            @Html.LabelFor(model => model.FinalizeByDocketDate, "Billing On Finalization Date", new { @for = "rdFinalizationDate" })
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "FromLocationId", FieldCaption = "Location" })
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                @Html.Label("Select " + SessionUtility.DocketNomenClature + " Date", new { @class = "label" })
+                                <div class="clearfix">
+                                    <div id="drDocketDate"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.Hidden("hdnCustomerId")
+                                        @Html.TextBoxFor(model => model.CustomerCode, null, new { @class = "form-control", @id = "txtCustomerCode" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.CustomerCode)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Label("CustomerCode", " ", new { @class = "lable" })
+                                    <div class="clearfix">
+                                    </div>
+                                    @Html.Label("CustomerCode", " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-separator">OR</div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Label(SessionUtility.DocketNomenClature + " No(s)", new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNos" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Label(" ", new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.Label("(seperated by comma if multiple)")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-sm-4" id="dvCustomer">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                                    <div class="clearfix">
+                                    </div>
+                                    @Html.LabelFor(model => model.CustomerCode, " ", new { @class = "label-bold", @id = "lblCustomer" })
+                                </div>
+                            </div>
+                            <div class="col-sm-4" id="dvFinalizationDate">
+                                <div class="form-group">
+                                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "FinalizationDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.FinalizationDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = false, MinDate = DateTime.Now.Date, MaxDate = DateTime.Now.Date.AddDays(1) })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div>
+                                    <table id="dtDocketList"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

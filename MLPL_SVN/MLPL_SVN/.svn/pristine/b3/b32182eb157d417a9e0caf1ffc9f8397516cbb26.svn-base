@@ -1,0 +1,92 @@
+﻿@model CodeLock.Models.MasterAccountGroup
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "AccountGroup Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "AccountGroup", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("AccountGroupId", 0)
+    @Html.AntiModelInjectionFor(m => m.AccountGroupId)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GroupCode, new { @class = "label" })
+                    <div class="system-label">
+                        @Html.Label("", "<System Generated>")
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.AccountCategoryId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.AccountCategoryId, new SelectList(ViewBag.CategoryList, "Value", "Name"), "Select Account Category", new { @class = "form-control", @id = "ddlCategory" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.AccountCategoryId)
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.ParentGroupId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.ParentGroupId, new SelectList(ViewBag.GroupCodeList, "Value", "Name"), "Select Parent Group", new { @class = "form-control", @id = "ddlGroupCode" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.ParentGroupId)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ManualGroupCode, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.ManualGroupCode, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ManualGroupCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GroupName, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.GroupName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GroupName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Account Group', 'Create', 'ddlCategory', 'Go To List', '@Url.Action("Index")');
+        $('#ddlCategory').change(OnCategoryChange);
+    });
+
+
+    function OnCategoryChange() {
+        if ($('#ddlCategory').val() != "") {
+            var requestData = { accountCategoryId: $('#ddlCategory').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetAccountGroupListByCategoryId", "AccountGroup")', JSON.stringify(requestData), GetGroupCodeListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetGroupCodeListSuccess(responseData) {
+        BindDropDownList('ddlGroupCode', responseData, 'Value', 'Name', 0, 'Select GroupCode');
+    }
+</script>

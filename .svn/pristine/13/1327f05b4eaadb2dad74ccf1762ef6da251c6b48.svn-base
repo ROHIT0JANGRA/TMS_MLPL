@@ -1,0 +1,80 @@
+﻿@*@using AppClicker.Models*@
+@model CodeLock.Models.Inspection
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        companyId = '@SessionUtility.CompanyId';
+        warehouseId = '@SessionUtility.WarehouseId';
+        inspectionUrl = '@Url.Action("", "Inspection", new { Area = "WMS" })';
+    });
+</script>
+<script src="@Url.Content("~/Areas/WMS/Views/Inspection/Put.js")"></script>
+
+<div class="row" id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("GRN Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drGrnDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("GrnNos", "GRN No", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBox("GrnNos", string.Empty, new { @class = "form-control", @id = "txtGrnNos" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("InvoiceNos", "Invoice No", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBox("InvoiceNos", string.Empty, new { @class = "form-control", @id = "txtInvoiceNos" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "InspectionDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.InspectionDateTime), IsDateOnly = false, IsRequired = true, AllowFutureDate = false, AllowPastDate = false, MinDate = DateTime.Now.Date, MaxDate = DateTime.Now.Date.AddDays(1) })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table id="dtInspectionList">
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 40px"></th>
+                                    <th style="min-width: 180px"></th>
+                                    <th style="min-width: 80px"></th>
+                                    <th style="min-width: 180px"></th>
+                                    <th style="max-width: 100px"></th>
+                                    <th style="min-width: 100px"></th>
+                                    <th style="min-width: 100px"></th>
+                                    <th style="min-width: 100px"></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+

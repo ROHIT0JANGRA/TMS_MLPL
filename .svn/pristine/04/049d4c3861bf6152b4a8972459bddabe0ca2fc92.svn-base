@@ -1,0 +1,56 @@
+﻿@using CodeLock.Models
+@model MrCancellation
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+        baseUrl = '@Url.Action("", "CustomerBill")';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+        currentDate = '@DateTime.Now';
+        dateTimeFormat = '@ConfigHelper.JsDateFormat' + ' ' + '@ConfigHelper.TimeFormat';
+    </script>
+<script src="~/Areas/Finance/Views/CustomerBill/MrCancellation.js"></script>
+
+<div class="row" id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("MrCancellation", "CustomerBill", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label("Mr Date", new { @class = "label" })
+                            </div>
+                            <div id="drMrDate"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.MrNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.MrNo, new { @class = "form-control", @id = "txtMrNo" })
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                @Html.Label("(seperated by comma if multiple)")
+                            </div>
+                        </div>*@
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtMrBillList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

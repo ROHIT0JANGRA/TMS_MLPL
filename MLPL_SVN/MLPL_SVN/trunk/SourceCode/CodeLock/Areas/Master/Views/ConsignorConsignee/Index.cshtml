@@ -1,0 +1,86 @@
+﻿@model IEnumerable<CodeLock.Models.MasterConsignorConsigneeMapping>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtMasterConsignorConsigneeMapping">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ConsignorName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ConsigneeName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BillingPartyName)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ConsignorName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ConsigneeName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BillingPartyName)
+                    </td>
+                    <td>
+                        @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Mapping", new { id = item.MappingId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.MappingId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Consignor Consignee Mapping', 'Mapping List', 'filter', 'Add New', '@Url.Action("Mapping")');
+        LoadDataTable('dtMasterConsignorConsigneeMapping', true, true, true);
+    });
+</script>
+

@@ -1,0 +1,612 @@
+﻿@using CodeLock.Models
+@model OtherBillEntry
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "OtherBillEntry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        accountMasterUrl = '@Url.Action("", "Account", new { Area = "Master" })';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        employeeMasterUrl = '@Url.Action("", "Employee", new { Area = "Master" })';
+        locationMasterUrl = '@Url.Action("", "Location", new { Area = "Master" })';
+        vehicleMasterUrl = '@Url.Action("", "Vehicle", new { Area = "Master" })';
+        docketUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+        thcUrl = '@Url.Action("", "THC", new { Area = "Operation" })';
+        vendorPaymentUrl = '@Url.Action("", "VendorPayment", new { Area = "Finance" })';
+        gstMasterUrl = '@Url.Action("", "Gst", new { Area = "Master" })';
+        sacMasterUrl = '@Url.Action("", "Sac", new { Area = "Master" })';
+        stateMasterUrl = '@Url.Action("", "State", new { Area = "Master" })';
+        cityMasterUrl = '@Url.Action("", "City", new { Area = "Master" })';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+        vendorContractMasterUrl = '@Url.Action("", "VendorContract", new { Area = "Contract" })';
+        hsnMasterUrl = '@Url.Action("", "Hsn", new { Area = "Master" })';
+        loginLocationId = '@SessionUtility.LoginLocationId';
+        loginLocationCode = '@SessionUtility.LoginLocationCode';
+    });
+</script>
+<script src="~/areas/finance/views/vendorpayment/otherbillentry.js?v4"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("OtherBillEntry", "VendorPayment", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorCode, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                                    @Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.VendorCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorName,  new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.VendorName, null, new { @class = "form-control", @id = "txtVendorName", @readOnly = "readOnly" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.VendorName)
+                            </div>
+                        </div>
+                    </div>
+					<div class="row">
+						@*<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(m => m.GstTypeId, new { @class = "label" })
+				<div class="select">
+					@Html.DropDownListFor(m => m.GstTypeId, new SelectList(ViewBag.GstTypeList, "Value", "Name"), "Select GST Type", new { @class = "form-control", @id = "ddlGstTypeId", @disabled = "true" })
+					<i></i>
+				</div>
+				@Html.ValidationMessageFor(m => m.GstTypeId)
+			</div>
+		</div>*@
+						<div class="col-sm-4">
+							<div class="form-group">
+								@Html.LabelFor(m => m.VendorGstStateId, new { @class = "label" })
+								<div class="select">
+									@Html.DropDownListFor(m => m.VendorGstStateId, Enumerable.Empty<SelectListItem>(), "Select Vendor GST State", new { @class = "form-control", @id = "ddlVendorGstStateId", @disabled = "true" })
+									<i></i>
+								</div>
+								@Html.ValidationMessageFor(m => m.VendorGstStateId)
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								@Html.LabelFor(m => m.CompanyGstStateId, new { @class = "label" })
+								<div class="select">
+									@Html.DropDownListFor(m => m.CompanyGstStateId, Enumerable.Empty<SelectListItem>(), "Select Company GST State", new { @class = "form-control", @id = "ddlCompanyGstStateId", @disabled = "true" })
+									<i></i>
+								</div>
+								@Html.ValidationMessageFor(m => m.CompanyGstStateId)
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								@Html.LabelFor(m => m.GstTypeId, new { @class = "label" })
+								<div class="select">
+									@Html.DropDownListFor(model => model.GstTypeId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlGstTypeId" })
+									<i></i>
+								</div>
+								@Html.ValidationMessageFor(model => model.GstTypeId)
+							</div>
+						</div>
+					</div>
+                    <div class="row">
+                        <div class="col-sm-6" style="display:none">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CompanyId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.CompanyId, new SelectList(ViewBag.CompanyList, "Value", "Name"), "Select Company", new { @class = "form-control", @id = "ddlCompayId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CompanyId)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="page-separator">Bill Detail</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "BillDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.BillDateTime), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, MinDate = DateTime.Now.Date.AddDays(-30), MaxDate = DateTime.Now.Date.AddDays(1) })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualBillNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualBillNo, new { @class = "form-control", @id = "txtDocumentNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualBillNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="label">Vendor</label>
+                            @Html.LabelFor(model => model.VendorCode, " ", new { id = "lblVendorNameStep2", @class = "label-bold" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "BillDueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.BillDueDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = true, MinDate = DateTime.Now.Date })
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Remarks)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CreditAccount, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.Label("LCL0002 : Sundry Creditors - Transporter", new { @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PaymentLocationId, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.PaymentLocationId, new { @id = "hdnPaymentLocationId" })
+                                    @Html.TextBoxFor(model => model.PaymentLocation, null, new { @class = "form-control", @id = "txtPaymentLocation" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.PaymentLocation)
+                            </div>
+                            </div>
+                        </div>
+                        <div class="page-separator">GST Detail</div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                @Html.LabelFor(model => model.IsInterState, new { @class = "label" })
+                                @Html.Label(" ", new { @id = "lblIsInterState", @class = "label-bold" })
+                                @Html.HiddenFor(model => model.IsInterState, new { @id = "hdnIsInterState" })
+                            </div>
+                            @*<div class="col-sm-4">
+                @Html.LabelFor(model => model.IsGstRegistered, new { @class = "label" })
+                @Html.Label(" ", new { @id = "lblIsGstRegistered", @class = "label-bold" })
+                @Html.HiddenFor(model => model.IsGstRegistered, new { @id = "hdnIsGstRegistered" })
+            </div>*@
+
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table data-tbl dataTable no-footer dtr-inline">
+                                    <tr>
+                                        <th>State Category</th>
+                                        <th>GST State</th>
+                                        @*<th>Location</th>*@
+                                        <th>City</th>
+                                        <th>GSTIN</th>
+                                        <th>Address</th>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Label(" ", "Vendor State", new { @class = "label-bold" })</td>
+                                        <td>@Html.Label(" ", new { @id = "lblVendorStateName", @class = "label-bold" })</td>
+                                        @*<td>
+                            <div class="select">
+                                @Html.DropDownListFor(m => m.VendorLocationId, Enumerable.Empty<SelectListItem>(), "Select Location", new { @class = "form-control", @id = "ddlGstVendorLocationId", @disabled = "true" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.VendorLocationId)
+                        </td>*@
+                                        <td>
+                                            <div class="select">
+                                                @Html.DropDownListFor(m => m.GstVendorCityId, Enumerable.Empty<SelectListItem>(), "Select City", new { @class = "form-control", @id = "ddlGstVendorCityId" })
+                                                <i></i>
+                                            </div>
+                                            @Html.ValidationMessageFor(m => m.GstVendorCityId)
+                                        </td>
+                                        <td>
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => m.VendorGstinNo, " ", new { @class = "form-control", @id = "txtVendorGstNo" })
+                                                @Html.HiddenFor(m => m.VendorGstId, new { @id = "hdnVendorGstId" })
+                                            </div>
+                                            @Html.ValidationMessageFor(m => m.VendorGstinNo)
+                                        </td>
+                                        <td>
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => m.GstVendorAddress, " ", new { @class = "form-control", @id = "txtGstVendorAddress" })
+                                            </div>
+                                            @Html.ValidationMessageFor(m => m.GstVendorAddress)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Label(" ", "Company State", new { @class = "label-bold" })</td>
+                                        <td>@Html.Label(" ", new { @id = "lblCompanyStateName", @class = "label-bold" })</td>
+                                        @*<td>
+                            <div class="select">
+                                @Html.DropDownListFor(m => m.CompanyLocationId, Enumerable.Empty<SelectListItem>(), "Select Location", new { @class = "form-control", @id = "ddlGstCompanyLocationId" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.CompanyLocationId)
+                        </td>*@
+                                        <td>
+                                            <div class="select">
+                                                @Html.DropDownListFor(m => m.GstCompanyCityId, Enumerable.Empty<SelectListItem>(), "Select City", new { @class = "form-control", @id = "ddlGstCompanyCityId" })
+                                                <i></i>
+                                            </div>
+                                            @Html.ValidationMessageFor(m => m.GstCompanyCityId)
+                                        </td>
+                                        <td>
+                                            @Html.LabelFor(m => m.CompanyGstinNo, " ", new { @class = "label-bold", @id = "lblCompanyGstinNo" })
+                                            @Html.HiddenFor(m => m.CompanyGstId, new { @id = "hdnCompanyGstId" })
+                                        </td>
+                                        <td>
+                                            @Html.Label(" ", new { @class = "label-bold", @id = "lblCompanyGstAddress" })
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="checkbox">
+                                        @Html.CheckBoxFor(m => m.IsCostCenterApplicable, new { @id = "chkIsCostCenterApplicable" })
+                                        <i></i>
+                                        @Html.LabelFor(m => m.IsCostCenterApplicable, new { @class = "label", @For = "chkIsCostCenterApplicable" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 table-responsive">
+                                <div>
+                                    <table id="dtAccountDetailList">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].GstExempted)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].TdsExempted)
+                                                </th>
+                                                <th width="20px">
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].IsGoodsProduct)
+                                                </th>
+                                                <th width="50px">
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].AccountCode)
+                                                </th>
+                                                <th width="100px">
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].AccountDescription)
+                                                </th>
+                                                <th id="thCostCenterType">
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].CostCenterTypeId)
+                                                    <div class="select" style="width:150px">
+                                                        @Html.DropDownList("CostCenterTypeId", new SelectList(ViewBag.CostCenterTypeId, "Value", "Name"), "Select Cost Center Type", new { @class = "form-control", @id = "ddlCommanCostCenterTypeId" })<i></i>
+                                                    </div>
+                                                    <i></i>
+                                                </th>
+                                                <th id="thCostCenter">
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].CostCenterId)
+                                                    @Html.Hidden("hdnCommanCostCenterId")
+                                                    @Html.TextBox("CostCenterId", string.Empty, new { @class = "form-control", @id = "txtCommanCostCenter", @style = "width: 200px", @placeholder = "Enter Cost Center" })
+                                                </th>
+                                                <th id="thCostCenterName">
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].CostCenterName)
+                                                    @Html.Label("lblCommanCostCenter", " ", new { id = "lblCommanCostCenter", @class = "label-bold" })
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].SacId)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].Units)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].Narration)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].Amount)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].Rcm)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].GstRate)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].GstAmount)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.BillAccountDetails[0].TotalAmount)
+                                                </th>
+                                                <th style="min-width:85px">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.BillAccountDetails.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <label class="checkbox">
+                                                                @Html.CheckBoxFor(model => model.BillAccountDetails[i].GstExempted, new { @id = "chkGstExempted" + i })
+                                                                <i></i>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <label class="checkbox">
+                                                                @Html.CheckBoxFor(model => model.BillAccountDetails[i].TdsExempted, new { @class = "selectrow", @id = "chkTdsExempted" + i })
+                                                                <i></i>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <label class="checkbox">
+                                                                @Html.CheckBoxFor(model => model.BillAccountDetails[i].IsGoodsProduct, new { @class = "selectrow", @id = "chkIsGoodsProduct" + i })
+                                                                <i></i>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @Html.HiddenFor(m => Model.BillAccountDetails[i].AccountId, new { id = "hdnAccountId" + i })
+                                                        @Html.TextBoxFor(m => Model.BillAccountDetails[i].AccountCode, new { @class = "form-control", id = "txtAccountCode" + i.ToString(), @style = "width: 100px;" })
+                                                        @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].AccountCode)
+                                                    </td>
+                                                    <td>
+                                                        @Html.Label("lblAccountName", " ", new { @class = "label-bold", @id = "lblAccountName" + i })
+                                                    </td>
+                                                    <td id="@("tdCostCenterType" + i)">
+                                                        <div class="select">
+                                                            @Html.DropDownListFor(model => model.BillAccountDetails[i].CostCenterTypeId, new SelectList(ViewBag.CostCenterTypeId, "Value", "Name"), "Select Cost Center Type", new { @class = "form-control", @id = "ddlCostCenterTypeId" + i.ToString() })
+                                                            <i></i>
+                                                        </div>
+                                                        @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].CostCenterTypeId)
+                                                    </td>
+                                                    <td id="@("tdCostCenter" + i)">
+                                                        <div class="input">
+                                                            @Html.HiddenFor(m => Model.BillAccountDetails[i].CostCenterId, new { id = "hdnCostCenterId" + i })
+                                                            @Html.TextBoxFor(m => Model.BillAccountDetails[i].CostCenterCode, new { @class = "form-control", id = "txtCostCenter" + i.ToString(), @style = "width: 200px;" })
+                                                        </div>
+                                                        @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].CostCenterCode)
+                                                    </td>
+                                                    <td id="@("tdCostCenterName" + i)">
+                                                        @Html.Label("lblCostCenter", " ", new { id = "lblCostCenter" + i.ToString(), @class = "label-bold" })
+                                                    </td>
+                                                    <td>
+                                                        <div class="select" style="width:150px">
+                                                            @Html.DropDownListFor(model => Model.BillAccountDetails[i].SacId, new SelectList(ViewBag.SacList, "Value", "Name", Model.BillAccountDetails[i].SacId), "Select", new { @class = "form-control", @id = "ddlSacId" + i.ToString() })
+                                                            <i></i>
+                                                        </div>
+                                                        @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].SacId)
+                                                    </td>
+                                                    <td>
+                                                        <div class="input">
+                                                            @Html.TextBoxFor(m => Model.BillAccountDetails[i].Units, "0", new { @class = "form-control input-small numeric", @id = "txtUnits" + i.ToString(), @style = "width: 50px;" })
+                                                        </div>
+                                                        @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].Units)
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => Model.BillAccountDetails[i].Narration, new { @class = "form-control", @id = "txtNarration" + i.ToString(), @style = "width: 150px;" })
+                                                        @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].Narration)
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => Model.BillAccountDetails[i].Amount, new { @class = "form-control numeric2", @id = "txtAmount" + i.ToString(), @style = "width: 80px;" })
+                                                        @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].Amount)
+                                                    </td>
+                                                    <td>
+                                                        @Html.LabelFor(m => Model.BillAccountDetails[i].Rcm, "No", new { @class = "label static", @id = "lblRcm" + i })
+                                                        @Html.HiddenFor(m => Model.BillAccountDetails[i].IsRcm, new { @class = "static", @id = "hdnIsRcm" + i })
+                                                    </td>
+                                                    <td>
+                                                        <div class="input">
+                                                            @Html.TextBoxFor(m => Model.BillAccountDetails[i].GstRate, "0.00", new { @class = "form-control numeric2", id = "txtGstRate" + i.ToString(), @style = "width: 80px;" })
+                                                        </div>
+                                                        @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].GstRate)
+                                                    </td>
+                                                    <td>
+                                                        <div class="input">
+                                                            @Html.TextBoxFor(m => Model.BillAccountDetails[i].GstAmount, "0.00", new { @class = "form-control textlabel numeric2", @id = "txtGstAmount" + i.ToString(), @style = "width: 80px;" })
+                                                        </div>
+                                                        @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].GstAmount)
+                                                    </td>
+                                                    <td>
+                                                        <div class="input">
+                                                            @Html.TextBoxFor(m => Model.BillAccountDetails[i].TotalAmount, "0.00", new { @class = "form-control textlabel numeric2", @id = "txtTotalAmount" + i.ToString(), @style = "width: 80px;" })
+                                                        </div>
+                                                        @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].TotalAmount)
+                                                    </td>
+                                                    <td style="min-width:85px"></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th id="ftCostCenterType"></th>
+                                                <th id="ftCostCenter"></th>
+                                                <th id="ftCostCenterName"></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th>Total</th>
+                                                <th class="align-right">
+                                                    <div class="input">
+                                                        @Html.TextBox("Total", "0", new { @id = "txtTotal", @class = "form-control textlabel numeric2", @style = "text-align: right" })
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane">
+                        @*<div class="row" id="dvDocumentDetails" style="display:none">
+                <div class="col-sm-3">
+                    @Html.LabelFor(model => model.GstExemptedCategory, new { @class = "control-label" })
+                    <div class="clearfix">
+                        @Html.DropDownListFor(model => model.GstExemptedCategory, new List<SelectListItem> {
+                            new SelectListItem() {Text = "Select",Value=""},
+                            new SelectListItem() {Text = "NEWSPAPER", Value="1"},}, new { @class = "selecterxl", @id = "ddlGstExemptedCategory" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GstExemptedCategory)
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocumentName, new { @class = "control-label" })
+                        <div class="input-wrapper">
+                            <input type="file" id="fuDocumentAttachment" name="Attachment" />
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+                        @Html.HiddenFor(model => model.GstRate, new { @id = "hdnGstRate" })
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DiscountReceived, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.DiscountReceived, null, new { @class = "form-control numeric2", @id = "txtDiscountReceived" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.DiscountReceived)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.OtherDeduction, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.OtherDeduction, null, new { @class = "form-control numeric2", @id = "txtOtherDeduction" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.OtherDeduction)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.SubTotal, new { @class = "control" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.SubTotal, "0.00", new { @Class = "textlabel form-control numeric2 label-bold", @id = "txtSubTotal" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Igst, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Igst, "0.00", new { @Class = "textlabel form-control numeric2 label-bold", @id = "txtIgst" })
+                                        @Html.HiddenFor(model => model.IgstPercentage, new { @id = "hdnIgstPercentage" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Cgst, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Cgst, "0.00", new { @Class = "textlabel form-control numeric2 label-bold", @id = "txtCgst" })
+                                        @Html.HiddenFor(model => model.CgstPercentage, new { @id = "hdnCgstPercentage" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Sgst, new { @class = "control-label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Sgst, "0.00", new { @Class = "textlabel form-control numeric2 label-bold", @id = "txtSgst" })
+                                        @Html.HiddenFor(model => model.SgstPercentage, new { @id = "hdnSgstPercentage" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Ugst, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Ugst, "0.00", new { @Class = "textlabel form-control numeric2 label-bold", @id = "txtUgst" })
+                                        @Html.HiddenFor(model => model.UgstPercentage, new { @id = "hdnUgstPercentage" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.GstTotal, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.GstTotal, "0.00", new { @Class = "textlabel form-control numeric2 label-bold", @id = "txtGstTotal" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.BillAmount, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.BillAmount, "0.00", new { @Class = "textlabel form-control numeric2 label-bold", @id = "txtBillAmount" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.NetPayableAmount, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.NetPayableAmount, "0.00", new { @Class = "textlabel form-control numeric2 label-bold", @id = "txtNetPayableAmount" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.NetPayableAmount)
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.TdsRate, new { @class = "label" })
+                                        <div class="input">
+                                            @Html.TextBoxFor(model => model.TdsRate, new { @class = "form-control numeric2", @id = "txtTdsRate" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.TdsRate)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.TdsAccountId, new { @class = "label" })
+                                        <div class="select">
+                                            @Html.DropDownListFor(m => m.TdsAccountId, new SelectList(ViewBag.TdsList, "Value", "Name"), "Select TDS Section", new { @class = "form-control", @id = "ddlTdsSection" })
+                                            <i></i>
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.TdsAccountId)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.TdsAmount, new { @class = "label" })
+                                        <div class="input">
+                                            @Html.TextBoxFor(model => model.TdsAmount, new { @class = "form-control textlabel numeric2 label-bold", @id = "txtTdsAmount" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+        }
+    </div>
+</div>

@@ -1,0 +1,306 @@
+﻿@model CodeLock.Models.MasterDcr
+@{
+    ViewBag.Title = "Reallocate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Reallocate", "DCR", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentTypeName, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.DocumentTypeName, " ", new { @id = "lblDocumentTypeName", @class = "label-bold" })
+                        @Html.HiddenFor(model => model.DocumentTypeId, new { @id = "hdnDocumentTypeId" })
+                        @Html.HiddenFor(model => model.Id, new { @id = "hdnDocumentId" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BookCode, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.BookCode, new { @id = "lblBookCode", @class = "label-bold" })
+                        @Html.HiddenFor(model => model.BookCode, new { @id = "hdnBookCode" })
+                        @Html.HiddenFor(model => model.SuffixBase, new { @id = "hdnSuffixBase" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BusinessTypeId, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.BusinessType, new { @id = "lblBusinessType", @class = "label-bold" })
+                        @Html.HiddenFor(model => model.BusinessTypeId, new { @id = "hdnBusinessTypeId" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SeriesFrom, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.SeriesFrom, new { @id = "lblSeriesFrom", @class = "label-bold" })
+                        @Html.HiddenFor(model => model.SeriesFrom, new { @id = "hdnSeriesFrom" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SeriesTo, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.SeriesTo, new { @id = "lblSeriesTo", @class = "label-bold" })
+                        @Html.HiddenFor(model => model.SeriesTo, new { @id = "hdnSeriesTo" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Total, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.Total, new { @id = "lblTotalLeaf", @class = "label-bold" })
+                        @Html.HiddenFor(model => model.Total, new { @id = "hdnTotalLeaf" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.LocationId, new { @id = "hdnLocationId" })
+                        @Html.HiddenFor(model => model.LocationIdOld, new { @id = "hdnLocationIdOld" })
+                        @Html.HiddenFor(model => model.LocationCodeOld, new { @id = "hdnLocationCodeOld" })
+                        @Html.TextBoxFor(model => model.LocationCode, null, new { @class = "form-control text-complete text-complete-html", @id = "txtLocationCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SeriesFrom)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AllotedCategory, new { @class = "label" })
+                    <div class="select">
+                        @Html.HiddenFor(model => model.AllotedCategoryOld, new { @id = "hdnAllotedCategoryOld" })
+                        @Html.DropDownListFor(model => model.AllotedCategory, new List<SelectListItem> { new SelectListItem() { Text = "User", Value = "U" }, new SelectListItem() { Text = "Business Associate", Value = "B" } }, "Select Alloted Category", new { @class = "form-control", @id = "ddlAllotedCategory" })
+                        <i></i>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(model => model.AllotedCategory)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AllotedTo, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.AllotedTo, new { @id = "hdnAllotedToId" })
+                        @Html.HiddenFor(model => model.AllotedToOld, new { @id = "hdnAllotedToIdOld" })
+                        @Html.HiddenFor(model => model.AllotedToNameOld, new { @id = "hdnAllotedToNameOld" })
+                        @Html.TextBoxFor(model => model.AllotedToName, null, new { @class = "form-control text-complete text-complete-html", @id = "txtAllotedToName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AllotedToName)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    var locationId;
+    $(document).ready(function () {
+        SetPageLoad('DCR', 'Reallocate', '');
+        hdnDocumentId = $('#hdnDocumentId');
+        hdnDocumentTypeId = $('#hdnDocumentTypeId');
+        lblDocumentTypeName = $('#lblDocumentTypeName');
+        lblBookCode = $('#lblBookCode');
+        hdnBookCode = $('#hdnBookCode');
+        lblSuffixBase = $('#lblSuffixBase');
+        hdnSuffixBase = $('#hdnSuffixBase');
+        lblBusinessType = $('#lblBusinessType');
+        hdnBusinessTypeId = $('#hdnBusinessTypeId');
+        hdnDCRSeriesTo = $('#hdnDCRSeriesTo');
+        lblSeriesFrom = $('#lblSeriesFrom');
+        hdnSeriesFrom = $('#hdnSeriesFrom');
+        lblSeriesTo = $('#lblSeriesTo');
+        hdnSeriesTo = $('#hdnSeriesTo');
+        lblTotalLeaf = $('#lblTotalLeaf');
+        hdnTotalLeaf = $('#hdnTotalLeaf');
+        txtLocationCode = $('#txtLocationCode');
+        hdnLocationCodeOld = $('#hdnLocationCodeOld');
+        hdnLocationId = $('#hdnLocationId');
+        hdnLocationIdOld = $('#hdnLocationIdOld');
+        ddlAllotedCategory = $('#ddlAllotedCategory');
+        hdnAllotedCategoryOld = $('#hdnAllotedCategoryOld');
+        hdnAllotedToId = $('#hdnAllotedToId');
+        hdnAllotedToOld = $('#hdnAllotedToOld');
+        hdnAllotedToNameOld = $('#hdnAllotedToNameOld');
+        txtAllotedToName = $('#txtAllotedToName');
+        btnSubmit = $('#btnSubmit');
+        LocationAutoComplete('txtLocationCode', 'hdnLocationId');
+        Init();
+        txtLocationCode.blur(function () { return IsLocationCodeExist(txtLocationCode, hdnLocationId); });
+        txtLocationCode.change(OnLocationChange);
+        ddlAllotedCategory.change(OnAllocatedCategoryChange);
+        btnSubmit.click(OnSubmitClick);
+    });
+
+    function Init() {
+        var requestData = { DocumentTypeId: hdnDocumentTypeId.val(), SeriesFrom: hdnSeriesFrom.val() };
+        AjaxRequestWithPostAndJson('@Url.Action("GetDetailByDocumentTypeIdAndDocumentNumber")', JSON.stringify(requestData), OnGetDCRSuccess, ErrorFunction, false);
+    }
+
+    function OnLocationChange() {
+        locationId = hdnLocationId.val();
+        txtAllotedToName.val('');
+        hdnAllotedToId.val('');
+        ddlAllotedCategory.val('');
+    }
+
+    function OnGetDCRSuccess(responseData) {
+        hdnDocumentId.val(responseData.Id);
+        lblSeriesFrom.text(responseData.SeriesFrom);
+        hdnSeriesFrom.val(responseData.SeriesFrom);
+        lblSeriesTo.text(responseData.SeriesTo);
+        hdnSeriesTo.val(responseData.SeriesTo);
+        lblTotalLeaf.text(responseData.Total);
+        hdnTotalLeaf.val(responseData.Total);
+        lblDocumentTypeName.text(responseData.DocumentTypeName);
+        lblBookCode.text(responseData.BookCode + responseData.Suffix);
+        hdnBookCode.val(responseData.BookCode);
+        lblSuffixBase.text(responseData.Suffix);
+        hdnSuffixBase.val(responseData.Suffix);
+        hdnBusinessTypeId.val(responseData.BusinessTypeId);
+        lblBusinessType.text(responseData.BusinessType);
+        txtLocationCode.val(responseData.LocationCode);
+        hdnLocationCodeOld.val(responseData.LocationCode);
+        hdnLocationId.val(responseData.LocationId);
+        hdnLocationIdOld.val(responseData.LocationId);
+        locationId = hdnLocationId.val();
+        ddlAllotedCategory.val(responseData.AllotedCategory);
+        hdnAllotedCategoryOld.val(ddlAllotedCategory.val());
+        if ($('#ddlAllotedCategory').val() == 'U') {
+            UserAutoCompleteByLocation($('#txtAllotedToName').attr('id'), $('#hdnAllotedToId').attr('id'), 'User Name', hdnLocationId.val());
+            $('#txtAllotedToName').rules('remove', 'required');
+            $('#txtAllotedToName').rules("add", { required: true, messages: { required: "Please enter User Name." } });
+            $('#txtAllotedToName').blur(function () {
+                return IsUserNameExist($(this), $('#hdnAllotedToId'));
+            });
+        }
+        else if ($('#ddlAllotedCategory').val() == 'B') {
+            UserAutoCompleteByLocation($('#txtAllotedToName').attr('id'), $('#hdnAllotedToId').attr('id'), 'Business Associate Name',hdnLocationId.val(), 1);
+            $('#txtAllotedToName').rules('remove', 'required');
+            $('#txtAllotedToName').rules("add", { required: true, messages: { required: "Please enter Business Associate Name." } });
+            $('#txtAllotedToName').blur(function () {
+                return IsUserNameExist($(this), $('#hdnAllotedToId', 'Business Associate Name', 1));
+            });
+        }
+        else {
+            txtAllotedToName.rules('remove', 'required');
+        }
+        txtAllotedToName.val(responseData.AllotedToName);
+        hdnAllotedToNameOld.val(responseData.AllotedToName);
+        hdnAllotedToId.val(responseData.AllotedTo);
+        hdnAllotedToOld.val(responseData.AllotedTo);
+    }
+
+    function CheckValidSeriesFrom() {
+        if (txtSeriesFrom.val() != '') {
+            var requestData = { DCRSeriesFrom: hdnDCRSeriesFrom.val(), DCRSeriesTo: hdnDCRSeriesTo.val(), SeriesFrom: txtSeriesFrom.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("CheckValidSeriesFrom")', JSON.stringify(requestData), OnCheckValidSeriesFrom, ErrorFunction, false);
+        }
+    }
+
+    function OnCheckValidSeriesFrom(isValid) {
+        if (isValid) {
+            var requestData = { DocumentId: hdnDocumentId.val(), DCRSeriesFrom: hdnDCRSeriesFrom.val(), SeriesFrom: txtSeriesFrom.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetMaxDocumentNumber")', JSON.stringify(requestData), OnGetMaxDocumentSuccess, ErrorFunction, false);
+        }
+        else {
+            ShowMessage('Docuement No <b>\'' + txtSeriesFrom.val() + '</b>\' is not in DCR Series');
+            txtSeriesFrom.val('');
+            lblTotalLeaf.text('0');
+            hdnTotalLeaf.val('0');
+            txtSeriesFrom.focus();
+            return false;
+        }
+    }
+
+    function OnGetMaxDocumentSuccess(maxDocumentNo) {
+        if (maxDocumentNo != '') {
+            ShowMessage('Docuement No <b>\'' + txtSeriesFrom.val() + '</b>\' is already used. Please enter Series From grater than <b>\'' + maxDocumentNo + '</b>\'');
+            txtSeriesFrom.val('');
+            lblTotalLeaf.text('0');
+            hdnTotalLeaf.val('0');
+            txtSeriesFrom.focus();
+            return false;
+        }
+        else
+            GetTotalLeaf();
+    }
+
+    function GetTotalLeaf() {
+        var requestData = { SeriesFrom: txtSeriesFrom.val(), DCRSeriesTo: hdnDCRSeriesTo.val() };
+        AjaxRequestWithPostAndJson('@Url.Action("GetTotalLeaf")', JSON.stringify(requestData), OnGetTotalLeafSuccess, ErrorFunction, false);
+    }
+
+    function OnGetTotalLeafSuccess(totalLeaf) {
+        lblTotalLeaf.text(totalLeaf);
+        hdnTotalLeaf.val(totalLeaf);
+        return false;
+    }
+
+    function OnAllocatedCategoryChange() {
+        txtAllotedToName.val('');
+        hdnAllotedToId.val('');
+        locationId = hdnLocationId.val();
+        $('#txtAllotedToName').off("blur");
+        if ($('#ddlAllotedCategory').val() == 'U') {
+            UserAutoCompleteByLocation($('#txtAllotedToName').attr('id'), $('#hdnAllotedToId').attr('id'), 'User Name', hdnLocationId.val());
+            RemoveRequired($('#txtAllotedToName'));
+            AddRequired($('#txtAllotedToName'), "Please enter Employee Name");
+            $('#txtAllotedToName').blur(function () {
+                return IsUserNameExist($(this), $('#hdnAllotedToId'));
+            });
+        }
+        else if ($('#ddlAllotedCategory').val() == 'B') {
+            VendorAutoComplete($('#txtAllotedToName').attr('id'), $('#hdnAllotedToId').attr('id'), 'Business Associate Name', 4);
+            RemoveRequired($('#txtAllotedToName'));
+            AddRequired($('#txtAllotedToName'), "Please enter Business Associate Name");
+            $('#txtAllotedToName').blur(function () {
+                return CheckVendorCodeExist($(this), $('#hdnAllotedToId', 'Business Associate Name', 4));
+            });
+        }
+        else {
+            RemoveRequired($('#txtAllotedToName'));
+        }
+    }
+
+   function CheckVendorCodeExist(txtObj, hdnObj, fieldName, vendorType) {
+    if (IsObjectNullOrEmpty(fieldName)) fieldName = 'Vendor';
+    if (IsObjectNullOrEmpty(vendorType)) vendorType = '0';
+    if (txtObj.val() != "") {
+        var requestData = { vendorCode: txtObj.val(), vendorTypeId: vendorType };
+        AjaxRequestWithPostAndJson(ReplaceUrl('Vendor', 'IsVendorCodeExist'), JSON.stringify(requestData), function (result) {
+            if (IsObjectNullOrEmpty(result)) {
+                ShowMessage('Invalid ' + fieldName);
+                txtObj.val('').focus();
+                hdnObj.val(0);
+            }
+            else {
+                hdnObj.val(result.Value);
+                txtObj.val(result.Description);
+            }
+        }, ErrorFunction, false);
+    }
+    return false;
+}
+
+
+    function OnSubmitClick() {
+
+    }
+</script>

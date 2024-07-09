@@ -1,0 +1,763 @@
+﻿@model  CodeLock.Models.CustomerContractFleetCharge
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("FleetCharge", "CustomerContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Contract ID", new { @id = "lblCustomer", @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.ManualContractId
+                    </div>
+                </div>
+            </div>
+            @if (@ViewBag.isCustomerContract == false)
+            {
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Vendor", new { @id = "lblCustomer", @class = "label-bold" })
+                        <div class="clearfix">
+                            @ViewBag.CustomerCode : @ViewBag.CustomerName
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Customer", new { @id = "lblCustomer", @class = "label-bold" })
+                        <div class="clearfix">
+                            @ViewBag.CustomerCode : @ViewBag.CustomerName
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Charge Name", new { @id = "lblChargeName", @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.ChargeName
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="material-table-widget">
+                    @Html.HiddenFor(model => Model.ContractId, new { @id = "hdnContractId" })
+                    @Html.HiddenFor(model => Model.CustomerId, new { @id = "hdnCustomerId" })
+                    @Html.HiddenFor(model => Model.BaseOn1, new { @id = "hdnBaseOnFirst" })
+                    @Html.HiddenFor(model => Model.BaseOn2, new { @id = "hdnBaseOnSecond" })
+                    @Html.HiddenFor(model => Model.BaseCode1, new { @id = "hdnBaseCodeFirst" })
+                    @Html.HiddenFor(model => Model.BaseCode2, new { @id = "hdnBaseCodeSecond" })
+                    @Html.HiddenFor(model => Model.ToLocation, new { @id = "hdnToLocation" })
+                    @Html.HiddenFor(model => Model.ChargeCode, new { @id = "hdnChargeCode" })
+                    @Html.HiddenFor(model => Model.MatrixType, new { @id = "hdnMatrixType" })
+                    @Html.HiddenFor(model => Model.TransportModeId, new { @id = "hdnTransportModeId" })
+                    @Html.HiddenFor(model => Model.IsBooking, new { @id = "hdnIsBooking" })
+                    @Html.HiddenFor(model => Model.FtlTypeId, new { @id = "hdnFtlTypeId" })
+                    @Html.HiddenFor(model => Model.ConsignorId, new { @id = "hdnConsignorId" })
+                    @Html.HiddenFor(model => Model.ConsigneeId, new { @id = "hdnConsigneeId" })
+                    @Html.HiddenFor(model => Model.IsMilkrunHrsPerDayEnabled, new { @id = "hdnIsMilkrunHrsPerDayEnabled" })
+                    @Html.HiddenFor(model => Model.IsLaneEnabled, new { @id = "hdnIsLaneEnabled" })
+                    @{
+                        if (Model.IsLaneEnabled)
+                        {
+                            <table class="table-bordered" id="dtFleetCharge">
+                                <thead>
+                                    <tr>
+                                        <th id="thLaneId" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].LaneId)
+                                        </th>
+                                        <th id="thMasterLaneId" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].MasterLaneId)
+                                        </th>
+                                        <th id="thRouteId" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].RouteName)
+                                        </th>
+                                        <th id="thVehicleTypeId" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].FTLTypeDesc)
+                                        </th>
+                                        <th id="thFuelTypeId" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].FuelTypeDesc)
+                                        </th>
+                                        <th id="thContractedKM" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].ContractedKM)
+                                        </th>
+                                        <th id="thAssetCount" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].AssetCount)
+                                        </th>
+                                        <th id="thDriverCount" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].DriverCount)
+                                        </th>
+                                        <th id="thFixedChargePerTrip" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].FixedChargePerTrip)
+                                        </th>
+                                        <th id="thVariableRate" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].VariableRate)
+                                        </th>
+                                        <th id="thVariableBaseAmtPerTrip" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].VariableBaseAmtPerTrip)
+                                        </th>
+                                        <th id="thFuelPrice" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].FuelPrice)
+                                        </th>
+                                        <th id="thTollAmount" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].TollAmount)
+                                        </th>
+                                        <th id="thIsActive" width="100px" data-sort-ignore="true">
+                                            @Html.DisplayNameFor(model => model.Details[0].IsActive)
+                                        </th>
+                                        <th data-sort-ignore="true" data-hide="phone" width="85" id="thAction">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.Details.Count; i++)
+                                    {
+                                        <tr>
+                                            <td id="@("tdLaneId" + i)">
+                                                <div class="select">
+                                                    @Html.DropDownListFor(model => model.Details[i].LaneId, new SelectList(ViewBag.LaneList, "Value", "Name", Model.Details[i].ID.ToString()),
+                                                            new
+                                                                 {
+                                                                     @class = "form-control",
+                                                                     @id = "ddlLaneId" + i.ToString(),
+                                                                     @style = "width: 100px;",
+                                                                @enabled = true
+                                                            })
+                                                    <i></i>
+                                                </div>
+                                                @Html.ValidationMessageFor(modelItem => Model.Details[i].LaneId)
+                                                @Html.HiddenFor(model => model.Details[i].LaneId, new { @id = "hdnLaneId" + i })
+                                                @Html.HiddenFor(model => model.Details[i].ID, new { @id = "hdnID" + i })
+                                                @Html.HiddenFor(model => model.Details[i].VehicleId, new { @id = "hdnVehicleId" + i })
+                                            </td>
+                                            <td id="@("tdMasterLaneId" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(model => Model.Details[i].MasterLaneId, new { @class = "form-control readonly", @id = "txtMasterLaneId" + i.ToString(), @readonly = true })
+                                                </div>
+                                                @Html.ValidationMessageFor(modelItem => Model.Details[i].MasterLaneId)
+                                            </td>
+                                            <td id="@("tdRouteName" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].RouteName, new { @class = "form-control readonly", @id = "txtRouteName" + i.ToString(), @style = "width: 100px;", @readonly = true })
+                                                </div>
+                                            </td>
+                                            <td id="@("tdVehicleTypeDesc" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].FTLTypeDesc, new { @class = "form-control readonly", @id = "txtVehicleTypeDesc" + i.ToString(), @style = "width: 100px;", @readonly = true })
+                                                </div>
+                                            </td>
+                                            <td id="@("tdFuelTypeDesc" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].FuelTypeDesc, new { @class = "form-control readonly", @id = "txtFuelTypeDesc" + i.ToString(), @style = "width: 100px;", @readonly = true })
+                                                </div>
+                                            </td>
+                                            <td id="@("tdContractedKM" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(model => Model.Details[i].ContractedKM, new { @class = "form-control readonly", @id = "txtContractedKM" + i.ToString(), @style = "width: 100px;", @readonly = true })
+                                                </div>
+                                            </td>
+                                            <td id="@("tdAssetCount" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].AssetCount, new { @class = "form-control readonly", @id = "txtAssetCount" + i.ToString(), @style = "width: 100px;", @readonly = true })
+                                                </div>
+                                            </td>
+                                            <td id="@("tdDriverCount" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].DriverCount, new { @class = "form-control readonly", @id = "txtDriverCount" + i.ToString(), @style = "width: 100px;", @readonly = true })
+                                                </div>
+                                            </td>
+                                            <td id="@("tdFixedChargePerTrip" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].FixedChargePerTrip, new { @class = "form-control readonly", @id = "txtFixedChargePerTrip" + i.ToString(), @style = "width: 100px;" })
+                                                </div>
+                                                @Html.ValidationMessageFor(modelItem => Model.Details[i].FixedChargePerTrip)
+                                            </td>
+                                            <td id="@("tdVariableRate" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].VariableRate, new { @class = "form-control readonly", @id = "txtVariableRate" + i.ToString(), @style = "width: 100px;", @onblur = "CalculateVariableBaseAmount($(this))" })
+                                                </div>
+                                                @Html.ValidationMessageFor(modelItem => Model.Details[i].VariableRate)
+                                            </td>
+                                            <td id="@("tdVariableBaseAmtPerTrip" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].VariableBaseAmtPerTrip, new { @class = "form-control readonly", @id = "txtVariableBaseAmtPerTrip" + i.ToString(), @style = "width: 100px;", @readonly = true })
+                                                </div>
+                                                @Html.ValidationMessageFor(modelItem => Model.Details[i].VariableBaseAmtPerTrip)
+                                            </td>
+                                            <td id="@("tdVariableBaseAmtPerTrip" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].FuelPrice, new { @class = "form-control readonly", @id = "txtFuelPrice" + i.ToString(), @style = "width: 100px;" })
+                                                </div>
+                                                @Html.ValidationMessageFor(modelItem => Model.Details[i].FuelPrice)
+                                            </td>
+                                            <td id="@("tdTollAmount" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].TollAmount, new { @class = "form-control readonly", @id = "txtTollAmount" + i.ToString(), @style = "width: 100px;" })
+                                                </div>
+                                                @Html.ValidationMessageFor(modelItem => Model.Details[i].TollAmount)
+                                            </td>
+                                            <td id="@("tdIsActive" + i)">
+                                                <div class="input">
+                                                    @Html.CheckBoxFor(m => Model.Details[i].IsActive, new { @class = "checkbox", @id = "chkIsActive" + i.ToString() })
+                                                </div>
+                                            </td>
+                                            <td id="@("tdAction" + i)"></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <table class="table-bordered" id="dtFleetCharge">
+                                <thead>
+                                    <tr>
+                                        <th id="thToLocation" width="300" data-sort-ignore="true" data-hide="phone">
+                                            @Html.DisplayNameFor(model => model.Details[0].ToLocationCode)
+                                        </th>
+                                        <th id="thVehicle" width="400" data-sort-ignore="true" data-hide="phone">
+                                            @Html.DisplayNameFor(model => model.Details[0].VehicleId)
+                                        </th>
+                                        <th id="thFixedAmount" width="200" data-sort-ignore="true" data-hide="phone">
+                                            @Html.DisplayNameFor(model => model.Details[0].FixedAmount)
+                                        </th>
+                                        <th id="thFixedKm" width="200" data-sort-ignore="true" data-hide="phone">
+                                            @Html.DisplayNameFor(model => model.Details[0].FixedKm)
+                                        </th>
+                                        <th id="thFixedDays" width="200" data-sort-ignore="true" data-hide="phone">
+                                            @Html.DisplayNameFor(model => model.Details[0].FixedDays)
+                                        </th>
+
+                                        <th id="thVariableRate" width="50" data-sort-ignore="true" data-hide="phone">
+                                            @Html.DisplayNameFor(model => model.Details[0].VariableRate)
+                                        </th>
+
+                                        <th id="thContractType" width="500" data-sort-ignore="true" data-hide="phone">
+                                            @Html.DisplayNameFor(model => model.Details[0].ContractType)
+                                        </th>
+
+                                        <th id="thRateType" width="500" data-sort-ignore="true" data-hide="phone">
+                                            @Html.DisplayNameFor(model => model.Details[0].RateType)
+                                        </th>
+
+
+                                        @if (Model.IsMilkrunHrsPerDayEnabled)
+                                        {
+                                            <th id="thExtraDaysRate" width="50" data-sort-ignore="true">
+                                                @Html.DisplayNameFor(model => model.Details[0].ExtraDaysRate)
+                                            </th>
+                                            <th id="thExtraHoursRate" width="50" data-sort-ignore="true">
+                                                @Html.DisplayNameFor(model => model.Details[0].ExtraHoursRate)
+                                            </th>
+                                            <th id="thWorkingHours" width="50" data-sort-ignore="true">
+                                                @Html.DisplayNameFor(model => model.Details[0].WorkingHours)
+                                            </th>
+                                            <th id="thOtherFixedAmount" width="50" data-sort-ignore="true">
+                                                @Html.DisplayNameFor(model => model.Details[0].OtherFixedAmount)
+                                            </th>
+                                        }
+                                        else
+                                        {
+                                            <th id="thProduct" width="400" data-sort-ignore="true" data-hide="phone">
+                                                @Html.DisplayNameFor(model => model.Details[0].ProductId)
+                                            </th>
+                                        }
+                                        <th data-sort-ignore="true" data-hide="phone" width="85" id="thAction">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.Details.Count; i++)
+                                    {
+                                        <tr>
+                                            <td id="@("tdToLocation" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(model => model.Details[i].ToLocationCode, new { @class = "form-control", @id = "txtToLocationCode" + i.ToString(), @style = "width: 200px;" })
+                                                </div>
+                                                @Html.HiddenFor(model => model.Details[i].ToLocation, new { @id = "hdnToLocation" + i })
+                                                @Html.ValidationMessageFor(model => model.Details[i].ToLocationCode)
+                                            </td>
+                                            <td id="@("tdVehicle" + i)">
+                                                <div class="select">
+                                                    @Html.DropDownListFor(model => Model.Details[i].VehicleId, new SelectList(ViewBag.VehicleList, "Value", "Name", Model.Details[i].VehicleId), "Select Vehicle", new { @class = "form-control", @id = "ddlVehicleId" + i.ToString() })
+                                                    <i></i>
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.Details[i].VehicleId)
+                                            </td>
+                                            <td id="@("tdFixedAmount" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].FixedAmount, new { @class = "form-control numeric2", @id = "txtFixedAmount" + i.ToString(), @style = "width: 100px;" })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.Details[i].FixedAmount)
+                                            </td>
+                                            <td id="@("tdFixedKm" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].FixedKm, new { @class = "form-control numeric2", @id = "txtFixedKm" + i.ToString(), @style = "width: 100px;" })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.Details[i].FixedKm)
+                                            </td>
+
+                                            <td id="@("tdFixedDays" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].FixedDays, new { @class = "form-control numeric2", @id = "txtFixedDays" + i.ToString(), @style = "width: 100px;" })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.Details[i].FixedDays)
+                                            </td>
+
+
+                                            <td id="@("tdVariableRate" + i)">
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].VariableRate, new { @class = "form-control numeric2", @id = "txtVariableRate" + i.ToString(), @style = "width: 100px;" })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.Details[i].VariableRate)
+                                            </td>
+
+                                            <td id="@("tdContractType" + i)">
+                                                <div class="select">
+                                                    @Html.DropDownListFor(model => Model.Details[i].ContractType, new SelectList(ViewBag.ContractTypeList, "Value", "Name", Model.Details[i].ContractType), "Select Contract Type", new { @class = "form-control", @id = "ddlContractType" + i.ToString() })
+                                                    <i></i>
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.Details[i].ContractType)
+                                            </td>
+
+                                            <td id="@("tdRateType" + i)">
+                                                <div class="select">
+                                                    @Html.DropDownListFor(model => Model.Details[i].RateType, new SelectList(ViewBag.RateTypeList, "Value", "Name", Model.Details[i].RateType), "Select Rate Type", new { @class = "form-control", @id = "ddlRateType" + i.ToString() })
+                                                    <i></i>
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.Details[i].RateType)
+                                                @Html.HiddenFor(model => Model.Details[i].UpdateBy, new { @id = "hdnUpdateBy" + i })
+                                                @Html.HiddenFor(model => Model.Details[i].UpdateDate, new { @id = "hdnUpdateDate" + i })
+                                            </td>
+                                            @if (Model.IsMilkrunHrsPerDayEnabled)
+                                            {
+                                                <td id="@("tdExtraDaysRate" + i)">
+                                                    <div class="input">
+                                                        @Html.TextBoxFor(m => Model.Details[i].ExtraDaysRate, new { @class = "form-control numeric2", @id = "txtExtraDaysRate" + i.ToString(), @style = "width: 100px;" })
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => Model.Details[i].ExtraDaysRate)
+                                                </td>
+                                                <td id="@("tdExtraHoursRate" + i)">
+                                                    <div class="input">
+                                                        @Html.TextBoxFor(m => Model.Details[i].ExtraHoursRate, new { @class = "form-control numeric2", @id = "txtExtraHoursRate" + i.ToString(), @style = "width: 100px;" })
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => Model.Details[i].ExtraHoursRate)
+                                                </td>
+                                                <td id="@("tdWorkingHours" + i)">
+                                                    <div class="input">
+                                                        @Html.TextBoxFor(m => Model.Details[i].WorkingHours, new { @class = "form-control numeric2", @id = "txtWorkingHours" + i.ToString(), @style = "width: 100px;" })
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => Model.Details[i].WorkingHours)
+                                                </td>
+                                                <td id="@("tdOtherFixedAmount" + i)">
+                                                    <div class="input">
+                                                        @Html.TextBoxFor(m => Model.Details[i].OtherFixedAmount, new { @class = "form-control numeric2", @id = "txtOtherFixedAmount" + i.ToString(), @style = "width: 100px;" })
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => Model.Details[i].OtherFixedAmount)
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td id="@("tdProduct" + i)">
+                                                    <div class="select">
+                                                        @Html.DropDownListFor(model => Model.Details[i].ProductId, new SelectList(ViewBag.MovementTypeList, "Value", "Name", Model.Details[i].ProductId), "Select", new { @class = "form-control", @id = "ddlProductId" + i.ToString() })
+                                                        <i></i>
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => Model.Details[i].ProductId)
+                                                </td>
+                                            }
+                                            <td id="@("tdAction" + i)"></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    }
+                    <div class="form-footer">
+                        <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    var txtNumberOfRow = $('#txtNumberOfRow'), tableRow, contractId, baseOn1, baseCode1, isBooking, chargeCode, toLocation, matrixType, isMilkrunHrsPerDayEnabled, isLaneEnabled, customerId, companyId;
+
+    $(document).ready(function () {
+        SetPageLoad('Customer Contract', 'Standard Charge', '', 'Go To Standard Charge Criteria', '@Url.Action("StandardChargeCriteria", new { id = Model.ContractId })', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = Model.ContractId })');
+        contractId = '@Model.ContractId';
+        baseOn1 = '@Model.BaseOn1';
+        baseCode1 = '@Model.BaseCode1';
+        isBooking = '@Model.IsBooking';
+        chargeCode = '@Model.ChargeCode';
+        matrixType = '@Model.MatrixType';
+        toLocation = '@Model.ToLocation';
+        isLaneEnabled = '@Model.IsLaneEnabled';
+        isMilkrunHrsPerDayEnabled = '@Model.IsMilkrunHrsPerDayEnabled';
+        customerId = '@Model.CustomerId';
+        companyId = '@Model.CompanyId';
+        if (isLaneEnabled == "True")
+            InitFleetGrid('dtFleetCharge', false, 14, InitControl);
+        else if (isMilkrunHrsPerDayEnabled == 'True')
+            InitFleetGrid('dtFleetCharge', false, 12, InitAutoComplete);
+        else
+            InitFleetGrid('dtFleetCharge', false, 7, InitAutoComplete);
+        $("#btnSubmit").on("click", OnSubmit);
+    });
+
+    function GetDetailSuccess(responseData, txtToLocationCode, ddlRateType) {
+        useTo = responseData.UseTo;
+        useRateType = responseData.UseRateType;
+
+        if (useTo && toLocation != 0) {
+            $('[id*="thAction"]').hide();
+            $('[id*="tdAction"]').hide();
+        }
+        else {
+            $('[id*="thAction"]').show();
+            $('[id*="tdAction"]').show();
+        }
+        if (useTo && toLocation == 0) {
+            $('#thToLocation').show();
+            $('[id*="tdToLocation"]').show();
+            AddRequired(txtToLocationCode, "Please enter To");
+        }
+        else {
+            $('#thToLocation').hide();
+            $('[id*="tdToLocation"]').hide();
+            RemoveRequired(txtToLocationCode);
+        }
+        if (useRateType) {
+            $('#thRateType').show();
+            $('[id*="tdRateType"]').show();
+            ddlRateType.enable();
+        }
+        else {
+            $('#thRateType').hide();
+            $('[id*="tdRateType"]').hide();
+            ddlRateType.disable();
+        }
+    }
+
+    function InitControl(isAdd) {
+        if (IsObjectNullOrEmpty(isAdd)) isAdd = false;
+        $('[id*="ddlLaneId"]').not('span').each(function () {
+            var ddlLaneId = $(this).Id;
+            var hdnLaneId = $('#' + ddlLaneId.replace("ddlLaneId", "hdnLaneId"));
+
+            $('#' + ddlLaneId).on("change", function () { GetLaneDetail(ddlLaneId) });
+
+            if (hdnLaneId.val() != null && hdnLaneId.val() != undefined && hdnLaneId.val() != "" && hdnLaneId.val() != "0") {
+                $('#' + ddlLaneId).prop("disabled", true);
+            }
+            else {
+                $('#' + ddlLaneId).prop("disabled", false);
+            }
+        });
+    }
+
+    function InitAutoComplete(isAdd) {
+        if (IsObjectNullOrEmpty(isAdd)) isAdd = false;
+        $('[id*="ddlRateType"]').not('span').each(function () {
+            var ddlRateType = $(this);
+            var hdnToLocation = $('#' + ddlRateType.Id.replace('ddlRateType', 'hdnToLocation'));
+            var txtToLocationCode = $('#' + ddlRateType.Id.replace('ddlRateType', 'txtToLocationCode'));
+
+            txtToLocationCode.off("blur");
+
+            if (matrixType == 2) {
+                LocationAutoComplete(txtToLocationCode.Id, hdnToLocation.Id);
+                txtToLocationCode.blur(function () { IsLocationCodeExist(txtToLocationCode, hdnToLocation, 'To Location'); });
+            }
+
+            var requestDataForDetail = { contractId: contractId, baseOn: baseOn1, baseCode: baseCode1, isBooking: isBooking, chargeCode: chargeCode };
+            AjaxRequestWithPostAndJson('@Url.Action("GetDetail")', JSON.stringify(requestDataForDetail), function (result) {
+                GetDetailSuccess(result, txtToLocationCode, ddlRateType);
+            }, ErrorFunction, false);
+
+            var useRateType = 0, useTo = 0;
+
+            if (toLocation != 0) {
+                hdnToLocation.val(toLocation);
+            }
+
+            txtToLocationCode.blur(function () {
+                try {
+                    IsChargeExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+        });
+    }
+
+    function CheckIsValid(objName, objHdnId) {
+        if (matrixType == 2)
+            IsLocationCodeExist(objName, objHdnId);
+    }
+
+    //function AddRow() {
+    //    var rowCount = parseInt(txtNumberOfRow.val());
+    //    for (var i = 0; i < rowCount; i++) {
+    //        if ($('#dtFleetCharge > tbody > tr:first').length > 0)
+    //            AddTableRow('dtFleetCharge', true);
+    //        else {
+    //            $('#dtFleetCharge').append(tableRow);
+    //            InitTable();
+    //        }
+    //    }
+    //    if (isLaneEnabled == "True")
+    //        InitControl(false);
+    //    else
+    //        InitAutoComplete(false);
+    //}
+
+    function RemoveRow(btn) {
+        RemoveTableRow($(btn), true);
+    }
+
+    function InitTable() {
+        ManageTableAddRemove('dtFleetCharge', true);
+    }
+
+    function ValidateForm(form) {
+        var hasError = false;
+        var inputs = $(":text(:visible),:radio,:checkbox,select,textarea");
+        var elements = form.find(inputs);
+        $(elements).each(function (idx) {
+            if (!$(this).hasAttr('disabled')) {
+                var isValid = form.validate().element($(this));
+                if (!isValid) { hasError = true; }
+            }
+        });
+        return !hasError;
+    }
+
+    function OnSubmit() {
+        if (isLaneEnabled == "True") {
+
+            $('[id*="ddlLaneId"]').not('span').each(function () {
+                var ddlLaneId = $(this);
+                if (!ddlLaneId.hasAttr('disabled')) {
+                    var txtVariableRate = $("#" + ddlLaneId.Id.replace("ddlLaneId", "txtVariableRate"));
+                    if (!CheckDuplicateInTable('dtFleetCharge', 'ddlLaneId', 'Lane Id', ddlLaneId)) {
+                        ClearLaneDetails(ddlLaneId.Id);
+                        CalculateVariableBaseAmount(txtVariableRate)
+                        return false;
+                    }
+                }
+            });
+        }
+
+        var form = $('#btnSubmit').closest('form');
+        var hasError = ValidateForm(form);
+        if (!hasError)
+            return false;
+    }
+
+    function IsChargeExist(obj) {
+        if (obj.val() != '' && !obj.is('[readonly]')) {
+            var outertr = obj.closest('tr');
+            var outerhdnToLocation = outertr.find('[id*="hdnToLocation"]');
+
+            $('#dtFleetCharge tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innerhdnToLocation = innertr.find('[id*="hdnToLocation"]');
+
+                if (innerhdnToLocation.Id != outerhdnToLocation.Id && innerhdnToLocation.val() == outerhdnToLocation.val()) {
+                    ShowMessage("Charge is already exist");
+                    throw (true);
+                }
+            });
+        }
+    }
+
+    function GetLaneDetail(ele) {
+        txtObj = $("#" + ele);
+        var hdnID = $("#" + txtObj.Id.replace("ddlLaneId", "hdnID"));
+        var hdnLaneId = $("#" + txtObj.Id.replace("ddlLaneId", "hdnLaneId"));
+        var txtMasterLaneId = $("#" + txtObj.Id.replace("ddlLaneId", "txtMasterLaneId"));
+        var txtRouteName = $("#" + txtObj.Id.replace("ddlLaneId", "txtRouteName"));
+        var txtVehicleTypeDesc = $("#" + txtObj.Id.replace("ddlLaneId", "txtVehicleTypeDesc"));
+        var txtFuelTypeDesc = $("#" + txtObj.Id.replace("ddlLaneId", "txtFuelTypeDesc"));
+        var txtContractedKM = $("#" + txtObj.Id.replace("ddlLaneId", "txtContractedKM"));
+        var txtAssetCount = $("#" + txtObj.Id.replace("ddlLaneId", "txtAssetCount"));
+        var txtDriverCount = $("#" + txtObj.Id.replace("ddlLaneId", "txtDriverCount"));
+        var txtVariableRate = $("#" + txtObj.Id.replace("ddlLaneId", "txtVariableRate"));
+        var hdnVehicleId = $("#" + txtObj.Id.replace("ddlLaneId", "hdnVehicleId"));
+
+        if (txtObj.val() == undefined  || txtObj.val() == "") {
+            ClearLaneDetails(ele);
+        }
+        if (txtObj.val() != "") {
+
+            if (!CheckDuplicateInTable('dtFleetCharge', 'ddlLaneId', 'Lane Id', txtObj)) {
+                ClearLaneDetails(ele);
+                CalculateVariableBaseAmount(txtVariableRate)
+                return false;
+            }
+
+            var requestData = { companyId: companyId, customerId: customerId, LaneId: txtObj.val() };
+            AjaxRequestWithPostAndJson(ReplaceUrl("CustomerContract", "GetLaneDetails", "Contract"), JSON.stringify(requestData), function (result) {
+                //txtObj.val(result.LaneId);
+                console.log(result);
+                if (result.length > 0) {
+                    oData = result[0];
+                    //txtObj.prop("disabled", true);
+                    hdnID.val(oData.ID);
+                    hdnVehicleId.val(oData.ID);
+                    hdnLaneId.val(oData.LaneId);
+
+                    txtMasterLaneId.val(oData.MasterLaneId);
+                    txtRouteName.val(oData.RouteName);
+                    txtVehicleTypeDesc.val(oData.FTLTypeDesc);
+                    txtFuelTypeDesc.val(oData.FuelTypeDesc);
+                    txtContractedKM.val(oData.ContractedKM);
+                    txtAssetCount.val(oData.AssetCount);
+                    txtDriverCount.val(oData.DriverCount);
+                    CalculateVariableBaseAmount(txtVariableRate)
+                }
+                else {
+                    ShowMessage("No Data Found for Selected Lane");
+                }
+            }, ErrorFunction, false);
+        }
+        return false;
+    }
+    function ClearLaneDetails(ele) {
+        txtObj = $("#" + ele);
+
+        var hdnID = $("#" + txtObj.Id.replace("ddlLaneId", "hdnID"));
+        var hdnLaneId = $("#" + txtObj.Id.replace("ddlLaneId", "hdnLaneId"));
+        var txtMasterLaneId = $("#" + txtObj.Id.replace("ddlLaneId", "txtMasterLaneId"));
+        var txtRouteName = $("#" + txtObj.Id.replace("ddlLaneId", "txtRouteName"));
+        var txtVehicleTypeDesc = $("#" + txtObj.Id.replace("ddlLaneId", "txtVehicleTypeDesc"));
+        var txtFuelTypeDesc = $("#" + txtObj.Id.replace("ddlLaneId", "txtFuelTypeDesc"));
+        var txtContractedKM = $("#" + txtObj.Id.replace("ddlLaneId", "txtContractedKM"));
+        var txtAssetCount = $("#" + txtObj.Id.replace("ddlLaneId", "txtAssetCount"));
+        var txtDriverCount = $("#" + txtObj.Id.replace("ddlLaneId", "txtDriverCount"));
+        var txtVariableRate = $("#" + txtObj.Id.replace("ddlLaneId", "txtVariableRate"));
+        var txtVariableBaseAmtPerTrip = $("#" + txtObj.Id.replace("ddlLaneId", "txtVariableBaseAmtPerTrip"));
+        var txtFixedChargePerTrip = $("#" + txtObj.Id.replace("ddlLaneId", "txtFixedChargePerTrip"));
+        var txtFuelPrice = $("#" + txtObj.Id.replace("ddlLaneId", "txtFuelPrice"));
+        var txtTollAmount = $("#" + txtObj.Id.replace("ddlLaneId", "txtTollAmount"));
+        var hdnVehicleId = $("#" + txtObj.Id.replace("ddlLaneId", "hdnVehicleId"));
+
+        hdnID.val("");
+        hdnVehicleId.val("");
+        hdnLaneId.val("");
+        txtMasterLaneId.val("");
+        txtRouteName.val("");
+        txtVehicleTypeDesc.val("");
+        txtFuelTypeDesc.val("");
+        txtContractedKM.val("0");
+        txtAssetCount.val("0");
+        txtDriverCount.val("0");
+        txtVariableRate.val("0");
+        txtVariableBaseAmtPerTrip.val("0");
+        txtFixedChargePerTrip.val("0");
+        txtFuelPrice.val("0");
+        txtTollAmount.val("0");
+    }
+    function CalculateVariableBaseAmount(ele) {
+        var txtContractedKM = $("#" + ele.Id.replace("txtVariableRate", "txtContractedKM"));
+        var txtVariableBaseAmtPerTrip = $("#" + ele.Id.replace("txtVariableRate", "txtVariableBaseAmtPerTrip"));
+
+        if (isNaN(parseFloat(ele.val()))) ele.val("0");
+        if (isNaN(parseFloat(txtContractedKM.val()))) txtContractedKM.val("0");
+        if (isNaN(parseFloat(txtVariableBaseAmtPerTrip.val()))) txtVariableBaseAmtPerTrip.val("0");
+
+        if (txtContractedKM.val() == undefined || txtContractedKM.val() == "") txtContractedKM.val("0");
+        baseAmount = parseFloat(txtContractedKM.val()) * parseFloat(ele.val());
+        txtVariableBaseAmtPerTrip.val(baseAmount.toFixed(2));
+    }
+
+
+    function InitFleetGrid(objId, allowDeleteAllRow, actionColumnIndex, rowEventFunction, useDeleteOnly, sizeArr) {
+
+        if (IsObjectNullOrEmpty(useDeleteOnly)) useDeleteOnly = false;
+
+        $('#' + objId).addClass('table table-striped data-tbl dataTable no-footer dtr-inline');
+        //$('#' + objId + ' > tbody > tr:last').attr('data-row-id', '0');
+        $('#' + objId + ' > thead > th').css("tabindex", "-1");
+
+        if (sizeArr !== undefined && sizeArr !== null) {
+            $.each(sizeArr, function (i, item) {
+                $('#' + objId + ' thead tr th:eq(' + item[0] + ')').css('min-width', item[1]).css('max-width', item[1]);
+            });
+        }
+
+        $('#' + objId).removeClass('dataTable');
+        $('#' + objId).wrap('<div class="table-responsive"></div>');
+        var fnName = arguments[3].name;
+
+        var buttons = (useDeleteOnly ? '' : '<button type="button" id="btnAdd" onclick="return AddTableGridRow(\'' + objId + '\',' + allowDeleteAllRow + ',' + fnName + ')" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i></button>') +
+            '<button type="button" id="btnRemove" onclick="return RemoveGridRow($(this),\'' + objId + '\',' + allowDeleteAllRow + ',' + fnName + ')" class="btn btn-danger" style="margin-left: 3px;"><i class="fa fa-times" aria-hidden="true"></i></button>';
+
+        $('#' + objId + ' > tbody > tr').each(function () {
+            $(this).find('td:eq(' + actionColumnIndex + ')').html(buttons).css("min-width", "75px");
+
+        });
+
+        ManageTableAddRemove(objId, allowDeleteAllRow);
+
+        if (rowEventFunction != null && rowEventFunction != '' && rowEventFunction != undefined)
+            rowEventFunction.call(this, objId);
+    }
+
+
+    function AddTableGridRow(objId, allowDeleteAllRow, rowEventFunction, asFirstRow) {
+
+        if (IsObjectNullOrEmpty(asFirstRow)) asFirstRow = false;
+        AddTableRow1(objId, allowDeleteAllRow, asFirstRow);
+        rowEventFunction.call(this, objId);
+    }
+
+    function AddTableRow1(tableId, allowDeleteAll, asFirstRow) {
+        if (IsObjectNullOrEmpty(asFirstRow)) asFirstRow = false;
+        var trFirst = $('#' + tableId + ' > tbody > tr:first');
+        var trLast = $('#' + tableId + ' > tbody > tr:last');
+        var trNew = trFirst.clone();
+
+        if (asFirstRow) {
+            trFirst.before(trNew);
+            trNew.attr('data-row-id', '-1');
+        }
+        else {
+            RenameCloneIdsAndNames(trNew, true);
+            if (trNew.attr('data-row-id'))
+                trLast.after(trNew);
+        }
+
+        ManageTableAddRemove(tableId, allowDeleteAll);
+
+        RegisterValidation();
+        trLast = $('#' + tableId + ' > tbody > tr:last');
+        //var elements = trLast.find(':text,:radio,:checkbox,select,textarea').filter(function () {
+        //    return !this.readOnly &&
+        //        !this.disabled &&
+        //        $(this).parentsUntil('form', 'div').css('display') != "none";
+        //});
+        //if (elements.length > 0)
+        //    elements[0].focus();
+
+        $('#' + tableId + ' > tbody > tr:last').find('[id*=ddlLaneId]').trigger('change');
+
+        trLast.find('select:first(:visible,not:disabled)').val("");
+        trLast.find('select:first(:visible,not:disabled)').focus();
+        $('#' + tableId + ' > tbody > tr:last').find('[id*=chk]').val('true');
+        return false;
+    }
+
+
+</script>

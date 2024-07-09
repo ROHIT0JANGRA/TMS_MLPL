@@ -1,0 +1,78 @@
+﻿@model CodeLock.Models.Advice
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label("Select Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "FromLocationId", FieldCaption = "From Location" })
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "ToLocationId", FieldCaption = "To Location" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        Advice No
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.AdviceNo, new { @class = "form-control", @id = "txtAdviceNo" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDate, ddlFromLocationId, ddlToLocationId, hdnCustomerId, txtCustomerCode, lblCustomer, btnSubmit;
+
+    $(document).ready(function () {
+        SetPageLoad('Advice Document', 'Report', '', '', '');
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        ddlFromLocationId = $('#ddlFromLocationId');
+        ddlToLocationId = $('#ddlToLocationId');
+        //ToLocationId = $('#ToLocationId');
+        txtAdviceNo = $('#txtAdviceNo');
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+
+    });
+
+    function ViewReport() {
+        try {
+            var prmList = [
+                { Name: "FromDate", Value: drDate.startDate },
+                { Name: "ToDate", Value: drDate.endDate },
+                { Name: "AdviceNo", Value: $('#txtAdviceNo').val() == '' ? ' ' : $('#txtAdviceNo').val() },
+                { Name: "FromLocationId", Value: ddlFromLocationId.val() },
+                { Name: "ToLocationId", Value: ddlToLocationId.val() }];
+
+
+            var reportInfo = { PrmList: prmList, Name: 'Advice_Register', Description: 'Advice Register' };
+            ShowReport(reportInfo);
+        } catch (e) { ShowMessage(e.message) }
+        return false;
+    }
+</script>

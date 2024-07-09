@@ -1,0 +1,110 @@
+﻿@using CodeLock.Models
+@model WorkDone
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.DateType, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.DateType, true, new { @id = "rdDocumentDate", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DateType, "Document Date", new { @for = "rdDocumentDate" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.DateType, false, new { @id = "rdManual" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DateType, "Entry Date", new { @for = "rdManual" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.Label("Select Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drDate"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.ReportType, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ReportType, false, new { @id = "rdLocationWise", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ReportType, "Location Wise", new { @for = "rdLocationWise" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ReportType, true, new { @id = "rdUserWise" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ReportType, "User Wise", new { @for = "rdUserWise" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4" id="dvLocation">
+                <div class="form-group">
+                    @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                </div>
+            </div>
+            <div class="col-sm-4" id="dvUser" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UserCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.UserId, new { @id = "hdnUserId" })
+                        @Html.TextBoxFor(model => model.UserCode, new { @class = "form-control", @id = "txtUserCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UserCode)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+
+}
+<script>
+    var rdDocumentDate, drDate, ddlLocationId, rdLocationWise, rdUserWise, hdnUserId, txtUserCode, btnSubmit;
+
+    $(document).ready(function () {
+        SetPageLoad('Work Done', 'Report', '', '', '');
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        rdDocumentDate = $('#rdDocumentDate');
+        ddlLocationId = $('#ddlLocationId');
+        rdLocationWise = $('#rdLocationWise');
+        rdUserWise = $('#rdUserWise');
+        hdnUserId = $('#hdnUserId');
+        txtUserCode = $('#txtUserCode');
+        btnSubmit = $('#btnSubmit');
+
+        UserAutoComplete(txtUserCode.Id, hdnUserId.Id);
+        txtUserCode.blur(function () { IsUserNameExist(txtUserCode, hdnUserId) });
+        rdLocationWise.click(OnReportTypeChange);
+        rdUserWise.click(OnReportTypeChange);
+        btnSubmit.click(ViewReport);
+    });
+
+    function OnReportTypeChange() {
+        $('#dvLocation').showHide(rdLocationWise.IsChecked);
+        $('#dvUser').showHide(!rdLocationWise.IsChecked);
+    }
+
+    function ViewReport() {
+        var prmList = [{ Name: "LocationId", Value: ddlLocationId.val() },
+        { Name: "FromDate", Value: drDate.startDate },
+        { Name: "ToDate", Value: drDate.endDate },
+        { Name: "DateType", Value: rdDocumentDate.IsChecked },
+        { Name: "ReportType", Value: rdLocationWise.IsChecked },
+        { Name: "EntryBy", Value: hdnUserId.val() == '' ? 0 : hdnUserId.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'WorkDoneReport', Description: 'Work Done Report' };
+        return ShowReport(reportInfo);
+    }
+</script>

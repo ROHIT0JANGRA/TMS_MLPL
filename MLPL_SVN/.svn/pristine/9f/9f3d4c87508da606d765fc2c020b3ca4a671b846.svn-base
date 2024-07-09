@@ -1,0 +1,59 @@
+﻿@model CodeLock.Models.JobOrder
+@using CodeLock.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    baseUrl = '@Url.Action("", "JobOrder", new { Area = "FMS" })';
+</script>
+
+<script src="@Url.Content("~/Areas/FMS/Views/JobOrder/Update.js")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Job Order Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drJobOrderDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.JobCardType, new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownList("JobCardTypeId", new SelectList(ViewBag.JobCardTypeList, "Value", "Name"),"All", new { @class = "form-control", @id = "ddlJobCardTypeId" })
+                                <i></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.JobOrderNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.JobOrderNo, new { @class = "form-control", @id = "txtJobOrderNo" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtJobOrderDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

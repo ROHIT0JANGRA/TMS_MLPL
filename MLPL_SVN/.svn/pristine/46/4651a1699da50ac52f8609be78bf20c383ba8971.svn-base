@@ -1,0 +1,64 @@
+﻿@model IEnumerable<CodeLock.Models.Stock>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtSku">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.SkuCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SkuDescription)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UOM)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Packing)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AvailableQuantity)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Volume)
+                </th>
+            </tr>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SkuCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SkuDescription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UOM)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Packing)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AvailableQuantity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Volume)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Inventory', 'List', '', null, null);
+        LoadDataTable('dtSku', true, true, true);
+        $('[id=dtSku_filter]').find('input').focus();
+    });
+</script>

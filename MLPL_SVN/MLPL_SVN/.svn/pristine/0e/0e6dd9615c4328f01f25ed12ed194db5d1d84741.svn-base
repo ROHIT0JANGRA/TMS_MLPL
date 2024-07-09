@@ -1,0 +1,155 @@
+﻿@using CodeLock.Models
+@model MasterRoleBasedAccessRight
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Index", "RoleBasedAccessRight", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RoleId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.RoleId, new SelectList(ViewBag.RoleList, "Value", "Name"), "Select Role", new { @class = "form-control", @id = "ddlRoleId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.RoleId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UserId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.UserId, new { @id = "hdnUserId" })
+                        @Html.TextBoxFor(model => model.UserName, new { @class = "form-control", @id = "txtUserName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UserName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div id="dvShow" class="row form-buttons">
+                        @Html.Label(" ", new { @class = "label" })
+                        <input type="button" value="Show Current Access" class="btn btn-primary" id="btnShow" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="dvMenu" style="display:none">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="dtMenuAccess"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input type="submit" value="Assign Rights" class="btn btn-success" id="btnSubmit" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    var dtMenuAccess;
+    $(document).ready(function () {
+        SetPageLoad('Menu Access', 'Update', 'ddlRoleId', '', '');
+        if (('@ViewBag.Message') == 'True') {
+            ShowMessage("Successfully Saved");
+        }
+        ddlRoleId = $('#ddlRoleId');
+        ddlRoleId.val('');
+        btnShow = $('#btnShow');
+        dvMenu = $('#dvMenu');
+        btnShow.click(GetAssignedList);
+
+        hdnUserId = $("#hdnUserId");
+        txtUserName = $("#txtUserName");
+        txtUserName.disable();
+        ddlRoleId.change(OnRoleChange);
+        txtUserName.blur(function () { IsUserNameExistByRoleId(txtUserName, hdnUserId, 'User', ddlRoleId); });
+    });
+
+    function OnRoleChange() {
+        txtUserName.enable(ddlRoleId.val() != '');
+        GetAutoCompleteUserListByRoleId('txtUserName', 'hdnUserId', 'User', ddlRoleId.val());
+        
+    }
+    var baseList = [];
+    function GetAssignedList() {
+        dvMenu.showHide(ddlRoleId.val() != '');
+        if ($('form:eq(0)').valid()) {
+            var requestData = { roleId: ddlRoleId.val() != '' ? ddlRoleId.val() : 0, userId: txtUserName.val() != '' ? hdnUserId.val() : 0 }
+            AjaxRequestWithPostAndJson('@Url.Action("GetMenuAccessListByRoleIdAndUserId")', JSON.stringify(requestData), function (responseData) {
+
+                if (dtMenuAccess == undefined) {
+                    var columnList = [{ title: SelectAll.GetChkAll('chkAllMenu', SelectMenu), data: "MenuId" }];
+                    var menuLevelList = [];
+                    $.each(responseData, function (i, item) {
+                        if ($.inArray(item.MenuLevel, menuLevelList) === -1)
+                            menuLevelList.push(item.MenuLevel);
+                    });
+                    totalMenuLevel = menuLevelList.length;
+                    for (var i = 0; i < totalMenuLevel; i++) {
+                        var column = { title: 'Level ' + i, data: 'LinkText' + i }
+                        columnList.push(column);
+                    }
+                    dtMenuAccess = LoadDataTable('dtMenuAccess', false, false, false, null, null, [], columnList);
+                }
+                baseList = responseData;
+                menuArr = [];
+                menuList = [];
+
+                PopulateMenu(responseData, 0);
+                menuList.sort(function (a, b) { return ((a.SrNo < b.SrNo) ? -1 : ((a.SrNo > b.SrNo) ? 1 : 0)); });
+
+                dtMenuAccess.fnClearTable();
+                $.each(menuList, function (i, item) {
+                    for (var j = 0; j < totalMenuLevel; j++) item['LinkText' + j] = (j == item.MenuLevel) ? item.LinkText : '';
+                    item.MenuId = SelectAll.GetChk('chkAllMenu', 'chkMenu' + i, 'MasterMenuList[' + i + '].IsActive', SelectMenu, item.IsActive) +
+                                    "<input type='hidden' value='" + item.MenuId + "' name='MasterMenuList[" + i + "].MenuId' id='hdnMenuId" + i + "'/>" +
+                                    "<label class='label' for='chkMenu" + i + "' id='lblMenuId" + i + "'></label>";
+                });
+                dtMenuAccess.dtAddData(menuList);
+                dtMenuAccess.removeClass('dataTable');
+
+
+                $('#dtMenuAccess tr').each(function () {
+                    $(this).find('td:eq(0)').css("max-width", "25px");
+                });
+
+                return false;
+            }, ErrorFunction, false);
+        }
+    }
+
+
+    var menuArr = [], menuList = [], totalMenuLevel = 0;
+    function PopulateMenu(list, parentMenuId) {
+        $.each(list, function (i, item) {
+            if ($.inArray(item.MenuId, menuArr) === -1 && item.MenuId > 0) {
+                menuArr.push(item.MenuId);
+                item.SrNo = menuArr.length + 1;
+                menuList.push(item);
+
+                var innerMenuList = [];
+                $.each(baseList, function (j, jItem) {
+                    if (jItem.ParentMenuId == item.MenuId)
+                        innerMenuList.push(jItem);
+                });
+
+                PopulateMenu(innerMenuList, item.MenuId);
+            }
+        });
+    }
+    function SelectMenu() { }
+
+</script>
+

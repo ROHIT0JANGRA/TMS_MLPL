@@ -1,0 +1,156 @@
+﻿@model CodeLock.Models.VendorContract
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Contract ID", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.ManualContractId
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vendor Type", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.VendorType
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vendor Name", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.VendorCode : @ViewBag.VendorName
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Step Selection", new { @class = "label-bold" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButton("Step", "1", new { @id = "rdStepBasicInformationOwn", @checked = "checked" })
+                            <i></i>
+                            @Html.Label("Basic Information", new { @for = "rdStepBasicInformationOwn" })
+                        </label>
+                    </div>
+                    <div id="divAttached" style="display:none">
+                        <div>
+                            <label class="radio">
+                                @Html.RadioButton("Step", "2", new { @id = "rdStepRoutebased" })
+                                <i></i>
+                                @Html.Label("Route Based Contract", new { @for = "rdStepRoutebased" })
+                            </label>
+                        </div>
+                        <div>
+                            <label class="radio">
+                                @Html.RadioButton("Step", "3", new { @id = "rdStepCitybased" })
+                                <i></i>
+                                @Html.Label("City Based Contract", new { @for = "rdStepCitybased" })
+                            </label>
+                        </div>
+                        <div>
+                            <label class="radio">
+                                @Html.RadioButton("Step", "4", new { @id = "rdStepDistancebased" })
+                                <i></i>
+                                @Html.Label("Distance Based Contract", new { @for = "rdStepDistancebased" })
+                            </label>
+                        </div>
+                        <div>
+                            <label class="radio">
+                                @Html.RadioButton("Step", "8", new { @id = "rdStepFleetCharge" })
+                                <i></i>
+                                @Html.Label("Fleet Charge Contract", new { @for = "rdStepFleetCharge" })
+                            </label>
+                        </div>
+                    </div>
+                    <div id="div3PL" style="display:none">
+                        <div>
+                            <label class="radio">
+                                @Html.RadioButton("Step", "5", new { @id = "rdStep3PLContracts" })
+                                <i></i>
+                                @Html.Label("3PL Contracts", new { @for = "rdStep3PLContracts" })
+                            </label>
+                        </div>
+                    </div>
+                    <div id="divDocket" style="display:none">
+                        <div>
+                            <label class="radio">
+                                @Html.RadioButton("Step", "6", new { @id = "rdStepDocketBased" })
+                                <i></i>
+                                @Html.Label("Docket Based Contracts", new { @for = "rdStepDocketBased" })
+                            </label>
+                        </div>
+                    </div>
+                    <div id="divCrossing" style="display:none">
+                        <div>
+                            <label class="radio">
+                                @Html.RadioButton("Step", "7", new { @id = "rdStepCrossingBased" })
+                                <i></i>
+                                @Html.Label("Crossing Contract", new { @for = "rdStepCrossingBased" })
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3" id="btnSubmit">Next</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vendor Contract', 'Step Selection', '', 'Go To List', '@Url.Action("Index")');
+        var vendorTypeId = GetUrlValue()["vendorTypeId"];
+        if (vendorTypeId == 2 || vendorTypeId == 3)
+            $('#divAttached').show();
+        if (vendorTypeId == 5)
+            $('#div3PL').show();
+        if (vendorTypeId == 4)
+            $('#divDocket').show();
+        if (vendorTypeId == 7)
+            $('#divCrossing').show();
+        $('[id*="rdStep"]').each(function () { if ($(this).IsChecked) selectedStep = $(this).val(); $(this).click(function () { selectedStep = $(this).val(); }); });
+        $('[id*="rdMatrix"]').each(function () { if ($(this).IsChecked) selectedMatrix = $(this).val(); $(this).click(function () { selectedMatrix = $(this).val(); }); });
+        $('#btnSubmit').click(OnSubmit);
+    });
+
+    function OnSubmit() {
+        var contractId = GetUrlValue()["contractId"];
+        var vendorId = GetUrlValue()["vendorId"];
+        var vendorTypeId = GetUrlValue()["vendorTypeId"];
+        var isCustomerContract = "False";
+        var url = "";
+        switch (selectedStep) {
+            case "1": url = "@Url.Action("Update")/" + contractId; break;
+            case "2": url = "@Url.Action("RouteBasedCriteria")/" + contractId + "?vendorTypeId=" + vendorTypeId; break;
+            case "3": url = "@Url.Action("CityBasedCriteria")/" + contractId + "?vendorTypeId=" + vendorTypeId; break;
+            case "4": url = "@Url.Action("DistanceBasedCriteria")/" + contractId + "?vendorTypeId=" + vendorTypeId; break;
+            case "5": url = "@Url.Action("Index","CustomerContract")?customerId=" + vendorId + "&isCustomerContract=" + isCustomerContract; break;
+            case "6": url = "@Url.Action("DocketBasedCriteria")/" + contractId + "?vendorTypeId=" + vendorTypeId; break;
+            case "7": url = "@Url.Action("CrossingBasedCriteria")/" + contractId + "?vendorTypeId=" + vendorTypeId; break;
+            case "8": url = "@Url.Action("FleetCharge")/" + contractId + "?baseOn1=0&baseOn2=0&baseCode1=0&baseCode2=0&matrixType=0&fromLocation=0&toLocation=0&transportModeId=0&isBooking=true&ftlTypeId=0&consignorId=0&consigneeId=0&chargeCode=101&vendorTypeId=" + vendorTypeId + "&vendorId=" + vendorId; break;
+
+        }
+        window.location.href = url;
+        return false;
+    }
+</script>

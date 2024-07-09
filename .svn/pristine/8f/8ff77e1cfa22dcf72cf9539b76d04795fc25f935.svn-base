@@ -1,0 +1,147 @@
+﻿@model CodeLock.Models.MasterSku
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "Sku", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.SkuId)
+    @Html.HiddenFor(m => m.SkuId, new { @id = "hdnSkuId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaterialCategoryId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.MaterialCategoryId, new SelectList(ViewBag.MaterialCategoryList, "Value", "Name"), "Select Material Category", new { @class = "form-control", @id = "ddlMaterialCategory" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MaterialCategoryId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SkuCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SkuCode, new { @class = "form-control", @id = "txtSkuCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SkuCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SkuName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SkuName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SkuName)
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row">
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Manufacture, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Manufacture, new { @class = "form-control", @id = "txtManufacture" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Manufacture)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SkuSize, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.SkuSize, new SelectList(ViewBag.SkuSizeList, "Value", "Name"), "Select Sku Size", new { @class = "form-control", @id = "ddlSkuSize" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SkuSize)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SkuType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.SkuType, new SelectList(ViewBag.SkuTypeList, "Value", "Name"), "Select Sku Type", new { @class = "form-control", @id = "ddlSkuType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SkuType)
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UomId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.UomId, new SelectList(ViewBag.UnitsOfMeasurementList, "Value", "Name"), "Select UnitsOfMeasurement", new { @class = "form-control", @id = "ddlUnitsOfMeasurement" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UomId)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remark, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Remark, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0"></button>
+            </div>
+        </div>
+}
+
+<script>
+    var hdnSkuId, btnSubmit;
+    $(document).ready(function () {
+        hdnSkuId = $('#hdnSkuId');
+        btnSubmit = $('#btnSubmit');
+
+        var isAdd = true;
+        if (hdnSkuId.val() != 0) {
+            isAdd = false;
+        }
+
+        if (isAdd == false) {
+            SetPageLoad('SKU', 'Edit', 'SkuName', 'Go To List', '@Url.Action("Index")');
+        }
+        else {
+            SetPageLoad('SKU', 'Add', 'SkuName', 'Go To List', '@Url.Action("Index")');
+
+        }
+
+        btnSubmit.html(isAdd ? 'Create' : 'Update');
+
+    });
+
+
+</script>
+
+
+
+

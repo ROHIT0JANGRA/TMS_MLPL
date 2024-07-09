@@ -1,0 +1,104 @@
+﻿@model CodeLock.Models.VendorBillUploadInSystem
+@{
+    ViewBag.Title = "UploadInSystem";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("UploadInSystem", "VendorPayment", FormMethod.Post, new { @class = "j-forms", enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.File, new { @class = "label" })
+                    <div class="input prepend-big-btn">
+                        <label class="icon-right" for="prepend-big-btn">
+                            <i class="fa fa-download"></i>
+                        </label>
+                        <div class="file-button">
+                            Browse
+                            <input class="form-control" id="fuStatus" type="file" name="file" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                        </div>
+                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("blank", "Format Download Link")
+
+                    @{ var fileNamelnkId = "lnkAttachment";}
+                    <a href="#" id=@fileNamelnkId onclick="return DownloadFormat();">Download Vendor Bill Upload Format</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3" id="btnSubmit">Upload</button>
+        </div>
+        <div id="dvResult">
+            <table id="dtResult">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().ManualBillNo)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().BillDate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().BillType)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().VendorCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().Vendor)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details.FirstOrDefault().UploadStatus)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Details.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].ManualBillNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].BillDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].BillType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].VendorCode)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].Vendor)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Details[i].UploadStatus)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vendor Bill', 'Upload', 'File');
+        var msg = '@Model.ErrorMessage';
+        if (msg != '')
+            ShowMessage(msg);
+
+        $('#dvResult').showHide(parseInt('@Model.Details.Count') > 0);
+        LoadDataTable('dtResult', true, false, false);
+    });
+
+    function DownloadFormat() {
+        window.location ='@Href("~/Areas/Finance/Views/VendorPayment/VendorBilllUploadFormat.xlsx")';
+    }
+</script>

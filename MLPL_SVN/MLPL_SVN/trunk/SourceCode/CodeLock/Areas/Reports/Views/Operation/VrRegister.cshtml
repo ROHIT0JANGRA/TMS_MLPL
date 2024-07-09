@@ -1,0 +1,105 @@
+﻿@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm())
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div>
+                    @Html.Label("VRDate", "VR Date", new { @class = "label" })
+                </div>
+                <div id="drVrDate"></div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("VrNo", "VR No", new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBox("txtVrNo", null, new { @class = "form-control", @id = "txtVrNo" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Label("VRStatus", "VR Status", new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownList("VRStatus", new List<SelectListItem> {
+                        new SelectListItem() {Text = "All",Value="0"},
+                        new SelectListItem() {Text = "Pending", Value="1"},
+                        new SelectListItem() {Text = "Edited", Value="2"},
+                        new SelectListItem() {Text = "Closed", Value="3"},}, new { @class = "form-control", @id = "ddlVrStatus" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("BillingParty", "Billing Party", new { @class = "label" })
+                    <div class="input">
+                        @Html.Hidden("CustomerId", "CustomerId", new { @id = "hdnCustomerId" })
+                        @Html.TextBox("CustomerCode", null, new { @class = "autocomplete", @id = "txtCustomerCode" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Save</button>
+        </div>
+    </div>
+}
+
+<script>
+    var customerMasterUrl, txtCustomerCode, hdnCustomerId, ddlVrStatus, txtVrNo, ddlLocationId, drVrDate, btnSubmit;
+    $(document).ready(function () {
+        SetPageLoad('Vehicle Request', 'Register', '', '', '');
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        hdnCustomerId = $('#hdnCustomerId');
+        txtCustomerCode = $('#txtCustomerCode');
+        btnSubmit = $('#btnSubmit');
+        txtVrNo = $('#txtVrNo');
+        hdnLocationId = $('#hdnLocationId');
+        ddlLocationId = $('#ddlLocationId');
+        ddlVrStatus = $('#ddlVrStatus');
+        drVrDate = InitDateRange('drVrDate', DateRange.LastWeek);
+    }
+    function AttachEvents() {
+        AutoComplete('txtCustomerCode', customerMasterUrl + '/GetAutoCompleteListByCompanyId', 'customerCode', 'l', 'l', 'l', 'd', '', 'hdnCustomerId', '', '');
+        txtCustomerCode.blur(function () { return CheckValidCustomerCode(txtCustomerCode, hdnCustomerId); });
+        btnSubmit.click(ViewReport);
+    }
+    function CheckValidCustomerCode(txtCustomerCode, hdnCustomerId) {
+        if (txtCustomerCode.val() != "") {
+            var requestData = { customerCode: txtCustomerCode.val().split(':')[0].trim() };
+            AjaxRequestWithPostAndJson(customerMasterUrl + '/CheckValidCustomerCodeByCompanyId', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    hdnCustomerId.val(result.Value);
+                    txtCustomerCode.val(result.Name + ' : ' + result.Description);
+                }
+                else {
+                    ShowMessage('Customer is not exist');
+                    txtCustomerCode.val('');
+                    hdnCustomerId.val('');
+                    txtCustomerCode.focus();
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function ViewReport() {
+        var prmList = [
+              { Name: "FromDate", Value: drVrDate.startDate }, { Name: "ToDate", Value: drVrDate.endDate }, { Name: "VrNo", Value: txtVrNo.val() == '' ? '0' : txtVrNo.val() }, { Name: "VrStatus", Value: ddlVrStatus.val() }, { Name: "LocationId", Value: ddlLocationId.val() }, { Name: "Customer", Value: txtCustomerCode.val() == '' ? ' ' : txtCustomerCode.val().split(':')[0].trim() }];
+        var reportInfo = { PrmList: prmList, Name: 'VrRegister', Description: 'Vr Register' };
+        return ShowReport(reportInfo);
+    }
+</script>
+

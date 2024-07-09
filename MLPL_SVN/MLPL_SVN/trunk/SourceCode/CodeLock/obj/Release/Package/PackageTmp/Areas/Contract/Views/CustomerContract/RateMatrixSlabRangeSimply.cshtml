@@ -1,0 +1,250 @@
+﻿@model CodeLock.Models.CustomerContractRateMatrix
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("RateMatrixSlabRange", "CustomerContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        @Html.HiddenFor(model => Model.ContractId, new { @id = "hdnContractId" })
+        @Html.HiddenFor(model => Model.BaseOn1, new { @id = "hdnBaseOnFirst" })
+        @Html.HiddenFor(model => Model.BaseOn2, new { @id = "hdnBaseOnSecond" })
+        @Html.HiddenFor(model => Model.BaseCode1, new { @id = "hdnBaseCodeFirst" })
+        @Html.HiddenFor(model => Model.BaseCode2, new { @id = "hdnBaseCodeSecond" })
+        @Html.HiddenFor(model => Model.ChargeCode, new { @id = "hdnChargeCode" })
+        @Html.HiddenFor(model => Model.MatrixType, new { @id = "hdnMatrixType" })
+        @Html.HiddenFor(model => Model.TransportModeId, new { @id = "hdnTransportModeId" })
+        @Html.HiddenFor(model => Model.IsBooking, new { @id = "hdnIsBooking" })
+        @Html.HiddenFor(model => Model.FtlTypeId, new { @id = "hdnFtlTypeId" })
+        @Html.HiddenFor(model => Model.ConsignorId, new { @id = "hdnConsignorId" })
+        @Html.HiddenFor(model => Model.ConsigneeId, new { @id = "hdnConsigneeId" })
+        <table id="dtRateMatrixSlabRange">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.RangeDetails[0].From)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.RangeDetails[0].To)
+                    </th>
+                    <th id="thRateType">
+                        @Html.DisplayNameFor(model => model.RangeDetails[0].RateType)
+                    </th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.RangeDetails.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <div class="input">
+                                @Html.HiddenFor(model => Model.RangeDetails[i].SlabId, new { @id = "hdnSlabId" + i })
+                                @Html.TextBoxFor(m => Model.RangeDetails[i].From, new { @class = "form-control numeric2", id = "txtFrom" + i.ToString(), @style = "width: 200px;", @disabled = "disabled" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.RangeDetails[i].From)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model.RangeDetails[i].To, new { @class = "form-control numeric2", id = "txtTo" + i.ToString(), @style = "width: 200px;" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.RangeDetails[i].To)
+                        </td>
+                        <td>
+                            <div class="select">
+                                @Html.DropDownListFor(model => Model.RangeDetails[i].RateType, new SelectList(ViewBag.RateTypeList, "Value", "Name", Model.RangeDetails[i].RateType), "Select Rate Type", new { @class = "form-control", @id = "ddlRateType" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.RangeDetails[i].RateType)
+                        </td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var RemoveValidation;
+    $(document).ready(function () {
+        SetPageLoad('Customer Contract', 'Slab Range', '', 'Go To Criteria Selection', '@Url.Action("StandardChargeCriteria", new { id = @Html.Raw(@Model.ContractId) })');
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        RemoveValidation = "N";
+        contractId = '@Model.ContractId';
+        baseOn1 = '@Model.BaseOn1';
+        baseCode1 = '@Model.BaseCode1';
+        isBooking = '@Model.IsBooking';
+        chargeCode = '@Model.ChargeCode';
+        matrixType = '@Model.MatrixType';
+        fromLocation = '@Model.FromLocation';
+        toLocation = '@Model.ToLocation';
+
+        var request = { moduleId: 1, ruleId: 100 };
+        AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(request), function (result) {
+            RemoveValidation = result;
+        }, ErrorFunction, false);
+
+
+        InitGrid('dtRateMatrixSlabRange', false, 3, Init, false);
+        $('#btnSubmit').click(OnSubmit);
+    });
+
+    function Init() {
+        $('[id*="txtFrom"]').each(function () {
+            var txtFrom = $(this);
+            var txtTo = $('#' + txtFrom.attr('id').replace('txtFrom', 'txtTo'));
+            var ddlRateType = $('#' + txtFrom.attr('id').replace('txtFrom', 'ddlRateType'));
+
+            if (RemoveValidation == "Y")
+            {
+                txtFrom.enable(true);
+            }
+            else
+            {
+                txtFrom.enable(txtFrom.attr('id') == 'txtFrom0');
+            }
+
+            var requestData = { contractId: contractId, baseOn: baseOn1, baseCode: baseCode1, isBooking: isBooking, chargeCode: chargeCode };
+            AjaxRequestWithPostAndJson('@Url.Action("GetDetail")', JSON.stringify(requestData), GetDetailSuccess, ErrorFunction, false);
+
+            var useRateType = 0;
+            function GetDetailSuccess(responseData) {
+                useRateType = responseData.UseRateType;
+
+                if (useRateType) {
+                    $('#thRateType').show();
+                    $('td:nth-child(3)').show();
+                    AddRequired(ddlRateType, "Please select RateType");
+                }
+                else {
+                    $('#thRateType').hide();
+                    $('td:nth-child(3)').hide();
+                    RemoveRequired(ddlRateType);
+                }
+            }
+
+            txtFrom.blur(function () {
+                try {
+                    IsSlabRangeValid($(this), txtTo);
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            txtFrom.blur(function () {
+                try {
+                    IsSlabRangeIsUsed($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            txtTo.blur(function () {
+                try {
+                    IsSlabRangeValid(txtFrom, $(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            txtTo.blur(function () {
+                try {
+                    IsSlabRangeIsUsed($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            ddlRateType.change(function () {
+                try {
+                    IsSlabRangeIsUsed($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            function IsSlabRangeValid(objFrom, objTo) {
+                if (parseFloat(objFrom.val()) > parseFloat(objTo.val()) && objTo.val() != '' && objFrom.val() != '' && parseFloat(objTo.val()) != 0) {
+                    ShowMessage("Slab To shoud be greater than Slab From.");
+                    throw (true);
+                }
+            }
+
+            txtTo.blur(function () {
+                CalculateNextSlab($(this));
+            });
+            CalculateNextSlab(txtTo);
+            txtTo.blur(CalculateNextSlab(txtTo));
+        });
+    }
+
+    function IsSlabRangeIsUsed(obj) {
+        if (obj.val() != '' && RemoveValidation == "N") {
+            var outertr = obj.closest('tr');
+            var outertxtFrom = outertr.find('[id*="txtFrom"]');
+            var outertxtTo = outertr.find('[id*="txtTo"]');
+            var outerddlRateType = outertr.find('[id*="ddlRateType"]');
+
+            $('#dtRateMatrixSlabRange tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innertxtFrom = innertr.find('[id*="txtFrom"]');
+                var innertxtTo = innertr.find('[id*="txtTo"]');
+                var innerddlRateType = innertr.find('[id*="ddlRateType"]');
+
+                if (innertxtFrom.attr('id') != outertxtFrom.attr('id') &&
+                    parseInt(outertxtFrom.val()) <= parseInt(innertxtTo.val()) &&
+                    parseInt(innertxtFrom.val()) <= parseInt(outertxtTo.val()) &&
+                    innerddlRateType.val() == outerddlRateType.val()) {
+                    ShowMessage("Slab Range is already used");
+                    throw (true);
+                }
+            });
+        }
+    }
+
+    function CalculateNextSlab(obj) {
+
+        if (obj.val() != '' && parseInt(obj.val()) != 0 && RemoveValidation == "N") {
+            var txtFrom = obj.parents('tr').next().find('[id*="txtFrom"]')
+            txtFrom.val(parseFloat(obj.val()) + 1);
+        }
+    }
+
+    function ValidateForm(form) {
+        var hasError = false;
+        var inputs = $(":text(:visible),:radio,:checkbox,select,textarea");
+        var elements = form.find(inputs);
+        $(elements).each(function (idx) {
+            if (!$(this).hasAttr('disabled')) {
+                var isValid = form.validate().element($(this));
+                if (!isValid) { hasError = true; }
+            }
+        });
+        return !hasError;
+    }
+
+    function OnSubmit() {
+        $('[id*="txtFrom"]').removeAttr('disabled');
+        var form = $('#btnSubmit').closest('form');
+        var hasError = ValidateForm(form);
+        if (!hasError)
+            return false;
+    }
+
+</script>

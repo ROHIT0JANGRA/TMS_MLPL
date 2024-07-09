@@ -1,0 +1,661 @@
+﻿@model  CodeLock.Models.CustomerContractChargeMatrixSTD
+
+@{
+    ViewBag.Title = "StandardCharge";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("StandardCharge", "CustomerContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+	<div class="widget-wrap">
+		<div class="row">
+			<div class="col-sm-4">
+				<div class="form-group">
+					@Html.Label("Contract ID", new { @id = "lblCustomer", @class = "label-bold" })
+					<div class="clearfix">
+						@ViewBag.ManualContractId
+					</div>
+				</div>
+			</div>
+			@if (@ViewBag.isCustomerContract == false)
+			{
+				<div class="col-sm-4">
+					<div class="form-group">
+						@Html.Label("Vendor", new { @id = "lblCustomer", @class = "label-bold" })
+						<div class="clearfix">
+							@ViewBag.CustomerCode : @ViewBag.CustomerName
+						</div>
+					</div>
+				</div>
+			}
+			else
+			{
+				<div class="col-sm-4">
+					<div class="form-group">
+						@Html.Label("Customer", new { @id = "lblCustomer", @class = "label-bold" })
+						<div class="clearfix">
+							@ViewBag.CustomerCode : @ViewBag.CustomerName
+						</div>
+					</div>
+				</div>
+			}
+			<div class="col-sm-4">
+				<div class="form-group">
+					@Html.Label("Charge Name", new { @id = "lblChargeName", @class = "label-bold" })
+					<div class="clearfix">
+						@ViewBag.ChargeName
+					</div>
+				</div>
+			</div>
+		</div>
+		@*<div class="row" id="divAddRow">
+			<div class="col-sm-4">
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					@Html.Label("Enter Rows", new { @class = "label" })
+					<div class="input">
+						@Html.TextBox("NumberOfRows", "", new { @class = "form-control numeric", @id = "txtNumberOfRow" })
+					</div>
+					@Html.ValidationMessage("NumberOfRows")
+				</div>
+				<span class="form-footer">
+					<button type="button" id="btnAdd" onclick="return AddRow();" class="btn btn-primary btn-xs dt-edit btn-ripple"><span class="glyphicon glyphicon-plus-sign"></span></button>
+				</span>
+			</div>
+		</div>*@
+		@Html.HiddenFor(model => Model.ContractId, new { @id = "hdnContractId" })
+		@Html.HiddenFor(model => Model.BaseOn1, new { @id = "hdnBaseOnFirst" })
+		@Html.HiddenFor(model => Model.BaseOn2, new { @id = "hdnBaseOnSecond" })
+		@Html.HiddenFor(model => Model.BaseCode1, new { @id = "hdnBaseCodeFirst" })
+		@Html.HiddenFor(model => Model.BaseCode2, new { @id = "hdnBaseCodeSecond" })
+		@Html.HiddenFor(model => Model.FromLocation, new { @id = "hdnFromLocation" })
+		@Html.HiddenFor(model => Model.ToLocation, new { @id = "hdnToLocation" })
+		@Html.HiddenFor(model => Model.ChargeCode, new { @id = "hdnChargeCode" })
+		@Html.HiddenFor(model => Model.MatrixType, new { @id = "hdnMatrixType" })
+		@Html.HiddenFor(model => Model.TransportModeId, new { @id = "hdnTransportModeId" })
+		@Html.HiddenFor(model => Model.IsBooking, new { @id = "hdnIsBooking" })
+		@Html.HiddenFor(model => Model.FtlTypeId, new { @id = "hdnFtlTypeId" })
+		@Html.HiddenFor(model => Model.ConsignorId, new { @id = "hdnConsignorId" })
+		@Html.HiddenFor(model => Model.ConsigneeId, new { @id = "hdnConsigneeId" })
+		@Html.HiddenFor(model => Model.MinimumCharge, new { @id = "hdnMinimumCharge" })
+
+		<table class="table-bordered" id="dtStandardCharge">
+			<thead>
+                <tr>
+                    <th id="thFromLocation" width="300" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].FromLocation)
+                    </th>
+                    <th id="thToLocation" width="300" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].ToLocation)
+                    </th>
+                    <th id="thMinimumCharge" width="100" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].MinimumCharge)
+                    </th>
+                    <th id="thPartId" width="350" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].PartId)
+                    </th>
+                    <th id="thPackingTypeId" width="100" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].PackingTypeId)
+                    </th>
+                    <th id="thBillingCode" width="100" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].BillingCode)
+                    </th>
+                    <th id="thRate" width="300" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].Rate)
+                    </th>
+                    <th id="thRateType" width="100" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].RateType)
+                    </th>
+                    <th id="thTransitDays" width="50" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].TransitDays)
+                    </th>
+                    <th id="thBillLocation" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].BillLocationId)
+                    </th>
+                    <th id="thUseProRata" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].UseProRata)
+                    </th>
+                    <th id="thProRataType" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].ProRataType)
+                    </th>
+                    <th id="thProRata" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].ProRata)
+                    </th>
+                    <th id="thProIsReverse" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].IsReverse)
+                    </th>
+                    <th data-sort-ignore="true" data-hide="phone" width="85" id="thAction">Action</th>
+                </tr>
+			</thead>
+			<tbody>
+				@for (int i = 0; i < Model.Details.Count; i++)
+				{
+                    <tr>
+                        <td id="@("tdFromLocation" + i)">
+
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.Details[i].FromLocationCode, new { @class = "form-control", @id = "txtFromLocationCode" + i.ToString(), @style = "width: 200px;" })
+                            </div>
+                            @Html.HiddenFor(model => model.Details[i].FromLocation, new { @id = "hdnFromLocation" + i })
+                            @Html.ValidationMessageFor(model => model.Details[i].FromLocationCode)
+                        </td>
+                        <td id="@("tdToLocation" + i)">
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.Details[i].ToLocationCode, new { @class = "form-control", @id = "txtToLocationCode" + i.ToString(), @style = "width: 200px;" })
+                            </div>
+                            @Html.HiddenFor(model => model.Details[i].ToLocation, new { @id = "hdnToLocation" + i })
+                            @Html.ValidationMessageFor(model => model.Details[i].ToLocationCode)
+                        </td>
+                        <td id="@("tdMinimumCharge" + i)">
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model.Details[i].MinimumCharge, new { @class = "form-control numeric2", id = "txtMinimumCharge" + i.ToString(), @style = "width: 100px;" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].MinimumCharge)
+                        </td>
+                        <td id="@("tdPart" + i)">
+                            <div class="select">
+                                @Html.DropDownListFor(model => Model.Details[i].PartId, new SelectList(ViewBag.PartList, "Value", "Name", Model.Details[i].PartId), "Select Part No", new { @class = "form-control", @id = "ddlPartId" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].PartId)
+                        </td>
+                        <td id="@("tdPackingType" + i)">
+                            @Html.HiddenFor(model => Model.Details[i].SavedPackingTypeId, new { @id = "hdnSavedPackingTypeId" + i })
+                            <div class="select">
+                                @Html.DropDownListFor(model => Model.Details[i].PackingTypeId, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "form-control", @id = "ddlPackingTypeId" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].PackingTypeId)
+                        </td>
+                        <td id="@("tdBillingCode" + i)">
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.Details[i].BillingCode, new { @class = "form-control", @id = "txtBillingCode" + i.ToString(), @style = "width: 200px;" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Details[i].BillingCode)
+                        </td>
+                        <td id="@("tdRate" + i)">
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model.Details[i].Rate, new { @class = "form-control numeric2", id = "txtRate" + i.ToString(), @style = "width: 100px;" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].Rate)
+                        </td>
+                        <td id="@("tdRateType" + i)">
+                            <div class="select">
+                                @Html.DropDownListFor(model => Model.Details[i].RateType, new SelectList(ViewBag.RateTypeList, "Value", "Name", Model.Details[i].RateType), "Select Rate Type", new { @class = "form-control", @id = "ddlRateType" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].RateType)
+                        </td>
+                        <td id="@("tdTransitDays" + i)">
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model.Details[i].TransitDays, new { @class = "form-control numeric", @id = "txtTransitDays" + i.ToString(), @style = "width: 100px;" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].TransitDays)
+                        </td>
+                        <td id="@("tdBillLocation" + i)">
+                            <div class="input">
+                                @Html.TextBoxFor(model => Model.Details[i].BillLocationCode, new { @class = "form-control", @id = "txtBillLocationCode" + i.ToString(), @style = "width: 200px;" })
+                            </div>
+                            @Html.HiddenFor(model => Model.Details[i].BillLocationEditable, new { @id = "hdnBillLocationEditable" + i })
+                            @Html.HiddenFor(model => Model.Details[i].BillLocationId, new { @id = "hdnBillLocationId" + i })
+                            @Html.ValidationMessageFor(model => Model.Details[i].BillLocationCode)
+                            @Html.HiddenFor(model => Model.Details[i].UpdateBy, new { @id = "hdnUpdateBy" + i })
+                            @Html.HiddenFor(model => Model.Details[i].UpdateDate, new { @id = "hdnUpdateDate" + i })
+                        </td>
+                        <td id="@("tdUseProRata" + i)">
+                            <div class="row">
+                                <div class="form-group">
+                                    @Html.Label(" ", new { @class = "label", @id = "lblUseProRata" + i.ToString(), @for = "chkUseProRata" + i.ToString() })
+                                    <label class="checkbox">
+                                        @Html.CheckBoxFor(model => Model.Details[i].UseProRata, new { @id = "chkUseProRata" + (i + 1).ToString(), @name = "chkUseProRata" + (i + 1).ToString() })
+                                        <i></i>
+                                    </label>
+                                </div>
+                            </div>
+                        </td>
+                        <td id="@("tdProRataType" + i)">
+                            <div class="select">
+                                @Html.DropDownListFor(model => Model.Details[i].ProRataType, new SelectList(ViewBag.ProRataTypeList, "Value", "Name", Model.Details[i].ProRataType), new { @class = "form-control", @id = "ddlProRataType" + i.ToString() })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].ProRataType)
+                        </td>
+                        <td id="@("tdProRata" + i)">
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model.Details[i].ProRata, new { @class = "form-control numeric", id = "txtProRata" + i.ToString(), @style = "width: 200px;" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].ProRata)
+                        </td>
+                        <td id="@("tdIsReverse" + i)">
+                            <div class="form-group">
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(model => Model.Details[i].IsReverse, new { @id = "chkIsReverse" + (i + 1).ToString(), @name = "chkIsReverse" + (i + 1).ToString() })
+                                    <i></i>
+                                </label>
+                            </div>
+                        </td>
+                        <td id="@("tdAction" + i)">
+                            @*<button type="button" id="btnRemove" onclick="return RemoveRow(this)" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i></button>*@
+                        </td>
+                    </tr>
+				}
+			</tbody>
+		</table>
+
+
+		<div class="form-footer">
+			<button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+		</div>
+	</div>
+}
+
+<script>
+    var txtNumberOfRow = $('#txtNumberOfRow'), tableRow, contractId, baseOn1, baseCode1, isBooking, chargeCode, fromLocation, toLocation, matrixType;
+
+    $(document).ready(function () {
+        SetPageLoad('Customer Contract', 'Standard Charge', '', 'Go To Standard Charge Criteria', '@Url.Action("StandardChargeCriteria", new { id = Model.ContractId })', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = Model.ContractId })');
+        contractId = '@Model.ContractId';
+        baseOn1 = '@Model.BaseOn1';
+        baseCode1 = '@Model.BaseCode1';
+        isBooking = '@Model.IsBooking';
+        chargeCode = '@Model.ChargeCode';
+        matrixType = '@Model.MatrixType';
+        transportMode = '@Model.TransportModeId';
+        fromLocation = '@Model.FromLocation';
+        toLocation = '@Model.ToLocation';
+        consignorId = '@Model.ConsignorId';
+        consigneeId = '@Model.ConsigneeId';
+        isBillLocationEditable = '@ViewBag.IsBillLocationEditable';
+        InitGrid('dtStandardCharge', false, 14, InitAutoComplete);
+        //InitAutoComplete();
+        //$('#btnSubmit').click(OnSubmit);
+    });
+
+    function UseProRataChange(ddlProRataType, txtProRata, chkUseProRata) {
+        if (chkUseProRata.IsChecked) {
+            ddlProRataType.enable();
+            if (ddlProRataType.val() == 'A') {
+                txtProRata.disable();
+                RemoveRequired(txtProRata);
+            }
+            else
+                AddRange(txtProRata, "Please enter a value between 1 to 9999999999", 1, 9999999999.99);
+        }
+        else {
+            ddlProRataType.disable();
+            SetDropDownValue(ddlProRataType, 'A');
+            txtProRata.disable();
+            txtProRata.val(0);
+            RemoveRequired(txtProRata);
+        }
+    }
+
+    function OnProRataTypeChange(ddlProRataType, txtProRata) {
+        if (ddlProRataType.val() == 'A') {
+            txtProRata.disable();
+            RemoveRequired(txtProRata);
+            txtProRata.val(0);
+        }
+        else {
+            txtProRata.enable();
+            AddRange(txtProRata, "Please enter a value between 1 to 9999999999", 1, 9999999999.99);
+        }
+    }
+
+    var useFrom = 0, useTo = 0, useTransportMode = 0, useFtlType, slabType = '', useConsignor = 0, useConsignee = 0, usePartNo = 0, useBillingCode = 0;
+    function GetDetailSuccess(responseData, txtFromLocationCode, txtToLocationCode, ddlRateType, ddlPartId, ddlPackingTypeId, txtBillingCode) {
+        useFrom = responseData.UseFrom;
+        useTo = responseData.UseTo;
+        useRateType = responseData.UseRateType;
+        usePartNo = responseData.UsePartNo;
+        useBillingCode = responseData.UseBillingCode;
+
+        if ((!useFrom && fromLocation == 0 && !useTo && toLocation == 0) ||
+            (useFrom && fromLocation != 0 && !useTo && toLocation == 0) ||
+            (useTo && toLocation != 0 && !useFrom && fromLocation == 0) ||
+            (useTo && toLocation != 0 && useFrom && fromLocation != 0)) {
+            $('[id*="thAction"]').hide();
+            $('[id*="tdAction"]').hide();
+        }
+        else {
+            $('[id*="thAction"]').show();
+            $('[id*="tdAction"]').show();
+        }
+        if (useFrom && fromLocation == 0) {
+            $('#thFromLocation').show();
+            $('[id*="tdFromLocation"]').show();
+            AddRequired(txtFromLocationCode, "Please enter From");
+        }
+        else {
+            $('#thFromLocation').hide();
+            $('[id*="tdFromLocation"]').hide();
+            RemoveRequired(txtFromLocationCode);
+        }
+        if (useTo && toLocation == 0) {
+            $('#thToLocation').show();
+            $('[id*="tdToLocation"]').show();
+            AddRequired(txtToLocationCode, "Please enter To");
+        }
+        else {
+            $('#thToLocation').hide();
+            $('[id*="tdToLocation"]').hide();
+            RemoveRequired(txtToLocationCode);
+        }
+        if (useRateType) {
+            $('#thRateType').show();
+            $('[id*="tdRateType"]').show();
+            ddlRateType.enable();
+        }
+        else {
+            $('#thRateType').hide();
+            $('[id*="tdRateType"]').hide();
+            ddlRateType.disable();
+        }
+        if (usePartNo) {
+            $('#thPartId').show();
+            $('[id*="tdPart"]').show();
+            ddlPartId.enable();
+            AddRequired(ddlPartId, "Please enter Part No");
+
+            $('#thPackingTypeId').show();
+            $('[id*="tdPackingType"]').show();
+            ddlPackingTypeId.enable();
+            AddRequired(ddlPackingTypeId, "Please enter Packing Type");
+        }
+        else {
+            $('#thPartId').hide();
+            $('[id*="tdPart"]').hide();
+            ddlPartId.disable();
+
+
+            $('#thPackingTypeId').hide();
+            $('[id*="tdPackingType"]').hide();
+            ddlPackingTypeId.disable();
+
+        }
+        if (useBillingCode) {
+            $('#thBillingCode').show();
+            $('[id*="tdBillingCode"]').show();
+            txtBillingCode.enable();
+            AddRequired(txtBillingCode, "Please enter Billing Code");
+        }
+        else {
+            $('#thBillingCode').hide();
+            $('[id*="tdBillingCode"]').hide();
+            txtBillingCode.disable();
+
+        }
+    }
+
+    function InitAutoComplete(isAdd) {
+        if (IsObjectNullOrEmpty(isAdd)) isAdd = false;
+        $('[id*="ddlRateType"]').not('span').each(function () {
+            var ddlRateType = $(this);
+            var hdnFromLocation = $('#' + ddlRateType.Id.replace('ddlRateType', 'hdnFromLocation'));
+            var txtFromLocationCode = $('#' + ddlRateType.Id.replace('ddlRateType', 'txtFromLocationCode'));
+            var hdnToLocation = $('#' + ddlRateType.Id.replace('ddlRateType', 'hdnToLocation'));
+            var txtToLocationCode = $('#' + ddlRateType.Id.replace('ddlRateType', 'txtToLocationCode'));
+            var hdnBillLocationId = $('#' + ddlRateType.Id.replace('ddlRateType', 'hdnBillLocationId'));
+            var txtBillLocationCode = $('#' + ddlRateType.Id.replace('ddlRateType', 'txtBillLocationCode'));
+            var txtRate = $('#' + ddlRateType.Id.replace('ddlRateType', 'txtRate'));
+            var chkUseProRata = $('#' + ddlRateType.Id.replace('ddlRateType', 'chkUseProRata'));
+            var ddlProRataType = $('#' + ddlRateType.Id.replace('ddlRateType', 'ddlProRataType'));
+            var txtProRata = $('#' + ddlRateType.Id.replace('ddlRateType', 'txtProRata'));
+            var txtTransitDays = $('#' + ddlRateType.Id.replace('ddlRateType', 'txtTransitDays'));
+            var tdTransitDays = $('#' + ddlRateType.Id.replace('ddlRateType', 'tdTransitDays'));
+            var tdBillLocation = $('#' + ddlRateType.Id.replace('ddlRateType', 'tdBillLocation'));
+            var tdUseProRata = $('#' + ddlRateType.Id.replace('ddlRateType', 'tdUseProRata'));
+            var tdProRataType = $('#' + ddlRateType.Id.replace('ddlRateType', 'tdProRataType'));
+            var tdProRata = $('#' + ddlRateType.Id.replace('ddlRateType', 'tdProRata'));
+            var hdnBillLocationEditable = $('#' + ddlRateType.Id.replace('ddlRateType', 'hdnBillLocationEditable'));
+            var txtMinimumCharge = $('#' + ddlRateType.Id.replace('ddlRateType', 'txtMinimumCharge'));
+            var tdMinimumCharge = $('#' + ddlRateType.Id.replace('ddlRateType', 'tdMinimumCharge'));
+            var ddlPartId = $('#' + ddlRateType.Id.replace('ddlRateType', 'ddlPartId'));
+            var ddlPackingTypeId = $('#' + ddlRateType.Id.replace('ddlRateType', 'ddlPackingTypeId'));
+            var hdnSavedPackingTypeId = $('#' + ddlRateType.Id.replace('ddlRateType', 'hdnSavedPackingTypeId'));
+            var txtBillingCode = $('#' + ddlRateType.Id.replace('ddlRateType', 'txtBillingCode'));
+            //AddRange(txtRate, "Please enter a value between 1 to 9999999999", 1, 9999999999.99);
+            UseProRataChange(ddlProRataType, txtProRata, chkUseProRata);
+            chkUseProRata.click(function () { UseProRataChange(ddlProRataType, txtProRata, chkUseProRata); });
+            ddlProRataType.change(function () { OnProRataTypeChange(ddlProRataType, txtProRata); });
+            var fclRateMatrix = chargeCode == '3';
+            fclRateMatrix = false;
+
+            $('#thUseProRata').showHide(fclRateMatrix);
+            $('#thProRataType').showHide(fclRateMatrix);
+            $('#thProRata').showHide(fclRateMatrix);
+            $('#thMinimumCharge').showHide(chargeCode == '7' || chargeCode == '52' || chargeCode == '23');
+            tdUseProRata.showHide(fclRateMatrix);
+            tdProRataType.showHide(fclRateMatrix);
+            tdProRata.showHide(fclRateMatrix);
+            tdMinimumCharge.showHide(chargeCode == '7' || chargeCode == '52' || chargeCode == '23');
+
+            var isFreightMatrix = (chargeCode == '1' || chargeCode == '2' || chargeCode == '3');
+
+            $('#thTransitDays').showHide(isFreightMatrix);
+            $('#thBillLocation').showHide(isFreightMatrix);
+            tdTransitDays.showHide(isFreightMatrix);
+            tdBillLocation.showHide(isFreightMatrix);
+
+            if (isFreightMatrix) {
+                AddRange(txtTransitDays, "Please enter a value between 1 to 255", 1, 255);
+                txtBillLocationCode.enable();
+                $('#thBillLocation').showHide(isBillLocationEditable == "True");
+                tdBillLocation.showHide(isBillLocationEditable == "True");
+            }
+            else {
+                RemoveRange(txtTransitDays);
+                txtBillLocationCode.disable();
+            }
+
+            txtFromLocationCode.off("blur");
+            txtToLocationCode.off("blur");
+            txtBillLocationCode.off("blur");
+
+            if (matrixType == 1) {
+                CityAutoComplete(txtFromLocationCode.Id, hdnFromLocation.Id);
+                CityAutoComplete(txtToLocationCode.Id, hdnToLocation.Id);
+                txtFromLocationCode.blur(function () { IsCityNameExist(txtFromLocationCode, hdnFromLocation, 'From City'); });
+                txtToLocationCode.blur(function () { IsCityNameExist(txtToLocationCode, hdnToLocation, 'To City'); });
+            }
+            else if (matrixType == 2) {
+                LocationAutoComplete(txtFromLocationCode.Id, hdnFromLocation.Id);
+                LocationAutoComplete(txtToLocationCode.Id, hdnToLocation.Id);
+                txtFromLocationCode.blur(function () { IsLocationCodeExist(txtFromLocationCode, hdnFromLocation, 'From Location'); });
+                txtToLocationCode.blur(function () { IsLocationCodeExist(txtToLocationCode, hdnToLocation, 'To Location'); });
+            }
+            else if (matrixType == 3) {
+                ZoneAutoComplete(txtFromLocationCode.Id, hdnFromLocation.Id);
+                ZoneAutoComplete(txtToLocationCode.Id, hdnToLocation.Id);
+                txtFromLocationCode.blur(function () { IsZoneNameExist(txtFromLocationCode, hdnFromLocation, 'From Zone'); });
+                txtToLocationCode.blur(function () { IsZoneNameExist(txtToLocationCode, hdnToLocation, 'To Zone'); });
+            }
+            else if (matrixType == 4) {
+                StateAutoComplete(txtFromLocationCode.Id, hdnFromLocation.Id);
+                StateAutoComplete(txtToLocationCode.Id, hdnToLocation.Id);
+                txtFromLocationCode.blur(function () { IsStateNameExist(txtFromLocationCode, hdnFromLocation, 'From State'); });
+                txtToLocationCode.blur(function () { IsStateNameExist(txtToLocationCode, hdnToLocation, 'To State'); });
+            }
+            LocationAutoComplete(txtBillLocationCode.Id, hdnBillLocationId.Id);
+            txtBillLocationCode.blur(function () { IsLocationCodeExist(txtBillLocationCode, hdnBillLocationId, 'Billing Location'); });
+
+            if (!isAdd || isAdd == 'dtStandardCharge') {
+                var requestDataForDetail = { contractId: contractId, baseOn: baseOn1, baseCode: baseCode1, isBooking: isBooking, chargeCode: chargeCode };
+                AjaxRequestWithPostAndJson('@Url.Action("GetDetail")', JSON.stringify(requestDataForDetail), function (result) {
+                    GetDetailSuccess(result, txtFromLocationCode, txtToLocationCode, ddlRateType, ddlPartId, ddlPackingTypeId, txtBillingCode);
+                }, ErrorFunction, false);
+            }
+
+            var useRateType = 0, useFrom = 0, useTo = 0;
+
+            if (fromLocation != 0) {
+                hdnFromLocation.val(fromLocation);
+            }
+
+            if (toLocation != 0) {
+                hdnToLocation.val(toLocation);
+            }
+
+            //if (ddlRateType.val() == '') {
+            //    ddlRateType.val(0);
+            //}
+            //txtFromLocationCode.blur(function () { return CheckIsValid(txtFromLocationCode, hdnFromLocation); });
+            //txtToLocationCode.blur(function () { return CheckIsValid(txtToLocationCode, hdnToLocation); });
+
+            txtFromLocationCode.blur(function () {
+                try {
+                    IsChargeExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            txtToLocationCode.blur(function () {
+                try {
+                    IsChargeExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            ddlPartId.change(function () {
+                try {
+                    IsChargeExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            txtBillingCode.blur(function () {
+                try {
+                    IsChargeExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            txtFromLocationCode.blur(function () { return CheckRate(hdnFromLocation, hdnToLocation, ddlRateType, txtRate); });
+            txtToLocationCode.blur(function () { return CheckRate(hdnFromLocation, hdnToLocation, ddlRateType, txtRate); });
+            txtRate.blur(function () { return CheckRate(hdnFromLocation, hdnToLocation, ddlRateType, txtRate); });
+            ddlRateType.change(function () { return CheckRate(hdnFromLocation, hdnToLocation, ddlRateType, txtRate); });
+            ddlPartId.change(function () { OnPartChange(ddlPartId, ddlPackingTypeId, hdnSavedPackingTypeId, false); });
+            OnPartChange(ddlPartId, ddlPackingTypeId, hdnSavedPackingTypeId, true);
+        });
+    }
+
+    function OnPartChange(objPartId, objPackingTypeId, objSavedPackingTypeId , isOnLoad) {
+        if (!IsObjectNullOrEmpty(objPartId.val())) {
+            var requestData = { partId: objPartId.val(), consignorId: consignorId, consigneeId: consigneeId };
+            AjaxRequestWithPostAndJson('@Url.Action("GetPackingTypeListByPartId", "Part", new { Area = "Master" })', JSON.stringify(requestData), function (responseData) {
+                BindDropDownList(objPackingTypeId.Id, responseData, 'Value', 'Name', '', 'Select');
+                if (!IsObjectNullOrEmpty(objSavedPackingTypeId.val()) && isOnLoad)
+                    objPackingTypeId.val(objSavedPackingTypeId.val());
+            }, ErrorFunction, false);
+        }
+    }
+
+    function CheckRate(fromLocationId, toLocationId, rateType, rate) {
+        var requestData = { transportModeId: transportMode, matrixTypeId: matrixType, fromLocationId: fromLocationId.val() == '' ? 0 : fromLocationId.val(), toLocationId: toLocationId.val() == '' ? 0 : toLocationId.val(), rateTypeId: rateType.val() == '' ? 0 : rateType.val() };
+        AjaxRequestWithPostAndJson('@Url.Action("GetExpenseRate")', JSON.stringify(requestData), function (result) {
+            if (!IsObjectNullOrEmpty(result)) {
+                if (parseFloat(rate.val()) < result.Rate) {
+                    ShowMessage("Please set Rate grater than or equal to " + result.Rate);
+                    rate.val(0);
+                    return false;
+                }
+            }
+
+
+        }, ErrorFunction, false);
+    }
+
+    function CheckIsValid(objName, objHdnId) {
+        if (matrixType == 1) {
+            IsCityNameExist(objName, objHdnId);
+        }
+        else if (matrixType == 2) {
+            IsLocationCodeExist(objName, objHdnId);
+        }
+        else if (matrixType == 3) {
+            IsZoneNameExist(objName, objHdnId);
+        }
+    }
+
+    function AddRow() {
+        var rowCount = parseInt(txtNumberOfRow.val());
+        for (var i = 0; i < rowCount; i++) {
+            if ($('#dtStandardCharge > tbody > tr:first').length > 0)
+                AddTableRow('dtStandardCharge', true);
+            else {
+                $('#dtStandardCharge').append(tableRow);
+                InitTable();
+            }
+        }
+        InitAutoComplete(false);
+    }
+
+    function RemoveRow(btn) {
+        RemoveTableRow($(btn), true);
+    }
+
+    function InitTable() {
+        ManageTableAddRemove('dtStandardCharge', true);
+    }
+
+    function ValidateForm(form) {
+        var hasError = false;
+        var inputs = $(":text(:visible),:radio,:checkbox,select,textarea");
+        var elements = form.find(inputs);
+        $(elements).each(function (idx) {
+            if (!$(this).hasAttr('disabled')) {
+                var isValid = form.validate().element($(this));
+                if (!isValid) { hasError = true; }
+            }
+        });
+        return !hasError;
+    }
+
+    function OnSubmit() {
+        $('[id*="ddlProRataType"]').removeAttr('disabled');
+        var form = $('#btnSubmit').closest('form');
+        var hasError = ValidateForm(form);
+        if (!hasError)
+            return false;
+    }
+
+    function IsChargeExist(obj) {
+        if (obj.val() != '' && !obj.is('[readonly]')) {
+            var outertr = obj.closest('tr');
+            var outerhdnFromLocation = outertr.find('[id*="hdnFromLocation"]');
+            var outerhdnToLocation = outertr.find('[id*="hdnToLocation"]');
+            var outerddlPartId = outertr.find('[id*="ddlPartId"]');
+            var outertxtBillingCode = outertr.find('[id*="txtBillingCode"]');
+
+            $('#dtStandardCharge tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innerhdnFromLocation = innertr.find('[id*="hdnFromLocation"]');
+                var innerhdnToLocation = innertr.find('[id*="hdnToLocation"]');
+                var innerddlPartId = innertr.find('[id*="ddlPartId"]');
+                var innertxtBillingCode = innertr.find('[id*="txtBillingCode"]');
+
+                if (innerhdnFromLocation.Id != outerhdnFromLocation.Id
+                    && innerhdnFromLocation.val() == outerhdnFromLocation.val()
+                    && innerhdnToLocation.val() == outerhdnToLocation.val()
+                    && innertxtBillingCode.val() == outertxtBillingCode.val()
+                    && innerddlPartId.val() == outerddlPartId.val()) {
+                    ShowMessage("Charge is already exist");
+                    throw (true);
+                }
+            });
+        }
+    }
+
+</script>

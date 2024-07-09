@@ -1,0 +1,464 @@
+﻿@using CodeLock.Models
+@model ReceiptControl
+
+<script>
+    var ddlReceiptMode, txtReceiptAmountApplicable, txtReceiptCashAmount, ddlReceiptCashAccount, ddlReceiptTdsAccount,
+        txtReceiptChequeNo, txtReceiptChequeDate, txtReceiptChequeAmount, txtReceiptOnAccountBalance, chkIsOnAccount, txtReceiptBankName, txtReceiptBankBranchName,
+        txtReceiptCollectionAmountFromCheque, ddlReceiptBankAccount, txtReceiptNetReceivedAmount, rdYes, rdNo, txtBaAccountCode, txtBaPaymentRemarks, hdnBaAccountID, lblName;
+    var partyTypeId = 0, partyId = 0;
+
+    $(document).ready(function () {
+        ddlReceiptMode = $('#ddlReceiptMode'); txtReceiptAmountApplicable = $('#txtReceiptAmountApplicable'); txtReceiptCashAmount = $('#txtReceiptCashAmount'); ddlReceiptCashAccount = $('#ddlReceiptCashAccount'); ddlReceiptTdsAccount = $('#ddlReceiptTdsAccount');
+        txtReceiptChequeNo = $('#txtReceiptChequeNo'); txtReceiptChequeDate = $('#txtReceiptChequeDate'); txtReceiptChequeAmount = $('#txtReceiptChequeAmount'); txtReceiptOnAccountBalance = $('#txtReceiptOnAccountBalance'); chkIsOnAccount = $('#chkIsOnAccount'); txtReceiptBankName = $('#txtReceiptBankName'); txtReceiptBankBranchName = $('#txtReceiptBankBranchName');
+        txtReceiptCollectionAmountFromCheque = $('#txtReceiptCollectionAmountFromCheque'); ddlReceiptBankAccount = $('#ddlReceiptBankAccount'); txtReceiptNetReceivedAmount = $('#txtReceiptNetReceivedAmount'); rdYes = $('#rdYes'); rdNo = $('#rdNo');
+        txtBaAccountCode = $('#txtBaAccountCode'); txtBaPaymentRemarks = $('#txtBaPaymentRemarks'); hdnBaAccountID = $('#hdnBaAccountID'); lblName = $('#lblName');
+        txtReceiptChequeDate.disable();
+        ddlReceiptMode.change(OnReceiptModeChange).change();
+        rdYes.change(OnDepositInBankChange);
+        rdNo.change(OnDepositInBankChange);
+        txtReceiptCashAmount.blur(ManageReceiptCashAmount);
+        txtReceiptCollectionAmountFromCheque.blur(ManageReceiptChequeAmount);
+        chkIsOnAccount.readOnly();
+        txtReceiptNetReceivedAmount.readOnly();
+        txtReceiptOnAccountBalance.readOnly();
+        txtReceiptCollectionAmountFromCheque.readOnly();
+        chkIsOnAccount.disable();
+    });
+
+    function OnReceiptModeChange() {
+        
+        var mode = ddlReceiptMode.val();
+        var payCash = false, payCheque = false;
+        txtBaAccountCode.val('').blur().readOnly();
+        txtBaPaymentRemarks.val('').blur().readOnly();
+        if (mode == "1" && mode != "") {
+            payCash = true;
+            ddlReceiptCashAccount.enable(payCash).val('');
+           
+        }
+        if (mode == "2"  && mode != "") {
+            payCheque = true;
+            ddlReceiptCashAccount.enable(payCash).val('');
+            
+        }
+
+        if (mode == "8" && mode != "") {
+            payCash = true;
+            ddlReceiptCashAccount.enable(false).val('');
+            txtBaAccountCode.val('').blur().readOnly(false);
+            txtBaPaymentRemarks.val('').blur().readOnly(false);
+            txtBaAccountCode.val('');
+            hdnBaAccountID.val('');
+            lblName.text('');
+            VendorAccountAutoComplete('txtBaAccountCode', 'hdnPartyId', null, ddlReceiptMode.val());
+            txtBaAccountCode.blur(function () { return CheckIsValidAccountExist(); });
+            rdNo.check(true);
+        }
+       
+       
+          
+
+        var cashAmount = 0.00, chequeAmount = 0.00;
+        if (txtReceiptAmountApplicable.val() == 0)
+            txtReceiptAmountApplicable.val(0);
+        if (mode != "2")
+            cashAmount = parseFloat(txtReceiptAmountApplicable.val());
+        else
+            chequeAmount = parseFloat(txtReceiptAmountApplicable.val());
+
+        txtReceiptCashAmount.val(cashAmount).readOnly(!(mode == "3")).blur();
+        
+
+        txtReceiptChequeAmount.val(chequeAmount).blur().readOnly(!(mode == "3"));
+        //txtReceiptCollectionAmountFromCheque.val(chequeAmount).readOnly(!(mode != "1"));
+        txtReceiptChequeNo.val('').blur().enable(payCheque);
+        txtReceiptChequeDate.val('').blur().enable(payCheque);
+        txtReceiptBankName.enable(payCheque).val('');
+        txtReceiptBankBranchName.enable(payCheque).val('');
+        txtReceiptNetReceivedAmount.val(cashAmount + chequeAmount);
+
+        var mode = ddlReceiptMode.val();
+        
+        rdYes.uncheck().enable((mode == "1" && mode != ""));
+        rdYes.uncheck().enable((mode == "8" && mode != ""));
+        rdYes.check().enable((mode == "2" && mode != ""));
+
+        rdNo.check().enable((mode == "1" && mode != ""));
+        rdNo.check().enable((mode == "8" && mode != ""));
+        rdNo.uncheck().enable((mode == "2" && mode != ""));
+        if (mode == "2" && mode != "")
+        {
+            rdYes.check(true);
+            rdNo.check(false);
+        }
+        else
+        {
+            rdYes.check(false);
+            rdNo.check(true);
+        }
+        
+       
+        //rdNo.check(true);
+        //rdYes.check(true);
+        OnDepositInBankChange();
+    }
+
+    function OnDepositInBankChange() {
+        var mode = ddlReceiptMode.val();
+        ddlReceiptBankAccount.enable(rdYes.IsChecked).val('');
+        txtReceiptBankName.val('').enable(rdNo.IsChecked && mode != "1" && mode != "");
+        txtReceiptBankBranchName.val('').enable(rdNo.IsChecked && mode != "1" && mode != "");
+    }
+
+    function CheckIsValidAccountExist() {
+        lblName.text('');
+        if (ddlReceiptMode.val() == "8") {
+            IsAccountNameExist(txtBaAccountCode, hdnBaAccountID, lblName);
+            if (hdnBaAccountID.val() == 1) {
+                ShowMessage('');
+                txtBaAccountCode.val('');
+                hdnPartyId.val('');
+                txtBaAccountCode.focus();
+            }
+
+        }
+
+    }
+
+    function ManageReceiptCashAmount() {
+        var applicableAmount = parseFloat(txtReceiptAmountApplicable.val());
+        var amount = parseFloat(txtReceiptCashAmount.val());
+        if (applicableAmount < amount)
+            amount = applicableAmount;
+        txtReceiptCollectionAmountFromCheque.val(applicableAmount - amount);
+        txtReceiptCashAmount.val(amount);
+    }
+
+    function ManageReceiptChequeAmount() {
+        var applicableAmount = parseFloat(txtReceiptAmountApplicable.val());
+        var amount = parseFloat(txtReceiptCollectionAmountFromCheque.val());
+        if (applicableAmount < amount)
+            amount = applicableAmount;
+        txtReceiptCashAmount.val(applicableAmount - amount);
+        txtReceiptCollectionAmountFromCheque.val(amount);
+    }
+
+	function SetReceiptAmount(collectionAmount, tdsAmount, isOnlyTdsAmount) {
+        if (IsObjectNullOrEmpty(isOnlyTdsAmount)) isOnlyTdsAmount = false;
+        //alert(collectionAmount);
+        txtReceiptAmountApplicable.val(collectionAmount);
+        ddlReceiptMode.enable(collectionAmount > 0);
+		ddlReceiptMode.val('').change();
+        if (collectionAmount > 0 || isOnlyTdsAmount) {
+            $('#txtReceiptTdsAmount').val(tdsAmount);
+            ddlReceiptTdsAccount.enable(tdsAmount > 0);
+            if (tdsAmount > 0) {
+                AddRequired(ddlReceiptTdsAccount, "Please select TDS Account");
+                ddlReceiptTdsAccount.val('');
+            }
+            else {
+                RemoveRequired(ddlReceiptTdsAccount);
+				ddlReceiptTdsAccount.val('');
+            }
+        }
+
+        if (collectionAmount == 0 && isOnlyTdsAmount) {
+            RemoveRange(txtReceiptAmountApplicable);
+        }
+        else {
+			AddRange(txtReceiptAmountApplicable, "Amount Applicable must be greater than zero", 0, 999999999);
+        }
+    }
+
+    function EnableReceiptControlsOnSubmit() {
+        chkIsOnAccount.enable();
+        txtReceiptAmountApplicable.enable();
+        //txtReceiptBankName.enable();
+        //txtReceiptBankBranchName.enable();
+        //ddlReceiptBankAccount.enable();
+        rdYes.enable();
+        rdNo.enable();
+    }
+
+	function SetReceiptPartyTypeAndParty(partyType, party) {
+		partyTypeId = partyType, partyId = party;
+	}
+</script>
+@{
+    <div class="controls">
+        @Html.HiddenFor(m => m.ReceiptDetails.NetPayableAmount, new { id = "hdnTotalAmount" })
+        <div class="row">
+            <div class="col-sm-6">
+                @Html.LabelFor(m => m.ReceiptDetails.ReceiptMode, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(m => m.ReceiptDetails.ReceiptMode, new List<SelectListItem>
+                                                { new SelectListItem{Text="Cash", Value="1"},
+                                                  new SelectListItem{Text="Bank", Value="2"},
+                                                  new SelectListItem {Text="BA", Value="8" }},
+                                                           //new SelectListItem{Text="Both", Value="3"}},
+                                                           "Select Receipt Mode", new { @class = "form-control", @id = "ddlReceiptMode" })<i></i>
+                </div>
+                @Html.ValidationMessageFor(m => m.ReceiptDetails.ReceiptMode)
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiptDetails.AmountApplicable, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ReceiptDetails.AmountApplicable, new { @class = "form-control numeric2", @id = "txtReceiptAmountApplicable", @readonly = "readonly" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReceiptDetails.AmountApplicable)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiptDetails.CashAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ReceiptDetails.CashAmount, new { @class = "form-control numeric2", @id = "txtReceiptCashAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReceiptDetails.CashAmount)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                @Html.LabelFor(m => m.ReceiptDetails.CashAccountId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(m => m.ReceiptDetails.CashAccountId, Enumerable.Empty<SelectListItem>(), "Select Cash Account", new { @class = "form-control", @id = "ddlReceiptCashAccount", })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(m => m.ReceiptDetails.CashAccountId)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiptDetails.ChequeNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.ReceiptDetails.ChequeId, new { @id = "hdnReceiptChequeId", @value = "0" })
+                        @*@Html.HiddenFor(m => m.ReceiptDetails.ChequeType, new { @value = "0" })*@
+                        @Html.TextBoxFor(model => model.ReceiptDetails.ChequeNo, null, new { @class = "form-control", @id = "txtReceiptChequeNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReceiptDetails.ChequeNo)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "ReceiptDetails.ChequeDate", FieldId = "ReceiptChequeDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.ReceiptDetails.ChequeDate), IsDateOnly = true, IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = false })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiptDetails.ChequeAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ReceiptDetails.ChequeAmount, new { @class = "form-control numeric2", @id = "txtReceiptChequeAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReceiptDetails.ChequeAmount)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiptDetails.OnAccountBalance, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ReceiptDetails.OnAccountBalance, new { @class = "form-control numeric2", @id = "txtReceiptOnAccountBalance", @Value = "0.00" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReceiptDetails.OnAccountBalance)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiptDetails.CollectionAmountFromCheque, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ReceiptDetails.CollectionAmountFromCheque, new { @class = "form-control numeric2", @id = "txtReceiptCollectionAmountFromCheque" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReceiptDetails.CollectionAmountFromCheque)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                @Html.LabelFor(m => m.ReceiptDetails.TdsAccountId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(m => m.ReceiptDetails.TdsAccountId, Enumerable.Empty<SelectListItem>(), "Select TDS Account", new { @class = "form-control", @id = "ddlReceiptTdsAccount" })
+                    <i></i>
+                    @Html.HiddenFor(m => m.ReceiptDetails.TdsAmount, new { @id = "txtReceiptTdsAmount" })
+                </div>
+                @Html.ValidationMessageFor(m => m.ReceiptDetails.TdsAccountId)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(m => m.ReceiptDetails.IsDirectDeposited, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(m => m.ReceiptDetails.IsDirectDeposited, "true", new { @id = "rdYes", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(m => m.ReceiptDetails.IsDirectDeposited, "Yes", new { @for = "rdYes" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(m => m.ReceiptDetails.IsDirectDeposited, "false", new { @id = "rdNo", @value = "false" })
+                            <i></i>
+                            @Html.LabelFor(m => m.ReceiptDetails.IsDirectDeposited, "No", new { @for = "rdNo" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ReceiptDetails.BankAccountId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(m => m.ReceiptDetails.BankAccountId, Enumerable.Empty<SelectListItem>(), "Select Bank", new { @class = "form-control", @id = "ddlReceiptBankAccount" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.ReceiptDetails.BankAccountId)
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiptDetails.BankName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ReceiptDetails.BankName, new { @class = "form-control ", @id = "txtReceiptBankName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReceiptDetails.BankName)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiptDetails.BankBranchName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ReceiptDetails.BankBranchName, new { @class = "form-control", @id = "txtReceiptBankBranchName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReceiptDetails.BankBranchName)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiptDetails.BaAccountID, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.ReceiptDetails.BaAccountID, new { @id = "hdnBaAccountID" })
+                        @Html.TextBoxFor(model => model.ReceiptDetails.BaAccountCode, null, new { @class = "form-control", @id = "txtBaAccountCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReceiptDetails.BaAccountCode)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @class = "label-bold", @id = "lblName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ReceiptDetails.BaPaymentRemarks, new { @class = "label" })
+                    <div class="select">
+                        @Html.TextBoxFor(model => model.ReceiptDetails.BaPaymentRemarks, null, new { @class = "form-control", @id = "txtBaPaymentRemarks" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.ReceiptDetails.BaPaymentRemarks)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiptDetails.IsOnAccount, new { @class = "label", @for = "chkIsOnAccount" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.ReceiptDetails.IsOnAccount, new { @id = "chkIsOnAccount" })
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiptDetails.NetReceived, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ReceiptDetails.NetReceived, new { @class = "form-control numeric2", @id = "txtReceiptNetReceivedAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReceiptDetails.NetReceived)
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        BindAccountDropDown(ddlReceiptCashAccount, 5, 'Cash');
+        BindAccountDropDown(ddlReceiptBankAccount, 6, 'Bank');
+        BindAccountDropDown(ddlReceiptTdsAccount, 9, 'TDS');
+        txtReceiptChequeNo.blur(CheckValidCheque);
+        txtReceiptChequeDate.blur(CheckValidCheque);
+    });
+
+    function BindAccountDropDown(ddl, category, type) {
+        AjaxRequestWithPostAndJson('@Url.Action("GetListByCategory","Account",new{ Area="Master"})', JSON.stringify({ categoryId: category }), function (result) {
+            BindDropDownList(ddl.Id, result, 'Value', 'Description', '', type + ' Account');
+        }, ErrorFunction, false);
+    }
+
+    function CheckValidCheque() {
+        if (txtReceiptChequeNo.val() != '' && txtReceiptChequeDate.val() != '') {
+            AjaxRequestWithPostAndJson('@Url.Action("IsChequeExistForCollection", "Account", new { Area = "Master" })',
+				JSON.stringify({ chequeNo: txtReceiptChequeNo.val(), chequeDate: $.setDate(txtReceiptChequeDate.val()), partyTypeId: partyTypeId, partyId: partyId }), function (result) {
+                    if (!IsObjectNullOrEmpty(result)) {
+                        if (result.ChequeId > 0 && !result.IsOnAccount) {
+                            txtReceiptChequeNo.val('');
+                            ShowMessage('Chqeue is already used.');
+                            ResetBankDetails();
+                            return false;
+                        }
+                        if (result.IsOnAccount) {
+                            if (parseFloat(result.BalanceAmount) < parseFloat(txtReceiptCollectionAmountFromCheque.val())) {
+                                ShowMessage('Collection amount is greater than selected bank balance amount.');
+                                ResetBankDetails();
+                                return false;
+                            }
+                            $('#hdnReceiptChequeId').val(result.ChequeId);
+                            txtReceiptChequeNo.val(result.ChequeNo);
+                            txtReceiptChequeAmount.val(result.ChequeAmount);
+                            ddlReceiptBankAccount.val(result.BankAccountId).enable(false);
+                            txtReceiptBankName.val(result.BankName);
+                            txtReceiptBankBranchName.val(result.BranchName);
+                            txtReceiptOnAccountBalance.val(result.BalanceAmount);
+                            chkIsOnAccount.check(true);
+                           // rdYes.check().enable(false);
+                            //rdNo.enable(false);
+                        }
+                        //else {
+                        //    ResetBankDetails();
+                        //}
+                    }
+                    //else {
+                    //    ResetBankDetails();
+                    //}
+                    var mode = ddlReceiptMode.val();
+                    txtReceiptBankName.val('').enable(rdNo.IsChecked && mode != "1" && mode != "");
+                    txtReceiptBankBranchName.val('').enable(rdNo.IsChecked && mode != "1" && mode != "");
+            }, ErrorFunction, false);
+        }
+    }
+
+    function ResetBankDetails() {
+        $('#hdnReceiptChequeId').val(0);
+        ddlReceiptBankAccount.val('');
+        txtReceiptBankName.val('');
+        txtReceiptBankBranchName.val('');
+        txtReceiptOnAccountBalance.val(0);
+        chkIsOnAccount.check(false);
+        //rdYes.enable(true);
+        //rdNo.check().enable(true);
+    }
+</script>

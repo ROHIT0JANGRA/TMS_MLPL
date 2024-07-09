@@ -1,0 +1,126 @@
+﻿@model CodeLock.Models.VendorContractRouteBased
+
+@{
+    ViewBag.Title = "RouteBasedCriteria";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("RouteBasedCriteria", "VendorContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.ContractId, new { @id = "hdnContractId" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Contract ID", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.ManualContractId
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vendor Type", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.VendorType
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vendor Name", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.VendorCode : @ViewBag.VendorName
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name"), "Select Mode", new { @class = "form-control", @id = "ddlTransportModeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TransportModeId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RouteId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.RouteId, Enumerable.Empty<SelectListItem>(), "Select Route", new { @class = "form-control", @id = "ddlRouteId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.RouteId)
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FtlTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.FtlTypeId, new SelectList(ViewBag.FtlTypeList, "Value", "Name"), "Select FTL Type", new { @class = "form-control", @id = "ddlFtlTypeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FtlTypeId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VehicleId, Enumerable.Empty<SelectListItem>(), "Select Vehicle", new { @class = "form-control", @id = "ddlVehicleId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleId)
+                </div>
+            </div>
+        </div>
+       
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+<script>
+    var btnSubmit, hdnContractId, ddlRouteId, ddlTransportModeId, ddlVehicleId, ddlFtlTypeId;
+    $(document).ready(function () {
+        SetPageLoad('Vendor Contract', 'Route Based', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { contractId = Model.ContractId, vendorTypeId = Model.VendorTypeId, vendorId = @Html.Raw(@ViewBag.VendorId) })');
+        btnSubmit = $('#btnSubmit');
+        hdnContractId = $('#hdnContractId');
+        ddlTransportModeId = $('#ddlTransportModeId');
+        ddlRouteId = $('#ddlRouteId');
+        ddlVehicleId = $('#ddlVehicleId');
+        ddlFtlTypeId = $('#ddlFtlTypeId');
+        AddItemDropDownList(ddlFtlTypeId, 0, '0','All');   
+        $('#ddlTransportModeId').change(OnTransportModeChange);
+        ddlFtlTypeId.change(OnFtlTypeChange);
+    });
+
+    function OnTransportModeChange() {
+        if ($('#ddlTransportModeId').val() != "") {
+            var requestData = { transportModeId: $('#ddlTransportModeId').val(), locationId: 0 };
+            AjaxRequestWithPostAndJson('@Url.Action("GetRouteListByTransportModeId", "Route",new { @Area = "Master"})', JSON.stringify(requestData), GetRouteListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetRouteListSuccess(responseData) {
+        BindDropDownList('ddlRouteId', responseData, 'Value', 'Name', '', 'Select Route');
+    }
+
+    function OnFtlTypeChange() {
+        if (ddlFtlTypeId.val() != "") {
+            var requestData = { ftlTypeId:  ddlFtlTypeId.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetVehicleByFtlTypeId", "Vehicle", new { @Area = "Master" })', JSON.stringify(requestData), GetVehicleListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetVehicleListSuccess(responseData) {
+        BindDropDownList('ddlVehicleId', responseData, 'Value', 'Name', '0', 'All');
+    }
+
+</script>

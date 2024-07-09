@@ -1,0 +1,70 @@
+﻿@model CodeLock.Models.BarCodeModel
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "GenerateBarCode";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-separator">List of Bar Code</div>
+
+<div class="widget-wrap">
+    <div class="row">
+        <table id="dtCity" width="100%">
+            <thead>
+                <tr>
+                    <th>
+                        Bar Code
+                    </th>
+                    <th>
+                        Bar Code Image
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Details)
+            {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BarCode)
+                        </td>
+                        <td style="margin-bottom:20px;">
+                            <img src="~/Storage/BarCode/@item.BarCodeFile" alt="" style="border-collapse:collapse;" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+</div>
+
+    <div class="form-footer">
+        <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Print Bar Code</button>
+    </div>
+    </div>
+
+
+    <script>
+        var StartCode, EndCode, btnSubmit;
+
+        $(document).ready(function () {
+            SetPageLoad('BarCode', 'List', 'filter', 'Generate Bar Code', '@Url.Action("BarCode")');
+
+            StartCode = '@ViewBag.sCode';
+            EndCode = '@ViewBag.eCode';
+            btnSubmit = $('#btnSubmit');
+            btnSubmit.click(ViewReport);
+
+        });
+
+        function ViewReport() {
+            try {
+                var prmList = [{ Name: "FromBarCode", Value: StartCode },
+                    { Name: "ToBarCode", Value: EndCode }];
+                var reportInfo = { PrmList: prmList, Name: 'PrintBarcode', Description: 'Print Barcode' };
+                ShowReport(reportInfo);
+            } catch (e) { ShowMessage(e.message) }
+            return false;
+        }
+    </script>
+
+
+
+

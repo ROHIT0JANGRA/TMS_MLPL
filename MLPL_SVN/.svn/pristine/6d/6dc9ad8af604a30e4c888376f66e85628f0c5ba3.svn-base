@@ -1,0 +1,81 @@
+﻿using CodeLock.Areas.Master.Repository;
+using CodeLock.Areas.WMS.Repository;
+using CodeLock.Models;
+using System;
+using System.Linq;
+using System.Web.Mvc;
+
+namespace CodeLock.Areas.WMS.Controllers
+{
+  public class RepackingController : Controller
+  {
+    public readonly IRepackingRepository repackingRepository;
+    public readonly IGeneralRepository generalRepository;
+
+    public RepackingController()
+    {
+    }
+
+    public RepackingController(
+      IRepackingRepository _repackingRepository,
+      IGeneralRepository _generalRepository)
+    {
+      this.repackingRepository = _repackingRepository;
+      this.generalRepository = _generalRepository;
+    }
+
+    public ActionResult Insert()
+    {
+      return (ActionResult) this.View((object) new Repacking()
+      {
+        Details = {
+          new RepackingDetail()
+        }
+      });
+    }
+
+    [HttpPost]
+    public ActionResult Insert(Repacking objRepacking)
+    {
+      if (this.ModelState.IsValid)
+      {
+        objRepacking.CompanyId = SessionUtility.CompanyId;
+        objRepacking.WarehouseId = SessionUtility.WarehouseId;
+        objRepacking.EntryBy = SessionUtility.LoginUserId;
+        objRepacking.EntryDate = DateTime.Now;
+        objRepacking.Details.RemoveAll((Predicate<RepackingDetail>) (m => !m.IsChecked));
+        objRepacking.Details.ForEach((Action<RepackingDetail>) (m => m.Remarks = m.Remarks.ConvertToString()));
+        Response response = this.repackingRepository.Insert(objRepacking);
+        if (response.IsSuccessfull)
+          return (ActionResult) this.RedirectToAction("Done", "Asn", (object) new
+          {
+            documentType = "Repacking",
+            documentNo = response.DocumentNo,
+            documentId = response.DocumentId,
+            documentTypeId = ModuleHelper.Repacking
+          });
+      }
+      return (ActionResult) this.View((object) objRepacking);
+    }
+
+    public JsonResult GetRepackingList(
+      byte warehouseId,
+      byte companyId,
+      DateTime fromDate,
+      DateTime toDate,
+      string repackingNos,
+      string grnNos)
+    {
+      return this.Json((object) this.repackingRepository.GetRepackingList(warehouseId, companyId, fromDate, toDate, repackingNos, grnNos, SessionUtility.FinStartDate, SessionUtility.FinEndDate));
+    }
+
+    [HttpPost]
+    public JsonResult GetRejectReasonList()
+    {
+      return this.Json((object) new RejectReasonList()
+      {
+        Reject = this.generalRepository.GetByGeneralList((short) 64).ToList<MasterGeneral>()
+      }, JsonRequestBehavior.AllowGet);
+    }
+  }
+}

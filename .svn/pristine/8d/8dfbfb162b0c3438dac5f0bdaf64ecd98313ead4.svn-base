@@ -1,0 +1,105 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+    <div id="dvDocumentDetail">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label(" ", new { @id = "lblDocument", @for = "DocumentNo", @class = "label-bold" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                    @Html.Hidden("hdnDocumentId")
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button onclick="return ViewReport();" class="btn btn-info">
+                    <i class="fa fa-eye"></i>
+                </button>
+            </div></div>
+
+            <div class="row">
+
+                <div class="col-sm-3">
+
+
+                    <h5>@Html.Label("Voucher No", new { @class = "label-bold" })</h5>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(" ", new { @id = "lblVoucherNo", @for = "VoucherNo", @class = "label-bold" })
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <button onclick="return VoucherView();" class="btn btn-info">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    var spnMassage, dvDocumentDetail, lblDocumentNo, hdnDocumentId, lblDocument;
+    var voucherId = 0;
+    var status = '';
+    $(document).ready(function () {
+        dvDocumentDetail = $('#dvDocumentDetail');
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        spnMassage = $('#spnMassage');
+        lblDocument = $('#lblDocument');
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        status = GetUrlValue()["status"];
+        if (status == "PoGenerateDone") {
+            lblDocumentNo.html(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            spnMassage.text("Purchase Order is Generated Successfully");
+            lblDocument.text("Purchase Order No");
+            SetPageLoad('Purchase Order', 'Done', '', 'Go To Create', '@Url.Action("Generate")');
+        }
+        else if (status == "Approval") {
+            spnMassage.text("PO are Approved Successfully");
+            dvDocumentDetail.hide();
+            SetPageLoad('Purchase Order', 'Done', '', 'Go To Approve', '@Url.Action("Approve")');
+        }
+        else if (status == "GrnDone") {
+            lblDocumentNo.html(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            spnMassage.text("GRN is Generated Successfully");
+            lblDocument.text("GRN No");
+            SetPageLoad('GRN', 'Done', '', 'Go To GRN Create', '@Url.Action("Grn")');
+        }
+        else if (status == "AdvancePaymentDone") {
+            lblDocumentNo.html(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            $('#lblVoucherNo').html(GetUrlValue()["voucherNo"]);
+            voucherId = GetUrlValue()["voucherId"];
+            $('#dvVoucherDetail').show();
+            spnMassage.text("Advance Payment done Successfully");
+            lblDocument.text("PO No");
+            SetPageLoad('Advance Payment', 'Done', '', 'Go To Advance Payment', '@Url.Action("AdvancePayment")');
+        }
+    }
+
+    function ViewReport() {
+        @*if (status == "PoGenerateDone" || status == "AdvancePaymentDone")
+            return ShowViewPrint('@ModuleHelper.PurchaseOrder', hdnDocumentId.val());
+        else if (status == "GrnDone")
+            return ShowViewPrint('@ModuleHelper.PoGrn', hdnDocumentId.val());*@
+    }
+
+    function VoucherView() {
+        var prmList = [{ Name: "VoucherId", Value: voucherId }];
+        var reportInfo = { PrmList: prmList, Name: 'VoucherDetailView', Description: 'VoucherDetailView' };
+        return ShowReport(reportInfo);
+    }
+</script>

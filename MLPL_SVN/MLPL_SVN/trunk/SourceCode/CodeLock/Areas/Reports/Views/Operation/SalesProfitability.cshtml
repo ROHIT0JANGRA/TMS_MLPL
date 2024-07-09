@@ -1,0 +1,201 @@
+﻿@model CodeLock.Models.SalesProfitability
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Label(SessionUtility.DocketNomenClature + " Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drDate"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control", @id = "ddlLocationId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                    @Html.DropDownListFor(model => model.PaybasId, new SelectList(ViewBag.PaybasList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlPaybasId", @multiple = "multiple", @placeholder = "Select Paybas" })
+                    @Html.ValidationMessageFor(model => model.PaybasId)
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                    @Html.DropDownListFor(model => model.TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlTransportModeId", @multiple = "multiple", @placeholder = "Select Transport Mode" })
+                    @Html.ValidationMessageFor(model => model.TransportModeId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ServiceTypeId, new { @class = "label" })
+                    @Html.DropDownListFor(model => model.ServiceTypeId, new SelectList(ViewBag.ServiceTypeList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlServiceTypeId", @multiple = "multiple", @placeholder = "Select Service Type" })
+                    @Html.ValidationMessageFor(model => model.ServiceTypeId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BusinessTypeId, new { @class = "label" })
+                    @Html.DropDownListFor(model => model.BusinessTypeId, new SelectList(ViewBag.BusinessTypeList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlBusinessTypeId", @multiple = "multiple", @placeholder = "Select Business Type" })
+                    @Html.ValidationMessageFor(model => model.BusinessTypeId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                        @Html.TextBoxFor(model => model.CustomerCode, new { @class = "form-control", @id = "txtCustomerCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomer" })
+                    @Html.HiddenFor(model => model.CustomerName, new { @id = "hdnCustomerName" })
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocumentNo, new { @class = "form-control", @id = "txtDocumentNo" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label("(seperated by comma if multiple)", new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            @*<div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            @Html.LabelFor(model => model.FormatType, new { @class = "label" })
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.FormatType, true, new { @id = "rdSummary", @checked = "checked" })
+                                <i></i>
+                                @Html.LabelFor(model => model.FormatType, "Summary", new { @for = "rdSummary" })
+                            </label>
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.FormatType, false, new { @id = "rdRegister" })
+                                <i></i>
+                                @Html.LabelFor(model => model.FormatType, "Register", new { @for = "rdRegister" })
+                            </label>
+                        </div>
+                    </div>
+                </div>*@
+
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">View Report   </button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDate, ddlLocationId, ddlPaybasId, ddlTransportModeId, ddlServiceTypeId, ddlBusinessTypeId, hdnCustomerId, txtCustomerCode, lblCustomer, txtDocumentNo;
+    var customerMasterUrl;
+    $(document).ready(function () {
+        SetPageLoad('Sales Profitability', 'Report', '', '', '');
+
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        ddlLocationId = $('#ddlLocationId');
+        ddlPaybasId = $('#ddlPaybasId');
+        ddlTransportModeId = $('#ddlTransportModeId');
+        ddlServiceTypeId = $('#ddlServiceTypeId');
+        ddlBusinessTypeId = $('#ddlBusinessTypeId');
+        hdnCustomerId = $('#hdnCustomerId');
+        txtCustomerCode = $('#txtCustomerCode');
+        lblCustomer = $('#lblCustomer');
+        txtDocumentNo = $('#txtDocumentNo');
+        customerMasterUrl = '/AC_Micro_Test/Master/Customer';
+
+        InitMultiSelect(ddlPaybasId.Id, true, true);
+        InitMultiSelect(ddlTransportModeId.Id, true, true);
+        InitMultiSelect(ddlServiceTypeId.Id, true, true);
+        InitMultiSelect(ddlBusinessTypeId.Id, true, true);
+
+        CustomerAutoComplete('txtCustomerCode', 'hdnCustomerId');
+        txtCustomerCode.blur(function () { return IsCustomerCodeExist(txtCustomerCode, hdnCustomerId, lblCustomer); });
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    });
+
+    function CheckValidCustomerCode(txtCustomerCode, hdnCustomerId) {
+        if (txtCustomerCode.val() != "") {
+            var requestData = { customerCode: txtCustomerCode.val() };
+            AjaxRequestWithPostAndJson(customerMasterUrl + '/CheckValidCustomerCodeByCompanyId', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    hdnCustomerId.val(result.Value);
+                    txtCustomerCode.val(result.Name);
+                    lblCustomer.text(result.Description);
+                }
+                else {
+                    ShowMessage('Customer is not exist');
+                    txtCustomerCode.val('');
+                    hdnCustomerId.val(0);
+                    lblCustomer.text('');
+                    txtCustomerCode.focus();
+                }
+            }, ErrorFunction, false);
+        }
+        else {
+            hdnCustomerId.val(0);
+            txtCustomerCode.val('');
+            lblCustomer.text('');
+        }
+    }
+
+    function ViewReport() {
+        var prmList = [{ Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+            { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+        { Name: "LocationId", Value: ddlLocationId.val() },
+        { Name: "Paybas", Value: ddlPaybasId.multiVal() },
+        { Name: "TransportMode", Value: ddlTransportModeId.multiVal() },
+        { Name: "ServiceType", Value: ddlServiceTypeId.multiVal() },
+        { Name: "BusinessType", Value: ddlBusinessTypeId.multiVal() },
+        { Name: "CustomerId", Value: txtCustomerCode == '' ? 0 : hdnCustomerId.val() },
+        { Name: "DocketNo", Value: txtDocumentNo.val() == '' ? '0' : txtDocumentNo.val() }];
+
+       /* alert(prmList[0].Value);
+        alert(prmList[1].Value);
+        alert(prmList[2].Value);
+        alert(prmList[3].Value);
+        alert(prmList[4].Value);
+        alert(prmList[5].Value);
+        alert(prmList[6].Value);
+        alert(prmList[7].Value);
+        alert(prmList[8].Value);*/
+       
+
+        var reportInfo = { PrmList: prmList, Name: 'SalesProfitability', Description: 'Sales Profitability Report' };
+        return ShowReport(reportInfo);
+    }
+</script>
+
+

@@ -1,0 +1,298 @@
+﻿@model CodeLock.Models.CustomerContract
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "CustomerContract Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "CustomerContract", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("ContractId", 0, new { @id = "hdnContractId" })
+    @Html.AntiModelInjectionFor(m => m.ContractId)
+    @Html.HiddenFor(m => m.IsCustomerContract, new { id = "hdnIsCustomerContract" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.PaybasId, new SelectList(ViewBag.PayBasList, "Value", "Name"), "Select Paybas", new { @class = "form-control", @id = "ddlPaybasId" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.PaybasId)
+            </div>
+            <div class="col-sm-4">
+                @Html.Label("Contract ID", new { @id = "lblCustomerId", @class = "label"  })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.CustomerId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Customer", new { @class = "form-control", @id = "ddlCustomerId" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.CustomerId)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerContractBasicInfo.ManualContractId, new { @class = "label" })
+                    <div class="system-label">
+                        @Html.Label("", "<System Generated>")
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "StartDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.StartDate), IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true, IsValidateFinYear = false })
+            </div>
+            <div class="col-sm-4">
+                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "EndDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.EndDate), IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true, IsValidateFinYear = false })
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "CustomerContractBasicInfo.ContractDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.CustomerContractBasicInfo.ContractDate), IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true, IsValidateFinYear = false })
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.CustomerContractBasicInfo.LocationId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.CustomerContractBasicInfo.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control", @id = "ddlLocation" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.LocationId)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerContractBasicInfo.DocumentName, new { @class = "label" })
+                    <div class="input prepend-big-btn">
+                        <label class="icon-right" for="prepend-big-btn">
+                            <i class="fa fa-download"></i>
+                        </label>
+                        <div class="file-button">
+                            Browse
+                            <input class="form-control" id="fuDocumentAttachment" type="file" name="CustomerContractBasicInfo.Attachment" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                            @*@Html.HiddenFor(model => model.DeclarationDocumentName, new { @id = "hdnDeclarationDocumentName", @Value = Model.DeclarationDocumentName })*@
+                        </div>
+                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.CustomerContractBasicInfo.PartyCategory, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.CustomerContractBasicInfo.PartyCategory, new SelectList(ViewBag.PartyCategoryList, "Value", "Name"), "Select Party Category", new { @class = "form-control", @id = "ddlPartyCategory" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.PartyCategory)
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.CustomerContractBasicInfo.ContractCategory, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.CustomerContractBasicInfo.ContractCategory, new SelectList(ViewBag.ContractCategoryList, "Value", "Name"), "Select Contract Category", new { @class = "form-control", @id = "ddlContractCategory" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.ContractCategory)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerContractBasicInfo.AccountRepresentativeName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerContractBasicInfo.AccountRepresentativeName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.AccountRepresentativeName)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerContractBasicInfo.AccountPersonName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerContractBasicInfo.AccountPersonName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.AccountPersonName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerContractBasicInfo.AccountPersonMobileNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerContractBasicInfo.AccountPersonMobileNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.AccountPersonMobileNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerContractBasicInfo.AccountPersonEmailId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerContractBasicInfo.AccountPersonEmailId, new { @class = "form-control", Style = "text-transform:lowercase" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.AccountPersonEmailId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerContractBasicInfo.CseName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerContractBasicInfo.CseName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.CseName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerContractBasicInfo.CseMobileNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerContractBasicInfo.CseMobileNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.CseMobileNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerContractBasicInfo.CseEmailId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerContractBasicInfo.CseEmailId, new { @class = "form-control", Style = "text-transform:lowercase" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.CseEmailId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerContractBasicInfo.Remarks, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerContractBasicInfo.Remarks, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.Remarks)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    var isCustomerContract=@Model.IsCustomerContract.ToString().ToLower();
+    $(document).ready(function () {
+        var txtStartDate = $('#txtStartDate');
+        var txtEndDate = $('#txtEndDate');
+        var txtCustomerCode, txtCustomerName;
+        ddlCustomerId = $('#ddlCustomerId');
+        $('#ddlPaybasId').change(GetCustomerList);
+        $('#ddlPaybasId').change(CheckDate);
+        $('#txtStartDate').blur(CheckDate);
+        txtStartDate.blur(function () { return CheckContractDateRange(txtStartDate); });
+        txtEndDate.blur(function () { return CheckContractDateRange(txtEndDate); });
+        txtStartDate.blur(function () { return CheckDateIsValid(txtStartDate); });
+        txtEndDate.blur(function () { return CheckDateIsValid(txtEndDate); });
+        lblCustomerId = $('#lblCustomerId');
+        InitCustomerContract();
+        $('#btnSubmit').click(OnSubmit);
+        ddlCustomerId.enable($('#hdnIsCustomerContract').val() == 'true');
+        customerUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+    });
+
+    function InitCustomerContract() {
+        if (isCustomerContract){
+lblCustomerId.text("Customer Name");
+            SetPageLoad('Customer Contract', 'Basic Information', 'ddlPaybasId', 'Go To List', '@Url.Action("Index")');
+}
+        else {
+            lblCustomerId.text("Vendor Name");
+            SetPageLoad('Vendor Contract', 'Basic Information', 'ddlPaybasId', 'Go To List', '@Url.Action("Index", new { customerId = Model.CustomerId, isCustomerContract = Model.IsCustomerContract })');
+        }
+    }
+
+    function CheckDate() {
+        if ($('#ddlCustomerId').val() != null && $('#ddlPaybasId').val() != null && $('#txtStartDate').val() != null && $('#txtEndDate').val() != null) {
+            if ($('#ddlCustomerId').val() != "" && $('#ddlPaybasId').val() != "" && $('#txtStartDate').val() != "" && $('#txtEndDate').val() != "") {
+                var requestData = { contractId: $('#hdnContractId').val(), customerId: $('#ddlCustomerId').val(), paybasId: $('#ddlPaybasId').val(), isCustomerContract:isCustomerContract, startDate: $('#txtStartDate').val(), endDate: $('#txtEndDate').val() };
+                AjaxRequestWithPostAndJson('@Url.Action("CheckDate")', JSON.stringify(requestData), function (result) {
+                    if (!result) {
+                        ShowMessage("Contract is already exist on this Date");
+                        $('#txtStartDate').val('');
+                        $('#txtEndDate').val('');
+                    }
+                }, ErrorFunction, false);
+            }
+            else if ($('#ddlCustomerId').val() != "" && $('#ddlPaybasId').val() != "" && $('#txtStartDate').val() != "") {
+                var requestData = { contractId: $('#hdnContractId').val(), customerId: $('#ddlCustomerId').val(), paybasId: $('#ddlPaybasId').val(), isCustomerContract: isCustomerContract, contractDate: $('#txtStartDate').val() };
+                AjaxRequestWithPostAndJson('@Url.Action("CheckDateIsValid")', JSON.stringify(requestData), function (result) {
+                    if (!result) {
+                        ShowMessage("Contract is already exist on this Date");
+                        $('#txtStartDate').val('');
+                    }
+                }, ErrorFunction, false);
+            }
+            else if ($('#ddlCustomerId').val() != "" && $('#ddlPaybasId').val() != "" && $('#txtEndDate').val() != "") {
+                var requestData = { contractId: $('#hdnContractId').val(), customerId: $('#ddlCustomerId').val(), paybasId: $('#ddlPaybasId').val(), isCustomerContract: isCustomerContract, contractDate: $('#txtEndDate').val() };
+                AjaxRequestWithPostAndJson('@Url.Action("CheckDateIsValid")', JSON.stringify(requestData), function (result) {
+                    if (!result) {
+                        ShowMessage("Contract is already exist on this Date");
+                        $('#txtEndDate').val('');
+                    }
+                }, ErrorFunction, false);
+            } else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    function CheckDateIsValid(objDate) {
+        if ($('#ddlCustomerId').val() != "" && $('#ddlPaybasId').val() != "" && (objDate.val() != "")) {
+            var requestData = { contractId: $('#hdnContractId').val(), customerId: $('#ddlCustomerId').val(), paybasId: $('#ddlPaybasId').val(), isCustomerContract: isCustomerContract, contractDate: objDate.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("CheckDateIsValid")', JSON.stringify(requestData), function (result) {
+                if (!result) {
+                    ShowMessage("Contract is already exist on this Date");
+                    objDate.val('');
+                    objDate.focus();
+                }
+            }, ErrorFunction, false);
+        }
+        return false;
+    }
+
+    function CheckContractDateRange(obj) {
+        var txtStartDate = $('#txtStartDate');
+        var txtEndDate = $('#txtEndDate');
+
+        if (txtStartDate.val() != "" && txtEndDate.val() != "") {
+            if (txtEndDate.toDate() <= txtStartDate.toDate()) {
+                ShowMessage("End Date must be greater than Start Date");
+                obj.val('');
+                obj.focus();
+                return false;
+            }
+        }
+    }
+
+    function GetCustomerList(){
+        var requestData = { payBasId: $('#ddlPaybasId').val() }
+	if(isCustomerContract)
+		AjaxRequestWithPostAndJson(customerUrl + '/GetCustomerListByPaybasId', JSON.stringify(requestData), function (responseData) {
+		    BindDropDownList('ddlCustomerId', responseData, 'Value', 'Name', '', 'Select Customer');
+		}, ErrorFunction, false);
+    }
+
+    function OnSubmit() {
+        ddlCustomerId.removeAttr('disabled');
+    }
+</script>
+

@@ -1,0 +1,91 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap" style="height:250px">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+    <div class="row" id="dvJobOrderDetail">
+        <div class="col-sm-3">
+            <h4>Job Order No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return ViewReport();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+    <div class="row" id="dvSpareRequestDetail">
+        <div class="col-sm-3">
+            <h4>Spare Part Request No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblSpareRequestNo", @for = "SpareRequestNo", @class = "label-bold" })
+                @Html.Hidden("hdnSpareRequestId")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return ViewSpareRequestReport();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var lblDocumentNo, hdnDocumentId, lblSpareRequestNo, hdnSpareRequestId, spnMassage;
+    $(document).ready(function () {
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        lblSpareRequestNo = $('#lblSpareRequestNo');
+        hdnSpareRequestId = $('#hdnSpareRequestId');
+        spnMassage = $('#spnMassage');
+
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+        lblSpareRequestNo.html(GetUrlValue()["spareRequestNo"]);
+        hdnSpareRequestId.val(GetUrlValue()["spareRequestId"]);
+
+        OnPageLoad();
+
+    });
+
+    function OnPageLoad() {
+        var status = GetUrlValue()["status"];
+        if (status == "GenerateDone") {
+            spnMassage.text("Job Order is Generated Successfully");
+            SetPageLoad('Job Order', 'Done', '', 'Go To Create', '@Url.Action("Insert")');
+            $('#dvSpareRequestDetail').showHide(hdnSpareRequestId.val() != 0);
+        }
+        else if (status == "UpdateDone") {
+            spnMassage.text("Job Order is Updated Successfully");
+            SetPageLoad('Job Order Update', 'Done', '', 'Go To Update', '@Url.Action("Update")');
+            $('#dvSpareRequestDetail').showHide(hdnSpareRequestId.val() != 0);
+        }
+
+        else if (status == "ApprovalDone") {
+            spnMassage.text("Job Order are Approved Successfully");
+            $('#dvJobOrderDetail').hide();
+            $('#dvSpareRequestDetail').hide();
+            SetPageLoad('Job Order Approve', 'Done', '', 'Go To Approve', '@Url.Action("Approve")');
+        }
+        if (status == "CloseDone") {
+            spnMassage.text("Job Order is Closed Successfully");
+            SetPageLoad('Job Order Close', 'Done', '', 'Go To Update', '@Url.Action("Update")');
+            $('#dvSpareRequestDetail').hide();
+        }
+    }
+
+    function ViewReport() {
+        return false;
+    }
+
+    function ViewSpareRequestReport() {
+        return false;
+    }
+</script>

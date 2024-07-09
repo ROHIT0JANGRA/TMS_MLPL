@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewBag.Title = "ChangeAdvanceBalanceLocationDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row example-buttons">
+    <div class="col-md-12">
+        <div class="note note-info note-right-striped">
+            <div class="page-separator">Advance/Balance Location changed Successfully</div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Change Advance Balance Location', '', '', 'Go To PRS/DRS/THC Financial Edit Page', '@Url.Action("GetValidChangeAdvanceBalanceLocation")');
+    });
+</script>
+

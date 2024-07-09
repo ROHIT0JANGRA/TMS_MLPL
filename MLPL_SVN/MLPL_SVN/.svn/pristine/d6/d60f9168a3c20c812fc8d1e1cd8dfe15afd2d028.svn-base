@@ -1,0 +1,114 @@
+﻿@using CodeLock.Models
+@model List<ThcManifestDetail>
+@{
+    ViewBag.Title = "StockUpdateMLPL Done";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="alert alert-success" id="dvHeaderStock"><h5><label id="lblMessage">Stock is Updated Successfully</label></h5></div>
+    <div class="alert alert-success" id="dvHeaderDeps"><h5><label>DEPS Update/Close Done Successfully</label></h5></div>
+    <div class="row" id="dvStock">
+        <div class="col-sm-3">
+            <h4>THC No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+        <div class="col-sm-1">
+            <button onclick="return ViewReport();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <h4>Stock Update/Pouch Details</h4>
+        </div>
+        <div class="col-sm-1">
+            <button onclick="return ViewStockUpdateReport();" class="btn btn-primary">
+                <i class="glyphicon glyphicon-print"></i>
+            </button>
+        </div>
+    </div>
+    <div class="page-separator">Manifest List</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <table id="dtMrDocketList">
+                <thead>
+                    <tr>
+                        <th width="300px">
+                            Manifest No
+                        </th>
+                        <th>
+                            Unloading View/Print
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => item.ManifestNo)
+                            </td>
+                            <td>
+                                <button onclick='return ViewStockUnloadingReport( @Html.DisplayFor(model => item.ManifestId));' class="btn btn-primary">
+                                    <i class="glyphicon glyphicon-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        OnPageLoad();
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+
+
+    });
+    function ViewReport() {
+        return ShowViewPrint('@ModuleHelper.Thc', hdnDocumentId.val());
+    }
+
+    function ViewStockUpdateReport() {
+               var prmList = [{ Name: "ThcId", Value: hdnDocumentId.val() },
+                               { Name: "LocationId", Value: loginLocationId }];
+
+        var reportInfo = { PrmList: prmList, Name: 'THCPouchReportAtStock', Description: 'THC Stock Update/Pouch View' };
+
+        return ShowReport(reportInfo);
+    }
+
+    function ViewStockUnloadingReport(manifestId) {
+        var prmList = [{ Name: "ManifestId", Value: manifestId }];
+
+        var reportInfo = { PrmList: prmList, Name: 'ManifestUnloadingView', Description: 'Manifest Unloading View' };
+
+        return ShowReport(reportInfo);
+    }
+
+    function OnPageLoad() {
+        var documentNo = GetUrlValue()["documentNo"];
+
+        if (documentNo == null || documentNo == '') {
+            SetPageLoad('DEPS Update/Close', 'Done', '', 'Go To DEPS Update', '@Url.Action("DepsUpdate")');
+            $('#dvStock').hide();
+            $('#dvHeaderStock').hide();
+        }
+        else {
+            $('#dvHeaderDeps').hide();
+            SetPageLoad('Stock UpdateMLPL', 'Done', '', 'Go To Stock Update', '@Url.Action("StockUpdateMLPL")');
+        }
+    }
+</script>

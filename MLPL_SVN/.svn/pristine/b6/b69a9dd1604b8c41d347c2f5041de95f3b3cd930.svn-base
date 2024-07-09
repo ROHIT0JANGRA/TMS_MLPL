@@ -1,0 +1,86 @@
+﻿@model IEnumerable<CodeLock.Models.DocketBarcodeDetail>
+@{
+    ViewBag.Title = "eWay Consolidate Bill List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var sno = 0;
+
+}
+
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtCustomer">
+        <thead>
+            <tr>
+                <th>
+                    S. No.
+                </th>
+
+                <th>
+                    Docket No.
+                </th>
+                <th>
+                    DocketDate
+                </th>
+                <th>
+                    FromCity
+                </th>
+                <th>
+                    ToCity
+                </th>
+                <th>
+                    CustomerName
+                </th>
+
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                {
+                    sno++;
+                    }
+
+                    <tr>
+                        <td>
+                            @sno
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DocketNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DocketDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FromCity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ToCity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CustomerName)
+                        </td>
+                        <td class="td-center">
+                            <div class="btn-toolbar" role="toolbar">
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("PrintBarcodeNameInPdf", new { documentId = item.DocketId })"><span class="fa fa-file"></span></a>
+                                </div>
+                            </div>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Docket Pkt. Barcode', 'List', 'filter', '', '');
+        LoadDataTable('dtCustomer', true, true, true);
+    });
+</script>
+

@@ -1,0 +1,174 @@
+﻿@model CodeLock.Models.DeliveryBA
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                @Html.Label(SessionUtility.DocketNomenClature + " Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drDate"></div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                        @Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorCode)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorCode, " ", new { @class = "label" })
+                    <div class="clearfix">
+                    </div>
+                    @Html.LabelFor(model => model.VendorCode, " ", new { @class = "label-bold", @id = "lblVendorName" })
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsCumulative, true, new { @id = "rdIndividual" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsCumulative, "Individual", new { @for = "rdIndividual" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsCumulative, false, new { @id = "rdCumulative" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsCumulative, "Cumulative(Transaction includes all branches)", new { @for = "rdCumulative" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.LocationId, Enumerable.Empty<SelectListItem>(), " ", new { @class = "form-control", @id = "ddlLocationId" })
+                            <i></i>
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationId)
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BillNo, new { @class = "form-control", @id = "txtBillNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ManualBillNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ManualBillNo, new { @class = "form-control", @id = "txtManualBillNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "txtVehicleNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">View Report   </button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDate, txtVendorCode, hdnVendorId, lblVendorName, txtDeliveryBAName, txtVehicleNo, txtBillNo, txtDocketNo, txtManualBillNo,ddlLocationId;
+    $(document).ready(function () {
+        SetPageLoad('Finance Report','Delivery BA', '', '', '');
+
+        drDate = InitDateRange('drDate', DateRange.LastWeek, false);
+        txtVendorCode = $('#txtVendorCode');
+        hdnVendorId = $('#hdnVendorId');
+        lblVendorName = $('#lblVendorName');
+        txtDeliveryBAName = $('#txtDeliveryBAName');
+        txtVehicleNo = $('#txtVehicleNo');
+        txtBillNo = $('#txtBillNo');
+        txtDocketNo = $('#txtDocketNo');
+        ddlLocationId = $('#ddlLocationId');
+        txtManualBillNo = $('#txtManualBillNo');
+        rdIndividual = $('#rdIndividual');
+        rdCumulative = $('#rdCumulative');
+        locationId = '@SessionUtility.LoginLocationId';
+        locationUrl = '@Url.Action("", "Location", new { Area = "Master" })';
+        VendorAutoComplete('txtVendorCode', 'hdnVendorId');
+        txtVendorCode.blur(function () { return IsVendorCodeExist(txtVendorCode, hdnVendorId, lblVendorName); });
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+        OnIsIndividualChange();
+        rdIndividual.change(OnIsIndividualChange);
+        rdCumulative.change(OnIsIndividualChange);
+        ddlLocationId.val(1);
+    });
+
+    function OnIsIndividualChange() {
+        var requestData = { isRegion: rdIndividual.IsChecked }
+        AjaxRequestWithPostAndJson(locationUrl + '/GetLocationByHierarchyId', JSON.stringify(requestData), function (responseData) {
+            BindDropDownList('ddlLocationId', responseData, 'Value', 'Name', '', 'Select Location');
+            ddlLocationId.val(1);
+        }, ErrorFunction, false);
+    }
+
+    function ViewReport() {
+        var prmList = [
+            { Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+            { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+            { Name: "VendorId", Value: txtVendorCode == '' ? 0 : hdnVendorId.val() },
+            { Name: "VehicleNo", Value: txtVehicleNo.val() },
+            { Name: "BillNo", Value: txtBillNo.val() },
+            { Name: "DocketNo", Value: txtDocketNo.val() },
+            { Name: "LocationId", Value: ddlLocationId.val() == '' ? 0 : ddlLocationId.val()  },
+            { Name: "IsCumulative", Value: rdCumulative.IsChecked },
+            { Name: "ManualBillNo", Value: txtManualBillNo.val() }
+        ];
+
+        var reportInfo = { PrmList: prmList, Name: 'DeliveryBAReport', Description: 'Delivery BA' };
+        return ShowReport(reportInfo);
+    }
+</script>
+
+

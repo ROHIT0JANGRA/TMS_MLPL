@@ -1,0 +1,24 @@
+﻿//  
+// Type: CodeLock.Areas.WMS.Repository.IOrderRepository
+//  
+//  
+//  
+
+using CodeLock.Models;
+using System;
+using System.Collections.Generic;
+
+namespace CodeLock.Areas.WMS.Repository
+{
+  public interface IOrderRepository : IDisposable
+  {
+    Response Insert(Order objOrder);
+
+    IEnumerable<OrderRegister> GetRegisterOrderDetail(
+      string orderNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate);
+  }
+}

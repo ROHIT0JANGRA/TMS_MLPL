@@ -1,0 +1,179 @@
+﻿@model CodeLock.Models.TripsheetRegister
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.TripsheetDateType, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.TripsheetDateType, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Generation",Value="1"},
+                        new SelectListItem() {Text = "Closure",Value="2"},}, new { @class = "form-control", @id = "ddlTripsheetDateType" })
+                    <i></i>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.Label("Tripsheet Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drTripsheetDate"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.TripsheetStatus, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.TripsheetStatus, new List<SelectListItem> {
+                   new SelectListItem() {Text = "All",Value="0"},
+                        new SelectListItem() {Text = "Pending",Value="1"},
+                        new SelectListItem() {Text = "Completed",Value="2"},}, new { @class = "form-control", @id = "ddlTripsheetStatus" })
+                    <i></i>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                        @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "txtVehicleNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TripsheetNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.TripsheetNo, new { @class = "form-control", @id = "txtTripsheetNo" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("", " ", new { @class = "label" })
+                    <div class="input">
+                        @Html.Label("(seperated by comma if multiple)")
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="clearfix">
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(model => model.AllTripsheetField, new { @class = "form-control", @id = "chkAllTripsheetField" })
+                            <i></i>
+                            @Html.LabelFor(model => model.AllTripsheetField, "Tripsheet Details", new { @class = "label", @for = "chkAllTripsheetField" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="unit">
+                        <div class="inline-group">
+                            <div id="dvFieldCheckboxContainer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var ddlTripsheetDateType, drTripsheetDate, ddlLocationId, ddlTripsheetStatus, hdnVehicleId, txtVehicleNo, txtTripsheetNo, dvFieldCheckboxContainer, baseUrl, chkAllTripsheetField;
+
+    $(document).ready(function () {
+        SetPageLoad('Tripsheet', 'Register', '', '', '');
+
+        ddlTripsheetDateType = $('#ddlTripsheetDateType');
+        drTripsheetDate = InitDateRange('drTripsheetDate', DateRange.LastWeek);
+        ddlLocationId = $('#ddlLocationId');
+        ddlTripsheetStatus = $('#ddlTripsheetStatus');
+        hdnVehicleId = $('#hdnVehicleId');
+        txtVehicleNo = $('#txtVehicleNo');
+        txtTripsheetNo = $('#txtTripsheetNo');
+        chkAllTripsheetField = $('#chkAllTripsheetField');
+        dvFieldCheckboxContainer = $('#dvFieldCheckboxContainer');
+          baseUrl = '@Url.Action("", "Operation", new { Area = "Reports" })';
+        GetDocketFieldList();
+        VehicleAutoComplete('txtVehicleNo', 'hdnVehicleId');
+        txtVehicleNo.blur(function () { return CheckValidVehicleNo(txtVehicleNo, hdnVehicleId); });
+        chkAllTripsheetField.click(OnAllTripsheetFieldChange);
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+
+    });
+    function GetDocketFieldList() {
+        var requestData = { reportId: 101 };
+        AjaxRequestWithPostAndJson(baseUrl + '/GetColumnListByReportId', JSON.stringify(requestData), function (result) {
+            if (result.length == 0)
+                dvFieldCheckboxContainer.empty();
+            else {
+                dvFieldCheckboxContainer.empty();
+                var content = '';
+                $.each(result, function (index, value) {
+                    content += "<div class='col-sm-3'> <label class='checkbox'>" +
+                        '<label for = "chkTripsheetField' + index + '" class="label">' + value.FieldCaption + '</label>' +
+                        '<input type="checkbox"  id="chkTripsheetField' + index + '" onclick="OnTripsheetFieldChange()"/><i></i>' +
+                        '<input type="hidden" id="hdnFieldId' + index + '" value = ' + value.FieldId + ' />' +
+                        '</label></div>'
+                });
+                dvFieldCheckboxContainer.html(content);
+                $('#chkTripsheetField0').check();
+                $('#chkTripsheetField0').disable();
+            }
+        }, ErrorFunction, false);
+    }
+    function OnAllTripsheetFieldChange() {
+        $('[id*="chkTripsheetField"]').check(chkAllTripsheetField.IsChecked);
+        $('#chkTripsheetField0').check();
+    }
+    function OnTripsheetFieldChange() {
+        var TripsheetFieldCount = 0;
+        $('[id*="chkTripsheetField"]').each(function () {
+            var chkTripsheetField = $(this);
+            if (!chkTripsheetField.IsChecked)
+                TripsheetFieldCount = 1;
+        });
+        chkAllTripsheetField.check(TripsheetFieldCount == 0);
+    }
+    function ViewReport() {
+        var TripsheetField = '';
+        $('[id*="chkTripsheetField"]').each(function () {
+            var chkTripsheetField = $(this);
+            var hdnFieldId = $('#' + chkTripsheetField.attr('id').replace('chkTripsheetField', 'hdnFieldId'));
+            if (chkTripsheetField.IsChecked)
+                TripsheetField = TripsheetField + ',' + hdnFieldId.val();
+        });
+
+        var prmList = [{ Name: "TripsheetDateType", Value: ddlTripsheetDateType.val() == '' ? 1 : ddlTripsheetDateType.val() },
+                        { Name: "FromDate", Value: $.displayDate(drTripsheetDate.startDate) },
+                        { Name: "ToDate", Value: $.displayDate(drTripsheetDate.endDate) },
+                       { Name: "LocationId", Value: ddlLocationId.val() == '' ? 1 : ddlLocationId.val() },
+                       { Name: "TripsheetStatus", Value: ddlTripsheetStatus.val() == '' ? ' ' : ddlTripsheetStatus.val() },
+                       { Name: "VehicleId", Value: txtVehicleNo.val() == '' ? 0 : hdnVehicleId.val() },
+            { Name: "TripsheetNo", Value: txtTripsheetNo.val() == '' ? ' ' : txtTripsheetNo.val() },
+            { Name: "ColumnList", Value: TripsheetField },];
+        var reportInfo = { PrmList: prmList, Name: 'TripsheetRegisterV1', Description: 'Tripsheet Register Report' };
+        return ShowReport(reportInfo);
+    }
+</script>

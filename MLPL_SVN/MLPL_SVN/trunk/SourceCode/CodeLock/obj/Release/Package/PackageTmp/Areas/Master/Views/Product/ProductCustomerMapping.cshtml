@@ -1,0 +1,161 @@
+﻿@model CodeLock.Models.ProductCustomerMapping
+
+@{
+    ViewBag.Title = "ProductCustomerMapping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("ProductCustomerMapping", "Product", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ProductCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.ProductId, new { @id = "hdnProductId" })
+                        @Html.TextBoxFor(model => model.ProductCode, null, new { @class = "form-control", @id = "txtProductCode" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.ProductCode, " ", new { @class = "label-bold", @id = "lblProductCode" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="overflow-table">
+            <table class="display" id="dtProductCustomerMappingDetail"></table>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">Create</button>
+        </div>
+    </div>
+}
+
+<script>
+    var ddlVendorId, dtProductCustomerMappingDetail;
+    $(document).ready(function () {
+        SetPageLoad('Product', 'Customer Mappping', 'ProductCode', '', '');
+        companyId = '@SessionUtility.CompanyId';
+        hdnProductId = $('#hdnProductId');
+        txtProductCode = $('#txtProductCode');
+        lblProductCode = $('#lblProductCode');
+        txtProductCode.blur(OnProductChange);
+
+        ProductAutoComplete('txtProductCode', 'hdnProductId');
+        txtProductCode.blur(function () { return IsProductCodeExist(txtProductCode, hdnProductId, lblProductCode); });
+        txtProductCode.blur(OnProductChange);
+
+        dtProductCustomerMappingDetail = LoadDataTable('dtProductCustomerMappingDetail', false, true, true, null, null, [],
+            [
+                { title: 'Consignor', data: "Consignor" },
+                { title: 'Consignee', data: "Consignee" },
+                { title: 'Action', data: "Action" }
+            ]);
+    });
+
+    function OnProductChange() {
+        if (txtProductCode.val() != '') {
+            var requestData = { productId: hdnProductId.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetCustomerMappingList")', JSON.stringify(requestData), OnCustomerMappingListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function OnCustomerMappingListSuccess(responseData) {
+        dtProductCustomerMappingDetail.fnClearTable()
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.Consignor = "<div class='col-sm-6'><input type='hidden' value='" + item.ConsignorId + "' name='ProductCustomerMappingList[" + i + "].ConsignorId' id='hdnConsignorId" + i + "'/>" +
+                    "<input class='form-control' id='txtConsignorCode" + i + "' type='text' name='ProductCustomerMappingList[" + i + "].ConsignorCode' value='" + item.ConsignorCode + "'>" +
+                "<div><span data-valmsg-for='ProductCustomerMappingList[" + i + "].ConsignorCode' data-valmsg-replace='true'></span></div></div>";
+                item.Consignee = "<input type='hidden' value='" + item.ConsigneeId + "' name='ProductCustomerMappingList[" + i + "].ConsigneeId' id='hdnConsigneeId" + i + "'/>" +
+                    "<input class='form-control' id='txtConsigneeCode" + i + "' type='text' name='ProductCustomerMappingList[" + i + "].ConsigneeCode' value='" + item.ConsigneeCode + "'>" +
+                    "<div><span data-valmsg-for='ProductCustomerMappingList[" + i + "].ConsigneeCode' data-valmsg-replace='true'></span></div>";
+                item.Action = '<td></td>';
+            });
+            dtProductCustomerMappingDetail.fnAddData(responseData);
+            InitGrid('dtProductCustomerMappingDetail', false, 2, InitAutoComplete);
+        }
+    }
+
+    function InitAutoComplete() {
+        $('[id*="txtConsignorCode"]').each(function () {
+            var txtConsignorCode = $(this);
+            var hdnConsignorId = $('#' + this.id.replace('txtConsignorCode', 'hdnConsignorId'));
+            var txtConsigneeCode = $('#' + this.id.replace('txtConsignorCode', 'txtConsigneeCode'));
+            var hdnConsigneeId = $('#' + this.id.replace('txtConsignorCode', 'hdnConsigneeId'));
+            AddRequired(txtConsignorCode, 'Enter Consignor');
+            AddRequired(txtConsigneeCode, 'Enter Consignee');
+            CustomerAutoComplete(txtConsignorCode.attr('id'), '@Url.Action("GetAutoCompleteListByPaybasId", "Customer")', 'customerCode', 'l', 'l', 'l', '', '', hdnConsignorId.attr('id'), '', '');
+            txtConsignorCode.blur(function () { return CheckValidCustomerCode(txtConsignorCode, hdnConsignorId, 'Consignor'); });
+
+            CustomerAutoComplete(txtConsigneeCode.attr('id'), '@Url.Action("GetAutoCompleteListByPaybasId", "Customer")', 'customerCode', 'l', 'l', 'l', '', '', hdnConsigneeId.attr('id'), '', '');
+            txtConsigneeCode.blur(function () { return CheckValidCustomerCode(txtConsigneeCode, hdnConsigneeId, 'Consignee'); });
+
+            txtConsignorCode.blur(function () {
+                try {
+                    IsMappingExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+            txtConsigneeCode.blur(function () {
+                try {
+                    IsMappingExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+        });
+    }
+
+    function CheckValidCustomerCode(txtCustomerCode, hdnCustomerId, fieldName) {
+        if (txtCustomerCode.val() != "") {
+            var requestData = { customerCode: txtCustomerCode.val().split(':')[0].trim() };
+            AjaxRequestWithPostAndJson('@Url.Action("IsCustomerCodeExist", "Customer")', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    txtCustomerCode.val(result.Name);
+                    hdnCustomerId.val(result.Value);
+                    txtCustomerCode.val(result.Name + ':' + result.Description);
+                }
+                else {
+                    ShowMessage('Invalid ' + fieldName);
+                    txtCustomerCode.val('');
+                    hdnCustomerId.val('');
+                    txtCustomerCode.focus();
+                }
+            }, ErrorFunction, false);
+        }
+        return false;
+    }
+
+    function IsMappingExist(obj) {
+        if (obj.val() != '') {
+            var outertr = obj.closest('tr');
+            var outertxtConsignorCode = outertr.find('[id*="txtConsignorCode"]');
+            var outertxtConsigneeCode = outertr.find('[id*="txtConsigneeCode"]');
+
+            $('#dtProductCustomerMappingDetail tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innertxtConsignorCode = innertr.find('[id*="txtConsignorCode"]');
+                var innertxtConsigneeCode = innertr.find('[id*="txtConsigneeCode"]');
+
+                if (innertxtConsignorCode.attr('id') != outertxtConsignorCode.attr('id') && innertxtConsignorCode.val() == outertxtConsignorCode.val() && innertxtConsigneeCode.val() == outertxtConsigneeCode.val()) {
+                    ShowMessage("Mapping is already exist");
+                    throw (true);
+                }
+            });
+        }
+    }
+
+</script>

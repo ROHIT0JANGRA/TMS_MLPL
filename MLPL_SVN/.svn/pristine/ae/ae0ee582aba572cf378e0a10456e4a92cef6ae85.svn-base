@@ -1,0 +1,104 @@
+﻿
+using CodeLock.Helper;
+using CodeLock.Models;
+using CodeLock.Repository;
+using Dapper;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+
+namespace CodeLock.Areas.WMS.Repository
+{
+  public class AsnRepository : BaseRepository, IAsnRepository, IDisposable
+  {
+    public Asn GetById(long id, short warehouseId, byte companyId)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@AsnId", (object) id, new DbType?(DbType.Int64), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@WarehouseId", (object) warehouseId, new DbType?(DbType.Int16), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@CompanyId", (object) companyId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return DataBaseFactory.QuerySP<Asn>("Usp_Asn_GetById", (object) dynamicParameters, "Asn - GetById").FirstOrDefault<Asn>();
+    }
+
+    public Response Insert(Asn objAsn)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@XmlAsn", (object) XmlUtility.XmlSerializeToString((object) objAsn), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return DataBaseFactory.QuerySP<Response>("Usp_Asn_Insert", (object) dynamicParameters, "Asn  - Insert").FirstOrDefault<Response>();
+    }
+
+    public IEnumerable<Asn> GetAsnDetails(long id, short warehouseId, byte companyId)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@AsnId", (object) id, new DbType?(DbType.Int64), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@WarehouseId", (object) warehouseId, new DbType?(DbType.Int16), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@CompanyId", (object) companyId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return (IEnumerable<Asn>) DataBaseFactory.QuerySP<Asn>("Usp_Asn_GetAsnDetail", (object) dynamicParameters, "Asn - GetAsnDetails").ToList<Asn>();
+    }
+
+    public IEnumerable<AsnRegister> GetRegisterAsnDetail(
+      string asnNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@AsnNo", (object) asnNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FromDate", (object) fromDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@ToDate", (object) toDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinStartDate", (object) finStartDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinEndDate", (object) finEndDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return (IEnumerable<AsnRegister>) DataBaseFactory.QuerySP<AsnRegister>("Usp_Asn_GetRegisterAsnDetail", (object) dynamicParameters, "Asn - GetRegisterAsnDetail").ToList<AsnRegister>();
+    }
+
+    public IEnumerable<Asn> GetListForGrn(
+      byte companyId,
+      short warehouseId,
+      short supplierType,
+      short supplierId,
+      string asnNo,
+      string poNo,
+      string invoiceNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@CompanyId", (object) companyId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@WareHouseId", (object) warehouseId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@SupplierType", (object) supplierType, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@SupplierId", (object) supplierId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@AsnNo", (object) asnNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@PoNo", (object) poNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@InvoiceNo", (object) invoiceNo, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FromDate", (object) fromDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@ToDate", (object) toDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinStartDate", (object) finStartDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinEndDate", (object) finEndDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return (IEnumerable<Asn>) DataBaseFactory.QuerySP<Asn>("Usp_Asn_GetListForGrn", (object) dynamicParameters, "Asn - GetRegisterAsnDetail").ToList<Asn>();
+    }
+
+    public Asn GetAsn(long asnId, short warehouseId, byte companyId)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@AsnId", (object) asnId, new DbType?(DbType.Int64), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@WareHouseId", (object) warehouseId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@CompanyId", (object) companyId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      Tuple<IEnumerable<Asn>, IEnumerable<AsnDetail>> tuple = DataBaseFactory.QueryMultipleSP<Asn, AsnDetail>("Usp_Asn_GetAsn", (object) dynamicParameters, "Asn - GetAsn");
+      Asn asn1 = new Asn();
+      Asn asn2 = tuple.Item1.FirstOrDefault<Asn>();
+      asn2.Details = tuple.Item2.ToList<AsnDetail>();
+      return asn2;
+    }
+
+    public IEnumerable<GatePass> GetDockNumberFromGatePassIn(byte GatepassInId)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@GatepassInId", (object) GatepassInId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return (IEnumerable<GatePass>) DataBaseFactory.QuerySP<GatePass>("Usp_GatePass_GetDockNumberFromGatePassIn", (object) dynamicParameters, "Gate Pass - GetDockNumberFromGatePassIn").ToList<GatePass>();
+    }
+  }
+}

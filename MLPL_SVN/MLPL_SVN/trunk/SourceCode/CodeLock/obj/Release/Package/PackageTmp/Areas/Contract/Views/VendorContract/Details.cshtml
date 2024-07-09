@@ -1,0 +1,238 @@
+﻿@model CodeLock.Models.VendorContract
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorTypeId, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorId, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.ManualContractId, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.ManualContractId, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StartDate, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.StartDate.ToDisplayDate()
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EndDate, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.EndDate.ToDisplayDate()
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.YesNo(Model.IsActive)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.ContractDate, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.VendorContractBasicInfo.ContractDate.ToDisplayDate()
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.LocationId, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.LocationCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.VendorCategory, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.VendorCategoryName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.ContractCategory, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.ContractCategoryName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            @*<div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.IsTDSApplicable, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.YesNo(Model.VendorContractBasicInfo.IsTDSApplicable)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.TDSRate, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.TDSRate, new { @class = "label" })
+                    </div>
+                </div>
+            </div>*@
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.SecurityDepositCheque, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.SecurityDepositCheque, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.SecurityDepositDate, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.VendorContractBasicInfo.SecurityDepositDate.ToDisplayDate()
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.SecurityDepositAmount, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.SecurityDepositAmount, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.PaymentInterval, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.PaymentIntervalName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.PaymentBasis, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.PaymentBasis, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.PaymentLocationId, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.PaymentLocationCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.ThcMatrixType, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.ThcMatrixType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.PrsMatrixType, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.PrsMatrixType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.DrsMatrixType, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.DrsMatrixType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.CreditDays, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.CreditDays, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EntryBy, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.EntryByName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.EntryDate, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.VendorContractBasicInfo.EntryDate.ToDisplayDateTime()
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UpdateBy, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.VendorContractBasicInfo.UpdateByName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorContractBasicInfo.UpdateDate, new { @class = "label-bold" }) <div class="clearfix">
+                        @Model.VendorContractBasicInfo.UpdateDate.ToDisplayDateTime()
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vendor Contract', 'Detail', '', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { id = Model.ContractId })', 'Go To List', '@Url.Action("Index", new { vendorId = Model.VendorId, vendorTypeId =Model.VendorTypeId })');
+    });
+</script>

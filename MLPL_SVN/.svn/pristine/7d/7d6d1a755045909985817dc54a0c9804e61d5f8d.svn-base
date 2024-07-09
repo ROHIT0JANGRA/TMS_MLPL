@@ -1,0 +1,175 @@
+﻿@model CodeLock.Models.MasterProduct
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Update", "Product", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.ProductId)
+    @Html.HiddenFor(model => model.ProductId)
+    @Html.HiddenFor(model => model.CompanyId)
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ProductName, new { @class = "label", @id = "txtProductName" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ProductName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProductName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ProductDescription, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ProductDescription, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProductDescription)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UomId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.UomId, new SelectList(ViewBag.UnitsOfMeasurementList, "Value", "Name"), "Select UnitsOfMeasurement", new { @class = "form-control", @id = "ddlUnitsOfMeasurement" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UomId)
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UomQuantity, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.UomQuantity, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UomQuantity)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UnitPrice, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.UnitPrice, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UnitPrice)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Length, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Length, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Length)
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Breadth, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Breadth, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Breadth)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Height, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Height, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Height)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ActualWeight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ActualWeight, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ActualWeight)
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ChargeWeight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ChargeWeight, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ChargeWeight)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsSerialNumber, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsSerialNumber, new { @id = "chkIsSerialNumber" })
+                        <i></i>
+                    </label>
+                    @Html.ValidationMessageFor(model => model.IsSerialNumber)
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4" id="divSingle">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.IsSingle, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsSingle, true, new { @id = "rdSingle", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsSingle, "Single", new { @for = "rdSingle" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsSingle, false, new { @id = "rdDouble" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsSingle, "Double", new { @for = "rdDouble" })
+                        </label>
+                        @Html.ValidationMessageFor(model => model.IsSingle)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Product', 'Update', 'txtProductName', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Create")', 'View Detail', '@Url.Action("View", new { productId = Model.ProductId, companyId = Model.CompanyId })');
+        $('#chkIsSerialNumber').click(OnSerialNumberChange);
+        OnSerialNumberChange();
+    });
+
+    function OnSerialNumberChange() {
+        $('#divSingle').showHide($('#chkIsSerialNumber').IsChecked);
+    }
+</script>
+

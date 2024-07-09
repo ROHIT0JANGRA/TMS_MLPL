@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap">
+    <div class="row example-buttons">
+        <div class="col-md-12">
+            <div class="note note-info note-right-striped">
+                <div class="page-separator"><span class="page-separator" id="spnMassage"></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+            spnMassage.text("Mapping done Successfully");
+            SetPageLoad('Cusotmer Bill Format Mapping', 'Done', '', 'Go To Mapping', '@Url.Action("Mapping")');
+    }
+</script>
+

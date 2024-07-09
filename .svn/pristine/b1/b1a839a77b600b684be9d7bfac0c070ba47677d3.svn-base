@@ -1,0 +1,174 @@
+﻿@using CodeLock.Models
+@model VendorAdvancePayment
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "AdvancePayment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        vendorPaymentUrl = '@Url.Action("", "VendorPayment", new { Area = "Finance" })';
+        locationId = '@SessionUtility.LoginLocationId';
+    });
+</script>
+<script src="~/areas/finance/views/vendorpayment/advancepayment.js?version=@DateTime.Now.Ticks"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("AdvancePayment", "VendorPayment", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Select Transaction Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drTransactionDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorCode, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                                    @Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.VendorCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorCodeName, " ", new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.VendorCodeName, " ", new { @class = "label-bold", @id = "lblVendorName" })
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.BAMappedLocationid, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.HiddenFor(model => model.BAMappedLocationid, new { @id = "hdnBAMappedLocationid" })
+                                        @Html.TextBoxFor(model => model.BAMappedLocation, new { @class = "form-control", @id = "txtBAMappedLocation" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.BAMappedLocation)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        @*<div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.TransportModeIdList, new { @class = "label" })
+                @Html.DropDownListFor(model => model.TransportModeIdList, new SelectList(ViewBag.TransportModeList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlTransportModeId", @multiple = "multiple", @placeholder = "Select Transport Mode" })
+                @Html.ValidationMessageFor(model => model.TransportModeIdList)
+            </div>
+        </div>*@
+                        <div id="divDocumentType">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DocumentTypes, new { @class = "label" })
+                                    <div class="inline-group">
+                                        @for (var i = 0; i < Model.DocumentTypes.Count(); i++)
+                                        {
+                                            <label class="checkbox">
+                                                @Html.HiddenFor(m => m.DocumentTypes[i].CodeId, new { @id = "hdnCodeId" + i.ToString() })
+                                                @Html.HiddenFor(m => m.DocumentTypes[i].CodeDescription)
+                                                @Html.LabelFor(m => m.DocumentTypes[i].IsActive, Model.DocumentTypes[i].CodeDescription, new { @class = "label", @For = "chkDocumentType" + i.ToString() })
+                                                @Html.CheckBoxFor(m => m.DocumentTypes[i].IsActive, new { @id = "chkDocumentType" + i.ToString() })
+                                                <i></i>
+                                            </label>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(model => model.IsTDSApplicable, new { @id = "chkIsTDSApplicable" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsTDSApplicable, new { @class = "label", @for = "chkIsTDSApplicable" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocumentNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.DocumentNo, new { @class = "form-control", @id = "txtDocumentNo" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualDocumentNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualDocumentNo, new { @class = "form-control", @id = "txtManualNo" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <label class="label">Vendor</label>
+                            @Html.LabelFor(model => model.VendorCode, " ", new { @id = "lblVendorNameStep2", @class = "label-bold" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDocumentList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "VoucherDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.VoucherDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, MinDate = DateTime.Now.Date, MaxDate = DateTime.Now.Date.AddDays(1), IsValidateFinYear = false })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualVoucherNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualVoucherNo, new { @class = "form-control", @id = "txtManualNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualVoucherNo)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDocumentDetailsList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.Partial("Payment", new CodeLock.Models.PaymentControl() { })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

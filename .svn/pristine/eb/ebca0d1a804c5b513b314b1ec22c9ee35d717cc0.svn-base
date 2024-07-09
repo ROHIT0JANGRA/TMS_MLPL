@@ -1,0 +1,303 @@
+﻿@model CodeLock.Models.StockReport
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CompanyId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.CompanyId, new SelectList(ViewBag.CompanyList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlCompanyId", @multiple = "multiple", @placeholder = "Select Company" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CompanyId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.StockTypeId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.StockTypeId, new SelectList(ViewBag.StockTypeList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlStockTypeId", @multiple = "multiple", @placeholder = "Select Stock Type" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.StockTypeId)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.FromLocationTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.FromLocationTypeId, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Current Location",Value="2"},
+                        new SelectListItem() {Text = "From Location",Value="1"},}, new { @class = "form-control", @id = "ddlFromLocationTypeId" })
+                        <i></i>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "FromLocationId", FieldCaption = "From Location" })
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "ToLocationId", FieldCaption = "To Location", AllowAll = true })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DateTypeId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.DateTypeId, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Booking Date",Value="1"},
+                        new SelectListItem() {Text = "Arrived Date", Value="2"},}, new { @class = "form-control", @id = "ddlDateTypeId" })
+                            <i></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Select Date", new { @class = "label" })
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-4" style="display:none">
+                    @Html.Label("Stock Type", new { @class = "control-label" })
+                    <div class="select">
+                        @Html.DropDownList("ddlStockSubType", new List<SelectListItem> {
+                        new SelectListItem() {Text = "Both",Value="All"},
+                        new SelectListItem() {Text = "Clean Stock",Value="0"},
+                        new SelectListItem() {Text = "Hold Stock",Value="1"}}, new { @class = "form-control", @id = "ddlStockSubType" })<i></i>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.PaybasId, new SelectList(ViewBag.PaybasList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlPaybasId", @multiple = "multiple", @placeholder = "Select Paybas" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PaybasId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlTransportModeId", @multiple = "multiple", @placeholder = "Select Transport Mode" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.TransportModeId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ServiceTypeId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.ServiceTypeId, new SelectList(ViewBag.ServiceTypeList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlServiceTypeId", @multiple = "multiple", @placeholder = "Select Service Type" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ServiceTypeId)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BusinessTypeId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.BusinessTypeId, new SelectList(ViewBag.BusinessTypeList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlBusinessTypeId", @multiple = "multiple", @placeholder = "Select Business Type" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.BusinessTypeId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("lblCustomerId", "Customer", new { @class = "label" })
+                        <div class="input">
+                            @Html.Hidden("hdnCustomerId", new { @id = "hdnCustomerId" })
+                            @Html.TextBox("txtCustomerCode", null, new { @class = "form-control", @id = "txtCustomerCode" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("CustomerName", " ", new { @class = "label" })
+                        <div class="clearfix">
+                        </div>
+                        @Html.Label("CustomerName", " ", new { @class = "label-bold", @id = "lblCustomer" })
+                    </div>
+                </div>
+                @*<div class="col-sm-8">
+                        <div class="form-group">
+                            <div class="inline-group">
+                                @Html.LabelFor(model => model.ReportType, new { @class = "label" })
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.ReportType, true, new { @id = "rdRegionWise", @checked = "checked" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.ReportType, "Region Wise Location Wise", new { @for = "rdRegionWise" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.ReportType, false, new { @id = "rdLocationWise" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.ReportType, "Location Wise Godown Wise", new { @for = "rdLocationWise" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>*@
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            @Html.LabelFor(model => model.FormatType, new { @class = "label" })
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.FormatType, true, new { @id = "rdRegister", @checked = "checked" })
+                                <i></i>
+                                @Html.LabelFor(model => model.FormatType, "Register", new { @for = "rdRegister" })
+                            </label>
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.FormatType, false, new { @id = "rdSummary" })
+                                <i></i>
+                                @Html.LabelFor(model => model.FormatType, "Summary", new { @for = "rdSummary" })
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            @Html.LabelFor(model => model.IsSuffix, new { @class = "label" })
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.IsSuffix, true, new { @id = "rdYes", @checked = "checked" })
+                                <i></i>
+                                @Html.LabelFor(model => model.IsSuffix, "Yes", new { @for = "rdYes" })
+                            </label>
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.IsSuffix, false, new { @id = "rdNo" })
+                                <i></i>
+                                @Html.LabelFor(model => model.IsSuffix, "No", new { @for = "rdNo" })
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-success primary-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    var reportId = '@ViewBag.ReportId';
+    $(document).ready(function () {
+        var reportName = 'Stock';
+        if (reportId == 2)
+            reportName = docketNomenclature + ' Flow';
+        if (reportId == 3)
+            reportName = 'Delivery Flow';
+        if (reportId == 4)
+            reportName = 'Operation Performance';
+        SetPageLoad(reportName, 'Report', '', '', '');
+
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+
+        ddlCompanyId = $('#ddlCompanyId'); ddlFromLocationTypeId = $('#ddlFromLocationTypeId'); ddlFromLocationId = $('#ddlFromLocationId');
+        ddlToLocationId = $('#ddlToLocationId'); ddlTransportModeId = $('#ddlTransportModeId'); ddlServiceTypeId = $('#ddlServiceTypeId');
+        ddlBusinessTypeId = $('#ddlBusinessTypeId'); ddlPaybasId = $('#ddlPaybasId'); ddlDateTypeId = $('#ddlDateTypeId'); ddlStockTypeId = $('#ddlStockTypeId');
+        hdnCustomerId = $('#hdnCustomerId'); txtCustomerCode = $('#txtCustomerCode'); lblCustomer = $('#lblCustomer');
+
+        ddlBusinessTypeId.val(0);
+        drDate = InitDateRange('drDate', DateRange.LastWeek,false);
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+
+        InitMultiSelect(ddlStockTypeId.Id, true, true);
+        InitMultiSelect(ddlPaybasId.Id, true, true);
+        InitMultiSelect(ddlTransportModeId.Id, true, true);
+        InitMultiSelect(ddlServiceTypeId.Id, true, true);
+        InitMultiSelect(ddlBusinessTypeId.Id, true, true);
+        InitMultiSelect(ddlCompanyId.Id, true, true);
+
+        OnLocationTypeChange();
+
+        ddlFromLocationTypeId.change(OnLocationTypeChange);
+
+        CustomerAutoComplete('txtCustomerCode', 'hdnCustomerId');
+        txtCustomerCode.blur(function () { return IsCustomerCodeExist(txtCustomerCode, hdnCustomerId, lblCustomer); });
+    });
+
+    function OnLocationTypeChange() {
+        if (ddlFromLocationTypeId.val() == 1) {
+            $('#lblFromLocationId').text('From Location');
+            $('#lblToLocationId').text('To Location');
+
+        }
+        else if (ddlFromLocationTypeId.val() == 2) {
+            $('#lblFromLocationId').text('Current Location');
+            $('#lblToLocationId').text('From Location');
+        }
+    }
+
+    function CheckValidCustomerCode(txtCustomerCode, hdnCustomerId) {
+        if (txtCustomerCode.val() != "") {
+            var requestData = { customerCode: txtCustomerCode.val() };
+            AjaxRequestWithPostAndJson(customerMasterUrl + '/CheckValidCustomerCodeByCompanyId', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    hdnCustomerId.val(result.Value);
+                    txtCustomerCode.val(result.Name);
+                    lblCustomer.text(result.Description);
+                }
+                else {
+                    ShowMessage('Customer is not exist');
+                    txtCustomerCode.val('');
+                    hdnCustomerId.val(0);
+                    lblCustomer.text('');
+                    txtCustomerCode.focus();
+                }
+            }, ErrorFunction, false);
+        }
+        else {
+            hdnCustomerId.val(0);
+            txtCustomerCode.val('');
+            lblCustomer.text('');
+        }
+    }
+
+    function ViewReport() {
+        if (!ValidateContainer($('#dvContainer'))) return false;
+        try {
+            var prmList = [
+                { Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+                { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+                { Name: "DateType", Value: ddlDateTypeId.val() },
+                { Name: "FromLocationType", Value: ddlFromLocationTypeId.val() },
+                { Name: "FromLocationId", Value: ddlFromLocationId.val() },
+                { Name: "ToLocationId", Value: ddlToLocationId.val() },
+                { Name: "Paybas", Value: ddlPaybasId.multiVal() },
+                { Name: "TransportMode", Value: ddlTransportModeId.multiVal() },
+                { Name: "BusinessType", Value: ddlBusinessTypeId.multiVal() },
+                { Name: "ServiceType", Value: ddlServiceTypeId.multiVal() },
+                { Name: "Company", Value: ddlCompanyId.multiVal() },
+                { Name: "Suffix", Value: $('#rdYes').IsChecked },
+                { Name: "StockType", Value: ddlStockTypeId.multiVal() },
+                { Name: "CustomerId", Value: txtCustomerCode.val() == '' ? 0 : hdnCustomerId.val() },
+                { Name: "ReportType", Value: reportId },
+                { Name: 'StockSubType', Value: $('#ddlStockSubType').val() }
+            ];
+            var reportInfo = {
+                PrmList: prmList, Name: $('#rdSummary').IsChecked ? 'StockSummary' :
+                   ($('#chkPartWise').IsChecked ? 'StockWithPartRegister' : 'StockRegister'), Description: 'Stock Report'
+            };
+            ShowReport(reportInfo);
+        } catch (e) { ShowMessage(e.message) }
+        return false;
+    }
+</script>

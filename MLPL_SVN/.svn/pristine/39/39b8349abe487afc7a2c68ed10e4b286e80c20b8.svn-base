@@ -1,0 +1,133 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+    <div class="row" id="dvJobOrderDetail">
+        <div class="col-sm-3">
+            @Html.Label(" ", new { @id = "lblDocumentType", @for = "DocumentType", @class = "label-bold" })
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return PrintReport();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var documentType = '', documentTypeId = 0;
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        lblDocumentType = $('#lblDocumentType');
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        documentType = GetUrlValue()["documentType"];
+        documentTypeId = GetUrlValue()["documentTypeId"]
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        if (documentType == "ASN") {
+            spnMassage.text("ASN is Generated Successfully");
+            lblDocumentType.text("ASN No");
+            lblDocumentNo.text(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            SetPageLoad('ASN', 'Done', '', 'Add New', '@Url.Action("Insert")');
+        }
+        else if (documentType == "GRN") {
+            spnMassage.text("GRN is Generated Successfully");
+            lblDocumentType.text("GRN No");
+            lblDocumentNo.text(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            SetPageLoad('GRN', 'Done', '', 'Add New', '@Url.Action("Insert","Grn")');
+        }
+        else if (documentType == "Order") {
+            spnMassage.text("Order is Generated Successfully");
+            lblDocumentType.text("Order No");
+            lblDocumentNo.text(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            SetPageLoad('Order', 'Done', '', 'Add New', '@Url.Action("Insert", "Order")');
+        }
+        else if (documentType == "Dispatch") {
+            spnMassage.text("Dispatch is Generated Successfully");
+            lblDocumentType.text("Dispatch No");
+            lblDocumentNo.text(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            SetPageLoad('Dispatch', 'Done', '', 'Add New', '@Url.Action("Insert", "Dispatch")');
+        }
+        else if (documentType == "Pick") {
+            spnMassage.text("Pick is Generated Successfully");
+            lblDocumentType.text("Pick No");
+            lblDocumentNo.text(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            SetPageLoad('Pick', 'Done', '', 'Add New', '@Url.Action("Insert", "Pick")');
+        }
+        else if (documentType == "PickUpdate") {
+            spnMassage.text("Pick is Updated Successfully");
+            lblDocumentType.text("Pick No");
+            lblDocumentNo.text(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            SetPageLoad('Pick Update', 'Done', '', 'Add New', '@Url.Action("Update", "Pick")');
+        }
+        else if (documentType == "PutAway") {
+            spnMassage.text("Put Away is Generated Successfully");
+            lblDocumentType.text("Put Away No");
+            lblDocumentNo.text(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            SetPageLoad('Put Away', 'Done', '', 'Add New', '@Url.Action("Insert", "PutAway")');
+        }
+        else if (documentType == "PutAwayUpdate") {
+            spnMassage.text("Put Away is Updated Successfully");
+            lblDocumentType.text("Put Away No");
+            lblDocumentNo.text(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            SetPageLoad('Put Away Update', 'Done', '', 'Add New', '@Url.Action("Update", "PutAway")');
+        }
+        else if (documentType == "Inspection") {
+            spnMassage.text("Inspection is Generated Successfully");
+            lblDocumentType.text("Inspection No");
+            lblDocumentNo.text(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            SetPageLoad('Inspection', 'Done', '', 'Go To Inspection', '@Url.Action("Put", "Inspection")');
+        }
+        else if (documentType == "Repacking") {
+            spnMassage.text("Repacking is Generated Successfully");
+            lblDocumentType.text("Repacking No");
+            lblDocumentNo.text(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            SetPageLoad('Repacking', 'Done', '', 'Go To Repacking', '@Url.Action("", "Repacking")');
+        }
+        else if (documentType == "GatePass") {
+            spnMassage.text("Gate Pass is Generated Successfully");
+            lblDocumentType.text("GatePass No");
+            lblDocumentNo.text(GetUrlValue()["documentNo"]);
+            hdnDocumentId.val(GetUrlValue()["documentId"]);
+            SetPageLoad('GatePass', 'Done', '', 'Add New', '@Url.Action("Insert", "GatePass")');
+        }
+    }
+
+    function PrintReport() {
+        if (documentType == "PickUpdate") {
+            var prmList = [{ Name: "PickId", Value: hdnDocumentId.val() }];
+            var reportInfo = { PrmList: prmList, Name: 'PickUpdateView', Description: 'Pick Update View' };
+            return ShowReport(reportInfo);
+        }
+        else if (documentType == "PutAwayUpdate") {
+            var prmList = [{ Name: "PutAwayId", Value: hdnDocumentId.val() }];
+            var reportInfo = { PrmList: prmList, Name: 'PutAwayUpdateView', Description: 'Put Away Update View' };
+            return ShowReport(reportInfo);
+        }
+        else
+            return ShowViewPrint(documentTypeId, hdnDocumentId.val());
+    }
+</script>
+
+

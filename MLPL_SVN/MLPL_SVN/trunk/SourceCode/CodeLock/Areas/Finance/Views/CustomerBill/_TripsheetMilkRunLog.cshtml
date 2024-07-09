@@ -1,0 +1,204 @@
+﻿@using CodeLock.Models
+@model MilkRunLogDetail
+@using Secure_Coding.MvcSecurityExtensions;
+
+<script>
+
+    $(document).ready(function () {
+        tripsheetUrl = '@Url.Action("", "Tripsheet", new { Area = "FMS" })';
+        GetTripsheetDetail();
+    });
+
+    function TableHeader() {
+        $("#tblList").html("");
+        var cols = '<thead><tr style="background-color:#fff;">';
+        cols = cols + '<th style="width:5%; text-align:center;"><b>S No.</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>From</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>To</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>Start Date & Time</b></th>';
+        cols = cols + '<th style="width:5%; text-align:center;"><b>Start Km</b></th>';
+        cols = cols + '<th style="width:5%; text-align:center;"><b>End Km</b></th>';
+        cols = cols + '<th style="width:5%; text-align:center;"><b>Km Run</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>End Date & Time</b></th>';
+        cols = cols + '<th style="width:5%; text-align:center;"><b>Transit Time (HH: MM) </b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Category</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Product</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Consignee Name</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>EWay bill No.</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Invoice No.</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Invoice Value</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>No. Of Packages</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Weight</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Delivered Pkgs</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Status</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Remarks</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Toll Tax Charges</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Upload Toll Tax Document</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Parking Charges</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Upload Parking Document</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Upload POD</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Detention Night Charges</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Unloading Charges</b></th>';
+        cols = cols + '</tr></thead>';
+
+        $('#tblList').append(cols);
+    }
+
+    function DownloadReport(filename) {
+
+        location.href = tripsheetUrl + '/DownloadTripsheetLog?filename=' + filename;
+        return false;
+    }
+    function GetTripsheetDetail() {
+
+        if ($('#hdnTripsheetNo').val() != "") {
+            try {
+                var requestData = { TripsheetNo: $('#hdnTripsheetNo').val() };
+                AjaxRequestWithPostAndJson(tripsheetUrl + '/GetMilkRunTripsheetDetails', JSON.stringify(requestData),
+                    OnSuccess_GetMilkRunTripsheetDetails, ErrorFunction, false);
+            } catch (e) { alert(e.message) }
+        }
+    }
+
+    function OnSuccess_GetMilkRunTripsheetDetails(result) {
+        var KmRun = 0;
+        var TollTaxCharges = 0;
+        var ParkingCharges = 0;
+        var hours = 0;
+        var minutes = 0;
+        var totaltime = "";
+        var DetentionNightCharges = 0;
+        var UnloadingCharges = 0;
+
+        if (result == null) {
+            isStepValid = false;
+            ShowMessage('No Record Found');
+            return false;
+        }
+        else if (result.length == 0) {
+            isStepValid = false;
+            ShowMessage('No Record Found');
+            return false;
+        }
+        else {
+
+            TableHeader();
+            $.each(result.VehicleLogDetail, function (i, item) {
+                var row = $('<tr />');
+                var index = document.getElementById('tblList').rows.length;
+                KmRun = KmRun + parseFloat(item.KmRun);
+                TollTaxCharges = TollTaxCharges + parseFloat(item.TollTaxCharges);
+                ParkingCharges = ParkingCharges + parseFloat(item.ParkingCharges);
+
+                DetentionNightCharges = DetentionNightCharges + parseFloat(item.DetentionNightCharges);
+                UnloadingCharges = UnloadingCharges + parseFloat(item.UnloadingCharges);
+
+                var timeSplit = item.TransitTime.split(':');
+                hours = hours + parseInt(timeSplit[0]);
+                minutes = minutes + parseInt(timeSplit[1])
+
+
+                var rowIndex = index - 1;
+                row.append('<td>' + (index) + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].From" class="form-control textlabel" id="txtlstFrom' + rowIndex + '" value="' + item.From + '" />' + item.From + ' </td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].To" class="form-control textlabel" id="txtlstTo' + rowIndex + '" value="' + item.To + '" />' + item.To + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].StartDateTime" class="form-control textlabel" id="txtlstStartDateTime' + rowIndex + '" value="' + item.StartDateTimestr + '" />' + item.StartDateTimestr + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].StartKm" class="form-control textlabel" id="txtlstStartKm' + rowIndex + '" value="' + item.StartKm + '" />' + item.StartKm + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].EndKm" class="form-control textlabel" id="txtlstEndKm' + rowIndex + '" value="' + item.EndKm + '" />' + item.EndKm + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].KmRun" class="form-control textlabel" id="txtlstKmRun' + rowIndex + '" value="' + item.KmRun + '" />' + item.KmRun + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].EndDateTime" class="form-control textlabel" id="txtlstEndDateTime' + rowIndex + '" value="' + item.EndDateTimestr + '" />' + item.EndDateTimestr + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].TransitTime" class="form-control textlabel" id="txtlstTransitTime' + rowIndex + '" value="' + item.TransitTime + '" />' + item.TransitTime + '</td>');
+
+                row.append('<td style="text-align:center;">' + item.CategoryName + ' <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].Category" class="form-control" id="txtlstCategory' + rowIndex + '" value="' + item.Category + '" /> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].CategoryName" class="form-control" id="txtlstCategoryName' + rowIndex + '" value="' + item.CategoryName + '" /></td>');
+                row.append('<td style="text-align:center;">' + item.ProductName + '<input type="hidden" name="VehicleLogDetail[' + rowIndex + '].ProductId" class="form-control" id="txtlstProductId' + rowIndex + '" value="' + item.ProductId + '" /><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].ProductName" class="form-control" id="txtlstProductName' + rowIndex + '" value="' + item.ProductName + '" /></td>');
+
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].ConsigneeName" class="form-control textlabel" id="txtlstConsigneeName' + rowIndex + '" value="' + item.ConsigneeName + '" />' + item.ConsigneeName + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].EWaybillNo" class="form-control textlabel" id="txtlstEWaybillNo' + rowIndex + '" value="' + item.EWaybillNo + '" />' + item.EWaybillNo + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].InvoiceNo" class="form-control textlabel" id="txtlstInvoiceNo' + rowIndex + '" value="' + item.InvoiceNo + '" />' + item.InvoiceNo + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].InvoiceValue" class="form-control textlabel" id="txtlstInvoiceValue' + rowIndex + '" value="' + item.InvoiceValue + '" />' + item.InvoiceValue + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].NoOfPackages" class="form-control textlabel" id="txtlstNoOfPackages' + rowIndex + '" value="' + item.NoOfPackages + '" />' + item.NoOfPackages + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].Weight" class="form-control textlabel" id="txtlstWeight' + rowIndex + '" value="' + item.Weight + '" />' + item.Weight + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].Deliveredpkgs" class="form-control textlabel" id="txtlstDeliveredpkgs' + rowIndex + '" value="' + item.Deliveredpkgs + '" />' + item.Deliveredpkgs + '</td>');
+                row.append('<td style="text-align:center;">' + item.StatusName + ' <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].Status" class="form-control" id="txtlstStatus' + rowIndex + '" value="' + item.Status + '" /> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].StatusName" class="form-control" id="txtlstStatusName' + rowIndex + '" value="' + item.StatusName + '" /></td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].Remarks" class="form-control textlabel" id="txtlstRemarks' + rowIndex + '" value="' + item.Remarks + '" />' + item.Remarks + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].TollTaxCharges" class="form-control textlabel" id="txtlstTollTaxCharges' + rowIndex + '" value="' + item.TollTaxCharges + '" />' + item.TollTaxCharges + '</td>');
+
+                if (item.TollTaxUpload != "")
+                    row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].TollTaxUpload" class="form-control textlabel" id="txtlstTollTaxUpload' + rowIndex + '" value="' + item.TollTaxUpload + '" />' + '<a onclick="return DownloadReport(\'' + item.TollTaxUpload + '\')" href="#" >Download</a>' + '</td>');
+                else
+                    row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].TollTaxUpload" class="form-control textlabel" id="txtlstTollTaxUpload' + rowIndex + '" value="' + item.TollTaxUpload + '" />' + item.TollTaxUpload + '</td>');
+
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].ParkingCharges" class="form-control textlabel" id="txtlstParkingCharges' + rowIndex + '" value="' + item.ParkingCharges + '" />' + item.ParkingCharges + '</td>');
+
+                if (item.ParkingChargesUpload != "")
+                    row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].ParkingChargesUpload" class="form-control textlabel" id="txtlstParkingChargesUpload' + rowIndex + '" value="' + item.ParkingChargesUpload + '" />' + '<a onclick="return DownloadReport(\'' + item.ParkingChargesUpload + '\')" href="#" >Download</a>' + '</td>');
+                else
+                    row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].ParkingChargesUpload" class="form-control textlabel" id="txtlstParkingChargesUpload' + rowIndex + '" value="' + item.ParkingChargesUpload + '" />' + item.ParkingChargesUpload + '</td>');
+
+                if (item.PODUpload != "")
+                    row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].PODUpload" class="form-control textlabel" id="txtlstPODUpload' + rowIndex + '" value="' + item.PODUpload + '" />' + '<a onclick="return DownloadReport(\'' + item.PODUpload + '\')" href="#" >Download</a>' + '</td>');
+                else
+                    row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].PODUpload" class="form-control textlabel" id="txtlstPODUpload' + rowIndex + '" value="' + item.PODUpload + '" />' + item.PODUpload + '</td>');
+
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].DetentionNightCharges" class="form-control textlabel" id="txtlstDetentionNightCharges' + rowIndex + '" value="' + item.DetentionNightCharges + '" />' + item.DetentionNightCharges + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].UnloadingCharges" class="form-control textlabel" id="txtlstUnloadingCharges' + rowIndex + '" value="' + item.UnloadingCharges + '" />' + item.UnloadingCharges + '</td>');
+
+
+                $('#tblList').append(row);
+
+            });
+
+            hours = hours + Math.floor(minutes / 60);
+            minutes = minutes % 60;
+            totaltime = ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+
+            var cols = '<tfoot><tr style="background-color:#fff;">';
+            cols = cols + '<th style="width:5%; text-align:center; color:black; font-weight:bold">Total</th>';
+            cols = cols + '<th style="width:15%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:15%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:15%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:5%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:5%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:5%; text-align:center; color:black; font-weight:bold">' + KmRun +'</th>';
+            cols = cols + '<th style="width:15%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:5%; text-align:center; color:black; font-weight:bold">' + totaltime + '</th>'; //
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;color:black; font-weight:bold">' + TollTaxCharges.toFixed(2) + '</th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;color:black; font-weight:bold">' + ParkingCharges.toFixed(2) +'</th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;color:black; font-weight:bold">' + DetentionNightCharges.toFixed(2) + '</th>';
+            cols = cols + '<th style="width:10%; text-align:center;color:black; font-weight:bold">' + UnloadingCharges.toFixed(2) + '</th>';
+            cols = cols + '</tr></tfoot>';
+
+            $('#tblList').append(cols);
+
+        }
+    }
+</script>
+
+<div class="modal-body">
+    @Html.HiddenFor(model => model.TripsheetNo, new { @id = "hdnTripsheetNo" })
+    <div class="page-separator">List of Vehicle Log </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="table-responsive text-nowrap">
+                <table id="tblList" class="table table-bordered table-striped display nowrap">
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>

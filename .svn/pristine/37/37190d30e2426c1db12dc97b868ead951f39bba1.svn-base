@@ -1,0 +1,89 @@
+﻿@model CodeLock.Models.DeliveryMrRegister
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CompanyId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.CompanyId, new SelectList(ViewBag.CompanyList, "Value", "Name"), new { @class = "form-control", @id = "ddlCompanyId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CompanyId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "FromLocationId", FieldCaption = "From Location" })
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "ToLocationId", FieldCaption = "To Location" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label("Select Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-separator">OR</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(SessionUtility.DocketNomenClature, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(m => m.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var ddlCompanyId;
+    var txtDocketNo, ddlFromLocationId, ddlToLocationId, drDate, btnSubmit;
+
+    $(document).ready(function () {
+        SetPageLoad('Delivery', 'Report', '', '', '');
+
+        ddlCompanyId = $('#ddlCompanyId');
+        txtDocketNo = $('#txtDocketNo');
+        ddlFromLocationId = $('#ddlFromLocationId');
+        ddlToLocationId = $('#ddlToLocationId');
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    });
+
+    function ViewReport() {
+        try {
+            var prmList = [{ Name: "FromDate", Value: drDate.startDate },
+                { Name: "ToDate", Value: drDate.endDate },
+                { Name: "DocketNo", Value: txtDocketNo.val() == '' ? '0' : txtDocketNo.val() },
+                { Name: "CompanyId", Value: ddlCompanyId.val() },
+                { Name: "FromLocationId", Value: ddlFromLocationId.val() },
+                { Name: "ToLocationId", Value: ddlToLocationId.val() }];
+            var reportInfo = { PrmList: prmList, Name: 'DeliveryReport', Description: 'Delivery Report' };
+            ShowReport(reportInfo);
+        } catch (e) { ShowMessage(e.message) }
+        return false;
+    }
+</script>

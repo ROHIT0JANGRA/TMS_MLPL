@@ -1,0 +1,147 @@
+﻿@model IEnumerable<CodeLock.Models.MasterUser>
+
+@{
+    ViewBag.Title = "User List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtUser">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MobileNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LocationCode)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EmailId)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.Gender)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.DoB)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.DoJ)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.Address)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.RoleId)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UserStatusId)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.ManagerName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UserTypeId)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MobileNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LocationCode)
+                    </td>
+                    <td>
+                        @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.UserId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.UserId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EmailId)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Gender)
+                    </td>
+                    <td style="display:none">
+                        @item.DoB.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @item.DoJ.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Address)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.RoleName)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UserStatus)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.ManagerName)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UserType)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('User', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtUser', true, true, true);
+    });
+</script>
+

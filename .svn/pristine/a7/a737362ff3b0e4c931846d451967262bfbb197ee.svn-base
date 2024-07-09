@@ -1,0 +1,70 @@
+﻿@using CodeLock.Helper
+@model CodeLock.Models.Docket
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+<div class="modal-body">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                Docket No
+                <div class="clearfix">
+                    @Html.DisplayFor(model => model.DocketNo, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                Docket Date
+                <div class="clearfix">
+                    
+                    @Html.DisplayFor(model => model.DocketDate, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                Docket Status
+                <div class="clearfix">
+                    @Html.DisplayFor(model => model.DocketStatus, new { @class = "label" })
+                </div> 
+             </div>
+        </div>
+
+    </div>
+    <div class="page-separator">Docket Charges List</div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table id="dtChargeList" style="min-height:5vh" width="50%">
+                <thead>
+                    <tr>
+                        <th>Charge Name</th>
+                        <th>Amount   </th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @for (int i = 0; i < Model.ChargeList.Count; i++)
+                    {
+                        var item = Model.ChargeList[i];
+                        var j = i.ToString();
+                        <tr>
+                            <td>
+                               @item.ChargeName
+                            </td>
+                            <td>
+                                @item.ChargeAmount
+                            </td>
+                        </tr>
+
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td><b style="font-weight:bold">Total</b></td>
+                        <td><b style="font-weight:bold">@Model.ChargeList.Sum(i => i.ChargeAmount)</b></td>
+                    </tr>
+                 </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

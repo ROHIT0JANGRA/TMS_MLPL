@@ -1,0 +1,62 @@
+﻿@model IEnumerable<CodeLock.Models.MasterRoute>
+
+@{
+    ViewBag.Title = "Route List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtRoute">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.RouteName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TransportModeId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RouteCategoryIsLongHaul)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RouteName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TransportMode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Category)
+                    </td>
+                    <td>
+                        @Html.YesNo(item.IsActive)
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                @*<a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Insert", new { id = item.RouteId })"><span class="zmdi zmdi-edit"></span></a>*@
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.RouteId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Route', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtRoute', true, true, true);
+    });
+</script>

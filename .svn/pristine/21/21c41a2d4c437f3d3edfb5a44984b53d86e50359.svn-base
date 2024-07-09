@@ -1,0 +1,126 @@
+﻿@model CodeLock.Models.MasterVehicleColdChainRate
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "VehicleColdChainRate", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                        @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "txtVehicleNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive, new { @id = "chkIsActive" })
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <table id="dtVehicle">
+                <thead>
+                    <tr>
+                        <th>Movement Type</th>
+                        <th>Dry KMPL</th>
+                        <th>Reefer KMPL</th>
+                        <th>Empty KMPL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Outside City</th>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.OutsideCityDryKmpl, new { @class = "form-control numeric2", @id = "txtOutsideCityDryKmpl" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.OutsideCityDryKmpl)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.OutsideCityReeferKmpl, new { @class = "form-control numeric2", @id = "txtOutsideCityReeferKmpl" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.OutsideCityReeferKmpl)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.OutsideCityEmptyKmpl, new { @class = "form-control numeric2", @id = "txtOutsideCityEmptyKmpl" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.OutsideCityEmptyKmpl)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Within City</th>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.WithinCityDryKmpl, new { @class = "form-control numeric2", @id = "txtWithinCityDryKmpl" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.WithinCityDryKmpl)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.WithinCityReeferKmpl, new { @class = "form-control numeric2", @id = "txtWithinCityReeferKmpl" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.WithinCityReeferKmpl)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.WithinCityEmptyKmpl, new { @class = "form-control numeric2", @id = "txtWithinCityEmptyKmpl" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.WithinCityEmptyKmpl)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    var dtMapping;
+    $(document).ready(function () {
+        SetPageLoad('KMPL for Cold Chain Master', 'Insert', 'txtVehicleNo', 'Go To List', '@Url.Action("Index")');
+        LoadDataTable('dtVehicle', false, false, false);
+        VehicleAutoComplete('txtVehicleNo', 'hdnVehicleId');
+        $('#txtVehicleNo').blur(function () { IsVehicleNoExist($('#txtVehicleNo'), $('#hdnVehicleId')); });
+        $('#txtVehicleNo').readOnly($('#hdnVehicleId').val() > 0);
+        $('#txtVehicleNo').blur(OnVehicleNoChange);
+    });
+
+    function OnVehicleNoChange() {
+        if ($('#txtVehicleNo').val() != '') {
+            var requestData = { id: $('#hdnVehicleId').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("", "VehicleColdChainRate")' + '/GetById', JSON.stringify(requestData), function (result) {
+                $('#chkIsActive').check(result.IsActive);
+                $('#txtOutsideCityDryKmpl').val(result.OutsideCityDryKmpl);
+                $('#txtOutsideCityReeferKmpl').val(result.OutsideCityReeferKmpl);
+                $('#txtOutsideCityEmptyKmpl').val(result.OutsideCityEmptyKmpl);
+                $('#txtWithinCityDryKmpl').val(result.WithinCityDryKmpl);
+                $('#txtWithinCityReeferKmpl').val(result.WithinCityReeferKmpl);
+                $('#txtWithinCityEmptyKmpl').val(result.WithinCityEmptyKmpl);
+            }, ErrorFunction, false);
+        }
+        else {
+            $('#chkIsActive').uncheck();
+            $('#txtOutsideCityDryKmpl').val(0);
+            $('#txtOutsideCityReeferKmpl').val(0);
+            $('#txtOutsideCityEmptyKmpl').val(0);
+            $('#txtWithinCityDryKmpl').val(0);
+            $('#txtWithinCityReeferKmpl').val(0);
+            $('#txtWithinCityEmptyKmpl').val(0);
+        }
+    }
+</script>

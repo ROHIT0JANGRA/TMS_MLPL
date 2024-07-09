@@ -1,0 +1,96 @@
+﻿@model CodeLock.Models.PickRegister
+    @using Secure_Coding.MvcSecurityExtensions;
+    @{
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+    <div id="dvWizard">
+        <div class="panel-body">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="tab-content">
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                @Html.Label("Pick Date", new { @class = "label" })
+                                <div id="drPickDate"></div>
+                            </div>
+                        </div>
+                        <div class="page-separator">OR</div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.PickNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.PickNo, new { @class = "form-control", @id = "txtPickNo" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div>
+                                    <table id="dtPickDetail"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            SetPageLoad('Pick', 'Register', '');
+            drPickDate = InitDateRange('drPickDate', DateRange.LastWeek);
+            txtPickNo = $('#txtPickNo');
+            InitWizard('dvWizard', [
+           { StepName: 'Criteria', StepFunction: GetPickList },
+           { StepName: 'Document List' }
+            ], '');
+
+            dtPickDetail = LoadDataTable('dtPickDetail', true, true, true, null, null, [],
+                    [
+                        { title: 'Pick No', data: "PickNo" },
+                    { title: 'Pick Date Time', data: "PickDateTime" },
+                    { title: 'Labour', data: "LabourName" },
+                    { title: 'Order No', data: "OrderNo" },
+                    { title: 'Product', data: "ProductCode" },
+                    { title: 'Quantity', data: "Quantity" },
+                    { title: 'Location', data: "BinName" },
+                    { title: 'Location Quantity', data: "LocationQuantity" }
+                    ]);
+        });
+
+        function GetPickList() {
+            var requestData = { pickNo: txtPickNo.val(), fromDate: drPickDate.startDate, toDate: drPickDate.endDate };
+            AjaxRequestWithPostAndJson('@Url.Action("GetRegisterPickDetail")', JSON.stringify(requestData), OnPickDetailsSuccess, ErrorFunction, false);
+            return false;
+        }
+
+        function OnPickDetailsSuccess(responseData) {
+            dtPickDetail.fnClearTable()
+            if (responseData.length == 0) {
+                isStepValid = false;
+                ShowMessage('No Record Found');
+                return false;
+            }
+            else {
+                if (responseData.length > 0) {
+                    $.each(responseData, function (i, item) {
+                        item.PickDateTime = $.displayDateTime(item.PickDateTime);
+                        if (item.LocationQuantity == 0)
+                            item.LocationQuantity = '';
+                        else
+                            item.LocationQuantity = '<input type="text" value=' + item.LocationQuantity.toFixed(3) + ' class="form-control textlabel numeric2" />';
+                        item.Quantity = '<input type="text" value=' + item.Quantity.toFixed(3) + ' class="form-control textlabel numeric2" />';
+                    });
+                    dtPickDetail.dtAddData(responseData);
+                }
+            }
+        }
+    </script>

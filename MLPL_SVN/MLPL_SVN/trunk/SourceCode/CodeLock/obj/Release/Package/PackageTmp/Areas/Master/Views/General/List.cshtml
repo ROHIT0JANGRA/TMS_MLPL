@@ -1,0 +1,81 @@
+﻿@model IEnumerable<CodeLock.Models.MasterGeneral>
+@{
+    ViewBag.Title = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <div class="table-filter-header">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <span class="tfh-label">Search </span>
+                        <input class="form-control" id="filter" type="text" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 col-md-offset-8 col-sm-offset-8">
+                        <span class="tfh-label">Data </span>
+                        <select id="change-page-size" class=" form-control">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table id="exportable-tbl" class="table foo-data-table-filterable" data-filter="#filter" data-filter-text-only="true" data-page-size="5" data-limit-navigation="3">
+        <thead>
+            <tr>
+                <th>
+                    @Html.Raw(ViewBag.CodeType)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CodeDescription)
+                    </td>
+                    <td>
+                       @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.CodeTypeId, codeId = item.CodeId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.CodeTypeId, codeId = item.CodeId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot class="hide-if-no-paging">
+            <tr>
+                <td colspan="6" class="footable-visible">
+                    <div class="pagination pagination-centered"></div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('General', 'List', 'filter', 'Add New', '@Url.Action("Insert",new { id =ViewBag.CodeTypeId })', 'Goto List', '@Url.Action("Index")');
+    });
+</script>
+

@@ -1,0 +1,970 @@
+﻿@model CodeLock.Models.Docket
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("ChangeDocketAmount", "Thc", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.DocketId, new { @id = "hdnDocketId" })
+    @Html.HiddenFor(m => m.CustomerName, new { @id = "hdnCustomerName" })
+    @Html.HiddenFor(m => m.CompanyName, new { @id = "hdnCompanyName" })
+    @Html.HiddenFor(m => m.Km, new { @id = "txtKm" })
+    @Html.HiddenFor(m => m.AllowUpdate, new { id = "hdnAllowUpdate" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <button id="btnReinvokeContract" type="button" class="btn btn-primary btn-danger" tabindex="0">Click Here For Reinvoke Contract</button>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Packages, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Packages, new { @class = "form-control textlabel numeric2", @id = "txtPackages" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ChargedWeight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ChargedWeight, new { @class = "form-control textlabel numeric2", @id = "txtChargedWeight" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FreightRate, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.FreightRate, new { @class = "form-control numeric2", @id = "txtFreightRate" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FreightRate)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RateTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.RateTypeId, new SelectList(ViewBag.RateTypeList, "Value", "Name"), "Select Rate Type", new { @id = "ddlRateType", @class = "form-control" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.RateTypeId)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Freight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Freight, new { @class = "form-control numeric2", @id = "txtFreight", @readonly = "readonly" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Freight)
+                    @Html.Label("lblMinimumFreightMessage", " ", new { @style = "color:red", @id = "lblMinimumFreightMessage" })
+                    @Html.Hidden("hdnIsFreightEnaledDisabled")
+                </div>
+            </div>
+
+            @*</div>
+                <div class="row">*@
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.Label("", "Rate Per KG", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.TextBox("RatePerKg", "0.00", new { @class = "form-control textlabel label-bold numeric2", @id = "txtRatePerKg" })
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="dvKm" style="display:none">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Km, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(m => m.Km, new { @class = "numeric", @id = "txtKm" })
+
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Km)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="dvGst1">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GstPayerId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.GstPayerId, new SelectList(ViewBag.GstPayerList, "Value", "Name"), "Select Gst Payer", new { @id = "ddlGstPayer", @class = "form-control" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GstPayerId)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstBillingParty, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.GstBillingParty, " ", new { @id = "lblGstBillingParty", @class = "label-bold" })
+                        @Html.Hidden("hdnWalkingGstTinNo")
+                        @Html.Hidden("hdnWalkinCode")
+                        @Html.HiddenFor(m => m.IsGst, new { @id = "hdnIsGst" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsGst, new { @class = "label", @for = "chkIsGst" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsGst, new { @id = "chkIsGst" })
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+        <div class="row" id="dvGst2">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstState, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(m => m.GstState, new SelectList(ViewBag.GstStateList, "Value", "Name"), "Select Gst State", new { @class = "form-control", @id = "ddlGstState" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.GstState)
+                    @Html.HiddenFor(m => m.GstStateId, new { @id = "hdnGstStateId" })
+                    @Html.HiddenFor(m => m.GstTinNo, new { @id = "hdnGstTinNo" })
+                    @Html.HiddenFor(m => m.PartyGstId, new { @id = "hdnPartyGstId" })
+                </div>
+            </div>
+            <div class="col-sm-2" id="dvGstTinNoDetail">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstTinNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(m => m.GstTinNo, " ", new { @class = "form-control", @id = "txtPartyGstTinNo", @readonly = "readonly" })
+                        @*@Html.HiddenFor(m => m.DeclarationFileName, new { @id = "hdnDeclarationFileName" })*@
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GstTinNo)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CompanyGstState, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(m => m.CompanyGstState, new SelectList(ViewBag.CompanyGstStateList, "Value", "Name"), "Select Company Gst State", new { @class = "form-control", @id = "ddlCompanyGstState" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.CompanyGstState)
+                    @Html.HiddenFor(m => m.CompanyGstStateId, new { @id = "hdnCompanyGstStateId" })
+                    @Html.HiddenFor(m => m.CompanyGstTinNo, new { @id = "hdnCompanyGstTinNo" })
+                    @Html.HiddenFor(m => m.CompanyGstId, new { @id = "hdnCompanyGstId" })
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CompanyGstTinNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(m => m.CompanyGstTinNo, " ", new { @class = "form-control", @id = "txtCompanyGstTinNo", @readonly = "readonly" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CompanyGstTinNo)
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvGst3">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IsRcm, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(m => m.IsRcm, new { @id = "hdnIsRcm" })
+                        @Html.LabelFor(m => m.IsRcm, new { @class = "form-control textlabel label-bold", @id = "lblIsRcm" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IsInterState, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.IsInterState, " ", new { @id = "lblIsInterState", @class = "label-bold" })
+                        @Html.HiddenFor(m => m.IsInterState, new { @id = "hdnIsInterState" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvGst4">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstRate, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.TextBoxFor(m => m.GstRate, new { @class = "form-control textlabel label-bold numeric2", @id = "txtGstRate" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstAmount, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.TextBoxFor(m => m.GstAmount, new { @class = "form-control textlabel label-bold numeric2", @id = "txtGstAmount" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstCharged, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.TextBoxFor(m => m.GstCharged, new { @class = "form-control textlabel label-bold numeric2", @id = "txtGstCharge" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvCharges">
+            <div class="col-sm-4">
+                <div>
+                    <table id="dtCharges1" class="table-bordered"></table>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div>
+                    <table id="dtCharges2" class="table-bordered"></table>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div>
+                    <table id="dtTax" class="table-bordered"></table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SubTotal, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(model => model.SubTotal, new { @id = "hdnSubTotal" })
+                        @Html.LabelFor(model => model.SubTotal, "0", new { @id = "lblSubTotal", @class = "label-bold numeric2" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TaxTotal, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(model => model.TaxTotal, new { @id = "hdnTaxTotal" })
+                        @Html.Hidden("hdnTaxPercentageTotal")
+                        @Html.LabelFor(model => model.TaxTotal, "0", new { @id = "lblTaxTotal", @class = "label-bold numeric2" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GrandTotal, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(model => model.GrandTotal, new { @id = "hdnGrandTotal" })
+                        @Html.LabelFor(model => model.GrandTotal, "0", new { @id = "lblGrandTotal", @class = "label-bold numeric2" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+        <div class="page-separator">Docket Details</div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.DocketNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketDate, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.DocketDate, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.FromCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ToCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.CustomerCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerName, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.CustomerName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorName, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorAddress1, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorAddress1, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeName, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeAddress1, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorAddress1, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Invoice Details</div>
+        <table id="dtInvoice">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].InvoiceNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].InvoiceDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].Packages)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].Length)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].Breadth)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].Height)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].VolumetricWeight)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].ChargedWeight)
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.InvoiceList)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InvoiceNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InvoiceDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Packages)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Length)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Breadth)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Height)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VolumetricWeight)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ChargedWeight)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+                        @Html.DisplayFor(model => model.Packages)
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+                        @Html.DisplayFor(model => model.ChargedWeight)
+                    </th>
+
+                </tr>
+
+            </tfoot>
+        </table>
+
+    </div>
+}
+
+<script>
+    var docketId, docketFieldList, txtDocketNo, btnSubmit, isFinancialUpdate = false, showErrorMessage = true, allowWalkIn = true;
+    var ddlGstState, hdnGstStateId, hdnGstTinNo, txtPartyGstTinNo, hdnPartyGstId, ddlCompanyGstState, hdnCompanyGstStateId, hdnCompanyGstTinNo, hdnCompanyGstId, txtCompanyGstTinNo;
+    var gstDetails = { IsGst: true, IsRcm: false, GstRate: 18.00, ApplyGst:true };
+    var dtCharges1, dtCharges2, chargeCount, dtTax, taxList;
+    var RateTypes = { Flat: "1", PerGram: "2", PerKG: "3", PerQuintal: "4", PerTon: "5", PerPackage: "6", PerKm: "7", PercentageOfFreight: "8", PercentageOfInvoice: "9", PerLiter: "10" };
+    $(document).ready(function () {
+        docketFieldList = JSON.parse('@DisplayName.GetList("Docket")'.replace(/&quot;/g, '"'));
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        baseUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+        SetPageLoad('Change Docket Amount', 'Update', '', '', '');
+
+
+        ddlGstState = $('#ddlGstState');
+        hdnGstStateId = $('#hdnGstStateId');
+        hdnGstTinNo = $('#hdnGstTinNo');
+        txtPartyGstTinNo = $('#txtPartyGstTinNo');
+        hdnPartyGstId = $('#hdnPartyGstId');
+
+        ddlCompanyGstState = $('#ddlCompanyGstState');
+        hdnCompanyGstStateId = $('#hdnCompanyGstStateId');
+        hdnCompanyGstTinNo = $('#hdnCompanyGstTinNo');
+        hdnCompanyGstId = $('#hdnCompanyGstId');
+        txtCompanyGstTinNo = $('#txtCompanyGstTinNo');
+
+        ddlGstPayer = $('#ddlGstPayer');
+
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+
+        $('#hdnAllowUpdate').val("");
+        //if ($('#chkIsFixedValue').is(':checked')) {
+        //    $('#chkIsFixedValue').disable();
+        //    $('#hdnAllowUpdate').val("No");
+        //}
+
+        LoadDataTable('dtInvoice', false, false, false);
+        $('#txtKm').val(0);
+
+        // Customer GST
+        $.each($("#" + ddlGstState.attr('id') + " > option"), function (i, item) {
+
+            var value = item.value.split('~');
+            if ((value[3]) == '@Model.PartyGstId' && (value[3]) != undefined) {
+                ddlGstState.val(item.value);
+                SetStateGstTin(ddlGstState, hdnGstStateId, hdnGstTinNo, true, txtPartyGstTinNo, hdnPartyGstId);
+
+            }
+        });
+
+        ddlGstState.change(function () {
+            SetStateGstTin(ddlGstState, hdnGstStateId, hdnGstTinNo, true, txtPartyGstTinNo, hdnPartyGstId);
+            ChangeGSTState();
+        });
+
+        // Company GST
+
+        $.each($("#" + ddlCompanyGstState.attr('id') + " > option"), function (i, item) {
+
+            var value = item.value.split('~');
+            if ((value[3]) == '@Model.CompanyGstId' && (value[3]) != undefined) {
+                ddlCompanyGstState.val(item.value);
+                SetStateGstTin(ddlCompanyGstState, hdnCompanyGstId, hdnCompanyGstTinNo, true, txtCompanyGstTinNo, hdnCompanyGstStateId);
+
+            }
+        });
+
+        ddlCompanyGstState.change(function () {
+            SetStateGstTin(ddlCompanyGstState, hdnCompanyGstId, hdnCompanyGstTinNo, true, txtCompanyGstTinNo, hdnCompanyGstStateId);
+            ChangeGSTState();
+        });
+
+        ChangeGSTState();
+
+        if (!IsObjectNullOrEmpty('@Model.GstPaidById')) {
+           ddlGstPayer.val('@Model.GstPaidById');
+            SetBillingPartyGstTinNo(ddlGstPayer.val());
+        }
+
+        if ($("#ddlGstPayer :selected").text() == "Billing Party") {
+            $('#lblIsRcm').text("Yes");
+            $('#hdnIsRcm').val(true);
+
+        }
+        else {
+            $('#lblIsRcm').text("No");
+            $('#hdnIsRcm').val(false);
+        }
+
+        ddlGstPayer.change(function () {
+            SetBillingPartyGstTinNo(ddlGstPayer.val());
+        });
+
+        $('#lblSubTotal').text('@Model.SubTotal');
+        $('#lblTaxTotal').text('@Model.TaxTotal');
+        $('#lblGrandTotal').text('@Model.GrandTotal');
+        chargeCount = 0;
+        var chargeList = @Html.Raw(Json.Encode(@Model.ChargeList));
+        SetOtherCharge(chargeList, dtCharges1, true);
+        SetOtherCharge(chargeList, dtCharges2, false);
+        taxList = @Html.Raw(Json.Encode(@Model.TaxList));
+        SetTaxCharge(taxList, dtTax);
+
+        gstDetails.IsGst = '@Model.IsGst';
+        gstDetails.GstRate = '@Model.GstRate';
+        gstDetails.ApplyGst = true;
+
+        $('#btnReinvokeContract').click(function () {
+
+            if ($('#chkIsFixedValue').is(':checked')) {
+                alert("Docket cost has been fixed, it can not be changed");
+                return false;
+            }
+            LoadReinvoke();
+        });
+
+        $('#txtFreightRate').blur(function () { CalculateFreight('Rate'); });
+        $('#txtFreight').blur(function () { CalculateFreight(); });
+        $('#ddlRateType').change(function () { CalculateFreight('RateType'); });
+
+    });
+
+    function CalculateRate(rateTypeId, rate, packages, chargedWeight, km, freight, invoiceAmount) {
+        var amount = 0;
+
+
+        switch (rateTypeId) {
+            case RateTypes.Flat: amount = rate; break;//Flat
+            case RateTypes.PerGram: amount = rate * chargedWeight; break;//PerGram
+            case RateTypes.PerKG: amount = rate * chargedWeight; break;//PerKG
+            case RateTypes.PerQuintal:
+            case RateTypes.PerTon:
+            case RateTypes.PerLiter: amount = rate * GetWeightByType(rateTypeId, chargedWeight); break;//Per TON
+            case RateTypes.PerPackage: amount = rate * packages; break;//Per Package
+            case RateTypes.PerKm: amount = rate * km; break;//Per KM
+            case RateTypes.PercentageOfFreight: amount = rate * freight / 100; break;// % of Freight
+            case RateTypes.PercentageOfInvoice: amount = rate * invoiceAmount / 100; break;// % of Invoice
+            default: freight = 0; break;
+        }
+
+        return amount;
+    }
+    function GetWeightByType(weightType, weight) {
+        switch (weightType) {
+            case RateTypes.PerGram: weight = weight * 1000; break;
+            case RateTypes.PerKG: weight = weight; break;
+            case RateTypes.PerLiter: weight = weight; break;
+            case RateTypes.PerQuintal: weight = $.toRound(weight / 100, 2); break;
+            case RateTypes.PerTon: weight = weight / 1000; break;
+            default: newWeight = weight; break;
+        }
+        return weight;
+    }
+    function CalculateFreight(caller) {
+        var freightRate = parseFloat($('#txtFreightRate').val());
+        var freight = parseFloat($('#txtFreight').val());
+        var chargedWeight = parseFloat($('#txtChargedWeight').val()),
+            packages = parseFloat($('#txtPackages').val());
+        var txtKm = $('#txtKm');
+
+        if (caller == 'RateType')
+            txtKm.val(0);
+
+        if (caller == 'Rate' || caller == 'RateType' || caller == 'Km') {
+
+            freight = CalculateRate($('#ddlRateType').val(), freightRate, packages, chargedWeight, parseInt(txtKm.val()), 0, 0);
+        } else {
+            switch ($('#ddlRateType').val()) {
+                case RateTypes.Flat: freightRate = freight; break;//Flat
+                case RateTypes.PerGram: freightRate = freight / (1000 * chargedWeight); break;//Per Gram
+                case RateTypes.PerKG: freight = freightRate * chargedWeight; break;//Per KG
+                case RateTypes.PerQuintal: freightRate = freight * 100 / chargedWeight; break;//Per Quintal
+                case RateTypes.PerTon: freightRate = freight * 1000 / chargedWeight; break;//Per Ton
+                case RateTypes.PerPackage: freightRate = freight / packages; break;//Per Package
+                case RateTypes.PerKm: freightRate = freight * txtKm.val(); break;//Per KM
+                case RateTypes.PerLiter: freightRate = freight / chargedWeight; break;//Per Liter
+                default: freightRate = 0; break;
+            }
+        }
+        $('#txtFreight').val(freight);
+        $('#txtFreightRate').val(freightRate);
+        $('#txtRatePerKg').val(freightRate / chargedWeight);
+
+        CalculateTotal();
+    }
+
+
+
+
+    function LoadReinvoke() {
+
+        var requestData = {
+            DocketId: $('#hdnDocketId').val()
+        };
+        AjaxRequestWithPostAndJson(baseUrl + '/GetStep6DetailForReinvoke', JSON.stringify(requestData), function (responseData) {
+
+            if (!responseData.IsSuccessfull) {
+                return false;
+            }
+
+            $('#txtFreightRate').val(responseData.FreightRate);
+            $('#ddlRateType').val(responseData.RateTypeId);
+            $('#txtFreight').val(responseData.Freight);
+            $('#lblSubTotal').text(responseData.SubTotal);
+            $('#hdnSubTotal').val(responseData.SubTotal);
+            $('#lblTaxTotal').text(responseData.TaxTotal);
+            $('#hdnTaxTotal').val(responseData.TaxTotal);
+            $('#lblGrandTotal').text(responseData.GrandTotal);
+            $('#hdnGrandTotal').val(responseData.GrandTotal);
+
+            var chargeList = responseData.ChargeList;
+
+
+            $.each(chargeList, function (i, item) {
+
+                $('#dtCharges1').find('[id*="hdnChargeCode"]').each(function () {
+                    var hdnChargeCode = $(this);
+                    var txtCharge = $('#' + this.id.replace('hdnChargeCode', 'txtCharge'));
+                    if (item.ChargeCode == hdnChargeCode.val()) {
+                        txtCharge.val(item.ChargeAmount);
+                    }
+
+                });
+            });
+
+            $.each(chargeList, function (i, item) {
+                $('#dtCharges2').find('[id*="hdnChargeCode"]').each(function () {
+                    var hdnChargeCode = $(this);
+                    var txtCharge = $('#' + this.id.replace('hdnChargeCode', 'txtCharge'));
+                    if (item.ChargeCode == hdnChargeCode.val()) {
+                        txtCharge.val(item.ChargeAmount);
+                    }
+
+                });
+            });
+
+            taxList = responseData.TaxList;
+            $.each(taxList, function (i, item) {
+                $('[id*=hdnTaxCode]').each(function () {
+                    var hdnTaxCode = $(this);
+
+                    var hdnTaxAmount = $('#' + this.id.replace('hdnTaxCode', 'hdnTaxAmount'));
+                    var lblTaxAmount = $('#' + this.id.replace('hdnTaxCode', 'lblTaxAmount'));
+
+                    if (item.TaxCode == hdnTaxCode.val()) {
+                        hdnTaxAmount.val(item.TaxAmount);
+                        lblTaxAmount.text(item.TaxAmount);
+                    }
+                });
+
+            });
+
+            CalculateTotal();
+
+        }, ErrorFunction, false);
+
+ }
+
+    function SetTaxCharge(taxList, dtTax) {
+
+        if (dtTax == null)
+            dtTax = LoadDataTable('dtTax', false, false, false, null, null, [],
+                [
+                    { title: 'Tax Code', data: 'TaxCode', hidden: true },
+                    { title: 'Tax Name', data: 'TaxDetail' },
+                    { title: 'Tax Amount', data: 'TaxAmount' }
+                ]);
+        else {
+            $('#dtTax').addClass('dataTable');
+            dtTax.fnClearTable();
+        }
+        if (taxList.length > 0) {
+            $.each(taxList, function (i, item) {
+                item.TaxDetail = '<input type="hidden" name="TaxList[' + i + '].TaxCode" id="hdnTaxCode' + i + '" value="' + item.TaxCode + '"/>' +
+                    '<input type="hidden" name="TaxList[' + i + '].TaxAmount" id="hdnTaxAmount' + i + '" value="' + parseFloat(item.TaxAmount).toFixed(2) + '"/>' +
+                    '<label class="label" id="lblTaxName' + i + '">' + item.TaxName + '</label>' +
+                    '<input type="hidden" name="TaxList[' + i + '].TaxPercentage" id="hdnTaxPercentage' + i + '" value="' + item.ActualTaxPercentage + '"/>';
+                item.TaxAmount = '<label class=\'align-right\' style=\'width:100%\' id="lblTaxAmount' + i + '">' + parseFloat(item.TaxAmount).toFixed(2) + '</label>';
+            });
+            dtTax.dtAddData(taxList);
+            $('#dtTax').DataTable().column(0).visible(false);
+        }
+    }
+
+    function SetOtherCharge(list, dtCharge, isOdd) {
+
+        var tableId = (isOdd ? 'dtCharges1' : 'dtCharges2');
+        if (dtCharge != null)
+            $('#' + tableId).addClass('dataTable');
+        if (dtCharge == null)
+            dtCharge = LoadDataTable(tableId, false, false, false, null, null, [],
+                [
+                    { title: 'Charge Name', data: 'ChargeDetail', width: 150 },
+                    { title: 'Charge', data: 'ChargeAmount', width: 60 }
+                ]);
+        dtCharge.fnClearTable();
+       // chargeCount = 0;
+
+        var newList = [];
+        if (list.length > 0) {
+            $.each(list, function (i, item) {
+
+
+                if ((isOdd && (((i + 1) % 2) != 0)) || (!isOdd && (((i + 1) % 2) == 0))) {
+                    item.ChargeDetail = '<input type="hidden" name="ChargeList[' + chargeCount + '].ChargeCode" id="hdnChargeCode' + i + '" value="' + item.ChargeCode + '"/>' +
+                        '<input type="hidden" name="ChargeList[' + chargeCount + '].IsOperator" id="hdnOperator' + i + '" value="' + (item.IsOperator ? '+' : '-') + '"/>' +
+                        '<label class="label" id="lblChargeName' + chargeCount + '">' + item.ChargeName + '(' + (item.IsOperator ? '+' : '-') + ')' + '</label>';
+                    item.ChargeAmount = '<input class="form-control numeric2" data-val="true" data-val-required="Please enter ' + item.ChargeName + '" ' +
+                        'name="ChargeList[' + chargeCount + '].ChargeAmount" value="' + item.ChargeAmount.toFixed(2) + '" id="txtCharge' + i + '" type="text" />' +
+                        '<span data-valmsg-for="ChargeList[' + chargeCount + '].Charge" data-valmsg-replace="true"></span>'
+                    newList.push(item);
+                    chargeCount++;
+                }
+            });
+            dtCharge.dtAddData(newList);
+        }
+        if (isOdd)
+            dtCharges1 = dtCharge;
+        else
+            dtCharges2 = dtCharge;
+        AttachChargeEvent();
+    }
+    function AttachChargeEvent() {
+        $('[id*=txtCharge]').each(function () {
+            var txtCharge = $(this);
+            txtCharge.blur(CalculateTotal);
+        });
+    }
+    function CalculateTotal() {
+
+
+        var freight = parseFloat($('#txtFreight').val());
+        var fov = 0; //parseFloat(txtFov.val());
+        var subTotal = freight + fov;
+
+        $('[id*=hdnChargeCode]').each(function () {
+            var hdnChargeCode = $(this);
+            var hdnOperator = $('#' + this.id.replace('hdnChargeCode', 'hdnOperator'));
+            var txtCharge = $('#' + this.id.replace('hdnChargeCode', 'txtCharge'));
+            subTotal += (hdnOperator.val() == "+" ? 1 : -1) * parseFloat(txtCharge.val());
+        });
+
+        $('#hdnSubTotal').val(subTotal);
+
+        var serviceTax = 0, totalTax = 0;
+        var taxPercentageTotal = 0;
+
+        if (gstDetails.IsGst) {
+
+            taxPercentageTotal = gstDetails.GstRate;
+            totalTax = parseFloat($('#hdnSubTotal').val()) * gstDetails.GstRate / 100;
+            $('#txtGstAmount').val(totalTax);
+
+
+            if ($("#ddlGstPayer :selected").text() == "Billing Party") {
+                totalTax = taxPercentageTotal = 0;
+                $.each(taxList, function (i, item) {
+                    item.TaxAmount = item.ActualTaxPercentage = 0;
+                });
+            }
+            else {
+
+                if (gstDetails.IsRcm && gstDetails.ApplyGst) {
+                    totalTax = taxPercentageTotal = 0;
+                    $.each(taxList, function (i, item) {
+                        item.TaxAmount = item.ActualTaxPercentage = 0;
+                    });
+                }
+                else {
+
+                    $.each(taxList, function (i, item) {
+                        if (gstDetails.IsInterState && item.TaxName == 'IGST') {
+                            item.TaxAmount = totalTax.toFixed(2);
+                            item.ActualTaxPercentage = gstDetails.GstRate;
+                        }
+                        else if (!gstDetails.IsInterState) {
+                            if (item.TaxName == 'SGST' || item.TaxName == 'CGST') {
+                                item.TaxAmount = (totalTax / 2).toFixed(2);
+                                item.ActualTaxPercentage = (gstDetails.GstRate / 2).toFixed(2);
+                            }
+                            else
+                                item.TaxAmount = item.ActualTaxPercentage = 0;
+                        }
+                        else
+                            item.TaxAmount = item.ActualTaxPercentage = 0;
+                    });
+                }
+            }
+
+            $('#txtGstCharge').val(totalTax);
+        }
+
+        $('#hdnTaxPercentageTotal').val(taxPercentageTotal);
+
+        var grandTotal = subTotal + totalTax;
+
+        $('#lblSubTotal').text(subTotal.toFixed(2));
+        $('#hdnSubTotal').val($('#lblSubTotal').text());
+
+        $('#lblTaxTotal').text(totalTax.toFixed(2));
+
+        $('#hdnTaxTotal').val(totalTax.toFixed(2));
+
+        $('#lblGrandTotal').text(grandTotal.toFixed(2));
+
+        $('#hdnGrandTotal').val(grandTotal.toFixed(2));
+
+
+        $.each(taxList, function (i, item) {
+            $('[id*=hdnTaxCode]').each(function () {
+                var hdnTaxCode = $(this);
+
+                var hdnTaxAmount = $('#' + this.id.replace('hdnTaxCode', 'hdnTaxAmount'));
+                var lblTaxAmount = $('#' + this.id.replace('hdnTaxCode', 'lblTaxAmount'));
+
+                if (item.TaxCode == hdnTaxCode.val()) {
+                    hdnTaxAmount.val(item.TaxAmount);
+                    lblTaxAmount.text(item.TaxAmount);
+                }
+            });
+
+        });
+
+    }
+    function ChangeGSTState() {
+        var value;
+        var value1;
+
+        if (!IsObjectNullOrEmpty($('#ddlGstState').val()) && !IsObjectNullOrEmpty($('#ddlCompanyGstState').val())) {
+
+            value = $('#ddlGstState').val().split('~');
+            value1 = $('#ddlCompanyGstState').val().split('~');
+
+            if (value[0] != value1[0]) {
+                gstDetails.IsInterState = true;
+            }
+            else {
+                gstDetails.IsInterState = false;
+            }
+
+            $('#hdnIsInterState').val(gstDetails.IsInterState);
+
+            if (gstDetails.IsInterState)
+                $('#lblIsInterState').text('Inter State');
+            else
+                $('#lblIsInterState').text('Intra State');
+
+            gstDetails.IsGst = true;
+
+
+        }
+
+    }
+
+    function SetBillingPartyGstTinNo(taxPayer) {
+           if (taxPayer == 3) {
+               $('#lblGstBillingParty').text($('#hdnCustomerName').val());
+        }
+        else if (taxPayer == 4) {
+               $('#lblGstBillingParty').text($('#hdnCompanyName').val());
+        }
+        else {
+               $('#lblGstBillingParty').text('');
+        }
+
+    }
+    function SetStateGstTin(ddlState, hdnStateCode, hdnGstTin, isCustomer, txtGstTin, hdnGstId) {
+        if (ddlState.val() == '0' || IsObjectNullOrEmpty(ddlState.val()) || $("#" + ddlState.attr('id') + " > option").length == 0) {
+            txtGstTin.val('');
+            hdnStateCode.val(0);
+            hdnGstTin.val('');
+        }
+        else {
+            var stateGst = ddlState.val().split('~');
+            hdnStateCode.val(stateGst[0]);
+            hdnGstTin.val(stateGst[1]);
+            txtGstTin.val(stateGst[1]);
+            txtGstTin.readOnly(stateGst[1] != '');
+            hdnGstId.val(stateGst[3]);
+        }
+        //CheckGstInterState();
+    }
+
+
+    function OnSubmit() {
+
+
+        return true;
+    }
+
+</script>
+

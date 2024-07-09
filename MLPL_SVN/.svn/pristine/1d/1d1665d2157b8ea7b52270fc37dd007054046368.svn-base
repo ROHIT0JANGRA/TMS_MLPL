@@ -1,0 +1,116 @@
+﻿
+@{
+    ViewBag.Title = "AdvancePaymentDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<div class="row example-buttons">
+        <div class="col-md-12">
+            <div class="note note-info note-right-striped">
+                <div class="page-separator">Advance Payment done Successfully</div>
+                <br />
+                <div class="row example-buttons">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <div class="clearfix">
+                                @Html.Label("Payment No", new { @class = "label" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <div class="clearfix">
+                                @Html.Label(" ", new { @id = "lblPaymentNo", @for = "PaymentNo" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button onclick="return PaymentView()" class="btn btn-primary btn-xs dt-edit">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row example-buttons">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <div class="clearfix">
+                                @Html.Label("Voucher No", new { @class = "label" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <div class="clearfix">
+                                @Html.Label(" ", new { @id = "lblVoucherNo", @for = "VoucherNo" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button onclick="return VoucherView()" class="btn btn-primary btn-xs dt-edit">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+<div class="widget-wrap" style="height:300px">
+    <div class="alert alert-success"><h5>Advance Payment Done Successfully</h5></div>
+    <div class="row">
+        <div class="col-sm-3">
+            <h4>Payment No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblPaymentNo", @class = "label-bold" })
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return PaymentView();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <h4>Voucher No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblVoucherNo", @class = "label-bold" })
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return VoucherView();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+    var voucherId = 0;
+    $(document).ready(function () {
+        SetPageLoad('Advance Payment', 'Done', '', 'Go To Advance Payment', '@Url.Action("AdvancePayment")');
+        $('#lblVoucherNo').html(GetUrlValue()["voucherNo"]);
+        $('#lblPaymentNo').html(GetUrlValue()["PaymentNo"]);
+        voucherId = GetUrlValue()["voucherId"];
+    });
+    function VoucherView() {
+        var prmList = [{ Name: "VoucherId", Value: voucherId }];
+        var reportInfo = { PrmList: prmList, Name: 'VoucherDetailView', Description: 'VoucherDetailView' };
+        return ShowReport(reportInfo);
+    }
+    //function PaymentView() {
+    //    var prmList = [{ Name: "BillId", Value: GetUrlValue()["PaymentId"] }];
+    //    var reportInfo = { PrmList: prmList, Name: 'VendorBillDetailViewPrint', Description: 'Advance Bill View' };
+    //    return ShowReport(reportInfo);
+    //}
+    function PaymentView() {
+        var prmList = [{ Name: "BillId", Value: GetUrlValue()["PaymentId"] }];
+        var reportInfo = { PrmList: prmList, Name: 'AdvanceVehicleHireSlip', Description: 'Advance Vehicle Hire Slip' };
+        return ShowReport(reportInfo);
+    }
+</script>
+
+

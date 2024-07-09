@@ -1,0 +1,273 @@
+﻿@model  CodeLock.Models.ExpenseContract
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("ExpenseCharge", "ExpenseContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Paybas Name", new { @id = "lblPayBasName", @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.PayBas
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Expense Name", new { @id = "lblExpenseName", @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.ExpenseName
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @Html.HiddenFor(model => Model.ExpenseId, new { @id = "hdnExpenseId" })
+        @Html.HiddenFor(model => Model.PayBasId, new { @id = "hdnPayBasId" })
+        @Html.HiddenFor(model => Model.TransportModeId, new { @id = "hdnTransportModeId" })
+        @Html.HiddenFor(model => Model.FromLocationId, new { @id = "hdnFromLocationId" })
+        @Html.HiddenFor(model => Model.ToLocationId, new { @id = "hdnToLocationId" })
+        @Html.HiddenFor(model => Model.MatrixType, new { @id = "hdnMatrixType" })
+        
+        <table class="table-bordered" id="dtExpenseCharge">
+            <thead>
+
+                <tr>
+                    <th id="thFromLocation" width="300" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].FromLocation)
+                    </th>
+                    <th id="thToLocation" width="300" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].ToLocation)
+                    </th>
+                    <th id="thRateType" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].RateTypeId
+                        )
+                    </th>
+
+                    <th id="thRate" width="150" data-sort-ignore="true" data-hide="phone">
+                        @Html.DisplayNameFor(model => model.Details[0].Rate)
+                    </th>
+                    <th data-sort-ignore="true" data-hide="phone" width="85" id="thAction">Action</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+                @for (int i = 0; i < Model.Details.Count; i++)
+                {
+                    <tr>
+                        <td id="@("tdFromLocation" + i)">
+
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.Details[i].FromLocation, new { @class = "form-control", @id = "txtFromLocation" + i.ToString(), @style = "width: 200px;" })
+                            </div>
+                            @Html.HiddenFor(model => model.Details[i].FromLocationId, new { @id = "hdnFromLocationId" + i })
+                            @Html.ValidationMessageFor(model => model.Details[i].FromLocation)
+                        </td>
+                        <td id="@("tdToLocation" + i)">
+                            <div class="input">
+                                @Html.TextBoxFor(model => model.Details[i].ToLocation, new { @class = "form-control", @id = "txtToLocation" + i.ToString(), @style = "width: 200px;" })
+                            </div>
+                            @Html.HiddenFor(model => model.Details[i].ToLocationId, new { @id = "hdnToLocationId" + i })
+                            @Html.ValidationMessageFor(model => model.Details[i].ToLocation)
+                        </td>
+                        <td id="@("tdRateType" + i)">
+                            <div class="select">
+                                @Html.DropDownListFor(model => Model.Details[i].RateTypeId, new SelectList(ViewBag.RateTypeList, "Value", "Name", Model.Details[i].RateTypeId), "Select Rate Type", new { @class = " form-control ", @id = "ddlRateType" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].RateTypeId)
+                        </td>
+                        <td id="@("tdRate" + i)">
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model.Details[i].Rate, new { @class = "form-control numeric2", @id = "txtRate" + i.ToString(), @style = "width: 100px;" })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].Rate)
+                        </td>
+                        
+                        <td id="@("tdAction" + i)">
+                            @*<button type="button" id="btnAdd" onclick="return AddRow(this)" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i></button>*@
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var txtNumberOfRow = $('#txtNumberOfRow'), tableRow, ExpenseId, PayBasId, TransportModeId, matrixType, fromLocation, toLocation;
+
+    $(document).ready(function () {
+        SetPageLoad('Customer Contract', 'Expense Charge', '');
+
+        expenseId = '@Model.ExpenseId';
+        payBasId = '@Model.PayBasId';
+        transportModeId = '@Model.TransportModeId';
+        matrixType = '@Model.MatrixType';
+        fromLocation = '@Model.FromLocationId';
+        toLocation = '@Model.ToLocationId';
+        InitGrid('dtExpenseCharge', false, 4, InitAutoComplete);
+        OnPageLoad();
+       // $('#btnSubmit').click(OnSubmit);
+    });
+
+    function OnPageLoad() {
+        
+        if (fromLocation > 0 && toLocation > 0) {
+            $('[id*="thAction"]').hide();
+            $('[id*="tdAction"]').hide();
+        }
+        else {
+            $('[id*="thAction"]').show();
+            $('[id*="tdAction"]').show();
+        }
+        if (fromLocation == 0) {
+            $('#thFromLocation').show();
+            $('[id*="tdFromLocation"]').show();
+            AddRequired($('[id*="tdFromLocation"]'), "Please enter From");
+        }
+        else {
+            $('#thFromLocation').hide();
+            $('[id*="tdFromLocation"]').hide();
+            RemoveRequired($('[id*="tdFromLocation"]'));
+        }
+        if (toLocation == 0) {
+            $('#thToLocation').show();
+            $('[id*="tdToLocation"]').show();
+            AddRequired($('[id*="tdToLocation"]'), "Please enter To");
+        }
+        else {
+            $('#thToLocation').hide();
+            $('[id*="tdToLocation"]').hide();
+            RemoveRequired($('[id*="tdToLocation"]'));
+        }
+        
+    }
+
+    function InitAutoComplete() {
+        $('[id*="txtRate"]').each(function () {
+            var txtRate = $(this);
+            var hdnFromLocationId = $('#' + txtRate.Id.replace('txtRate', 'hdnFromLocationId'));
+            var txtFromLocation = $('#' + txtRate.Id.replace('txtRate', 'txtFromLocation'));
+            var hdnToLocationId = $('#' + txtRate.Id.replace('txtRate', 'hdnToLocationId'));
+            var txtToLocation = $('#' + txtRate.Id.replace('txtRate', 'txtToLocation'));
+            var txtRate = $('#' + txtRate.Id.replace('txtRate', 'txtRate'));
+
+            //AddRange(txtRate, "Please enter a value between 1 to 9999999999", 1, 9999999999.99);
+
+            if (matrixType == 1) {
+                CityAutoComplete(txtFromLocation.Id, hdnFromLocationId.Id);
+                CityAutoComplete(txtToLocation.Id, hdnToLocationId.Id);
+                txtFromLocation.blur(function () { IsCityNameExist(txtFromLocation, hdnFromLocationId, 'From City'); });
+                txtToLocation.blur(function () { IsCityNameExist(txtToLocation, hdnToLocationId, 'To City'); });
+            }
+            else if (matrixType == 2) {
+                LocationAutoComplete(txtFromLocation.Id, hdnFromLocationId.Id);
+                LocationAutoComplete(txtToLocation.Id, hdnToLocationId.Id);
+                txtFromLocation.blur(function () { IsLocationCodeExist(txtFromLocation, hdnFromLocationId, 'From Location'); });
+                txtToLocation.blur(function () { IsLocationCodeExist(txtToLocation, hdnToLocationId, 'To Location'); });
+            }
+            else if (matrixType == 3) {
+                ZoneAutoComplete(txtFromLocation.Id, hdnFromLocationId.Id);
+                ZoneAutoComplete(txtToLocation.Id, hdnToLocationId.Id);
+                txtFromLocation.blur(function () { IsZoneNameExist(txtFromLocation, hdnFromLocationId, 'From Zone'); });
+                txtToLocation.blur(function () { IsZoneNameExist(txtToLocation, hdnToLocationId, 'To Zone'); });
+            }
+
+            if (fromLocation != 0) {
+                hdnFromLocationId.val(fromLocation);
+            }
+
+            if (toLocation != 0) {
+                hdnToLocationId.val(toLocation);
+            }
+
+            txtFromLocation.blur(function () { return CheckIsValid(txtFromLocation, hdnFromLocationId); });
+            txtToLocation.blur(function () { return CheckIsValid(txtToLocation, hdnToLocationId); });
+
+            txtFromLocation.blur(function () {
+                try {
+                    IsChargeExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            txtToLocation.blur(function () {
+                try {
+                    IsChargeExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+        });
+    }
+
+    function CheckIsValid(objName, objHdnId) {
+        if (matrixType == 1) {
+            IsCityNameExist(objName, objHdnId);
+        }
+        else if (matrixType == 2) {
+            IsLocationCodeExist(objName, objHdnId);
+        }
+        else if (matrixType == 3) {
+            IsZoneNameExist(objName, objHdnId);
+        }
+    }
+
+    function AddRow() {
+        var rowCount = parseInt(txtNumberOfRow.val());
+        for (var i = 0; i < rowCount; i++) {
+            if ($('#dtExpenseCharge > tbody > tr:first').length > 0)
+                AddRow('dtExpenseCharge', true);
+            else {
+                $('#dtExpenseCharge').append(tableRow);
+                InitTable();
+            }
+        }
+        InitAutoComplete();
+    }
+
+    function RemoveRow(btn) {
+        RemoveTableRow($(btn), true);
+    }
+
+    function InitTable() {
+        ManageTableAddRemove('dtExpenseCharge', true);
+    }
+
+    function IsChargeExist(obj) {
+        if (obj.val() != '' && !obj.is('[readonly]')) {
+            var outertr = obj.closest('tr');
+            var outerhdnFromLocation = outertr.find('[id*="hdnFromLocationId"]');
+            var outerhdnToLocation = outertr.find('[id*="hdnToLocationId"]');
+
+            $('#dtExpenseCharge tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innerhdnFromLocation = innertr.find('[id*="hdnFromLocationId"]');
+                var innerhdnToLocation = innertr.find('[id*="hdnToLocationId"]');
+
+                if (innerhdnFromLocation.Id != outerhdnFromLocation.Id && innerhdnFromLocation.val() == outerhdnFromLocation.val() && innerhdnToLocation.val() == outerhdnToLocation.val()) {
+                    ShowMessage("Charge is already exist");
+                    throw (true);
+                }
+            });
+        }
+    }
+
+</script>

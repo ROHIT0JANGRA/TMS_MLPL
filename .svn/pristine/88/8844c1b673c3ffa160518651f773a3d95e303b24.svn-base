@@ -1,0 +1,138 @@
+﻿@using CodeLock.Models
+@model ChequeRegister
+@{
+    ViewBag.Title = "ChequeRegister";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label("Cheque Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "FromLocationId", FieldCaption = "Location" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.BankAccountId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(m => m.BankAccountId, new List<SelectListItem> { new SelectListItem { Text = "HDFC Bank", Value = "H" } }, "Select Bank", new { @class = "form-control", @id = "ddlBankAccount" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.BankAccountId)
+                    </div>
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            @Html.LabelFor(model => model.ReportType, new { @class = "label" })
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.ReportType, false, new { @id = "rdChqIssue" })
+                                <i></i>
+                                @Html.LabelFor(model => model.ReportType, "Issue", new { @for = "rdChqIssue" })
+                            </label>
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.ReportType, true, new { @id = "rdChqRecvd", @checked = "checked" })
+                                <i></i>
+                                @Html.LabelFor(model => model.ReportType, "Received", new { @for = "rdChqRecvd" })
+                            </label>
+                           
+                        </div>
+                    </div>
+                </div>
+                
+               
+            </div>
+
+            <div class="page-separator">OR</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Chequeno, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.Chequeno, new { @class = "form-control", @id = "txtChequeno" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Chequeno)
+                    </div>
+                </div>
+                
+            </div>
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+
+    var ddlFromLocationId, drDate, txtChequeno,ddlBankAccount, btnSubmit;
+
+    $(document).ready(function () {
+        BankUrl = '@Url.Action("GetListByCategory", "Account", new { Area = "Master" })';
+        SetPageLoad('Finance Report', 'Cheque Register', '', '', '');
+        locationId = '@SessionUtility.LoginLocationId';
+        InitObjects();
+        AttachEvents();
+        BindAccountDropDown(ddlBankAccount, 6, 'Bank');
+    });
+
+    function InitObjects() {
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        ddlFromLocationId = $('#ddlFromLocationId');
+        rdChqRecvd = $('#rdChqRecvd');
+        rdChqIssue = $('#rdChqIssue');
+        txtChequeno = $('#txtChequeno');
+        ddlBankAccount = $("#ddlBankAccount");
+        locationUrl = '@Url.Action("", "Location", new { Area = "Master" })';
+    }
+
+    function AttachEvents() {
+
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    }
+
+    function BindAccountDropDown(ddl, category, type) {
+        AjaxRequestWithPostAndJson(BankUrl, JSON.stringify({ categoryId: category }), function (result) {
+            BindDropDownList(ddl.Id, result, 'Value', 'Description', '', type + ' Account');
+        }, ErrorFunction, false);
+    }
+
+
+    function ViewReport() {
+        var prmList = [
+            { Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+            { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+            { Name: "LocationId", Value: ddlFromLocationId.val() },
+            { Name: "ChequeType", Value: rdChqRecvd.IsChecked },
+            { Name: "chequeno", Value: txtChequeno.val() == '' ? ' ' : txtChequeno.val() },
+            { Name: "BankAccountId", Value: ddlBankAccount.val() == '' ? '0' : ddlBankAccount.val() }];
+            
+        /*alert(prmList[0].Value);
+        alert(prmList[1].Value);
+        alert(prmList[2].Value);
+        alert(prmList[3].Value);
+        alert(prmList[4].Value);
+        alert(prmList[5].Value);*/
+        
+        var reportInfo = {
+            PrmList: prmList, Name: $('#rdChqRecvd').IsChecked ? 'ChequeRegisterRecvd' : 'ChequeRegisterIssue', Description: 'Cheque Register'
+        };
+
+        return ShowReport(reportInfo);
+    }
+</script>

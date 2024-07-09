@@ -1,0 +1,131 @@
+﻿@model CodeLock.Models.MasterBins
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Insert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "Bins", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.BindId)
+    @Html.HiddenFor(m => m.BindId, new { @id = "hdnBindId" })
+    @Html.HiddenFor(m => m.HierarchyId, new { @id = "hdnHierarchyId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BinCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BinCode, new { @class = "form-control", @id = "txtBinCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BinCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BinName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BinName, new { @class = "form-control", @id = "txtBinName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BinName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BinHierarchyId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.BinHierarchyId, new SelectList(ViewBag.BinHierarchyList, "Value", "Name"), "Select Bin Hierarchy", new { @class = "form-control", @id = "ddlBinHierarchyId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BinHierarchyId)
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ParentHierarchy, new { @class = "label" })
+                    <div class="input">
+                        @Html.Label(" ", new { @class = "label-bold", @id = "lblParentHierarchy" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ParentHierarchy)
+                </div>
+            </div>
+            <div class="col-sm-4" id="divBaseCode2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ParentBindId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.ParentBindId, Enumerable.Empty<SelectListItem>(), "Select Parent Hierarchy", new { @class = "form-control", @id = "ddlParentBindId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ParentBindId)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        hdnBindId = $('#hdnBindId');
+        ddlBinHierarchyId = $('#ddlBinHierarchyId');
+        lblParentHierarchy = $('#lblParentHierarchy');
+        ddlParentBindId = $('#ddlParentBindId');
+        hdnHierarchyId = $('#hdnHierarchyId');
+        ddlBinHierarchyId.change(OnBinHierarchyChange);
+        btnSubmit = $('#btnSubmit');
+
+        SetPageLoad('Bins', 'Create', 'txtBinCode', 'Goto List', '@Url.Action("Index")');
+        OnBinHierarchyChange();
+
+    });
+
+    function OnBinHierarchyChange() {
+        if (ddlBinHierarchyId.val() != '') {
+            var requestData = { binHierarchyId: ddlBinHierarchyId.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetParentBinList")', JSON.stringify(requestData), function (result) {
+                BindDropDownList('ddlParentBindId', result, 'Value', 'Name', '', 'Select Parent Hierarchy');
+            }, ErrorFunction, false);
+
+            requestData = { binHierarchyId: ddlBinHierarchyId.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetParentHierarchy")', JSON.stringify(requestData), function (result) {
+                if (!IsObjectNullOrEmpty(result)) {
+
+                    lblParentHierarchy.text(result.Name);
+                    hdnHierarchyId.val(result.Value);
+                }
+                else {
+                    lblParentHierarchy.text('');
+                    hdnHierarchyId.val('');
+                }
+            }, ErrorFunction, false);
+        }
+
+        if (ddlBinHierarchyId.val() == '') {
+            lblParentHierarchy.text('');
+            $('#ddlParentBindId').empty();
+            $('#ddlParentBindId').append($("<option></option>").val('').html('Select Parent Hierarchy'));
+            ddlBinHierarchyId.val('');
+        }
+    }
+
+    function GetParentBinListSuccess(responseData) {
+        BindDropDownList('ddlParentBindId', responseData, 'Value', 'Name');
+    }
+</script>
+

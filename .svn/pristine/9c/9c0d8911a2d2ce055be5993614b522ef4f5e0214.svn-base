@@ -1,0 +1,57 @@
+﻿@using CodeLock.Models
+@model VendorDocumentApproval
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        baseUrl = '@Url.Action("", "VendorDocumentApproval", new { Area = "Operation" })';
+    });
+</script>
+<script src="~/areas/operation/views/VendorDocumentApproval/Insert.js"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Insert", "VendorDocumentApproval", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocumentTypes, new { @class = "label" })
+                                <div class="inline-group">
+                                    @for (var i = 0; i < Model.DocumentTypes.Count(); i++)
+                                    {
+                                        <label class="checkbox">
+                                            @Html.HiddenFor(m => m.DocumentTypes[i].CodeId, new { @id = "hdnCodeId" + i.ToString() })
+                                            @Html.HiddenFor(m => m.DocumentTypes[i].CodeDescription)
+                                            @Html.LabelFor(m => m.DocumentTypes[i].IsActive, Model.DocumentTypes[i].CodeDescription, new { @class = "label", @For = "chkDocumentType" + i.ToString() })
+                                            @Html.CheckBoxFor(m => m.DocumentTypes[i].IsActive, new { @id = "chkDocumentType" + i.ToString() })
+                                            <i></i>
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDocumentList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

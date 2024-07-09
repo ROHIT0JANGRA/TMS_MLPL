@@ -1,0 +1,111 @@
+﻿@model CodeLock.Models.MasterJobOrderTask
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "JobOrderTask", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.TaskId)
+    @Html.HiddenFor(m => m.TaskId, new { @id = "hdnTaskId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.WorkGroupId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.WorkGroupId, new SelectList(ViewBag.WorkGroupList, "Value", "Name"), "Select Work Group", new { @class = "form-control", @id = "ddlWorkGroupId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.WorkGroupId)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TaskTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.TaskTypeId, new SelectList(ViewBag.TaskTypeList, "Value", "Name"), "Select Task Type", new { @class = "form-control", @id = "ddlTaskTypeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TaskTypeId)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Task, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Task, new { @class = "form-control text-uppercase", @id = "txtTask" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Task)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EstimatedLabourHours, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.EstimatedLabourHours, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.EstimatedLabourHours)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0"></button>
+        </div>
+    </div>
+}
+<script>
+    var hdnTaskId, ddlWorkGroupId, ddlTaskTypeId, txtTask, btnSubmit;
+    $(document).ready(function () {
+        hdnTaskId = $('#hdnTaskId');
+        ddlWorkGroupId = $('#ddlWorkGroupId');
+        ddlTaskTypeId = $('#ddlTaskTypeId');
+        txtTask = $('#txtTask');
+        btnSubmit = $('#btnSubmit');
+        ddlWorkGroupId.change(function () { return IsTaskAvailable(ddlWorkGroupId); });
+        ddlTaskTypeId.change(function () { return IsTaskAvailable(ddlTaskTypeId); });
+        txtTask.blur(function () { return IsTaskAvailable(txtTask); });
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        var isAdd = true;
+        if (hdnTaskId.val() != 0)
+            isAdd = false;
+
+        if (isAdd == false)
+            SetPageLoad('Task', 'Edit', 'ddlWorkGroupId', 'Go To List', '@Url.Action("Index")');
+        else
+            SetPageLoad('Task', 'Add', 'ddlWorkGroupId', 'Go To List', '@Url.Action("Index")');
+
+        btnSubmit.html((isAdd ? 'Create' : 'Update'));
+    }
+
+    function IsTaskAvailable(obj) {
+        if (ddlWorkGroupId.val() != '' && ddlTaskTypeId.val() != '' && txtTask.val() != '') {
+            var requestData = { workGroupId: ddlWorkGroupId.val(), taskTypeId: ddlTaskTypeId.val(), task: txtTask.val(), taskId: hdnTaskId.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("IsTaskAvailable")', JSON.stringify(requestData), function (result) {
+                if (result) {
+                    ShowMessage('Task already exists');
+                    obj.val('');
+                    return false;
+                }
+            }, ErrorFunction, false);
+        }
+    }
+</script>

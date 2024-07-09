@@ -1,0 +1,252 @@
+﻿@model CodeLock.Models.Thc
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("ChangeVendorName", "Thc", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.HiddenFor(model => model.ThcId, new { @id = "hdnThcId" })
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VendorId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.VendorId, new SelectList(ViewBag.VendorList, "Value", "Description"), "Select Vendor", new { @class = "form-control select2", @id = "ddlVendorId" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.VendorId)
+            </div>
+        </div>
+    </div>
+
+    <div class="form-footer">
+        <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+    </div>
+    <div id="dvErrorList" style="display:none">
+        <div class="page-separator" style="background-color:red">Error Detail : <b> LR series already used  </b></div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div>
+                    <table id="dtDocumentDetailList">
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+    <div class="page-separator">Thc Details</div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ThcNo, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.ThcNo, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ThcDate, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.ThcDate, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FromCityName, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.FromCityName, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ToCityName, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.ToCityName, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VendorCode, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.VendorCode, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VendorName, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.VendorName, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VehicleNo, new { @class = "label-bold" }) <div class="clearfix">
+                    @Html.DisplayFor(model => model.VehicleNo, new { @class = "label" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-separator">Invoice Details</div>
+    <table id="dtInvoice">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].InvoiceNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].InvoiceDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].Length)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].Breadth)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].Height)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].VolumetricWeight)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => Model.InvoiceList[0].ChargedWeight)
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.InvoiceList)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.InvoiceNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.InvoiceDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Length)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Breadth)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Height)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VolumetricWeight)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ChargedWeight)
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>
+
+                </th>
+                <th>
+
+                </th>
+                <th>
+
+                </th>
+                <th>
+
+                </th>
+                <th>
+
+                </th>
+                <th>
+
+                </th>
+                <th>
+                    @Html.DisplayFor(model => model.ChargedWeight)
+                </th>
+
+            </tr>
+
+        </tfoot>
+    </table>
+
+</div>
+}
+
+<script>
+    var docketId, docketFieldList, txtDocketNo, btnSubmit, isFinancialUpdate = false, dtDocumentDetailList;
+
+    $(document).ready(function () {
+        docketFieldList = JSON.parse('@DisplayName.GetList("Docket")'.replace(/&quot;/g, '"'));
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        SetPageLoad('Change Vendor Name', 'Update', '', '', '');
+        txtDocketNo = $('#txtDocketNo');
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+        LoadDataTable('dtInvoice', false, false, false);
+        $('#dvErrorList').hide();
+
+        
+    });
+
+
+    function OnSubmit() {
+        var index = 0;
+        if ($('#ddlVendorId').val() == 0) {
+            ShowMessage('Vendor  is not valid for Update');
+            $('#ddlVendorId').focus();
+            return false;
+        }
+
+        var requestData = { ThcId: $('#hdnThcId').val(), VendorId: $('#ddlVendorId').val(), updateFor: "1", LRNo:"" };
+        AjaxRequestWithPostAndJson('@Url.Action("CheckValidThcForUpdate", "Thc")', JSON.stringify(requestData), function (result) {
+
+            if (dtDocumentDetailList == null)
+                dtDocumentDetailList = LoadDataTable('dtDocumentDetailList', false, false, false, null, null, [],
+                    [
+                        { title: 'Pickup ID', data: 'DocumentId' },
+                        { title: 'LR No', data: 'DocumentNo' },
+                        { title: 'Used Date', data: 'DocumentDate' }
+                    ]);
+
+            dtDocumentDetailList.fnClearTable();
+
+            if (result.length == 0) {
+
+                index = 1;
+            }
+            else {
+
+                $.each(result, function (i, item) {
+
+                    item.DocumentId = '<label id="lblDocumentId' + i + '" class="label-bold"/>' + item.DocumentId + '</label>' +
+                        '<input type=\'hidden\' value=' + i + '  id=\'hdnRowId' + i + '\'/>';
+
+                    item.DocumentNo = '<label id="lblDocumentNo' + i + '" class="label-bold"/>' + item.DocumentNo + '</label>';
+
+                    item.DocumentDate = '<label id="lblDocumentDate' + i + '" class="label-bold"/>' + item.DocumentDate + '</label>';
+
+                });
+                dtDocumentDetailList.dtAddData(result);
+                $('#dvErrorList').show();
+
+                index = 0;
+            }
+        }, ErrorFunction, false);
+
+        if (index == 1)
+            return true;
+        else
+            return false;
+    }
+
+</script>
+

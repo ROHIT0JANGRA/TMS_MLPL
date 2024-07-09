@@ -1,0 +1,180 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.DocumentTracking
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        trackingUrl = '@Url.Action("", "Tracking", new { Area = "Operation" })';
+        docketUrl = '@Url.Action("Details", "Docket", new { Area = "Operation" })';
+        docketModuleId = '@ModuleHelper.Docket';
+        prsModuleId = '@ModuleHelper.Prs';
+        lsModuleId = '@ModuleHelper.LoadingSheet';
+        mfModuleId = '@ModuleHelper.Manifest';
+        thcModuleId = '@ModuleHelper.Thc';
+        drsModuleId = '@ModuleHelper.Drs';
+        pfmModuleId = '@ModuleHelper.Pfm';
+        vrModuleId = '@ModuleHelper.Vr';
+        docketTalkModuleId = '@ModuleHelper.DocketTalk';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+        isLocalStorage = '@ConfigHelper.IsLocalStorage';
+        cloudStoragePath = '@ConfigHelper.CloudStoragePath';
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        sepdUrl = '@Url.Action("", "Thc", new { Area = "Operation" })';
+        currentDomain = '@Url.Content("~")';
+        urlPagination = '@Url.Action("GetDocketListByPagination", "Tracking")';
+        unloadingModuleId ='@ModuleHelper.Unloading';
+    });
+
+</script>
+
+
+<script src="@Url.Content("~/Areas/Operation/Views/Tracking/Index.js?v5")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Select Document Date", new { @class = "label" })
+                            <div id="drDocumentDate"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocumentTypeId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.DocumentTypeId, new SelectList(ViewBag.DocumentTypeList, "Value", "Name"), new { @class = "form-control", @id = "ddlDocumentTypeId" })
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocumentNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.DocumentNo, null, new { @class = "form-control", @id = "txtDocumentNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.DocumentNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                @Html.Label("(seperated by comma if multiple)")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualDocumentNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualDocumentNo, null, new { @class = "form-control", @id = "txtManualDocumentNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualDocumentNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                @Html.Label("(seperated by comma if multiple)")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+
+                    <div id="dvDocketDetails" class="widget-wrap material-table-widget">
+
+                    </div>
+
+                    <div class="row" id="dvThcDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtThcDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvDrsDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDrsDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvPrsDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtPrsDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvLoadingSheetDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtLoadingSheetDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvTripheetDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtTripsheetDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvManifestDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtManifestDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvPfmDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtPfmDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvVrDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtVrDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvDocketTalkDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDocketTalkDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="dvUnLoadingSheetDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtUnLoadingSheetDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,322 @@
+﻿@model List<CodeLock.Models.MasterDcr>
+@{
+    ViewBag.Title = "Insert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("InsertEssential", "Dcr", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-12">
+
+                <table class="table-bordered" id="dtDcr">
+                    <thead>
+                        <tr>
+                            <th>
+                                Company
+                            </th>
+                            <th>
+                                Document Type
+                            </th>
+                            <th>
+                                Book Code
+                            </th>
+                            <th>
+                                Series From
+                            </th>
+                            <th>
+                                Business Type
+                            </th>
+                            <th width="85px">
+                                Total Leaf
+                            </th>
+                            <th>
+                                Page Size
+                            </th>
+                            <th>
+                                Location
+                            </th>
+                            <th width="85px">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model[i].CompanyId, new SelectList(ViewBag.CompanyList, "Value", "Name"), "Select Company", new { @class = "form-control", @id = "ddlCompany" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model[i].CompanyId)
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model[i].DocumentTypeId, new SelectList(ViewBag.DocumentTypeList, "Value", "Name"), "Select Document Type", new { @class = "form-control", @id = "ddlDocumentType" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model[i].DocumentTypeId)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model[i].BookCode, new { @class = "form-control", id = "txtBookCode" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model[i].BookCode)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model[i].SeriesFrom, new { @class = "form-control", @id = "txtSeriesFrom" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model[i].SeriesFrom)
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        @Html.Label("lblBusinessType" + i.ToString(), "NA", new { @id = "lblBusinessType" + i.ToString() })
+                                        <div class="select">
+                                            @Html.HiddenFor(m => Model[i].IsBusinessTypeWise, new { @id = "hdnIsBusinessTypeWise" + i.ToString() })
+                                            @Html.DropDownListFor(model => model[i].BusinessTypeId, new SelectList(ViewBag.BusinessTypeList, "Value", "Name"), "Select Business Type", new { @class = "form-control", @id = "ddlBusinessType" + i.ToString() })
+                                            <i></i>
+                                        </div>
+                                        @Html.ValidationMessageFor(m => Model[i].BusinessTypeId)
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <div class="select">
+                                            @Html.DropDownListFor(model => model[i].Total, new SelectList(ViewBag.DcrTotalLeafList, "Value", "Name"), new { @class = "form-control", @id = "ddlTotalLeaf" + i.ToString() })
+                                            <i></i>
+                                            @Html.ValidationMessageFor(m => Model[i].Total)
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model[i].PageSize, new { @class = "form-control size-sm-2", id = "txtPageSize" + i.ToString(), @Value = "50" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model[i].PageSize)
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model[i].LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control", @id = "ddlLocation" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model[i].LocationId)
+                                </td>
+                                <td>
+                                    <button type="button" id="btnAdd" onclick="return AddRow(this.id)" class="btn btn-primary btn-xs dt-edit btn-ripple"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                                    <button type="button" id="btnRemove" onclick="return RemoveRow(this)" class="btn btn-danger btn-xs dt-delete btn-ripple"><span class="glyphicon glyphicon-trash"></span></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+
+}
+<script>
+
+
+    //function AddRow() {
+    //    AddTableRow('dtDcr', true);
+    //    Init();
+    //}
+
+    //function RemoveRow(btn) {
+    //    RemoveTableRow($(btn), true);
+    //}
+
+    //function InitTable() {
+    //    ManageTableAddRemove('dtDcr', true);
+    //}
+
+    var documentTypeList = [];
+    $(document).ready(function () {
+        $('#dtDcr tr:last').attr('data-row-id', '0');
+        SetPageLoad('DCR', 'Add', '', 'Go To List', '@Url.Action("InsertDumptcoDcr")');
+        documentTypeList = jQuery.parseJSON('@Html.Raw(ViewBag.DocumentTypeDetails)');
+        //InitTable();
+        //Init();
+
+        InitGrid('dtDcr', false, 8, Init);
+
+        $('#btnSubmit').click(ValidateOnSubmit);
+    });
+
+    function ValidateOnSubmit() {
+        $('[id*="txtBookCode"]').each(function () {
+            var txtBookCode = $(this);
+            var ddlDocumentType = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'ddlDocumentType'));
+            var ddlTotalLeaf = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'ddlTotalLeaf'));
+            var txtSeriesFrom = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'txtSeriesFrom'));
+            var txtPageSize = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'txtPageSize'));
+            var ddlLocation = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'ddlLocation'));
+            var ddlBusinessType = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'ddlBusinessType'));
+
+            var isValid = IsFormValid($('form:eq(0)'), [ddlDocumentType.attr('id'), txtBookCode.attr('id'), txtSeriesFrom.attr('id'), txtPageSize.attr('id'), ddlLocation.attr('id')]);
+            if (isValid) {
+                if (!CheckValidBookCode(txtBookCode, ddlDocumentType)) isValid = false;
+                if (!CheckValidSeriesFrom(txtSeriesFrom, ddlTotalLeaf, ddlDocumentType)) isValid = false;
+            }
+            else {
+                return false;
+            }
+
+        });
+    }
+
+    function Init() {
+        $('[id*="txtBookCode"]').each(function () {
+            var txtBookCode = $(this);
+            var ddlCompany = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'ddlCompany'));
+            var ddlDocumentType = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'ddlDocumentType'));
+            var txtSeriesFrom = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'txtSeriesFrom'));
+            var ddlBusinessType = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'ddlBusinessType'));
+            var lblBusinessType = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'lblBusinessType'));
+            var txtPageSize = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'txtPageSize'));
+            var ddlTotalLeaf = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'ddlTotalLeaf'));
+            var hdnIsBusinessTypeWise = $('#' + txtBookCode.attr('id').replace('txtBookCode', 'hdnIsBusinessTypeWise'));
+
+            ResetBusinessType(ddlDocumentType, ddlBusinessType, lblBusinessType, hdnIsBusinessTypeWise);
+            ddlCompany.change(function () { return CheckValidSeriesFrom(txtSeriesFrom, ddlTotalLeaf, ddlDocumentType); });
+            txtBookCode.blur(function () { return CheckValidBookCode(txtBookCode, ddlDocumentType); });
+            ddlTotalLeaf.blur(function () { return CheckValidPageSize(txtPageSize, ddlTotalLeaf); });
+            txtPageSize.blur(function () { return CheckValidPageSize(txtPageSize, ddlTotalLeaf); });
+            ddlTotalLeaf.change(function () { return ResetPageSize(txtPageSize, ddlTotalLeaf); }).change();
+            txtSeriesFrom.blur(function () { return CheckValidSeriesFrom(txtSeriesFrom, ddlTotalLeaf, ddlDocumentType); });
+            ddlTotalLeaf.change(function () { return CheckValidSeriesFrom(txtSeriesFrom, ddlTotalLeaf, ddlDocumentType); });
+            ddlDocumentType.change(function () { return ResetBusinessType(ddlDocumentType, ddlBusinessType, lblBusinessType, hdnIsBusinessTypeWise); });
+            ddlDocumentType.change(function () { return CheckValidSeriesFrom(txtSeriesFrom, ddlTotalLeaf, ddlDocumentType); });
+            ddlDocumentType.change();
+        });
+    }
+
+    function CheckValidPageSize(txtPageSize, ddlTotalLeaf) {
+        if (txtPageSize.val() == "")
+            ResetPageSize(txtPageSize, ddlTotalLeaf);
+
+        var pageSize = parseInt(txtPageSize.val());
+        //if (pageSize < 10) {
+        //    ShowMessage('Page Size should not be less than 10');
+        //    ResetPageSize(txtPageSize, ddlTotalLeaf);
+        //    //txtPageSize.focus();
+        //}
+        if (pageSize > parseInt(ddlTotalLeaf.val())) {
+            ShowMessage('Page Size should not be greater than ' + ddlTotalLeaf.val());
+            ResetPageSize(txtPageSize, ddlTotalLeaf);
+            //txtPageSize.focus();
+        }
+        return false;
+    }
+
+    function ResetBusinessType(ddlDocumentType, ddlBusinessType, lblBusinessType, hdnIsBusinessTypeWise) {
+        var useBusinessType = false;
+        for (var i = 0; i < documentTypeList.length; i++) {
+            if (documentTypeList[i].DocumentTypeId == ddlDocumentType.val()) {
+                useBusinessType = documentTypeList[i].UseBusinessTypeWiseDcr;
+
+                if (useBusinessType) {
+                    lblBusinessType.hide();
+                    ddlBusinessType.rules('add', { required: true });
+                    hdnIsBusinessTypeWise.val(true);
+                    ShowHideDropDownValue(ddlBusinessType, false);
+                    ResetDropDownValue(ddlBusinessType, 0, '');
+                }
+                else {
+                    lblBusinessType.text('NA').show();
+                    ddlBusinessType.rules('remove');
+                    hdnIsBusinessTypeWise.val(false);
+                    ShowHideDropDownValue(ddlBusinessType, true);
+                    ResetDropDownValue(ddlBusinessType, '', 0);
+                }
+            }
+            else {
+                lblBusinessType.text('NA').show();
+                ddlBusinessType.rules('remove');
+                hdnIsBusinessTypeWise.val(false);
+                ShowHideDropDownValue(ddlBusinessType, true);
+                ResetDropDownValue(ddlBusinessType, '', 0);
+            }
+        }
+
+    }
+
+    function ResetPageSize(txtPageSize, ddlTotalLeaf) {
+        txtPageSize.val(ddlTotalLeaf.val());
+        return false;
+    }
+
+    function CheckValidBookCode(txtBookCode, ddlDocumentType) {
+        txtBookCode.val(txtBookCode.val().trim().toUpperCase());
+        if (txtBookCode.val() != "" && ddlDocumentType.val() != "") {
+            if (!CheckDuplicateInTable('dtDcr', 'txtBookCode', 'Book Code', txtBookCode)) return false;
+            var requestData = { documentTypeId: ddlDocumentType.val(), bookCode: txtBookCode.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("IsBookCodeAvailable")', JSON.stringify(requestData), function (result) {
+                if (!result) {
+                    ShowMessage('Book Code is already exist');
+                    txtBookCode.val('');
+                    txtBookCode.focus();
+                }
+            }, ErrorFunction, false);
+            return true;
+        }
+    }
+
+    function CheckValidSeriesFrom(txtSeriesFrom, ddlTotalLeaf, ddlDocumentType) {
+        txtSeriesFrom.val(txtSeriesFrom.val().trim().toUpperCase());
+        if (txtSeriesFrom.val() != "" && ddlTotalLeaf.val() != "" && ddlDocumentType.val() != "") {
+            var dcrCharacterLength = 0, dcrLength = 7, charRequired = false;
+            for (var i = 0; i < documentTypeList.length; i++) {
+                if (documentTypeList[i].DocumentTypeId == ddlDocumentType.val()) {
+                    dcrCharacterLength = documentTypeList[i].DcrCharacterLength;
+                    dcrLength = documentTypeList[i].DcrLength;
+                    charRequired = documentTypeList[i].UseCharacter;
+                }
+            }
+
+            var pattern = "";
+            if (dcrCharacterLength > 0)
+                pattern = "^" + (charRequired ? "[A-Z]" : "[A-Z0-9]") + "{" + dcrCharacterLength + "}";
+            pattern += "\[0-9]{0," + (dcrLength - dcrCharacterLength) + "}$";
+
+            var regex = new RegExp(pattern);
+            if (!regex.test(txtSeriesFrom.val())) {
+                ShowMessage('Invalid Series From');
+                txtSeriesFrom.val('');
+                txtSeriesFrom.focus();
+                return false;
+            }
+            
+            
+            if (parseInt(txtSeriesFrom.val().trim().length) != 7 && ddlDocumentType.val() == 1) {
+                ShowMessage('Series From length must be 7');
+                txtSeriesFrom.val('');
+                txtSeriesFrom.focus();
+                return false;
+            }
+            
+            if (!CheckDuplicateInTable('dtDcr', 'txtSeriesFrom', 'Series From', txtSeriesFrom)) return false;
+            if (!CheckDuplicateRangeInTable('dtDcr', 'txtSeriesFrom', 'ddlTotalLeaf', 'Series From', txtSeriesFrom, ddlTotalLeaf)) return false;
+            var requestData = { documentTypeId: ddlDocumentType.val(), seriesFrom: txtSeriesFrom.val(), totalLeaf: ddlTotalLeaf.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("IsSeriesFromAvailable")', JSON.stringify(requestData), function (result) {
+                if (!result) {
+                    ShowMessage('Series From is already exist');
+                    txtSeriesFrom.val('');
+                    txtSeriesFrom.focus();
+                }
+            }, ErrorFunction, false);
+        }
+        return true;
+    }
+</script>
+
+
+

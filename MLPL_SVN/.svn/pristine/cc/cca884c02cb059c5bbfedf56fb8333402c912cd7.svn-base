@@ -1,0 +1,81 @@
+﻿@using CodeLock.Models
+@model ThcStockUpdateCancellation
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    baseUrl = '@Url.Action("", "Thc")';
+    docketNomenclature = '@SessionUtility.DocketNomenClature';
+    currentDate = '@DateTime.Now';
+    dateTimeFormat = '@ConfigHelper.JsDateFormat' + ' ' + '@ConfigHelper.TimeFormat';
+
+</script>
+<script src="~/Areas/Operation/Views/Thc/ThcStockUpdateCancellation.js?version=@DateTime.Now.Ticks"></script>
+
+<div class="row" id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("ThcStockUpdateCancellation", "Thc", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.HiddenFor(model => model.ThcId, new { @id = "hdnThcId" })
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label("Thc Date", new { @class = "label" })
+                            </div>
+                            <div id="drThcDate"></div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ThcNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ThcNo, new { @class = "form-control", @id = "txtThcNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                @Html.Label("(seperated by comma if multiple)")
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtThcStockUpdateDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CancelDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.CancelDate), IsDateOnly = false, IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CancelReason, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.CancelReason, new { @class = "form-control", @id = "txtCancelReason" })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

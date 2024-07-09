@@ -1,0 +1,164 @@
+﻿@model CodeLock.Models.GstRegistration
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Gst List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Index", "Gst", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.GstId, new { id = "hdnGstId" })
+    @Html.HiddenFor(model => model.OwnerType, new { @id = "hdnOwnerTypeId" })
+    @Html.HiddenFor(model => model.OwnerId, new { @id = "hdnOwner" })
+    <div class="widget-wrap">
+        <div class="page-separator"><span class="page-separator" id="spnMassage"></span></div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OwnerCode, new { @class = "label", @id = "lblOwnerCode" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.OwnerId, new { @id = "hdnOwnerId" })
+                        @Html.HiddenFor(model => model.OwnerType, new { @id = "hdnOwnerType" })
+                        @Html.TextBoxFor(model => model.OwnerCode, null, new { @class = "form-control", @id = "txtOwnerCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.OwnerCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OwnerName, new { @class = "label", @id = "lblOwnerNameHeader" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.OwnerName, " ", new { @class = "label-bold", @id = "lblOwnerName" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <div class="align-right">
+                    @Html.Label("btnsubmit", " ", new { @class = "label" })
+                    <div class="clearfix">
+                        <button type="submit" class="btn btn-primary">Add New</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget-wrap material-table-widget">
+            <table id="dtDetails"></table>
+        </div>
+    </div>
+
+}
+
+<script>
+    var companyMasterUrl, customerMasterUrl, vendorMasterUrl;
+    var txtOwnerCode, hdnOwnerId, hdnOwnerType, lblOwnerName, lblOwnerCode, spnMassage, hdnOwnerTypeId, hdnOwner;
+    $(document).ready(function () {
+        InitObjects();
+        OnPageLoad();
+    });
+
+    function InitObjects() {
+        hdnOwnerId = $('#hdnOwnerId'); hdnOwnerType = $('#hdnOwnerType'); txtOwnerCode = $('#txtOwnerCode'); lblOwnerName = $('#lblOwnerName'); lblOwnerNameHeader = $('#lblOwnerNameHeader');
+        lblOwnerCode = $('#lblOwnerCode'); spnMassage = $('#spnMassage'); hdnOwnerTypeId = $('#hdnOwnerTypeId'); hdnOwner = $('#hdnOwner');
+        companyMasterUrl = '@Url.Action("", "Company", new { Area = "Master" })';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        dtDetails = LoadDataTable('dtDetails', true, true, true, null, null, [],
+            [
+                { title: '@Html.DisplayNameFor(model => model.StateName)', data: "StateName" },
+                { title: '@Html.DisplayNameFor(model => model.Address)', data: "Address" },
+                { title: '@Html.DisplayNameFor(model => model.CityName)', data: "CityName" },
+                { title: '@Html.DisplayNameFor(model => model.ProvisionalId)', data: "ProvisionalId" },
+                { title: '@Html.DisplayNameFor(model => model.GstType)', data: "GstType" },
+                { title: '@Html.DisplayNameFor(model => model.GstTinNo)', data: "GstTinNo" },
+                { title: '@Html.DisplayNameFor(model => model.PanNo)', data: "PanNo" },
+                { title: "Edit", data: "Edit" }
+            ]);
+    }
+
+    function OnPageLoad() {
+        if (hdnOwnerType.val() == 1) {
+            SetPageLoad('Company GST', 'Registration', 'txtOwnerCode', '', '');
+            lblOwnerCode.text("Company");
+            lblOwnerNameHeader.text("Company Name");
+            spnMassage.text('Company GST Registration');
+            RemoveRequired(txtOwnerCode);
+            AddRequired(txtOwnerCode, "Please enter Company");
+            CompanyAutoComplete('txtOwnerCode', 'hdnOwnerId');
+            txtOwnerCode.blur(function () { return IsCompanyCodeExist(txtOwnerCode, hdnOwnerId, lblOwnerName); });
+        }
+        else if (hdnOwnerType.val() == 3) {
+            SetPageLoad('Customer GST', 'Registration', 'txtOwnerCode', '', '');
+            lblOwnerCode.text("Customer");
+            lblOwnerNameHeader.text("Customer Name");
+            spnMassage.text('Customer GST Registration');
+            RemoveRequired(txtOwnerCode);
+            AddRequired(txtOwnerCode, "Please enter Customer");
+            CustomerAutoComplete('txtOwnerCode', 'hdnOwnerId');
+            txtOwnerCode.blur(function () {
+                return IsCustomerCodeExist(txtOwnerCode, hdnOwnerId, lblOwnerName);
+            });
+
+        }
+        else if (hdnOwnerType.val() == 5) {
+            SetPageLoad('Vendor GST', 'Registration', 'txtOwnerCode', '', '');
+            lblOwnerCode.text("Vendor");
+            lblOwnerNameHeader.text("Vendor Name");
+            spnMassage.text('Vendor GST Registration');
+            RemoveRequired(txtOwnerCode);
+            AddRequired(txtOwnerCode, "Please enter Vendor");
+            VendorAutoComplete('txtOwnerCode', 'hdnOwnerId');
+            txtOwnerCode.blur(function () {
+                return IsVendorCodeExist(txtOwnerCode, hdnOwnerId, lblOwnerName);
+            });
+        }
+        txtOwnerCode.blur(function () { OnOwnerCodeChange(); });
+    }
+
+    function OnOwnerCodeChange() {
+        if (txtOwnerCode.val() != "") {
+            hdnOwnerTypeId.val(hdnOwnerType.val());
+            hdnOwner.val(hdnOwnerId.val());
+            var requestData = { ownerType: hdnOwnerTypeId.val(), ownerId: hdnOwner.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetGstRegistrationByOwnerId")', JSON.stringify(requestData), OnGstRegistrationDetailSuccess, ErrorFunction, false);
+        }
+    }
+
+    function OnGstRegistrationDetailSuccess(responseData) {
+        dtDetails.fnClearTable()
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.StateName =
+                            "<input type='hidden' value='" + item.StateId + "' id='hdnState" + i + "'/>" + item.StateName;
+                item.Edit = "<a href='@Url.Action("Update")/" + item.GstId +"' class='btn btn-default btn-sm m-user-edit'>" +
+                                '<span class="zmdi zmdi-edit"></span>' +
+                            '</a>';
+            });
+            dtDetails.fnAddData(responseData);
+        }
+    }
+
+    function GoToEdit(gstId) {
+        var requestData = { gstId: gstId };
+        AjaxRequestWithPostAndJson('@Url.Action("Update")?OwnerType=' + hdnOwnerType.val(), JSON.stringify(requestData), GetDetailsSuccess, ErrorFunction, false);
+    }
+
+    function GetDetailsSuccess(responseData) {
+        if (responseData != null) {
+            $('#btnSubmit').val(responseData.GstId == 0 ? 'Create' : 'Save');
+            hdnGstId.val(responseData.GstId);
+            hdnOwnerType.val(responseData.OwnerType);
+            hdnOwnerId.val(responseData.OwnerId);
+            hdnStateId.val(responseData.StateId);
+            txtStateName.val(responseData.StateName);
+            hdnCityId.val(responseData.CityId);
+            txtCityName.val(responseData.CityName);
+            txtAddress.val(responseData.Address);
+            txtGstTinNo.val(responseData.GstTinNo);
+            txtPanNo.val(responseData.PanNo);
+            txtProvisionalId.val(responseData.ProvisionalId);
+            ddlRegistrationType.val(responseData.RegistrationType);
+            txtPincode.val(responseData.Pincode)
+            GetGstTypeByStateId(hdnStateId, lblGstType);
+        }
+    }
+</script>

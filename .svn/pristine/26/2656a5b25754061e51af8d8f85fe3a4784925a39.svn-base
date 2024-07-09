@@ -1,0 +1,65 @@
+﻿@model CodeLock.Models.MasterTyrePattern
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Employee Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "TyrePattern", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.TyrePatternId)
+    @Html.HiddenFor(model => model.TyrePatternId)
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TyrePatternCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.TyrePatternCode, new { @class = "form-control", @id = "txtTyrePatternCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TyrePatternCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TyrePatternDescription, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.TyrePatternDescription, new { @class = "form-control", @id = "txtTyrePatternDescription" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TyrePatternDescription)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PositionAllowedId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.PositionAllowedId, new SelectList(ViewBag.PositionAllowedDescription, "Value", "Name"), "Select Positon", new { @class = "form-control", @id = "positionAllowed" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PositionAllowedId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+
+        SetPageLoad('TyrePattern', 'Update', 'txtTyrePatternCode', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.TyrePatternId })');
+    });
+
+
+</script>

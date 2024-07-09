@@ -1,0 +1,347 @@
+﻿@model CodeLock.Models.Deps
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        thcUrl = '@Url.Action("", "Thc", new { Area = "Operation" })';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Operation/Views/Thc/Deps.js")"></script>
+<div class="row" id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Deps", "Thc", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @novalidate = "novalidate", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(SessionUtility.DocketNomenClature + " No", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(m => m.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.DocketNo)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(SessionUtility.DocketNomenClature + " No", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblDocketNo", @class = "label-bold" })
+                                    @Html.HiddenFor(m => m.DocketId, new { @id = "hdnDocketId" })
+                                    @Html.HiddenFor(m => m.DocketSuffix, new { @id = "hdnDocketSuffix" })
+                                    @Html.HiddenFor(m => m.ThcId, new { @id = "hdnThcId" })
+                                    @Html.HiddenFor(m => m.ManifestId, new { @id = "hdnManifestId" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(SessionUtility.DocketNomenClature + " Date", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblDocketDate", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(SessionUtility.DocketNomenClature + " Status", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblDocketStatus", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.FromLocation, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblFromLocation", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ToLocation, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @id = "lblToLocation", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Packages, new { @class = "label" })
+                                @Html.TextBoxFor(m => m.Packages, "0", new { @Class = "textlabel label-bold form-control numeric", @id = "txtPackages" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ActualWeight, new { @class = "label" })
+                                @Html.TextBoxFor(m => m.ActualWeight, "0", new { @Class = "textlabel label-bold form-control numeric3", @id = "txtActualWeight" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ArrivalPackages, new { @class = "label" })
+                                @Html.TextBoxFor(m => m.ArrivalPackages, "0", new { @Class = "textlabel label-bold form-control numeric", @id = "txtArrivalPackages" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ArrivalWeight, new { @class = "label" })
+                                @Html.TextBoxFor(m => m.ArrivalWeight, "0", new { @Class = "textlabel label-bold form-control numeric3", @id = "txtArrivalWeight" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">DEPS Details</div>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.IsShort, new { @class = "label" })
+                                <div class="clearfix">
+                                    <label class="checkbox">
+                                        @Html.CheckBoxFor(m => m.IsShort, new { @tabindex = "0", @id = "chkIsShort" })<i></i>
+                                        @Html.LabelFor(m => m.IsShort, " ", new { @class = "label", @for = "chkIsShort" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ShortPackages, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(m => m.ShortPackages, new { @class = "form-control numeric", @id = "txtShortPackages" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.ShortPackages)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ShortPackagesReasonId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.ShortPackagesReasonId, new SelectList(ViewBag.ShortReasons, "Value", "Name"), "Select Package Condition", new { @class = "form-control", @id = "ddlShortPackagesReasonId", @placeholder = "Select Short Reason List" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(m => m.ShortPackagesReasonId)
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ShortRemark, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(m => m.ShortRemark, new { @class = "form-control ", @id = "txtShortRemark" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.ShortRemark)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="unit">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.ShortDocumentName, new { @class = "label" })
+                                    <div class="input prepend-big-btn">
+                                        <label class="icon-right" for="prepend-big-btn">
+                                            <i class="fa fa-download"></i>
+                                        </label>
+                                        <div class="file-button">
+                                            Browse
+                                            @Html.TextBoxFor(m => Model.ShortDocumentAttachment, null, new { @class = "form-control", @id = "fuShortDocumentAttachment", @type = "file" })
+                                        </div>
+                                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.IsPilfer, new { @class = "label" })
+                                <div class="form-group">
+                                    <label class="checkbox">
+                                        @Html.CheckBoxFor(m => m.IsPilfer, new { @tabindex = "0", @id = "chkIsPilfer" })<i></i>
+                                        @Html.LabelFor(m => m.IsPilfer, " ", new { @class = "label", @for = "chkIsPilfer" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.PilferPackages, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(m => m.PilferPackages, new { @class = "form-control numeric", @id = "txtPilferPackages" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.PilferPackages)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.PilferPackagesReasonId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.PilferPackagesReasonId, new SelectList(ViewBag.PilferReasons, "Value", "Name"), "Select Package Condition", new { @class = "form-control", @id = "ddlPilferPackagesReasonId", @placeholder = "Select Pilfer Reason List" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(m => m.PilferPackagesReasonId)
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.PilferRemark, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(m => m.PilferRemark, new { @class = "form-control", @id = "txtPilferRemark" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.PilferRemark)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="unit">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.PilferDocumentName, new { @class = "label" })
+                                    <div class="input prepend-big-btn">
+                                        <label class="icon-right" for="prepend-big-btn">
+                                            <i class="fa fa-download"></i>
+                                        </label>
+                                        <div class="file-button">
+                                            Browse
+                                            @Html.TextBoxFor(m => Model.PilferDocumentAttachment, null, new { @class = "form-control", @id = "fuPilferDocumentAttachment", @type = "file" })
+                                        </div>
+                                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.IsDamage, new { @class = "label" })
+                                <div class="clearfix">
+                                    <label class="checkbox">
+                                        @Html.CheckBoxFor(m => m.IsDamage, new { @tabindex = "0", @id = "chkIsDamage" })<i></i>
+                                        @Html.LabelFor(m => m.IsDamage, " ", new { @class = "label", @for = "chkIsDamage" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.DamagePackages, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(m => m.DamagePackages, new { @class = "form-control numeric", @id = "txtDamagePackages" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.DamagePackages)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.DamagePackagesReasonId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.DamagePackagesReasonId, new SelectList(ViewBag.DamageReasons, "Value", "Name"), "Select Package Condition", new { @class = "form-control", @id = "ddlDamagePackagesReasonId", @placeholder = "Select Damage Reason List" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(m => m.DamagePackagesReasonId)
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.DamageRemark, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(m => m.DamageRemark, new { @class = "form-control ", @id = "txtDamageRemark" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.DamageRemark)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="unit">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.DamageDocumentName, new { @class = "label" })
+                                    <div class="input prepend-big-btn">
+                                        <label class="icon-right" for="prepend-big-btn">
+                                            <i class="fa fa-download"></i>
+                                        </label>
+                                        <div class="file-button">
+                                            Browse
+                                            @Html.TextBoxFor(m => Model.DamageDocumentAttachment, null, new { @class = "form-control", @id = "fuDamageDocumentAttachment", @type = "file" })
+                                        </div>
+                                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.IsReject, new { @class = "label" })
+                                <div class="clearfix">
+                                    <label class="checkbox">
+                                        @Html.CheckBoxFor(m => m.IsReject, new { @tabindex = "0", @id = "chkIsReject" })<i></i>
+                                        @Html.LabelFor(m => m.IsReject, " ", new { @class = "label", @for = "chkIsReject" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.RejectPackages, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(m => m.RejectPackages, new { @class = "form-control numeric", @id = "txtRejectPackages" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.RejectPackages)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.RejectPackagesReasonId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.RejectPackagesReasonId, new SelectList(ViewBag.RejectReasons, "Value", "Name"), "Select Package Condition", new { @class = "form-control", @id = "ddlRejectPackagesReasonId", @placeholder = "Select Reject Reason List" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(m => m.RejectPackagesReasonId)
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.RejectRemark, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(m => m.RejectRemark, new { @class = "form-control", @id = "txtRejectRemark" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.RejectRemark)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="unit">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.RejectDocumentName, new { @class = "label" })
+                                    <div class="input prepend-big-btn">
+                                        <label class="icon-right" for="prepend-big-btn">
+                                            <i class="fa fa-download"></i>
+                                        </label>
+                                        <div class="file-button">
+                                            Browse
+                                            @Html.TextBoxFor(m => Model.RejectDocumentAttachment, null, new { @class = "form-control", @id = "fuRejectDocumentAttachment", @type = "file" })
+                                        </div>
+                                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+

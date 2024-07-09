@@ -1,0 +1,115 @@
+﻿@model CodeLock.Models.MasterJobOrderTaskType
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "JobOrderTaskType", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.TaskTypeId)
+    @Html.HiddenFor(m => m.TaskTypeId, new { @id = "hdnTaskTypeId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TaskType, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.TaskType, new { @class = "form-control text-uppercase" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TaskType)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AccountCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.AccountId, new { @id = "hdnAccountId" })
+                        @Html.TextBoxFor(model => model.AccountCode, null, new { @class = "form-control text-complete text-complete-html", @id = "txtAccountCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AccountCode)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("", " ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label("", " ", new { @class = "label-bold", @id = "lblAccountDescription" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0"></button>
+        </div>
+    </div>
+}
+
+<script>
+    var isAdd = true;
+    $(document).ready(function () {
+        hdnTaskTypeId = $('#hdnTaskTypeId');
+        hdnAccountId = $('#hdnAccountId');
+        txtAccountCode = $('#txtAccountCode');
+        lblAccountDescription = $('#lblAccountDescription');
+        accountMasterUrl = '@Url.Action("", "Account", new { Area = "Master" })';
+        btnSubmit = $('#btnSubmit');
+
+        if (hdnTaskTypeId.val() != 0)
+            isAdd = false;
+
+        if (isAdd == false)
+            SetPageLoad('Task Type', 'Update', 'TaskType', 'Go To List', '@Url.Action("Index")');
+        else
+            SetPageLoad('Task Type', 'Create', 'TaskType', 'Go To List', '@Url.Action("Index")');
+
+        btnSubmit.html((isAdd ? 'Create' : 'Update'));
+        Account.AccountAutoComplete('txtAccountCode', 'hdnAccountId');
+        Account.CheckValidAccountCode(txtAccountCode, hdnAccountId, lblAccountDescription);
+        txtAccountCode.blur(function () {
+            return Account.CheckValidAccountCode(txtAccountCode, hdnAccountId, lblAccountDescription);
+        });
+    });
+
+    var Account = {
+        CheckValidAccountCode: function (txtAccountCode, hdnAccountId, lblAccountDescription) {
+            if (txtAccountCode.val() != '') {
+                var requestData = { accountCode: txtAccountCode.val().split(':')[0].trim() };
+                AjaxRequestWithPostAndJson(accountMasterUrl + '/IsAccountCodeExist', JSON.stringify(requestData), function (result) {
+                    if (IsObjectNullOrEmpty(result)) {
+                        ShowMessage('Account is not exist');
+                        txtAccountCode.focus();
+                        txtAccountCode.val('');
+                        hdnAccountId.val('');
+                        lblAccountDescription.text('');
+                    }
+                    else {
+                        hdnAccountId.val(result.Value);
+                        txtAccountCode.val(result.Name);
+                        lblAccountDescription.text(result.Description);
+                    }
+                }, ErrorFunction, false);
+            }
+            else {
+                hdnAccountId.val('');
+                lblAccountDescription.text('');
+            }
+            return false;
+        },
+        AccountAutoComplete: function (txtAccountCodeId, hdnAccountId) {
+            AutoComplete(txtAccountCodeId, accountMasterUrl + '/GetAccountAutoCompleteList', 'accountCode', 'l', 'l', 'l', 'd', '', hdnAccountId, '', '', true, '');
+        }
+    }
+</script>

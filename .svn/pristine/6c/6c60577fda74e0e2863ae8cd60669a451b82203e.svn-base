@@ -1,0 +1,104 @@
+﻿@model CodeLock.Models.DriverSettlement
+@{
+    ViewBag.Title = "DriverSettlement";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label("Tripsheet Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drTripsheetDate"></div>
+                    </div>
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DriverName, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnDriverId" })
+
+
+                            @Html.TextBoxFor(model => model.DriverName, null, new { @class = "form-control", @id = "txtDriverName" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-separator">
+                OR
+            </div>
+
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.TripsheetNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(m => m.TripsheetNo, new { @class = "form-control", @id = "txtTripsheetNo" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(" ", new { @class = "label" })
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.Label(" ", new { @class = "label-bold", @id = "labelName" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script>
+    var ddlTripsheetDateType, drTripsheetDate, ddlTripsheetStatus, txtTripsheetNo;
+
+    $(document).ready(function () {
+        SetPageLoad('Driver Settlement', 'Register', '', '', '');
+
+        drTripsheetDate = InitDateRange('drTripsheetDate', DateRange.LastWeek);
+        hdnDriverId = $('#hdnDriverId');
+        txtTripsheetNo = $('#txtTripsheetNo');
+        txtDriverName = $('#txtDriverName');
+
+        DriverAutoComplete('txtDriverName', 'hdnDriverId');
+        txtDriverName.blur(function () { return IsDriverNameExist(txtDriverName, hdnDriverId); });
+
+        btnSubmit = $('#btnSubmit');
+
+        btnSubmit.click(ViewReport);
+
+    });
+
+    function ViewReport() {
+        var prmList = [
+                       { Name: "TripsheetId", Value: txtTripsheetNo.val() == '' ? ' ' : txtTripsheetNo.val() },
+                       { Name: "TripsheetDateType", Value: 1},
+                       { Name: "FromDate", Value: drTripsheetDate.startDate },
+                       { Name: "ToDate", Value: drTripsheetDate.endDate },
+                       { Name: "DriverId", Value: txtDriverName.val() == '' ? ' ' : txtDriverName.val() }
+                  ];
+        var reportInfo = { PrmList: prmList, Name: 'DriverSettlementRegister', Description: 'Driver Settlement Register' };
+        return ShowReport(reportInfo);
+    }
+
+</script>

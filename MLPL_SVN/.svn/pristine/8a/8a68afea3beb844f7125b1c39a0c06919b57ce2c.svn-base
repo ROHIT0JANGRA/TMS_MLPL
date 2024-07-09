@@ -1,0 +1,248 @@
+﻿@model CodeLock.Models.MasterServiceVehicle
+@using Secure_Coding.MvcSecurityExtensions;
+@using CodeLock.Models
+@{
+    ViewBag.Title = "Vehicle Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "veichleservicelist", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @*@Html.Hidden("VehicleId", 0);
+    @Html.AntiModelInjectionFor(m => m.VehicleId)*@
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VehicleId, new SelectList(ViewBag.VehicleList, "Value", "Name"), "Select Vehicle", new { @class = "form-control", @id = "ddlVehicleId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleId)
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CurrentServiceKM, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CurrentServiceKM, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CurrentServiceKM)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    
+                    <div class="form-group">
+                        @*@Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterServiceVehicle.CurrentServiceDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.CurrentServiceDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })*@
+
+                        @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "CurrentServiceDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.CurrentServiceDate), IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true, IsValidateFinYear = false })
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.NextServiceKM, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.NextServiceKM, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.NextServiceKM)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Reminder, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Reminder, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Reminder)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Remarks)
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Servicetype, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.Servicetype, new { @id = "hdnServiceTypeId" })
+                        @Html.DropDownList("ServiceType", new SelectList(ViewBag.ServiceTypeList, "Value", "Text"), new { @class = "form-control", @id = "ddlServiceType" })
+                        @Html.ValidationMessageFor(model => model.Servicetype)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AMC, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.AMC, new { @id = "hdnLocation" })
+                        @Html.DropDownListFor(model => model.AMC, new SelectList(ViewBag.AMCTypeList, "Value", "Text"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlAMCType", @placeholder = "Select AMC/Non AMC" })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AMC)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div clas s="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <div class="input">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                    </div>
+                    @Html.ValidationMessageFor(model => model.IsActive)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ServiceCentreType, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.Servicetype, new { @id = "hdnServiceCenterTypeId" })
+                        @Html.DropDownList("ServiceCentreType", new SelectList(ViewBag.ServiceCenterTypeList, "Value", "Text"), new { @class = "form-control", @id = "ddlServiceCenterType" })
+                        @Html.ValidationMessageFor(model => model.ServiceCentreType)
+                    </div>
+                    @*@Html.ValidationMessageFor(model => model.ServiceCentreType)*@
+                </div>
+            </div>
+            <div class="col-sm-4" id=" = divWorkshop">
+                <div class="form-group">
+                    <div class="input">
+                        @Html.LabelFor(model => model.Location, new { @class = "label" })
+                        @*@Html.HiddenFor(model => model.Location, new { @id = "hdnLocation" })*@
+                        @Html.DropDownListFor(model => model.Location, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlLocation", @placeholder = "Select Location" })
+                        @Html.ValidationMessageFor(model => model.Location)
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Location)
+                </div>
+            </div>
+            @*<div class="col-sm-4" id=" = divVendor">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Vendor, new { @class = "label" })
+                <div class="input">
+                    @Html.HiddenFor(model => model.UserTypeMapId, new { @id = "hdnUserTypeMapId" })
+                    @Html.TextBoxFor(model => model.Vendor, null, new { @class = "form-control", @id = "txtUserTypeMapCode" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Workshop)
+            </div>
+        </div>*@
+        <div class="col-sm-4" id=" = divVendor">
+            <div class="form-group">
+                @Html.LabelFor(model => model.VendorCode, new { @class = "label" })
+                <div class="input">
+                    @*@Html.HiddenFor(model => model.VendorCode, new { @id = "hdnVendorId" })*@
+                    @Html.TextBoxFor(model => model.VendorCode,  new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Workshop)
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ServiceCost, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ServiceCost, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ServiceCost)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UploadScannedDocument, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.UploadScannedDocument, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UploadScannedDocument)
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AutomailTo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.AutomailTo, new { @class = "form-control", Style = "text-transform:lowercase" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AutomailTo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AutoMailCCId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.AutoMailCCId, new { @class = "form-control", Style = "text-transform:lowercase" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AutoMailCCId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AutoMailBCCId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.AutoMailBCCId, new { @class = "form-control", Style = "text-transform:lowercase" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AutoMailBCCId)
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-footer">
+        <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+    </div>
+
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vehicle Service Information (KM)', ' ', 'VehicleNo', 'Go To List', '@Url.Action("Index")');
+        //$('#ddlVendorType').change(OnVendorTypeChange);
+        chkIsGpsEnabled = $('#chkIsGpsEnabled');
+        txtGpsDeviceId = $('#txtGpsDeviceId');
+        //chkIsGpsEnabled.change(OnIsGpsEnabledChange);
+        //OnIsGpsEnabledChange();
+        ddlVehicleId = $('#ddlVehicleId');
+        ddlVehicleId.change(function () { return IsVehicleAvailable(ddlVehicleId); });
+        //$('#ddlServiceCenterType').change(OnServiceCenterType);
+        //txtUserTypeMapCode = $('#txtUserTypeMapCode');
+        //txtUserTypeMapCode.blur(function () { return CheckIsValid(txtUserTypeMapCode, hdnUserTypeMapId); });
+        //AutoComplete('txtUserTypeMapCode', '@Url.Action("GetAutoCompleteVendorList", "Vendor")', 'vendorCode', 'l', 'l', 'l', 'd', '', 'hdnUserTypeMapId', '', '');
+    });
+      function IsVehicleAvailable(obj) {
+        //alert('is')
+        if (ddlVehicleId.val() != '') {
+            var requestData = { VehicleId: ddlVehicleId.val()  };
+            AjaxRequestWithPostAndJson('@Url.Action("IsVehicleAvailable")', JSON.stringify(requestData), function (result) {
+                if (result) {
+                    ShowMessage('Vehicle KM Mapping already exists');
+                    obj.val('');
+                    return false;
+                }
+            }, ErrorFunction, false);
+        }
+    }
+</script>
+
+
+
+
+

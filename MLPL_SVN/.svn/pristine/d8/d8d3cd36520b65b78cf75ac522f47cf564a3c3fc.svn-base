@@ -1,0 +1,177 @@
+﻿@model CodeLock.Models.DocketStatus
+@using CodeLock.Models
+@{
+    Layout = null;
+}
+
+<html lang="en">
+<head>
+    <!-- Added by HTTrack -->
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docket Tracking</title>
+
+    <!-- Global stylesheets -->
+    @Styles.Render("~/assets/css")
+    <!-- /global stylesheets -->
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <link type="text/css" rel="stylesheet" href="~/assets/css/font-awesome.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/material-design-iconic-font.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/bootstrap.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/animate.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/layout.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/components.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/widgets.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/plugins.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/pages.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/bootstrap-extend.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/common.css">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/responsive.css">
+
+</head>
+
+<body class="overlay-leftbar">
+    @*<div class="alert alert-danger fade in" role="alert">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            <strong>Error!</strong> A problem has been occurred while submitting your data.
+        </div>*@
+    <!--Topbar Start Here-->
+    <header class="topbar clearfix">
+        <!--Top Search Bar Start Here-->
+        <div class="top-search-bar">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <div class="search-input-addon">
+                            <span class="addon-icon"><i class="zmdi zmdi-search"></i></span>
+                            <input type="text" class="form-control top-search-input" placeholder="Search">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Top Search Bar End Here-->
+        <!--Topbar Left Branding With Logo Start-->
+        <div class="topbar-left pull-left">
+            <div class="clearfix">
+                <ul class="left-branding pull-left clickablemenu ttmenu dark-style menu-color-gradient">
+                    <li><span class="left-toggle-switch"><i class="zmdi zmdi-menu faa-pulse animated"></i></span></li>
+                    <li>
+                        <div class="">
+                            <a href="index.html" title="Admin Template"><img src="~/assets/images/logo.png" alt="logo" width="190" height="60"></a>
+                        </div>
+                    </li>
+                </ul>
+                <!--Mobile Search and Rightbar Toggle-->
+                <ul class="branding-right pull-right">
+                    <li><a href="#" class="btn-mobile-search btn-top-search"><i class="zmdi zmdi-search"></i></a></li>
+                    <li><a href="#" class="btn-mobile-bar"><i class="zmdi zmdi-apps"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <!--Topbar End Here-->
+    <!--Page Container Start Here-->
+    <section class="main-container">
+        <div class="container">
+            <div id="dvPageHeader" class="page-header filled light">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <h2 id="lblPageHeader"> </h2>
+                        <p id="lblPageSubHeader"></p>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="data-align-right">
+                            <div class="tbl-action-toolbar hide">
+                                <ul>
+                                    <li><a id="aNavigation1" class="btn add-row btn-primary" href="#"></a></li>
+                                    <li><a id="aNavigation2" class="btn add-row btn-primary" href="#"></a></li>
+                                    <li><a id="aNavigation3" class="btn add-row btn-primary" href="#"></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @using (Html.BeginForm("IndexDocket", "Home", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+                {
+                    <div class="widget-wrap">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                                        <br />
+                                        <button type="submit" id="btnSubmit" class="btn btn-danger primary-btn">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <!--Footer Start Here -->
+        <footer class="footer-container">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="footer-left">
+                            <span>© @DateTime.Now.Year <a href="">Empower Logics Pvt Ltd.</a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!--Footer End Here -->
+    </section>
+    <!--Page Container End Here-->
+
+    <script src="~/assets/js/lib/jquery.js"></script>
+    <script src="~/assets/js/lib/jquery-migrate.js"></script>
+    <script src="~/assets/js/lib/bootstrap.js"></script>
+    <script src="~/assets/js/lib/jRespond.js"></script>
+    <script src="~/assets/js/lib/hammerjs.js"></script>
+    <script src="~/assets/js/lib/jquery.hammer.js"></script>
+    <script src="~/assets/js/lib/smoothscroll.js"></script>
+    <script src="~/assets/js/lib/smart-resize.js"></script>
+    <script src="~/assets/js/lib/jquery.ui.js"></script>
+
+    <script src="~/assets/js/lib/jquery.validate.js"></script>
+    <script src="~/assets/js/lib/jquery.form.js"></script>
+    <script src="~/assets/js/lib/j-forms.js"></script>
+    <script src="~/assets/js/lib/j-forms-validations.js"></script>
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/assets/js")
+
+    <div id="dvLoader" class="page_loader">
+        @*   <img src="~/assets/images/loader.gif" width="90" height="90" alt="Loading..." style="position: fixed; top: 50%; left: 50%;background-color:transparent" />*@
+    </div>
+    <script>
+        var txtDocketNo, btnSubmit, baseUrl, FlagvalidateDocketNo;
+      $(document).ready(function () {
+          baseUrl = '@Url.Action("", "Home")';
+
+          txtDocketNo = $('#txtDocketNo');
+          btnSubmit = $('#btnSubmit');
+
+          btnSubmit.click(function () {
+
+                if (txtDocketNo.val().length == 0) {
+                    ShowMessage("Docket No can't be blank");
+                    txtDocketNo.focus();
+                    return false;
+                }
+                return true;
+          });
+          txtDocketNo.focus();
+    });
+
+    </script>
+</body>
+
+</html>

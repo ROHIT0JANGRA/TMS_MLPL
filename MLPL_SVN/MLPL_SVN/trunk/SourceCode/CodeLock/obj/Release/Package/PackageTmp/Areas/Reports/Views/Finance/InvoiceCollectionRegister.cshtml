@@ -1,0 +1,117 @@
+﻿@model CodeLock.Models.InvoiceCollectionRegister
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm(new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CompanyId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CompanyId, new SelectList(ViewBag.CompanyList, "Value", "Name"), "Select Company", new { @class = "form-control", @id = "ddlCompanyId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CompanyId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.Document, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.Document, true, new { @id = "rdBill", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.Document, "Bill", new { @for = "rdBill" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.Document, false, new { @id = "rdMR" })
+                            <i></i>
+                            @Html.LabelFor(model => model.Document, "MR", new { @for = "rdMR" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.LocationTypeId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.LocationTypeId, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Generation Location",Value="1"},
+                        new SelectListItem() {Text = "Submission Location",Value="2"},
+                        new SelectListItem() {Text = "Collection Location", Value="3"},}, new { @class = "form-control", @id = "ddlLocationTypeId" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control", @id = "ddlLocationId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.DateTypeId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.DateTypeId, new List<SelectListItem> {
+                        new SelectListItem() {Text = "Generation Date",Value="1"},
+                        new SelectListItem() {Text = "Submission Date",Value="2"},
+                        new SelectListItem() {Text = "Collection Date",Value="3"},
+                        new SelectListItem() {Text = "Cancellation Date", Value="4"},}, new { @class = "form-control", @id = "ddlDateTypeId" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.Label("Select Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drDate"></div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Finance Report', 'Invoice Register', '', '', '');
+        ddlCompanyId = $('#ddlCompanyId');
+        ddlLocationTypeId = $('#ddlLocationTypeId');
+        ddlLocationId = $('#ddlLocationId');
+        ddlToLocationId = $('#ddlToLocationId');
+        ddlTransportModeId = $('#ddlTransportModeId');
+        ddlServiceTypeId = $('#ddlServiceTypeId');
+        ddlBusinessTypeId = $('#ddlBusinessTypeId');
+        ddlPaybasId = $('#ddlPaybasId');
+        ddlDateTypeId = $('#ddlDateTypeId');
+        $('#ddlCompanyId option').eq(0).before($('<option>', { value: 'All', text: 'All' }));
+        ddlCompanyId.setVal(0);
+        $('#ddlPaybasId option').eq(0).before($('<option>', { value: 'All', text: 'All' }));
+        ddlPaybasId.setVal(0);
+        $('#ddlTransportModeId option').eq(0).before($('<option>', { value: 'All', text: 'All' }));
+        ddlTransportModeId.setVal(0);
+        $('#ddlServiceTypeId option').eq(0).before($('<option>', { value: 'All', text: 'All' }));
+        ddlServiceTypeId.setVal(0);
+        $('#ddlBusinessTypeId option').eq(0).before($('<option>', { value: 'All', text: 'All' }));
+        ddlBusinessTypeId.setVal(0);
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    });
+
+    function ViewReport() {
+        var prmList = [{ Name: "FromDate", Value: drDate.startDate }, { Name: "ToDate", Value: drDate.endDate }, { Name: "DateType", Value: ddlDateTypeId.val() }, { Name: "FromLocationType", Value: ddlLocationTypeId.val() }, { Name: "FromLocationId", Value: ddlLocationId.val() }, { Name: "ToLocationId", Value: ddlToLocationId.val() }, { Name: "Paybas", Value: ddlPaybasId.val() }, { Name: "TransportMode", Value: ddlTransportModeId.val() }, { Name: "BusinessType", Value: ddlBusinessTypeId.val() }, { Name: "ServiceType", Value: ddlServiceTypeId.val() }, { Name: "Company", Value: ddlCompanyId.val() }, { Name: "Suffix", Value: $('#rdYes').val() }];
+        var reportInfo = { PrmList: prmList, Name: 'StockSummary', Description: 'Stock Summary' };
+        return ShowReport(reportInfo);
+    }
+</script>
+
+

@@ -1,0 +1,96 @@
+﻿@model CodeLock.Models.SalesRegister
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(model => model.BaseOn, new { @id = "hdnBaseOn" })
+
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label("Select Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "FromLocationId", FieldCaption = "From Location" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                            @Html.TextBoxFor(model => model.CustomerCode, new { @class = "form-control", @id = "txtCustomerCode" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CustomerCode)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomer" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDate, ddlFromLocationId, hdnCustomerId, txtCustomerCode, lblCustomer, btnSubmit;
+
+    $(document).ready(function () {
+        SetPageLoad('Customer Care', 'Report', '', '', '');
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        ddlFromLocationId = $('#ddlFromLocationId');
+        hdnCustomerId = $('#hdnCustomerId');
+        txtCustomerCode = $('#txtCustomerCode');
+        lblCustomer = $('#lblCustomer');
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+        
+        CustomerAutoComplete('txtCustomerCode', 'hdnCustomerId');
+        txtCustomerCode.blur(function () { return IsCustomerCodeExist(txtCustomerCode, hdnCustomerId, lblCustomer); });
+    });
+
+    function ViewReport() {
+        var docketField = '1,2,4,5,6,7,8,9,10,11,12,13,14,20,21,22,23,24,25,26,27,28,63,29,37,40,54,55,56,57,58,59,60,508,518,530,531,532,609,610';
+        try {
+            var prmList = [{ Name: "CompanyId", Value: 1 },
+                { Name: "FromLocationId", Value: ddlFromLocationId.val() },
+                { Name: "ToLocationId", Value: 1 },
+                { Name: "FromDate", Value: drDate.startDate },
+                { Name: "ToDate", Value: drDate.endDate },
+                { Name: "Paybas", Value: "1,2,3,4" },
+                { Name: "TransportMode", Value: "1,2,3,4" },
+                { Name: "ServiceType", Value: 0 },
+                { Name: "LoadType", Value: "1" },
+                { Name: "IsBookedByBa", Value: 'All'},
+                { Name: "BookedById", Value: 0 },
+                { Name: "Status", Value: 0 },
+                { Name: "BusinessType", Value: '0' },
+                { Name: "PickupDeliveryType", Value: "1,2,3,4" },
+                { Name: "CustomerId", Value: hdnCustomerId.val() },
+                { Name: "DocketNo", Value: '0' },
+                { Name: "SortByDocketNo", Value: 1 },
+                { Name: "ColumnList", Value: docketField },
+                { Name: "CustomerDocketNo", Value: '0' },
+                { Name: "ReportType", Value: 3 }];
+            var reportInfo = { PrmList: prmList, Name: 'SalesRegister', Description: 'Sales Register' };
+            ShowReport(reportInfo);
+        } catch (e) { ShowMessage(e.message) }
+        return false;
+    }
+</script>

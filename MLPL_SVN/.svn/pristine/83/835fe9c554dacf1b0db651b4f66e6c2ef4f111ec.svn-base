@@ -1,0 +1,153 @@
+﻿@model CodeLock.Models.Docket
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    THC No./ Pick ID
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNoSearch, new { @class = "form-control", @id = "txtDocketNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StepSelection, new { @class = "label-bold" })
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "1", new { @id = "rdChangeVendorName", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change Vendor Name", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "2", new { @id = "rdChangeVehicleType", disabled = "disabled" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change Vehicle Type (Go to Edit Docket)", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "3", new { @id = "rdChangeFromCityToCity", disabled = "disabled" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change From City -- To City (Go to Edit Docket)", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "4", new { @id = "rdChangeDimension", disabled = "disabled" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change Dimension  (Go to Edit Docket)", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "5", new { @id = "rdChangeWeight", disabled = "disabled" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change Weight (Go to Edit Docket)", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "6", new { @id = "rdChangeAmount", disabled = "disabled" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change Amount (Go to Edit Docket)", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "7", new { @id = "rdChangeVehicleNo" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change Vehicle No.", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "8", new { @id = "rdChangeVendorLRNo" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change Vendor LR No.", new { @class = "label" })
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.StepSelection, "9", new { @id = "rdChangeTHCAmount" })
+                            <i></i>
+                            @Html.LabelFor(model => model.StepSelection, "Change THC Amount", new { @class = "label" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Search</button>
+        </div>
+
+    </div>
+}
+
+<script>
+
+    var selectedStep = "1";
+    var docketId, docketFieldList, txtDocketNo, btnSubmit, isFinancialUpdate = false;
+
+    $(document).ready(function () {
+        $('[id*="rd"]').each(function () { $(this).click(function () { selectedStep = $(this).val(); }); });
+        docketFieldList = JSON.parse('@DisplayName.GetList("Docket")'.replace(/&quot;/g, '"'));
+        SetPageLoad('THC', 'Update', '', '', '');
+        txtDocketNo = $('#txtDocketNo');
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+    });
+
+
+    function OnSubmit() {
+
+        if (txtDocketNo.val() == "") {
+            ShowMessage('THC No./ Pick ID  can not blank');
+            txtDocketNo.focus();
+            return false;
+        }
+
+        if (txtDocketNo.val() != "") {
+            var requestData = { docketNo: txtDocketNo.val(), selectedStep : selectedStep };
+            AjaxRequestWithPostAndJson('@Url.Action("CheckValidDocketNoForUpdate", "Thc")', JSON.stringify(requestData), function (result) {
+
+                if (result.ErrorMessage != "") {
+                    ShowMessage(result.ErrorMessage);
+                    txtDocketNo.focus();
+                    return false;
+                }
+
+                if (result.DocumentId != 0) {
+
+                    var url ="";
+
+                    switch (selectedStep) {
+                        case "1": url = "@Url.Action("ChangeVendorName", "Thc")?ThcId=" + result.DocumentId; break;
+                        case "3": url = "@Url.Action("ChangeFromCityToCity", "Thc")?ThcId=" + result.DocumentId; break;
+                        case "5": url = "@Url.Action("ChangeWeight", "Thc")?ThcId=" + result.DocumentId; break;
+                        case "7": url = "@Url.Action("ChangeVehicleNo", "Thc")?ThcId=" + result.DocumentId; break;
+                        case "8": url = "@Url.Action("ChangeVendorLRNo", "Thc")?ThcId=" + result.DocumentId; break;
+                        case "9": url = "@Url.Action("ChangeTHCAmount", "Thc")?DocumentNo=" + txtDocketNo.val(); break;
+                    }
+                    window.location.href = url;
+                    return false;
+             }
+
+
+                return false;
+            }, ErrorFunction, false);
+        }
+
+        return false;
+    }
+
+</script>
+

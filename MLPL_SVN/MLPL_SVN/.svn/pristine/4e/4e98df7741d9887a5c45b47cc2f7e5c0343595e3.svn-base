@@ -1,0 +1,42 @@
+﻿@model CodeLock.Models.MasterHolidayDayWise
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Index", "HolidayDayWise", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="unit">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.DayOfHoliday, new { @class = "label-bold" })
+                        @for (var i = 0; i < Model.DayOfHoliday.Count(); i++)
+                        {
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(m => m.DayOfHoliday[i].IsActive)
+                                <i></i>
+                                @Html.LabelFor(m => m.DayOfHoliday[i].IsActive, Model.DayOfHoliday[i].CodeDescription, new { @class = "label" })
+                            </label>
+                            @Html.HiddenFor(m => m.DayOfHoliday[i].CodeId)
+                            @Html.HiddenFor(m => m.DayOfHoliday[i].CodeDescription)
+                        }
+                        @Html.ValidationMessageFor(model => model.DayOfHoliday)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Save</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Holiday Day Wise', 'Create', 'DayOfHoliday', '', '');
+    });
+</script>

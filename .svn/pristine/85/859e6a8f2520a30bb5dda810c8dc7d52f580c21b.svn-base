@@ -1,0 +1,69 @@
+﻿@model CodeLock.Models.MasterHsn
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "Hsn", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.HsnId)
+    @Html.HiddenFor(m => m.HsnId, new { @id = "hdnHsnId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.HsnCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.HsnCode, new { @class = "form-control text-uppercase" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.HsnCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.HsnName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.HsnName, new { @class = "form-control text-uppercase" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.HsnName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0"></button>
+        </div>
+    </div>
+}
+
+<script>
+    var isAdd = true;
+    $(document).ready(function () {
+        hdnHsnId = $('#hdnHsnId');
+        btnSubmit = $('#btnSubmit');
+
+        if (hdnHsnId.val() != 0)
+            isAdd = false;
+
+        if (isAdd == false)
+            SetPageLoad('HSN', 'Update', 'HsnCode', 'GoTo List', '@Url.Action("Index")');
+        else
+            SetPageLoad('HSN', 'Create', 'HsnCode', 'GoTo List', '@Url.Action("Index")');
+
+        btnSubmit.html((isAdd ? 'Create' : 'Update'));
+    });
+
+</script>
+
+

@@ -1,0 +1,44 @@
+﻿@using CodeLock.Models
+@model List<VendorDocumentDetail>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="alert alert-success"><h5><span>Document Approved Successfully</span></h5></div>
+    <div class="page-separator">Document List</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <table id="dtDocumentList">
+                <thead>
+                    <tr>
+                        <th width="200px">
+                            Document Type
+                        </th>
+                        <th width="300px">
+                             Document No
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => item.DocumentType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.DocumentNo)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad("Vendor Document Approved", 'Done', '', 'Go To Vendor Document Approval', '@Url.Action("Insert")');
+    });
+</script>

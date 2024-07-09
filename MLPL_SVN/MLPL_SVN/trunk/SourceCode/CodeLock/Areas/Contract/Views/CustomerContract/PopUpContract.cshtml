@@ -1,0 +1,129 @@
+﻿@model CodeLock.Models.CustomerContract
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerContractBasicInfo.ManualContractId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerContractBasicInfo.ManualContractId, new { @class = "form-control", @id = "txtContractId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerContractBasicInfo.ManualContractId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerCode, new { @class = "form-control", @id = "txtCustomerCode" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control", @id = "txtCustomerName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">Submit</button>
+        </div>
+        <div class="overflow-table">
+            <table class="display" id="dtCustomerContract"></table>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSave">Save</button>
+        </div>
+    </div>
+}
+<script>
+    var txtContractId, dtCustomerContract, btnSubmit, txtCustomerCode, txtCustomerName, btnSave;
+    $(document).ready(function () {
+        txtContractId = $('#txtContractId');
+        txtCustomerCode = $('#txtCustomerCode');
+        txtCustomerName = $('#txtCustomerName');
+        btnSubmit = $('#btnSubmit');
+        btnSave = $('#btnSave');
+        btnSave.click(OnSaveButtonClick);
+        btnSubmit.click(OnButtonClick);
+        var hdnContractId = window.opener.$("#hdnContractId");
+        selected = hdnContractId.val().split(',');
+
+        dtCustomerContract = LoadDataTable('dtCustomerContract', false, false, false, null, null, [],
+            [
+                { title: '@Html.DisplayNameFor(model => model.CustomerContractBasicInfo.ManualContractId)', data: "ManualContractId" },
+                { title: '@Html.DisplayNameFor(model => model.CustomerCode)', data: "CustomerCode" },
+                { title: '@Html.DisplayNameFor(model => model.CustomerName)', data: "CustomerName" }
+            ]);
+        SetPageLoad('Customer Contract', 'List');
+    });
+    function OnButtonClick() {
+        if (txtContractId.val() == "" && txtCustomerCode.val() == "" && txtCustomerName.val() == "") {
+            var requestData = {};
+            AjaxRequestWithPostAndJson('@Url.Action("GetDetails")', JSON.stringify(requestData), OnButtonClickSuccess, ErrorFunction, false);
+        }
+        else {
+            var requestData = { ManualContractId: txtContractId.val(), CustomerCode: txtCustomerCode.val(), CustomerName: txtCustomerName.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetDetailsByManualContractId")', JSON.stringify(requestData), OnButtonClickSuccess, ErrorFunction, false);
+        }
+        return false;
+    }
+
+    function OnSaveButtonClick() {
+        try {
+            var strContractId = '';
+            var strManualContractId = '';
+            $("#dtCustomerContract tr:not(:first)").each(function () {
+                var chkContractId = $(this).find('[id*="chkContractId"]');
+                var hdnContractId = $(this).find('[id*="hdnContractId"]');
+                var lblContractId = $(this).find('[id*="lblContractId"]');
+                if (chkContractId.is(':checked')) {
+                    strContractId = strContractId == "" ? hdnContractId.val() : (strContractId + "," + hdnContractId.val());
+                    strManualContractId = strManualContractId == "" ? lblContractId.text() : (strManualContractId + "," + lblContractId.text());
+                }
+            });
+
+            if (window.opener != null && !window.opener.closed) {
+
+                var txtManualContractId = window.opener.$("#txtManualContractId");
+                var hdnContractId = window.opener.$("#hdnContractId");
+                hdnContractId.val(strContractId);
+                txtManualContractId.val(strManualContractId);
+            }
+            window.close();
+        } catch (e) { alert(e.message) }
+        return false;
+    }
+
+    var selected = [];
+    function OnButtonClickSuccess(responseData) {
+        dtCustomerContract.fnClearTable()
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                if ($.inArray(item.ContractId.toString(), selected) != -1)
+                    item.IsActive = true;
+                else
+                    item.IsActive = false;
+                item.ManualContractId =
+                "<label class='checkbox'>" +
+                  "<input type='checkbox' name='IsActive" + i + "' id='chkContractId" + i + "' onclick='SetCheck(this)' value='" + item.IsActive + "'" + (item.IsActive ? "checked" : "") + "/><i></i>  " +
+                   "<input type='hidden' name='ContractId" + i + "' value='" + item.ContractId + "'id='hdnContractId" + i + "' />" +
+                   "<label class='label' ' id='lblContractId" + i + "' for='IsActive" + i + "'>" + item.ManualContractId + "</label>" +
+              "</label>"
+            });
+            dtCustomerContract.fnAddData(responseData);
+        }
+    }
+
+    function SetCheck(obj) {
+        obj.value = obj.checked;
+    }
+</script>

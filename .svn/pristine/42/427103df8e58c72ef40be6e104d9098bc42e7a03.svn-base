@@ -1,0 +1,409 @@
+﻿@model CodeLock.Models.MasterCustomer
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-3" id="dvCustomerType">
+            <dl>
+                <dt>
+                    @Html.HiddenFor(m => m.MasterCustomerDetail.CustomerTypeId, new { @id = "hdnCustomerTypeId" })
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.CustomerTypeId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.CustomerTypeName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.GroupCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.GroupName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.CustomerName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CustomerName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.IndustryId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.IndustryName)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3" id="dvGstTinNo">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.GstTinNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.GstTinNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.PanNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.PanNo)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.MobileNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.MobileNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.EmailId)
+                </dt>
+                <dd class="text-wrap" style="word-wrap: break-word;">
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.EmailId)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.PhoneNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.PhoneNo)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.TypeOfOwnershipId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.TypeOfOwnershipName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SavedCustomerLocation)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CustomerLocation)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.SavedCustomerDeliveryLocation)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CustomerDeliveryLocation)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.PayBasName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.PayBasName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.IsMilkrunHrsPerDayEnabled)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.MasterCustomerDetail.IsMilkrunHrsPerDayEnabled)
+                </dd>
+            </dl>
+        </div>
+ 
+       
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.IsLaneID)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.MasterCustomerDetail.IsLaneID)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.IsTruckForwardNote)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.MasterCustomerDetail.IsTruckForwardNote)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsActive)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="page-separator">Decision Maker</div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.DecisionMakerName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.DecisionMakerName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.DecisionMakerDesignation)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.DecisionMakerDesignation)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.DecisionMakerMobileNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.DecisionMakerMobileNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.DecisionMakerEmailId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.DecisionMakerEmailId)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="page-separator">Sales Person(For Booking Deal)</div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.SalesPersonBookingDealName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.SalesPersonBookingDealName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.SalesPersonBookingDealDesignation)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.SalesPersonBookingDealDesignation)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.SalesPersonBookingDealMobileNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.SalesPersonBookingDealMobileNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.SalesPersonBookingDealEmailId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.SalesPersonBookingDealEmailId)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="page-separator">Sales Person(For Closing Deal)</div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.SalesPersonClosingDealName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.SalesPersonClosingDealName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.SalesPersonClosingDealDesignation)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.SalesPersonClosingDealDesignation)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.SalesPersonClosingDealMobileNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.SalesPersonClosingDealMobileNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.SalesPersonClosingDealEmailId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.SalesPersonClosingDealEmailId)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="page-separator">Billing Address Details</div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.Address1)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.Address1)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.Address2)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.Address2)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.CountryId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.CountryName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.StateId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.StateName)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.CityId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.CityName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.Pincode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.Pincode)
+                </dd>
+            </dl>
+        </div>
+
+    </div>
+</div>
+<script>
+    var ruleMasterUrl;
+            $(document).ready(function () {
+                SetPageLoad('Customer', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { id = Model.CustomerId })');
+                ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+                $('#dvGstTinNo').showHide($('#hdnCustomerTypeId').val() == 1);
+                var requestData = { moduleId: 15, ruleId: 11 };
+                AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(requestData), function (result) {
+                    var useCustomerType = true;
+                    useCustomerType = result == "Y" ? true : false;
+                    $('#dvCustomerType').showHide(result == "Y" ? true : false);
+                }, ErrorFunction, false);
+            });
+</script>
+

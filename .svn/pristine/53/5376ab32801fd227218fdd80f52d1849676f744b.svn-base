@@ -1,0 +1,43 @@
+﻿//  
+// Type: CodeLock.Areas.WMS.Repository.IPutAwayRepository
+//  
+//  
+//  
+
+using CodeLock.Models;
+using System;
+using System.Collections.Generic;
+
+namespace CodeLock.Areas.WMS.Repository
+{
+  public interface IPutAwayRepository : IDisposable
+  {
+    Response Insert(PutAway objPutAway);
+
+    IEnumerable<PutAway> GetPutAwayListForUpdate(
+      byte companyId,
+      short warehouseId,
+      string putAwayNo,
+      string grnNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate);
+
+    IEnumerable<PutAwayDetail> GetPutAwayDetailsForUpdate(
+      byte companyId,
+      short warehouseId,
+      long putAwayId);
+
+    Response Update(PutAway objPutAway);
+
+    IEnumerable<Stock> GetStockDetail(string productCode, string location);
+
+    IEnumerable<PutAwayRegister> GetRegisterPutAwayDetail(
+      string putAwayNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate);
+  }
+}

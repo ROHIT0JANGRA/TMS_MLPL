@@ -1,0 +1,137 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.DocumentTracking
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+
+        trackingUrl = '@Url.Action("", "Tracking", new { Area = "Operation" })';
+        docketUrl = '@Url.Action("Details", "Docket", new { Area = "Operation" })';
+        docketModuleId = '@ModuleHelper.Docket';
+        prsModuleId = '@ModuleHelper.Prs';
+        lsModuleId = '@ModuleHelper.LoadingSheet';
+        mfModuleId = '@ModuleHelper.Manifest';
+        thcModuleId = '@ModuleHelper.Thc';
+        drsModuleId = '@ModuleHelper.Drs';
+        pfmModuleId = '@ModuleHelper.Pfm';
+        vrModuleId = '@ModuleHelper.Vr';
+        docketTalkModuleId = '@ModuleHelper.DocketTalk';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+        isLocalStorage = '@ConfigHelper.IsLocalStorage';
+
+        cloudStoragePath = '@ConfigHelper.CloudStoragePath';
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        currentDomain = '@Url.Content("~")';
+    });
+
+</script>
+<script src="@Url.Content("~/Areas/Operation/Views/Tracking/IndexPOD.js")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.localStoragePath, new { id = "hdnlocalStoragePath" })
+            @Html.HiddenFor(m => m.FilesPath, new { id = "hdnFilesPath" })
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Select Document Date", new { @class = "label" })
+                            <div id="drDocumentDate"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            @Html.Label("Customer", new { @id = "lblCustomerId", @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.CustomerId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Customer", new { @class = "form-control select2", @id = "ddlCustomerId" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.CustomerId)
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ListType, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.ListType, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Scaned POD List", Value = "1" },
+                                                                            new SelectListItem{ Text="Awaited POD List", Value = "2" },
+                                                                            new SelectListItem{ Text="Handover POD List", Value = "3" }
+                                                                         }, new { @class = "form-control", @id = "ddlListType" })
+
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                        <div class="page-separator">OR</div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DocumentNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.DocumentNo, null, new { @class = "form-control", @id = "txtDocumentNo" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.DocumentNo)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Label(" ", new { @class = "label" })
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-separator">OR</div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ManualDocumentNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.ManualDocumentNo, null, new { @class = "form-control", @id = "txtManualDocumentNo" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.ManualDocumentNo)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Label(" ", new { @class = "label" })
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <div class="tab-pane">
+                    <div class="row" id="DivZip">
+                        <div class="col-sm-12">
+                            <a  href="@Url.Action("DownloadInZip", "Tracking", new { files = "" })">Download Files</a>
+                        </div>
+                    </div>
+
+                    <div class="row" id="dvDocketDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDocketDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,154 @@
+﻿@model CodeLock.Models.MasterProductTemperature
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "Product Temperature";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "ProductTemperature", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ProductId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.ProductId, new SelectList(ViewBag.ProductList, "Value", "Name"), "Select Product", new { @class = "form-control", @id = "ddlProduct" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProductId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PreLoadedTemperature, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PreLoadedTemperature, new { @class = "form-control", @id = "txtPreLoadedTemperature" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PreLoadedTemperature)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MinimumTemperature, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MinimumTemperature, new { @class = "form-control", @id = "txtMinimumTemperature" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MinimumTemperature)
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaximumTemperature, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MaximumTemperature, new { @class = "form-control", @id = "txtMaximumTemperature" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MaximumTemperature)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StandardTemperature, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.StandardTemperature, new { @class = "form-control", @id = "txtStandardTemperature" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StandardTemperature)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MinimumHumidity, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MinimumHumidity, new { @class = "form-control", @id = "txtMinimumHumidity" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MinimumHumidity)
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaximumHumidity, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MaximumHumidity, new { @class = "form-control", @id = "txtMaximumHumidity" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MaximumHumidity)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StandardHumidity, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.StandardHumidity, new { @class = "form-control", @id = "txtStandardHumidity" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StandardHumidity)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive, new { @id = "chkIsActive" })
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-footer">
+                <button type="submit" id="btnsubmit" class="btn btn-success primary-btn" tabindex="0">Submit</button>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    var btnsubmit;
+    $(document).ready(function () {
+        SetPageLoad('Product', 'Temperature', '', 'Go To List', '@Url.Action("Index")');
+        ddlProduct = $("#ddlProduct");
+        btnsubmit = $("#btnsubmit").click(OnSubmitChange);
+
+        $('#ddlProduct').enable($('#ddlProduct').val() == 0);
+        ddlProduct.change(OnProductChange);
+    });
+
+    function OnProductChange() {
+
+        if (ddlProduct.val() != '') {
+            var requestData = { id: ddlProduct.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("", "ProductTemperature")' + '/GetById', JSON.stringify(requestData), function (result) {
+                $('#chkIsActive').check(result.IsActive);
+                $('#txtPreLoadedTemperature').val(result.PreLoadedTemperature);
+                $('#txtMinimumTemperature').val(result.MinimumTemperature);
+                $('#txtMaximumTemperature').val(result.MaximumTemperature);
+                $('#txtStandardTemperature').val(result.StandardTemperature);
+                $('#txtMinimumHumidity').val(result.MinimumHumidity);
+                $('#txtMaximumHumidity').val(result.MaximumHumidity);
+                $('#txtStandardHumidity').val(result.StandardHumidity);
+            }, ErrorFunction, false);
+        }
+        else
+        {
+            $('#chkIsActive').uncheck();
+            $('#txtPreLoadedTemperature').val(0);
+            $('#txtMinimumTemperature').val(0);
+            $('#txtMaximumTemperature').val(0);
+            $('#txtStandardTemperature').val(0);
+            $('#txtMinimumHumidity').val(0);
+            $('#txtMaximumHumidity').val(0);
+            $('#txtStandardHumidity').val(0);
+        }
+
+    }
+    function OnSubmitChange() {
+        ddlProduct.enable();
+    }
+
+</script>

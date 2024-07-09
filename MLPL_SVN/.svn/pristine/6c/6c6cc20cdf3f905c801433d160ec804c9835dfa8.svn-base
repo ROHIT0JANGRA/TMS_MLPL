@@ -1,0 +1,190 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.ExpectedDriverAdvance
+@{
+    ViewBag.Title = "ExpectedDriverAdvance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        tripsheetUrl = '@Url.Action("", "Tripsheet", new { Area = "FMS" })';
+    });
+
+</script>
+
+<script src="@Url.Content("~/Areas/FMS/Views/Tripsheet/ExpectedDriverAdvance.js")"></script>
+<div class="widget-wrap">
+    <div id="dvWizard">
+        <div class="panel-body">
+            @using (Html.BeginForm("ExpectedDriverAdvance", "Tripsheet", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="tab-content">
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <label>Select Filter by</label>
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.searchBy, new List<SelectListItem> {
+                                new SelectListItem() {Text = "Enter Manual Tripsheet No", Value="1"},
+                                new SelectListItem() {Text = "Enter Tripsheet No", Value="2"},
+                           new SelectListItem() {Text = "Enter Vehicle No", Value="3"}}, new { @class = "form-control", @id = "ddlsearchBy" })
+                                    <i></i>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Label("Search No", new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBox("txtTripsheetNo", "", new { @class = "form-control", @id = "txtTripsheetNo" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @Html.Hidden("hdnVehicleId", '0', new { @id = "hdnVehicleId" })
+                        <div class="page-separator">OR</div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                @Html.Label("Select Trip Sheet Date", new { @class = "label" })
+                                <div class="clearfix">
+                                    <div id="drTripsheetDate"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div>
+                                    <table id="dtTripsheetDetailList"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.TripsheetNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.HiddenFor(model => model.TripsheetId, new { @id = "hdnTripsheetId" })
+                                        @Html.HiddenFor(model => model.CompanyId, new { @id = "hdnCompanyId" })
+                                        @Html.TextBoxFor(model => model.TripsheetNo, new { @class = "form-control textlabel label-bold", @id = "txtTripSheetNo" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.TripsheetDate, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.HiddenFor(model => model.TripsheetDate, new { @id = "hdnTripsheetDate" })
+                                        @Html.Label(" ", new { @id = "lblTripsheetDate", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.Label(" ", new { @id = "lblVehicleNo", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.StartLocationCode, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.Label(" ", new { @id = "lblStartLocationCode", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.EndLocationCode, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.Label(" ", new { @id = "lblEndLocationCode", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Category, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.Label(" ", new { @id = "lblCategory", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.Label(" ", new { @id = "lblCustomerCode", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.FromCity, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.Label(" ", new { @id = "lblFromCity", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ToCity, new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.Label(" ", new { @id = "lblToCity", @class = "label-bold" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <table id="dtAdvanceDetailList">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Details[0].LocationCode)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Details[0].AdvanceAmount)
+                                        </th>
+                                        <th style="min-width:85px">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.Details.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.HiddenFor(m => Model.Details[i].LocationId, new { id = "hdnLocationId" + i, @Name = "Details[" + i + "].LocationId" })
+                                                <div class="input">
+                                                    @Html.TextBoxFor(m => Model.Details[i].LocationCode, new { @class = "form-control input-small", @id = "txtLocationCode" + i.ToString() })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.Details[i].LocationCode)
+                                            </td>
+                                            <td>
+                                                <div class="input">
+                                                    @Html.HiddenFor(m => Model.Details[i].PaidAmount, new { id = "hdnPaidAmount" + i, @Name = "Details[" + i + "].PaidAmount" })
+                                                    @Html.TextBoxFor(m => Model.Details[i].AdvanceAmount, "0.00", new { @class = "form-control input-small numeric2", id = "txtAdvanceAmount" + i.ToString() })
+                                                </div>
+                                                @Html.ValidationMessageFor(m => Model.Details[i].AdvanceAmount)
+                                            </td>
+                                            <td style="min-width:85px"></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,2107 @@
+﻿@model CodeLock.Models.ChartDetail
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">*@
+
+    <script src="~/Views/Dashboard/Index.js"></script>
+
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+
+ </style>
+@*</head>
+
+
+<body>*@
+
+
+        <section>
+        @using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+        {
+        @Html.AntiForgeryToken()
+            <ul class="nav nav-tabs">
+                <li><a class="active" data-toggle="tab" href="#menu1">Operational</a></li>
+                <li><a data-toggle="tab" href="#menu2">Financial</a></li>
+                <li><a data-toggle="tab" href="#menu3">Fleet</a></li>
+                <li><a data-toggle="tab" href="#menu4">Vehicle Status</a></li>
+                <li style="float: right; margin-right:16px"><div id="drFilterDate"></div></li>
+            </ul>
+                        <!-- Tabs Content Starts -->
+                                    <!-- Tabs Content Starts -->
+        <div class="tab-content" style="background-color:white;">
+            <div id="menu1" class="tab-pane fade in active" >
+                <div class="col-md-4">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+                            <h1><strong>Booking </strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>Booked Shipment</td>
+                                <td>@Model.BookedShipment</td>
+                                <td>
+                                    <a href="#" onclick="PopupBookedShipment()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>LS Pending For MF</td>
+                                <td>@Model.LSPendingForMF</td>
+                                <td>
+                                    <a href="#" onclick="PopupLSPendingForMF()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>MF Pending For THC</td>
+                                <td>@Model.MFPendingForTHC</td>
+                                <td>
+                                    <a href="#" onclick="PopupMFPendingForTHC()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+
+                            <h1><strong>POD</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Shipment Delivered Partially or Fail</td>
+                                <td>@Model.ShipmentDeliveredPartiallyFail</td>
+                            </tr>
+                            <tr>
+                                <td>Delivered But POD not Scanned</td>
+                                <td>@Model.DeliveredButPODnotScanned</td>
+                            </tr>
+                            <tr>
+                                <td>POD Scanned but Not Forward</td>
+                                <td>@Model.PODScannedbutNotForward</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+                            <h1><strong>Delivery</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>Vehicle Pending for Unload</td>
+                                <td>@Model.VehiclePendingforUnload</td>
+                                <td>
+                                    <a href="#" onclick="PopupVehiclePendingforUnload()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Shipment Pending for Delivery</td>
+                                <td>@Model.ShipmentPendingforDelivery</td>
+                                <td>
+                                    <a href="#" onclick="PopupShipmentPendingforDelivery()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>DRS Pending For Closure</td>
+                                <td>@Model.DRSPendingForClosure</td>
+                                <td>
+                                    <a href="#" onclick="PopupDRSPendingForClosure()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+                            <h1><strong>Transshipment</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Vehicle Arrived But Not Depart</td>
+                                <td>05</td>
+                            </tr>
+                            <tr>
+                                <td>Transshipment Stock</td>
+                                <td>08</td>
+                            </tr>
+                            <tr>
+                                <td>Stock</td>
+                                <td>03</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+                            <h1><strong>COD/DOD Docket</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>COD/DOD Not Collected</td>
+                                <td>@Model.CODDODNotCollected</td>
+                            </tr>
+                            <tr>
+                                <td>COD/DOD Not Forwarded</td>
+                                <td>@Model.CODDODNotForwarded</td>
+                            </tr>
+                            <tr>
+                                <td>COD/DOD</td>
+                                <td>@Model.CODDOD</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+            <div id="menu2" class="tab-pane fade">
+
+                <div class="col-md-4">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+                            <h1><strong>RECEIVABLES </strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>Trips Bill</td>
+                                <td>@Model.FinReceTripsBill</td>
+                                <td>
+                                    <a href="#" onclick="PopupFinReceTripsBill()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TBB</td>
+                                <td>@Model.FinReceTBB</td>
+                                <td>
+                                    <a href="#" onclick="PopupFinReceTBB()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Paid</td>
+                                <td>@Model.FinRecePaid</td>
+                                <td>
+                                    <a href="#" onclick="PopupFinRecePaid()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>To-Pay</td>
+                                <td>@Model.FinReceToPay</td>
+                                <td>
+                                    <a href="#" onclick="PopupFinReceToPay()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+
+                            <h1><strong>COLLECTIONS</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>Trips Bill</td>
+                                <td>@Model.FinCollTripsBill</td>
+                                <td>
+                                    <a href="#" onclick="PopupFinCollTripsBill()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TBB</td>
+                                <td>@Model.FinCollTBB</td>
+                                <td>
+                                    <a href="#" onclick="PopupFinCollTBB()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Paid</td>
+                                <td>@Model.FinCollPaid</td>
+                                <td>
+                                    <a href="#" onclick="PopupFinCollPaid()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>To-Pay</td>
+                                <td>@Model.FinCollToPay</td>
+                                <td>
+                                    <a href="#" onclick="PopupFinCollToPay()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+                            <h1><strong>ASSETS</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Cash In Hand</td>
+                                <td>43000.00</td>
+                            </tr>
+                            <tr>
+                                <td>Bank Balance</td>
+                                <td>10000</td>
+                            </tr>
+                            <tr>
+                                <td>Balance</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Total Cash</td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+                            <h1><strong>PAYABLE</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Advance Payable Pending Expenses Booking</td>
+                                <td>05</td>
+                            </tr>
+                            <tr>
+                                <td>Pending Vendor Payable TDS Payable</td>
+                                <td>08</td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+                            <h1><strong>PAYMENT</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Advance Payment-Vendor Bill Paid</td>
+                                <td>05</td>
+                            </tr>
+                            <tr>
+                                <td>TDS Paid</td>
+                                <td>08</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+                            <h1><strong>FLOATING MONEY</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Advice not Acknowledge</td>
+                                <td>05</td>
+                            </tr>
+                            <tr>
+                                <td>Cheque Not Reconcile</td>
+                                <td>08</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+
+                            <h1><strong>TOTAL SALES</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Total Sales</td>
+                                <td>43000.00</td>
+                            </tr>
+                            <tr>
+                                <td>TBB</td>
+                                <td>10000</td>
+                            </tr>
+                            <tr>
+                                <td>Paid</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>To-Paid</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>Misc Income</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>Trip Bill Pending</td>
+                                <td>5000</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+
+                            <h1><strong>TOP 10 CUSTOMER BUSINESS WISE</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>ABB</td>
+                                <td>43000.00</td>
+                            </tr>
+                            <tr>
+                                <td>Relience India Pvt. Ltd</td>
+                                <td>10000</td>
+                            </tr>
+                            <tr>
+                                <td>Bajaj Auto Ltd.</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>Himalya Aurveda</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>Hindustan Unilever</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>Patanjali</td>
+                                <td>5000</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="menu3" class="tab-pane fade">
+                <div class="col-md-6">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+                            <h1><strong>FLEET </strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>On Road Vehicle</td>
+                                <td>@Model.OnRoadVehicle</td>
+                            </tr>
+                            <tr>
+                                <td>Under Maintenance</td>
+                                <td>@Model.UnderMaintenance</td>
+                            </tr>
+                            <tr>
+                                <td>Without Driver</td>
+                                <td>@Model.WithoutDriver</td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+
+                            <h1><strong>TRIP SHEET</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>Total Generated Trips</td>
+                                <td>@Model.FleetTripTotalGeneratedTrips</td>
+                                <td>
+                                    <a href="#" onclick="PopupFleetTripTotalGeneratedTrips()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Trip Pending for Operation Closure</td>
+                                <td>@Model.FleetTripPendingforOperationClosure</td>
+                                <td>
+                                    <a href="#" onclick="PopupFleetTripPendingforOperationClosure()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Trip Pending For Finance Closure</td>
+                                <td>@Model.FleetTripTripPendingForFinanceClosure</td>
+                                <td>
+                                    <a href="#" onclick="PopupFleetTripTripPendingForFinanceClosure()">
+                                        Read More..
+                                    </a>
+                                </td>
+                            </tr>
+
+
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+                            <h1><strong>DRIVER ADVANCES</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Total Advance Paid</td>
+                                <td>@Model.TotalAdvancePaid</td>
+                            </tr>
+                            <tr>
+                                <td>Balance Pending on Driver</td>
+                                <td>@Model.BalancePendingonDriver</td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+                            <h1><strong>FUEL EXPENSES</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Total Fuel Bill</td>
+                                <td>@Model.TotalFuelBill</td>
+                            </tr>
+                            <tr>
+                                <td>Pending Vendor Payable TDS Payable</td>
+                                <td>@Model.PendingVendorPayableTDSPayable</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+            <div id="menu4" class="tab-pane fade">
+                <div class="col-md-12">
+                    <div class="stats-widget stats-widget">
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Total Vehicle</td>
+                                <td>430</td>
+                            </tr>
+                            <tr>
+                                <td>On Road Vehicle</td>
+                                <td>100</td>
+                            </tr>
+                            <tr>
+                                <td>Off Road Vehicle</td>
+                                <td>500</td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+
+                            <h1><strong>VEHICLE STATUS- ON ROAD</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Vehicle On Road</td>
+                                <td>43000.00</td>
+                            </tr>
+                            <tr>
+                                <td>En-Route (Loaded)</td>
+                                <td>10000</td>
+                            </tr>
+                            <tr>
+                                <td>En-Route (Empty)</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>Ideal (planned)</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>Ideal (No Plain)</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>Total Halt</td>
+                                <td>5000</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="stats-widget stats-widget">
+                        <div class="widget-header" style="text-align:center">
+
+                            <h1><strong>VEHICLE STATUS- OFF ROAD</strong></h1>
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Vehicle Off Road</td>
+                                <td>43000.00</td>
+                            </tr>
+                            <tr>
+                                <td>En-Route</td>
+                                <td>10000</td>
+                            </tr>
+                            <tr>
+                                <td>Ideal</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>Halt</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>Driver Un-Available</td>
+                                <td>5000</td>
+                            </tr>
+                            <tr>
+                                <td>Break Down</td>
+                                <td>5000</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="modal scale fade" id="BookedShipment" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="page-separator">List of Booked Shipment Dockets</div>
+                        <table id="dtBookedShipment">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Docket No
+                                    </th>
+                                    <th>
+                                        Docket Date
+                                    </th>
+                                    <th>
+                                        Pay Base
+                                    </th>
+                                    <th>
+                                        Customer Name
+                                    </th>
+                                    <th>
+                                        From Location
+                                    </th>
+                                    <th>
+                                        To Location
+                                    </th>
+                                    <th>
+                                        Docket Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.BookedShipmentList)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.DocketNo)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.DocketDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Paybas)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CustomerName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.FromLocation)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.ToLocation)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.DocketStatus)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                    </div>
+                    <!--.modal-content-->
+                </div><!--.modal-dialog-->
+            </div><!--.modal-->
+        </div><!-- End -->
+        <div class="modal scale fade" id="LSPendingForMF" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of LS Pending For MF Dockets</div>
+                            <table id="dtLSPendingForMF">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Docket No
+                                        </th>
+                                        <th>
+                                            Docket Date
+                                        </th>
+                                        <th>
+                                            Pay Base
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            From Location
+                                        </th>
+                                        <th>
+                                            To Location
+                                        </th>
+                                        <th>
+                                            Docket Status
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.LSPendingForMFList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Paybas)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.FromLocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.ToLocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketStatus)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+        <div class="modal scale fade" id="MFPendingForTHC" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of MF Pending For THC Dockets</div>
+                            <table id="dtMFPendingForTHC">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Docket No
+                                        </th>
+                                        <th>
+                                            Docket Date
+                                        </th>
+                                        <th>
+                                            Pay Base
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            From Location
+                                        </th>
+                                        <th>
+                                            To Location
+                                        </th>
+                                        <th>
+                                            Docket Status
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.MFPendingForTHCList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Paybas)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.FromLocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.ToLocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketStatus)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+
+        <div class="modal scale fade" id="VehiclePendingforUnload" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of Vehicle Pending for Unload Dockets</div>
+                            <table id="dtVehiclePendingforUnload">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Docket No
+                                        </th>
+                                        <th>
+                                            Docket Date
+                                        </th>
+                                        <th>
+                                            Pay Base
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            From Location
+                                        </th>
+                                        <th>
+                                            To Location
+                                        </th>
+                                        <th>
+                                            Docket Status
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.VehiclePendingforUnloadList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Paybas)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.FromLocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.ToLocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketStatus)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+        <div class="modal scale fade" id="ShipmentPendingforDelivery" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of Shipment Pending for Delivery Dockets</div>
+                            <table id="dtShipmentPendingforDelivery">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Docket No
+                                        </th>
+                                        <th>
+                                            Docket Date
+                                        </th>
+                                        <th>
+                                            Pay Base
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            From Location
+                                        </th>
+                                        <th>
+                                            To Location
+                                        </th>
+                                        <th>
+                                            Docket Status
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.ShipmentPendingforDeliveryList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Paybas)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.FromLocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.ToLocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketStatus)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+        <div class="modal scale fade" id="DRSPendingForClosure" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of DRS Pending For Closure Dockets</div>
+                            <table id="dtDRSPendingForClosure">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Docket No
+                                        </th>
+                                        <th>
+                                            Docket Date
+                                        </th>
+                                        <th>
+                                            Pay Base
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            From Location
+                                        </th>
+                                        <th>
+                                            To Location
+                                        </th>
+                                        <th>
+                                            Docket Status
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.DRSPendingForClosureList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Paybas)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.FromLocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.ToLocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DocketStatus)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+
+
+
+            <div class="modal scale fade" id="FinReceTripsBill" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="page-separator">List of Trips Bill</div>
+                        <table id="dtFinReceTripsBill">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Bill No
+                                    </th>
+                                    <th>
+                                        Bill Date
+                                    </th>
+                                    <th>
+                                        Customer Code
+                                    </th>
+                                    <th>
+                                        Customer Name
+                                    </th>
+                                    <th>
+                                        Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.FinReceTripsBillList)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.BillNo)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.BillDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CustomerCode)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CustomerName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.BillAmount)
+                                        </td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                    </div>
+                    <!--.modal-content-->
+                </div><!--.modal-dialog-->
+            </div><!--.modal-->
+        </div><!-- End -->
+            <div class="modal scale fade" id="FinReceTBB" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of TBB Bill</div>
+                            <table id="dtFinReceTBB">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Bill No
+                                        </th>
+                                        <th>
+                                            Bill Date
+                                        </th>
+                                        <th>
+                                            Customer Code
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            Pay Base
+                                        </th>
+                                        <th>
+                                            Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.FinReceTBBList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerCode)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Paybas)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillAmount)
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+            <div class="modal scale fade" id="FinRecePaid" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of Paid Bill</div>
+                            <table id="dtFinRecePaid">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Bill No
+                                        </th>
+                                        <th>
+                                            Bill Date
+                                        </th>
+                                        <th>
+                                            Customer Code
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            Pay Base
+                                        </th>
+                                        <th>
+                                            Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.FinRecePaidList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerCode)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Paybas)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillAmount)
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+            <div class="modal scale fade" id="FinReceToPay" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of ToPay Bill</div>
+                            <table id="dtFinReceToPay">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Bill No
+                                        </th>
+                                        <th>
+                                            Bill Date
+                                        </th>
+                                        <th>
+                                            Customer Code
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            Pay Base
+                                        </th>
+                                        <th>
+                                            Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.FinReceToPayList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerCode)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Paybas)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillAmount)
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+
+            <div class="modal scale fade" id="FinCollTripsBill" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of Trips Bill</div>
+                            <table id="dtFinCollTripsBill">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Bill No
+                                        </th>
+                                        <th>
+                                            Bill Date
+                                        </th>
+                                        <th>
+                                            Customer Code
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.FinCollTripsBillList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerCode)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillAmount)
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+            <div class="modal scale fade" id="FinCollTBB" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of TBB Bill</div>
+                            <table id="dtFinCollTBB">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Bill No
+                                        </th>
+                                        <th>
+                                            Bill Date
+                                        </th>
+                                        <th>
+                                            Customer Code
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            Pay Base
+                                        </th>
+                                        <th>
+                                            Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.FinCollTBBList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerCode)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Paybas)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillAmount)
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+            <div class="modal scale fade" id="FinCollPaid" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of Paid Bill</div>
+                            <table id="dtFinCollPaid">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Bill No
+                                        </th>
+                                        <th>
+                                            Bill Date
+                                        </th>
+                                        <th>
+                                            Customer Code
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            Pay Base
+                                        </th>
+                                        <th>
+                                            Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.FinCollPaidList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerCode)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Paybas)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillAmount)
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+            <div class="modal scale fade" id="FinCollToPay" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of ToPay Bill</div>
+                            <table id="dtFinCollToPay">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Bill No
+                                        </th>
+                                        <th>
+                                            Bill Date
+                                        </th>
+                                        <th>
+                                            Customer Code
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            Pay Base
+                                        </th>
+                                        <th>
+                                            Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.FinCollToPayList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerCode)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Paybas)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BillAmount)
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+
+
+
+            <div class="modal scale fade" id="FleetTripTotalGeneratedTrips" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="page-separator">List of All Tripsheet</div>
+                        <table id="dtFleetTripTotalGeneratedTrips">
+                            <thead>
+                                <tr>
+                                    <th>
+                                       Tripsheet No
+                                    </th>
+                                    <th>
+                                        Tripsheet Date
+                                    </th>
+                                    <th>
+                                        Customer Name
+                                    </th>
+                                    <th>
+                                        Vehicle No
+                                    </th>
+                                    <th>
+                                        Start Location
+                                    </th>
+                                    <th>
+                                        End Location
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.FleetTripTotalGeneratedTripsList)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TripSheetNo)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TripSheetDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CustomerName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.VehicleNo)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.FromLocation)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.ToLocation)
+                                        </td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                    </div>
+                    <!--.modal-content-->
+                </div><!--.modal-dialog-->
+            </div><!--.modal-->
+        </div><!-- End -->
+
+            <div class="modal scale fade" id="FleetTripPendingforOperationClosure" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of Pending Tripsheet for Operation Closure</div>
+                            <table id="dtFleetTripPendingforOperationClosure">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Tripsheet No
+                                        </th>
+                                        <th>
+                                            Tripsheet Date
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            Vehicle No
+                                        </th>
+                                        <th>
+                                            Start Location
+                                        </th>
+                                        <th>
+                                            End Location
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.FleetTripPendingforOperationClosureList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.TripSheetNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.TripSheetDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.VehicleNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.FromLocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.ToLocation)
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+
+            <div class="modal scale fade" id="FleetTripTripPendingForFinanceClosure" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="page-separator">List of Pending Tripsheet for Finance Closure</div>
+                            <table id="dtFleetTripTripPendingForFinanceClosure">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Tripsheet No
+                                        </th>
+                                        <th>
+                                            Tripsheet Date
+                                        </th>
+                                        <th>
+                                            Customer Name
+                                        </th>
+                                        <th>
+                                            Vehicle No
+                                        </th>
+                                        <th>
+                                            Start Location
+                                        </th>
+                                        <th>
+                                            End Location
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.FleetTripTripPendingForFinanceClosureList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.TripSheetNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.TripSheetDate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CustomerName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.VehicleNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.FromLocation)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.ToLocation)
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-brand kt-btn" data-dismiss="modal">Close</button>
+                        </div>
+                        <!--.modal-content-->
+                    </div><!--.modal-dialog-->
+                </div><!--.modal-->
+            </div><!-- End -->
+
+        }
+
+        </section>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            drFilterDate = InitDateRange('drFilterDate', DateRange.LastWeek, false);
+            LoadDataTable('dtFleetTripTotalGeneratedTrips', false, true, true);
+            LoadDataTable('dtFleetTripPendingforOperationClosure', false, true, true);
+            LoadDataTable('dtFleetTripTripPendingForFinanceClosure', false, true, true);
+
+            LoadDataTable('dtFinReceTripsBill', false, true, true);
+            //SumdtFinReceTripsBill();
+
+            //SumLoadDataTable($('#dtFinReceTripsBill'), 4);
+
+            LoadDataTable('dtFinReceTBB', false, true, true);
+            //SumdtFinReceTBB();
+
+            //SumLoadDataTable($('#dtFinReceTBB'), 5);
+
+            LoadDataTable('dtFinRecePaid', false, true, true);
+            //SumdtFinRecePaid();
+
+            //SumLoadDataTable($('#dtFinRecePaid'), 5);
+
+            LoadDataTable('dtFinReceToPay', false, true, true);
+            //SumdtFinReceToPay();
+
+            //SumLoadDataTable($('#dtFinReceToPay'), 5);
+
+            LoadDataTable('dtFinCollTripsBill', false, true, true);
+            //SumdtFinCollTripsBill();
+            //
+            //SumLoadDataTable($('#dtFinCollTripsBill'), 4);
+            //SumLoadDataTable()
+            LoadDataTable('dtFinCollTBB', false, true, true);
+            //SumdtFinCollTBB();
+            //SumLoadDataTable($('#dtFinCollTBB'), 5);
+
+            LoadDataTable('dtFinCollPaid', false, true, true);
+            //SumdtFinCollPaid();
+            //SumLoadDataTable($('#dtFinCollPaid'), 5);
+
+            LoadDataTable('dtFinCollToPay', false, true, true);
+            //SumdtFinCollToPay();
+
+            //SumLoadDataTable($('#dtFinCollToPay'), 5);
+
+            LoadDataTable('dtBookedShipment', false, true, true);
+            LoadDataTable('dtLSPendingForMF', false, true, true);
+            LoadDataTable('dtMFPendingForTHC', false, true, true);
+            LoadDataTable('dtVehiclePendingforUnload', false, true, true);
+            LoadDataTable('dtShipmentPendingforDelivery', false, true, true);
+            LoadDataTable('dtDRSPendingForClosure', false, true, true);
+
+
+           //
+        });
+        //
+        function SumLoadDataTable(obj, col) {
+
+            $(obj).dataTable({
+                'bSort': false,
+                'bFilter': true,
+                'bPaginate': (true),//Paging
+                "footerCallback": function (tfoot, data, start, end, display) {
+                    var api = this.api(), data;
+                    var currentPagetotal = api.column(col, { page: 'current' }).data().reduce(function (a, b) {
+                        return parseFloat(a) + parseFloat(b);
+                    });
+
+                    var total = api.column(col).data().reduce(function (a, b) {
+                        return parseFloat(a) + parseFloat(b);
+                    });
+
+                    $(tfoot).find('th').eq(1).html(currentPagetotal.toFixed(2) + " of " + total.toFixed(2));
+                }
+            });
+        }
+
+
+
+        function SumdtFinReceTripsBill() {
+            var result = 0.00;
+            $('#dtFinReceTripsBill tr').each(function () {
+                $('td', this).each(function (index, val) {
+                    if (index == 4) {
+                        result = result + parseFloat($(val).text())
+                    }
+                });
+            });
+            //
+            $('#dtFinReceTripsBillfoot').html(result.toFixed(2));
+        }
+
+
+        function SumdtFinReceTBB() {
+            var result = 0.00;
+            $('#dtFinReceTBB tr').each(function () {
+                $('td', this).each(function (index, val) {
+                    if (index == 5) {
+                        result = result + parseFloat($(val).text())
+                    }
+                });
+            });
+            //
+            $('#dtFinReceTBBfoot').html(result.toFixed(2));
+        }
+
+
+
+        function SumdtFinRecePaid() {
+            var result = 0.00;
+            $('#dtFinRecePaid tr').each(function () {
+                $('td', this).each(function (index, val) {
+                    if (index == 5) {
+                        result = result + parseFloat($(val).text())
+                    }
+                });
+            });
+            //
+            $('#dtFinRecePaidfoot').html(result.toFixed(2));
+        }
+
+
+        function SumdtFinReceToPay() {
+            var result = 0.00;
+            $('#dtFinReceToPay tr').each(function () {
+                $('td', this).each(function (index, val) {
+                    if (index == 5) {
+                        result = result + parseFloat($(val).text())
+                    }
+                });
+            });
+            //
+            $('#dtFinReceToPayfoot').html(result.toFixed(2));
+        }
+        function SumdtFinCollTripsBill() {
+            var result = 0.00;
+            $('#dtFinCollTripsBill tr').each(function () {
+                $('td', this).each(function (index, val) {
+                    if (index == 4) {
+                        result = result + parseFloat($(val).text())
+                    }
+                });
+            });
+            //
+            $('#dtFinCollTripsBillfoot').html(result.toFixed(2));
+        }
+
+        function SumdtFinCollTBB() {
+            var result = 0.00;
+            $('#dtFinCollTBB tr').each(function () {
+                $('td', this).each(function (index, val) {
+                    if (index == 5) {
+                        result = result + parseFloat($(val).text())
+                    }
+                });
+            });
+            //
+            $('#dtFinCollTBBfoot').html(result.toFixed(2));
+        }
+        function SumdtFinCollToPay() {
+            var result = 0.00;
+            $('#dtFinCollToPay tr').each(function () {
+                $('td', this).each(function (index, val) {
+                    if (index == 5) {
+                        result = result + parseFloat($(val).text())
+                    }
+                });
+            });
+            //
+            $('#dtFinCollToPayfoot').html(result.toFixed(2));
+        }
+
+        function SumdtFinCollPaid() {
+            var result =0.00;
+            $('#dtFinCollPaid tr').each(function () {
+                $('td', this).each(function (index, val) {
+                    if (index == 5)
+                    {
+                        result = result + parseFloat($(val).text())
+                    }
+                });
+            });
+            //
+            $('#dtFinCollPaidfoot').html(result.toFixed(2));
+        }
+
+
+        function PopupBookedShipment() {
+            $('#BookedShipment').modal('show');
+        }
+        function PopupLSPendingForMF() {
+            $('#LSPendingForMF').modal('show');
+        }
+        function PopupMFPendingForTHC() {
+            $('#MFPendingForTHC').modal('show');
+        }
+        function PopupVehiclePendingforUnload() {
+            $('#VehiclePendingforUnload').modal('show');
+        }
+        function PopupShipmentPendingforDelivery() {
+            $('#ShipmentPendingforDelivery').modal('show');
+        }
+        function PopupDRSPendingForClosure() {
+            $('#DRSPendingForClosure').modal('show');
+        }
+        function PopupFinCollTripsBill() {
+            $('#FinCollTripsBill').modal('show');
+        }
+        function PopupFinCollTBB() {
+            $('#FinCollTBB').modal('show');
+        }
+        function PopupFinCollPaid() {
+            $('#FinCollPaid').modal('show');
+        }
+        function PopupFinCollToPay() {
+            $('#FinCollToPay').modal('show');
+        }
+
+
+        function PopupFinReceTripsBill() {
+            $('#FinReceTripsBill').modal('show');
+        }
+        function PopupFinReceTBB() {
+            $('#FinReceTBB').modal('show');
+        }
+        function PopupFinRecePaid() {
+            $('#FinRecePaid').modal('show');
+        }
+        function PopupFinReceToPay() {
+            $('#FinReceToPay').modal('show');
+        }
+
+        function PopupFleetTripTotalGeneratedTrips() {
+            $('#FleetTripTotalGeneratedTrips').modal('show');
+        }
+        function PopupFleetTripPendingforOperationClosure() {
+            $('#FleetTripPendingforOperationClosure').modal('show');
+        }
+        function PopupFleetTripTripPendingForFinanceClosure() {
+            $('#FleetTripTripPendingForFinanceClosure').modal('show');
+        }
+
+        // Load google charts
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        // Draw the chart and set the chart values
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+            ['Task', 'Hours per Day'],
+            ['Booked Shipment', @Model.BookedShipment],
+            ['LS Pending For MF', @Model.LSPendingForMF],
+            ['MF Pending For THC', @Model.MFPendingForTHC],
+            ]);
+
+            // Optional; add a title and set the width and height of the chart
+            var options = { 'title': '', 'width': 350, 'height': 220 };
+
+            // Display the chart inside the <div> element with id="piechart"
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+            chart.draw(data, options);
+        }
+    </script>
+
+@*</body>
+
+</html>*@

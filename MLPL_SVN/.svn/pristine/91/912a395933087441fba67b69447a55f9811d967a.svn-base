@@ -1,0 +1,223 @@
+﻿@model CodeLock.Models.MasterProduct
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ProductCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ProductCode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ProductName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ProductName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ProductDescription)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ProductDescription)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UnitsOfMeasurement)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UnitsOfMeasurement)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UomQuantity)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UomQuantity)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UnitPrice)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UnitPrice)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Length)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Length)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Breadth)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Breadth)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Height)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Height)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ActualWeight)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ActualWeight)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ChargeWeight)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ChargeWeight)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsActive)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsSerialNumber)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsSerialNumber)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayName("Serial Number Type")
+                </dt>
+                <dd>
+
+                    @Html.HiddenFor(model => model.IsSingle, new { @id = "hdnIsSingle" })
+                    @Html.LabelFor(model => model.IsSingle, new { @class = "label", @id = "lblIsSingle" })
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EntryByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </dt>
+                <dd>
+                    @Model.EntryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.UpdateDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Product', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { productId = Model.ProductId, companyId = Model.CompanyId })');
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        if ($('#hdnIsSingle').val() == 'True')
+            $('#lblIsSingle').text('Single');
+        else if ($('#hdnIsSingle').val() == 'False')
+            $('#lblIsSingle').text('Double');
+        else
+            $('#lblIsSingle').text('');
+    }
+</script>
+
+
+

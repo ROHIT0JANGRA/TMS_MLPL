@@ -1,0 +1,460 @@
+﻿@model CodeLock.Models.MasterRouteCityWise
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Route Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "RouteCityWise", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiModelInjectionFor(m => m.RouteId)
+    @Html.HiddenFor(m => m.RouteId, new { @id = "hdnRouteId" })
+    @Html.HiddenFor(m => m.FromCityId, new { @id = "hdnFromCityId" })
+    @Html.HiddenFor(m => m.ToCityId, new { @id = "hdnToCityId" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RouteName, new { @class = "label" })
+                    <div class="clearfix">
+                        <div class="checkboxer">
+                            @Html.HiddenFor(model => model.RouteName, new { @id = "hdnRouteName" })
+                            @Html.LabelFor(model => model.RouteName, " ", new { @class = "label-bold", id = "lblRouteName" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name"), "Select Route Mode", new { @class = "form-control", @id = "ddlTransportMode" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.TransportModeId)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RouteCategoryIsLongHaul, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.RouteCategoryIsLongHaul, new SelectList(ViewBag.RouteCategoryList, "Value", "Name"), "Select Route Category", new { @class = "form-control", @id = "ddlRouteCategoryIsLongHaul" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.RouteCategoryIsLongHaul)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Transit, new { @class = "label" })
+                    <div class="clearfix">
+                        <div class="checkboxer">
+                            @Html.HiddenFor(m => m.TotalTransitTimeHour, new { @id = "hdnTotalTransitTimeHour" })
+                            @Html.HiddenFor(m => m.TotalTransitTimeMin, new { @id = "hdnTotalTransitTimeMin" })
+                            @Html.LabelFor(model => model.Transit, "0", new { @class = "label-bold", id = "lblTotalTransitTime" })
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Transit)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.DepartureTime, new { @class = "label" })
+                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker()
+                           {
+                               FieldId = "DepartureTime",
+                               FieldName = "DepartureTime",
+                               FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => Model.DepartureTime),
+                               DefaultDate = Model.DepartureTime.ConvertToDateTime(),
+                               IsRequired = true,
+                               SetBlank = false,
+                               IsTimeOnly = true,
+                               UseFieldCaption = false
+                           })
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CityName, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.ControlCityId, new { @id = "hdnCityId" })
+                        @Html.TextBoxFor(model => model.CityName, null, new { @class = "form-control text-complete text-complete-html", @id = "txtCityName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CityName)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsReverse, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsReverse, new { @id = "chkIsReverse" })
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.NumberOfRows, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.NumberOfRows, new { @class = "form-control ", @id = "txtNumberOfRow" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.NumberOfRows)
+                </div>
+            </div>
+            <div class="col-sm-1">
+                @Html.Label("", " ", new { @class = "label" })
+                <button type="button" id="btnAdd" onclick="return AddRow()" class="btn btn-success primary-btn"><span class="glyphicon glyphicon-plus-sign"></span></button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="dtRouteDetail" class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.RouteDetailList.FirstOrDefault().CityName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.RouteDetailList.FirstOrDefault().Distance)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.RouteDetailList.FirstOrDefault().TransitTimeHour)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.RouteDetailList.FirstOrDefault().TransitTimeMin)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.RouteDetailList.FirstOrDefault().StoppageTimeHour)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.RouteDetailList.FirstOrDefault().StoppageTimeMin)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.RouteDetailList.Count; i++)
+                        {
+                            var item = Model.RouteDetailList.ToList()[i];
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => item.CityId, new { @id = "hdnCityId" + i.ToString(), @Name = "RouteDetailList[" + i + "].CityId", })
+                                    @Html.TextBoxFor(m => item.CityName, new { @class = "form-control", id = "txtCityName" + i.ToString(), @Name = "RouteDetailList[" + i + "].CityName", })
+                                    @Html.ValidationMessage("RouteDetailList[" + i + "].CityName")
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => item.Distance, new { @class = "form-control numeric", id = "txtDistance" + i.ToString(), @Name = "RouteDetailList[" + i + "].Distance", })
+                                    @Html.ValidationMessage("RouteDetailList[" + i + "].Distance")
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => item.TransitTimeHour, new { @class = "form-control numeric", id = "txtTransitTimeHour" + i.ToString(), @Name = "RouteDetailList[" + i + "].TransitTimeHour", })
+                                    @Html.ValidationMessage("RouteDetailList[" + i + "].TransitTimeHour")
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => item.TransitTimeMin, new { @class = "form-control numeric", id = "txtTransitTimeMin" + i.ToString(), @Name = "RouteDetailList[" + i + "].TransitTimeMin", })
+                                    @Html.ValidationMessage("RouteDetailList[" + i + "].TransitTimeMin")
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => item.StoppageTimeHour, new { @class = "form-control numeric", id = "txtStoppageTimeHour" + i.ToString(), @Name = "RouteDetailList[" + i + "].StoppageTimeHour", })
+                                    @Html.ValidationMessage("RouteDetailList[" + i + "].StoppageTimeHour")
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => item.StoppageTimeMin, new { @class = "form-control numeric", id = "txtStoppageTimeMin" + i.ToString(), @Name = "RouteDetailList[" + i + "].StoppageTimeMin", })
+                                    @Html.ValidationMessage("RouteDetailList[" + i + "].StoppageTimeMin")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>
+                            </th>
+                            <th class="align-right">
+                                @Html.Label("lblTotalDistanceFooter", "0", new { @id = "lblTotalDistanceFooter" })
+                            </th>
+                            <th class="align-right">
+                                @Html.Label("lblTotalTransitTimeHour", "0", new { @id = "lblTotalTransitTimeHour" })
+                            </th>
+                            <th class="align-right">
+                                @Html.Label("lblTotalTransitTimeMin", "0", new { @id = "lblTotalTransitTimeMin" })
+                            </th>
+                            <th class="align-right">
+                                @Html.Label("lblTotalStoppageTimeHour", "0", new { @id = "lblTotalStoppageTimeHour" })
+                            </th>
+                            <th class="align-right">
+                                @Html.Label("lblTotalStoppageTimeMin", "0", new { @id = "lblTotalStoppageTimeMin", @style = "text-align:right" })
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+
+<script>
+    var txtNumberOfRow, btnSave;
+    var txtNumberOfRow = $('#txtNumberOfRow');
+    var chkIsReverse;
+    function AddRow() {
+        var rowAdd = parseInt(txtNumberOfRow.val());
+        if (rowAdd < 2)
+            rowAdd = 2;
+        var rowCountTable = parseInt($('#dtRouteDetail').rowCount());
+        if (rowCountTable <= rowAdd) {
+            rowAdd = rowAdd - rowCountTable;
+            for (var i = 0; i < rowAdd; i++) {
+                AddTableRow('dtRouteDetail', true);
+                InitAutoComplete();
+            }
+        }
+        else if (rowCountTable > rowAdd) {
+            rowAdd = rowCountTable - rowAdd;
+            for (var i = 0; i < rowAdd; i++) {
+                var trLast = $('#dtRouteDetail > tbody > tr:last');
+                trLast.remove();
+            }
+        }
+        txtNumberOfRow.val(rowAdd);
+    }
+
+    $(document).ready(function () {
+        baseUrl = '@Url.Action("", "RouteCityWise", new { Area = "Master" })';
+        var isAdd = true;
+        chkIsReverse = $('#chkIsReverse');
+
+        if ($('#hdnRouteId').val() != 0) isAdd = false;
+        $('#btnSubmit').val((isAdd ? 'Create' : 'Save'));
+        SetPageLoad('Route', '(City Wise) ' + (isAdd ? 'Add' : 'Edit'), 'ddlTransportMode', 'Go To List', '@Url.Action("Index")');
+        CityAutoComplete('txtCityName', 'hdnCityId');
+        var txtDistance = $('#txtDistance');
+        txtDistance.attr("readOnly", true);
+        var txtTransit = $('#txtTransit');
+        txtTransit.attr("readOnly", true);
+        var txtNumberOfRow = $('#txtNumberOfRow');
+        $('#txtCityName').blur(function () { return IsCityNameExist($('#txtCityName'), $('#hdnCityId')); });
+        InitAutoComplete();
+        DisplayRoute();
+        $('#dtRouteDetail > tbody >tr:first').attr('data-row-id', '0');
+        ManageTableAddRemove('dtRouteDetail', false);
+        $('#btnSubmit').click(function (e) { return ValidateOnSubmit(e); });
+    });
+
+    function ValidateOnSubmit(e) {
+        e.preventDefault();
+        var isValid = true;
+        var LocationId = "";
+        $("#dtRouteDetail > tbody > tr:first").each(function () {
+            var hdnCityId = $(this).find('[id*="hdnCityId"]');
+            $('#hdnFromCityId').val(hdnCityId.val());
+        });
+
+        $("#dtRouteDetail > tbody > tr:last").each(function () {
+            var hdnCityId = $(this).find('[id*="hdnCityId"]');
+            $('#hdnToCityId').val(hdnCityId.val());
+        });
+
+        $('[id*="txtStoppageTimeMin"]').each(function () {
+            var txtStoppageTimeMin = $(this);
+            var txtCityName = $('#' + txtStoppageTimeMin.attr('id').replace('txtStoppageTimeMin', 'txtCityName'));
+            var hdnCityId = $('#' + txtStoppageTimeMin.attr('id').replace('txtStoppageTimeMin', 'hdnCityId'));
+            var txtDistance = $('#' + txtStoppageTimeMin.attr('id').replace('txtStoppageTimeMin', 'txtDistance'));
+            var txtTransitTimeHour = $('#' + txtStoppageTimeMin.attr('id').replace('txtStoppageTimeMin', 'txtTransitTimeHour'));
+            var txtStoppageTimeHour = $('#' + txtStoppageTimeMin.attr('id').replace('txtStoppageTimeMin', 'txtStoppageTimeHour'));
+            var txtTransitTimeMin = $('#' + txtStoppageTimeMin.attr('id').replace('txtStoppageTimeMin', 'txtTransitTimeMin'));
+
+            try {
+                if (txtCityName.val() == "") {
+                    txtCityName.focus();
+                    throw new Error('Please select City');
+                }
+                LocationId = LocationId + "," + hdnCityId.val();
+
+                if (!txtStoppageTimeMin.prop('disabled')) {
+                    if (parseInt(txtDistance.val()) == 0) {
+                        txtDistance.focus();
+                        throw new Error('Please enter Distance');
+                    }
+                    else if (parseInt(txtTransitTimeHour.val()) == 0 && parseInt(txtTransitTimeMin.val()) == 0) {
+                        txtTransitTimeHour.focus();
+                        throw new Error('Please enter Transit Hour/Min');
+                    }
+                    else if (parseInt(txtStoppageTimeHour.val()) == 0 && parseInt(txtStoppageTimeMin.val()) == 0) {
+                        txtStoppageTimeHour.focus();
+                        throw new Error('Please enter Stoppage Hour/Min');
+                    }
+                }
+            }
+            catch (e) {
+                isValid = false;
+                ShowMessage(e.message);
+                return false;
+            }
+        });
+
+        if ($('#ddlTransportMode').val() == "") {
+            isValid = false;
+            ShowMessage("Transport Mode can't be blank");
+            return false;
+        }
+        else if ($('#ddlRouteCategoryIsLongHaul').val() == "") {
+            isValid = false;
+            ShowMessage("Route Category can't be blank");
+            return false;
+        }
+        // Validate duplicate
+        var requestData = { TransportModeId: $('#ddlTransportMode').val(), RouteCategoryIsLongHaul: $('#ddlRouteCategoryIsLongHaul').val(), locationId: LocationId };
+
+        AjaxRequestWithPostAndJson(baseUrl + '/ValidateRoute', JSON.stringify(requestData), function (responseData) {
+
+            if (!responseData.IsSuccessfull) {
+                ShowMessage(responseData.ErrorMessage);
+                isStepValid = false;
+                isValid = false;
+                return false;
+            }
+        }, ErrorFunction, false);
+
+        if (isValid)
+            $('form').submit();
+    }
+
+    function InitAutoComplete() {
+        var i = 0;
+        $('[id*="txtStoppageTimeMin"]').each(function () {
+            var txtStoppageTimeMin = $(this);
+            var txtCityName = $('#' + txtStoppageTimeMin.attr('id').replace('txtStoppageTimeMin', 'txtCityName'));
+            var hdnCityId = $('#' + txtStoppageTimeMin.attr('id').replace('txtStoppageTimeMin', 'hdnCityId'));
+            var txtDistance = $('#' + txtStoppageTimeMin.attr('id').replace('txtStoppageTimeMin', 'txtDistance'));
+            var txtTransitTimeHour = $('#' + txtStoppageTimeMin.attr('id').replace('txtStoppageTimeMin', 'txtTransitTimeHour'));
+            var txtStoppageTimeHour = $('#' + txtStoppageTimeMin.attr('id').replace('txtStoppageTimeMin', 'txtStoppageTimeHour'));
+            var txtTransitTimeMin = $('#' + txtStoppageTimeMin.attr('id').replace('txtStoppageTimeMin', 'txtTransitTimeMin'));
+
+            txtDistance.prop('disabled', i == 0);
+            txtTransitTimeHour.prop('disabled', i == 0);
+            txtTransitTimeMin.prop('disabled', i == 0);
+            txtStoppageTimeHour.prop('disabled', i == 0);
+            txtStoppageTimeMin.prop('disabled', i == 0);
+
+            i++;
+            CityAutoComplete(txtCityName.attr('id'), hdnCityId.attr('id'));
+            txtDistance.change(CalculateTotal);
+            txtTransitTimeHour.change(CalculateTotal);
+            txtStoppageTimeHour.change(CalculateTotal);
+            txtTransitTimeMin.change(CalculateTotal);
+            txtStoppageTimeMin.change(CalculateTotal);
+            txtCityName.blur(function () { return CheckValidCityNameGrid(txtCityName, hdnCityId); });
+        });
+        CalculateTotal();
+    }
+
+    function CalculateTotal() {
+
+        var totalDistance = 0, totalHour = 0, totalMin = 0;
+        var totalTransitHour = 0, totalTransitMin = 0;
+        var totalStoppageHour = 0, totalStoppageMin = 0;
+
+        $("#dtRouteDetail tr:not(:first)").each(function () {
+            var txtDistance = $(this).find('[id*="txtDistance"]');
+            if (txtDistance.length > 0) {
+                var txtTransitTimeHour = $(this).find('[id*="txtTransitTimeHour"]');
+                var txtStoppageTimeHour = $(this).find('[id*="txtStoppageTimeHour"]');
+                var txtTransitTimeMin = $(this).find('[id*="txtTransitTimeMin"]');
+                var txtStoppageTimeMin = $(this).find('[id*="txtStoppageTimeMin"]');
+
+                if (txtDistance.val() == "") txtDistance.val(0);
+                if (txtTransitTimeHour.val() == "") txtTransitTimeHour.val(0);
+                if (txtStoppageTimeHour.val() == "") txtStoppageTimeHour.val(0);
+                if (txtTransitTimeMin.val() == "") txtTransitTimeMin.val(0);
+                if (txtStoppageTimeMin.val() == "") txtStoppageTimeMin.val(0);
+
+                var transitTimeMin = 0, stoppageTimeMin = 0;
+                transitTimeMin = parseInt(txtTransitTimeMin.val());
+                stoppageTimeMin = parseInt(txtStoppageTimeMin.val());
+
+                if (transitTimeMin > 59) {
+                    transitTimeMin = 0;
+                    txtTransitTimeMin.val(transitTimeMin);
+                }
+                if (stoppageTimeMin > 59) {
+                    stoppageTimeMin = 0;
+                    txtStoppageTimeMin.val(stoppageTimeMin);
+                }
+
+                totalDistance += parseInt(txtDistance.val());
+                totalTransitHour += parseInt(txtTransitTimeHour.val());
+                totalTransitMin += parseInt(txtTransitTimeMin.val());
+                totalStoppageHour += parseInt(txtStoppageTimeHour.val());
+                totalStoppageMin += parseInt(txtStoppageTimeMin.val());
+            }
+        });
+
+        totalHour = totalTransitHour + totalStoppageHour;
+        totalMin = totalTransitMin + totalStoppageMin;
+
+        totalTransitMin = totalTransitMin + (totalTransitHour * 60);
+        totalTransitHour = parseInt(totalTransitMin / 60);
+        totalTransitMin = (totalTransitMin % 60);
+
+        totalStoppageMin = totalStoppageMin + (totalStoppageHour * 60);
+        totalStoppageHour = parseInt(totalStoppageMin / 60);
+        totalStoppageMin = (totalStoppageMin % 60);
+
+        totalMin = totalMin + (totalHour * 60);
+        totalHour = parseInt(totalMin / 60);
+        totalMin = (totalMin % 60);
+
+        $('#lblTotalTransitTime').text((totalHour < 10 ? "0" + totalHour : totalHour) + ":" + (totalMin < 10 ? "0" + totalMin : totalMin));
+        $('#hdnTotalTransitTimeHour').val(totalHour < 10 ? "0" + totalHour : totalHour);
+        $('#hdnTotalTransitTimeMin').val(totalMin < 10 ? "0" + totalMin : totalMin);
+        $('#lblTotalDistance').text(totalDistance);
+
+        $('#lblTotalDistanceFooter').text(totalDistance);
+        $('#lblTotalTransitTimeHour').text(totalTransitHour);
+        $('#lblTotalTransitTimeMin').text(totalTransitMin);
+        $('#lblTotalStoppageTimeHour').text(totalStoppageHour);
+        $('#lblTotalStoppageTimeMin').text(totalStoppageMin);
+
+    }
+
+    function CheckValidCityNameGrid(txtCityName, hdnCityId) {
+
+        if ($('#chkIsReverse').is(":checked"))
+        {
+        }
+        else {
+            if (!CheckDuplicateInTable('dtRouteDetail', 'txtCityName', 'City', txtCityName)) return false;
+        }
+
+        IsCityNameExist(txtCityName, hdnCityId);
+        DisplayRoute();
+    };
+
+    function DisplayRoute() {
+        var routeName = "<System Generated>";
+        $("#dtRouteDetail > tbody > tr").each(function () {
+            var txtCityName = $(this).find('[id*="txtCityName"]');
+            if (txtCityName.length > 0 && txtCityName.val() != "")
+                routeName = routeName == "<System Generated>" ? txtCityName.val() : routeName + "~" + txtCityName.val();
+        });
+        $("#lblRouteName").text(routeName);
+        $('#hdnRouteName').val(routeName);
+    }
+</script>
+
+

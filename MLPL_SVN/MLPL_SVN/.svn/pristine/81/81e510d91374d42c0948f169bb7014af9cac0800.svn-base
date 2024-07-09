@@ -1,0 +1,266 @@
+﻿@model CodeLock.Models.MasterIssue
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ClientId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ClientName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IssueDateTime)
+                </dt>
+                <dd>
+                    @Model.IssueDateTime.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MainMenuId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MainMenu)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ParentMenuId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ParentMenu)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ChildMenuId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ChildMenu)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IssueDescription)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.IssueDescription)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IssueTypeId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.IssueType)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4" id="dvImageLink">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IssueImage)
+                </dt>
+                <dd>
+                    @{ var fileNamelnkId = "lnkAttachment";}
+                    <a href="#" id=@fileNamelnkId onclick="return ViewAttachment();">View</a>
+                    @Html.HiddenFor(model => model.IssueImage, new { id = "hdnIssueImage", @Name = "IssueImage" })
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IssuePriorityId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.IssuePriority)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IssueRaisedById)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.IssueRaisedBy)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryBy)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EntryByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </dt>
+                <dd>
+                    @Model.EntryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateBy)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.UpdateDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4" id="dvResolvedImageLink">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ResolvedDocument)
+                </dt>
+                <dd>
+                    @{ var fileNamelnkId2 = "lnkAttachment";}
+                    <a href="#" id=@fileNamelnkId2 onclick="return ViewResolvedAttachment();">View</a>
+                    @Html.HiddenFor(model => model.ResolvedDocument, new { id = "hdnResolvedDocument", @Name = "ResolvedDocument" })
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Comment)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Comment)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ResolvedBy)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ResolvedBy)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ResolvedDateTime)
+                </dt>
+                <dd>
+                    @Model.ResolvedDateTime.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ApprovalComment)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ApprovalComment)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ApprovedBy)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ApprovedBy)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ApprovedDateTime)
+                </dt>
+                <dd>
+                    @Model.ApprovedDateTime.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Issue History', 'View', '', 'History List', '@Url.Action("History", new { id = Model.IssueId })', '', '');
+        $('#dvImageLink').showHide($('#hdnIssueImage').val() != '');
+        $('#dvResolvedImageLink').showHide($('#hdnResolvedDocument').val() != '');
+    });
+
+    function ViewAttachment() {
+        var hdnIssueImage = $('#hdnIssueImage');
+        var filePath = '';
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = "@ConfigHelper.LocalStoragePath" + '/Issue';
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+        window.open(filePath + hdnIssueImage.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=400");
+        return false;
+    }
+
+    function ViewResolvedAttachment() {
+        var hdnResolvedDocument = $('#hdnResolvedDocument');
+        var filePath = '';
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = "@ConfigHelper.LocalStoragePath" + '/Issue';
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+        window.open(filePath + hdnResolvedDocument.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=400");
+        return false;
+    }
+</script>

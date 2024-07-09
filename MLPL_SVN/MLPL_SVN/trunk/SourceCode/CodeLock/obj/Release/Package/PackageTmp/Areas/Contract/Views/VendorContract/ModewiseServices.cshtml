@@ -1,0 +1,494 @@
+﻿@model CodeLock.Models.CustomerContractModewiseServices
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("ModewiseServices", "CustomerContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(model => model.ContractId)
+    @Html.HiddenFor(model => model.UseMinimumFreightTypeBaseWise, new { @id = "hdnbase" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Contract ID", new { @id = "lblCustomer", @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.ManualContractId
+                    </div>
+                </div>
+            </div>
+            @if (@ViewBag.isCustomerContract == false)
+            {
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Vendor", new { @id = "lblCustomer", @class = "label-bold" })
+                        <div class="clearfix">
+                            @ViewBag.CustomerCode : @ViewBag.CustomerName
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Customer", new { @id = "lblCustomer", @class = "label-bold" })
+                        <div class="clearfix">
+                            @ViewBag.CustomerCode : @ViewBag.CustomerName
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Text"), "Select Transport Mode", new { @class = "form-control", @id = "ddlTransportModeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TransportModeId)
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Cutoff Time</div>
+        <div class="row">
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CutOffStartTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.CutOffStartTime), IsRequired = true, IsTimeOnly = true })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CutOffEndTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.CutOffEndTime), IsRequired = true, IsTimeOnly = true })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CutOffTransitDays, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CutOffTransitDays, new { @class = "form-control numeric", @id = "txtCutOffTransitDays", @readOnly = true })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CutOffTransitDays)
+                </div>
+
+            </div>
+        </div>
+        <div class="page-separator" id="divBaseHeading" style="display:none">Minimum Freight- Base Wise</div>
+        <div class="page-separator" id="divPercentHeading" style="display:none">Minimum Freight-Percent Wise</div>
+        <div class="row">
+            <div class="col-sm-4" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MinimumFreightAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MinimumFreightAmount, new { @class = "form-control numeric", @id = "txtMinimumFreightAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MinimumFreightAmount)
+                </div>
+            </div>
+            <div id="divBase" style="display:none">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MinimumFreightRate, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.MinimumFreightRate, new { @class = "form-control numeric", @id = "txtMinimumFreightRate" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.MinimumFreightRate)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MinimumFreightRateType, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.MinimumFreightRateType, new List<SelectListItem>
+                    {
+                    new SelectListItem() {Text = "Select Minimum Freigh Rate Type", Value = ""},
+                    new SelectListItem() {Text = "Min. KG", Value="3"},
+                    new SelectListItem() {Text = "Min. Pkgs", Value="6"},
+                    new SelectListItem() {Text = "Min. Ton", Value="5"},
+                    new SelectListItem() {Text = "Min Rs", Value="1"} }, new { @id = "ddlMinimumFreightRateType", @class = "form-control" })<i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.MinimumFreightRateType)
+                    </div>
+                </div>
+            </div>
+            <div id="divPercent" style="display:none">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MinimumFreightLowerLimit, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.MinimumFreightLowerLimit, new { @class = "form-control numeric", @id = "txtMinimumFreightLowerLimit" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.MinimumFreightLowerLimit)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MinimumFreightUpperLimit, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.MinimumFreightUpperLimit, new { @class = "form-control numeric", @id = "txtMinimumFreightUpperLimit" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.MinimumFreightUpperLimit)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="divSubTotal" style="display:none">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MinimumSubTotalAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MinimumSubTotalAmount, new { @class = "form-control numeric", @id = "txtMinimumSubTotalAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MinimumSubTotalAmount)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SubTotalLowerLimit, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SubTotalLowerLimit, new { @class = "form-control numeric", @id = "txtSubTotalLowerLimit" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SubTotalLowerLimit)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SubTotalUpperLimit, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SubTotalUpperLimit, new { @class = "form-control numeric", @id = "txtSubTotalUpperLimit" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SubTotalUpperLimit)
+                </div>
+            </div>
+        </div>
+
+        <div class="page-separator">Volumetic Conversion</div>
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CftRatio, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CftRatio, new { @class = "form-control numeric2", @id = "txtCftRatio" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CftRatio)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CftMeasurementType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CftMeasurementType, new List<SelectListItem>
+                        {
+                        new SelectListItem() {Text = "Select Volumetric Measure", Value = ""},
+                        new SelectListItem() {Text = "CM", Value="C"},
+                        new SelectListItem() {Text = "Meter", Value="M"},
+                        new SelectListItem() {Text = "Inch", Value="I"},
+                        new SelectListItem() {Text = "Feet", Value="F"} }, new { @id = "ddlCftMeasurementType", @class = "form-control" })<i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CftMeasurementType)
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">GST Payer</div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="unit">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.ServiceTaxPayer, new { @class = "label-bold" })
+                        @for (var i = 0; i < Model.ServiceTaxPayer.Count(); i++)
+                        {
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(m => m.ServiceTaxPayer[i].IsActive, new { @id = "chkServiceTaxPayer" + i })
+                                <i></i>
+                                @Html.LabelFor(m => m.ServiceTaxPayer[i].IsActive, Model.ServiceTaxPayer[i].CodeDescription, new { @class = "label", @id = "lblServiceTaxPayer" + i, @for = "chkServiceTaxPayer" + i })
+                            </label>
+                            @Html.HiddenFor(m => m.ServiceTaxPayer[i].CodeTypeId, new { @id = "hdnCodeTypeId" + i })
+                            @Html.HiddenFor(m => m.ServiceTaxPayer[i].CodeId, new { @id = "hdnCodeId" + i })
+                            @Html.HiddenFor(m => m.ServiceTaxPayer[i].CodeDescription, new { @id = "hdnCodeDescription" + i })
+                        }
+                        @Html.ValidationMessageFor(model => model.ServiceTaxPayer)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DefaultServiceTaxPayer, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.DefaultServiceTaxPayer, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "form-control", @id = "ddlDefaultServiceTaxPayer" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DefaultServiceTaxPayer)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.IsServiceTaxPayerEnabled, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsServiceTaxPayerEnabled, true, new { @id = "rdYes", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsServiceTaxPayerEnabled, "Yes", new { @for = "rdYes" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsServiceTaxPayerEnabled, false, new { @id = "rdNo"})
+                            <i></i>
+                            @Html.LabelFor(model => model.IsServiceTaxPayerEnabled, "No", new { @for = "rdNo" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Fuel Surcharge</div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MinimumFuelSurchargeAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MinimumFuelSurchargeAmount, new { @class = "form-control numeric", @id = "txtMinimumFuelSurchargeAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MinimumFuelSurchargeAmount)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaximumFuelSurchargeAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MaximumFuelSurchargeAmount, new { @class = "form-control numeric", @id = "txtMaximumFuelSurchargeAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MaximumFuelSurchargeAmount)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FuelSurchargeRate, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.FuelSurchargeRate, new { @class = "form-control numeric2", @id = "txtFuelSurchargeRate" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FuelSurchargeRate)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FuelSurchargeRateType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.FuelSurchargeRateType, new SelectList(ViewBag.FuelSurchargeRateTypeList, "Value", "Name"), "Select", new { @class = "form-control", @id = "ddlFuelSurchargeRateType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FuelSurchargeRateType)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        if ('@ViewBag.isCustomerContract' == "False") {
+            SetPageLoad('Vendor Contract Modewise Services', 'Modewise Services', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = Model.ContractId })');
+        }
+        else {
+            SetPageLoad('Customer Contract Modewise Services', 'Modewise Services', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = Model.ContractId })');
+        }
+
+        $('input[type=checkbox]').prop("checked", false);
+        OnCutOffTimeChange();
+        $('#txtCutOffStartTime').blur(OnCutOffTimeChange);
+        $('#txtCutOffEndTime').blur(OnCutOffTimeChange);
+        CheckValidate();
+        $('#ddlTransportModeId').change(OnTransportModeChange).change();
+        Init();
+        $('#btnSubmit').click(ValidateOnSubmit);
+    });
+
+    function OnCutOffTimeChange() {
+        var hour = $('#txtCutOffStartTime').val().substr(0, $('#txtCutOffStartTime').val().indexOf(':'));
+        var minute = $('#txtCutOffStartTime').val().substr($('#txtCutOffStartTime').val().indexOf(":") + 1);
+        if ((parseInt(hour) == 0 && parseInt(minute) == 0) || $('#txtCutOffTime').val() == '') {
+            $('#txtCutOffEndTime').val('00:00');
+            $('#txtCutOffEndTime').attr("readOnly", true);
+            $('#txtCutOffTransitDays').val(0);
+            $('#txtCutOffTransitDays').attr("readOnly", true);
+            RemoveRange($("#txtCutOffTransitDays"));
+        }
+        else {
+            $('#txtCutOffTransitDays').attr("readOnly", false);
+            $('#txtCutOffEndTime').attr("readOnly", false);
+            AddRange($("#txtCutOffTransitDays"), "Please enter a value between 0 to 255", 0, 255);
+        }
+    }
+    function CheckValidate() {
+        AddRange($("#txtCftRatio"), "Please enter a value between 0 to 99", 0, 99);
+        AddRange($("#txtMaximumFuelSurchargeAmount"), "Please enter a value between 0 to 9999999999", 0);
+        AddRange($("#txtFuelSurchargeRate"), "Please enter a value between 0 to 9999999999", 0, 9999999999);
+    }
+    function OnTransportModeChange() {
+        $('#txtCutOffTransitDays').val(0);
+        $('#ddlMinimumFreightRateType').val('');
+        $('#txtCutOffStartTime').val('00:00');
+        $('#txtCutOffEndTime').val('00:00');
+        $('#txtCutOffTransitDays').val(0);
+        $('#txtMinimumFreightAmount').val(0);
+        $('#txtMinimumFreightRate').val(0);
+        $('#txtMinimumFreightLowerLimit').val(0);
+        $('#txtMinimumFreightUpperLimit').val(0);
+        $('#txtMinimumSubTotalAmount').val(0);
+        $('#txtSubTotalLowerLimit').val(0);
+        $('#txtSubTotalUpperLimit').val(0);
+        $('#txtCftRatio').val(0);
+        $('#ddlCftMeasurementType').val('');
+        $('#ddlDefaultServiceTaxPayer').val('');
+        $('#txtMinimumFuelSurchargeAmount').val(0);
+        $('#txtMaximumFuelSurchargeAmount').val(0);
+        $('#txtFuelSurchargeRate').val(0);
+        $('#ddlFuelSurchargeRateType').val('');
+        $('#hdnbase').val('');
+        $('#rdNo').prop("checked", true);
+        $('[id*="chkServiceTaxPayer"]').each(function () {
+            var chkServiceTaxPayer = $(this);
+            chkServiceTaxPayer.prop("checked", false);
+        });
+        $('#divBaseHeading').hide();
+        $('#divPercentHeading').hide();
+        $('#divBase').hide();
+        $('#txtMinimumFreightRate').val(0);
+        $('#ddlMinimumFreightRateType').val('');
+        $('#divPercent').hide();
+        $('#txtMinimumFreightLowerLimit').val(0);
+        $('#txtMinimumFreightUpperLimit').val(0);
+        $('#divSubTotal').hide();
+        $('#txtMinimumSubTotalAmount').val(0);
+        $('#txtSubTotalLowerLimit').val(0);
+        $('#txtSubTotalUpperLimit').val(0);
+        if ($('#ddlTransportModeId').val() != "") {
+            var requestData = { transportmodeId: $('#ddlTransportModeId').val(), contractId: '@Model.ContractId' };
+            AjaxRequestWithPostAndJson('@Url.Action("GetModewiseServicesDetails")', JSON.stringify(requestData), GetDetailSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetDetailSuccess(responseData) {
+        $('#txtCutOffTransitDays').val(responseData.CutOffTransitDays);
+        $('#ddlMinimumFreightRateType').val(responseData.MinimumFreightRateType);
+        $('#txtCutOffStartTime').val($.displayTime(responseData.CutOffStartTime));
+        $('#txtCutOffEndTime').val($.displayTime(responseData.CutOffEndTime));
+        $('#txtCutOffTransitDays').val(responseData.CutOffTransitDays);
+        $('#txtMinimumFreightAmount').val(responseData.MinimumFreightAmount);
+        $('#txtMinimumFreightRate').val(responseData.MinimumFreightRate);
+        $('#txtMinimumFreightLowerLimit').val(responseData.MinimumFreightLowerLimit);
+        $('#txtMinimumFreightUpperLimit').val(responseData.MinimumFreightUpperLimit);
+        $('#txtMinimumSubTotalAmount').val(responseData.MinimumSubTotalAmount);
+        $('#txtSubTotalLowerLimit').val(responseData.SubTotalLowerLimit);
+        $('#txtSubTotalUpperLimit').val(responseData.SubTotalUpperLimit);
+        $('#txtCftRatio').val(responseData.CftRatio);
+        $('#ddlCftMeasurementType').val(responseData.CftMeasurementType);
+
+        $('[id*="chkServiceTaxPayer"]').each(function () {
+            var chkServiceTaxPayer = $(this);
+            var hdnCodeId = $('#' + chkServiceTaxPayer.attr('id').replace('chkServiceTaxPayer', 'hdnCodeId'));
+            var hdnCodeDescription = $('#' + chkServiceTaxPayer.attr('id').replace('chkServiceTaxPayer', 'hdnCodeDescription'));
+            for (var i = 0; i < responseData.ServiceTaxPayer.length ; i++) {
+                if (hdnCodeId.val() == responseData.ServiceTaxPayer[i].CodeId) {
+                    chkServiceTaxPayer.prop("checked", true);
+                    $("#ddlDefaultServiceTaxPayer").append($('<option></option>').val(hdnCodeId.val()).html(hdnCodeDescription.val()));
+                    $("#ddlDefaultServiceTaxPayer").refresh();
+                    break;
+                }
+                else {
+                    chkServiceTaxPayer.prop("checked", false);
+                    $("#ddlDefaultServiceTaxPayer option[value='" + hdnCodeId.val() + "']").remove();
+                    $("#ddlDefaultServiceTaxPayer").refresh();
+                }
+            }
+        });
+        if (!IsObjectNullOrEmpty(responseData.DefaultServiceTaxPayer) && responseData.DefaultServiceTaxPayer != 0)
+            $('#ddlDefaultServiceTaxPayer').val(responseData.DefaultServiceTaxPayer);
+        else
+            $('#ddlDefaultServiceTaxPayer').val('');
+        $('#txtMinimumFuelSurchargeAmount').val(responseData.MinimumFuelSurchargeAmount);
+        $('#txtMaximumFuelSurchargeAmount').val(responseData.MaximumFuelSurchargeAmount);
+        $('#txtFuelSurchargeRate').val(responseData.FuelSurchargeRate);
+        if (!IsObjectNullOrEmpty(responseData.FuelSurchargeRateType) && responseData.FuelSurchargeRateType != 0)
+            $('#ddlFuelSurchargeRateType').val(responseData.FuelSurchargeRateType);
+        else
+            $('#ddlFuelSurchargeRateType').val('');
+        $('#hdnbase').val(responseData.UseMinimumFreightTypeBaseWise);
+        if (responseData.IsServiceTaxPayerEnabled == true)
+            $('#rdYes').prop("checked", true)
+        else
+            $('#rdNo').prop("checked", true)
+        if (responseData.UseMinimumFreightTypeBaseWise == true) {
+            $('#divBaseHeading').show();
+            $('#divPercentHeading').hide();
+            $('#divBase').show();
+            AddRequired($('#ddlMinimumFreightRateType'), "Please select Freight Rate Type");
+            $('#divPercent').hide();
+            $('#txtMinimumFreightLowerLimit').val(0);
+            $('#txtMinimumFreightUpperLimit').val(0);
+            RemoveRange($("#txtMinimumFreightUpperLimit"));
+            RemoveRange($("#txtSubTotalUpperLimit"));
+            $('#divSubTotal').hide();
+            $('#txtMinimumSubTotalAmount').val(0);
+            $('#txtSubTotalLowerLimit').val(0);
+            $('#txtSubTotalUpperLimit').val(0);
+        }
+        else {
+            $('#divBaseHeading').hide();
+            $('#divPercentHeading').show();
+            $('#divBase').hide();
+            $('#txtMinimumFreightRate').val(0);
+            $('#ddlMinimumFreightRateType').val('');
+            RemoveRequired($('#ddlMinimumFreightRateType'));
+            $('#divPercent').show();
+            AddRange($("#txtMinimumFreightUpperLimit"), "Please enter a value between 0 to 9999999999", 0, 9999999999);
+            AddRange($("#txtSubTotalUpperLimit"), "Please enter a value between 0 to 9999999999", 0, 9999999999);
+            $('#divSubTotal').show();
+        }
+    }
+
+    function Init() {
+        $('[id*="chkServiceTaxPayer"]').change(function () {
+            var chkServiceTaxPayer = $(this);
+            var hdnCodeId = $('#' + chkServiceTaxPayer.attr('id').replace('chkServiceTaxPayer', 'hdnCodeId'));
+            var hdnCodeDescription = $('#' + chkServiceTaxPayer.attr('id').replace('chkServiceTaxPayer', 'hdnCodeDescription'));
+            if (chkServiceTaxPayer.IsChecked) {
+                $("#ddlDefaultServiceTaxPayer").append($('<option></option>').val(hdnCodeId.val()).html(hdnCodeDescription.val()));
+                $("#ddlDefaultServiceTaxPayer").refresh();
+            }
+            else {
+                $("#ddlDefaultServiceTaxPayer option[value='" + hdnCodeId.val() + "']").remove();
+                $("#ddlDefaultServiceTaxPayer").refresh();
+            }
+
+        });
+    }
+
+    function ValidateMultiCheckBox(partialId, entityName) {
+        var selected = false, firstCheckBox = null;
+        $('[id*="' + partialId + '"]').each(function () {
+            if (firstCheckBox == null)
+                firstCheckBox = $(this);
+            if ($(this).is(':checked'))
+                selected = true;
+        });
+        if (!selected) {
+            ShowMessage("Please select at-least one " + entityName);
+            firstCheckBox.focus();
+            return false;
+        }
+        return true;
+    }
+
+    function ValidateOnSubmit() {
+        if (!ValidateMultiCheckBox('chkServiceTaxPayer', 'Service Tax Payer')) return false;
+    }
+</script>

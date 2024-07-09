@@ -1,0 +1,285 @@
+﻿@model  List<CodeLock.Models.VendorContractRouteBased>
+
+@{
+    ViewBag.Title = "RouteBased";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new {@id= "j-forms", @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Contract ID", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.ManualContractId
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vendor Type", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.VendorType
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Vendor Name", new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.VendorCode : @ViewBag.VendorName
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <table id="dtRouteBased">
+            <thead>
+                <tr>
+                    <th style="width:10%">
+                        @Html.DisplayNameFor(model => model[0].TransportModeId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].RouteId)
+                    </th>
+                    <th style="width:10%">
+                        @Html.DisplayNameFor(model => model[0].FtlTypeId)
+                    </th>
+                    <th style="width:15%">
+                        @Html.DisplayNameFor(model => model[0].VehicleId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].MinimumCharge)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].MaximumCharge)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].RateTypeId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model[0].Rate)
+                    </th>
+                    <th id="thAction" style="width:85px">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.HiddenFor(model => Model[i].ContractId, new { @id = "hdnContractId" + i, @class = "static" })
+                            <div class="select">
+                                @Html.DropDownListFor(m => Model[i].TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name", ViewBag.TransportModeId), "Select", new { @class = "form-control", id = "ddlTransportModeId" + i.ToString() })
+                            <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].TransportModeId)
+                        </td>
+                        <td>
+                            <div class="select">
+                                @Html.DropDownListFor(model => Model[i].RouteId, new SelectList(ViewBag.RouteList, "Value", "Name", ViewBag.RouteId), "Select Route", new { @class = "form-control", @id = "ddlRouteId" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].RouteId)
+                        </td>
+                        <td>
+                            <div class="select">
+                                @Html.DropDownListFor(model => Model[i].FtlTypeId, new SelectList(ViewBag.FtlTypeList, "Value", "Name", ViewBag.FtlTypeId), new { @class = "form-control", @id = "ddlFtlTypeId" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].FtlTypeId)
+                        </td>
+                        <td>
+                            <div class="select">
+                                @Html.DropDownListFor(model => Model[i].VehicleId, new SelectList(ViewBag.VehicleList, "Value", "Name", ViewBag.VehicleId), new { @class = "form-control", @id = "ddlVehicleId" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].VehicleId)
+                        </td>
+
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model[i].MinimumCharge, new { @class = "form-control numeric2", id = "txtMinimumCharge" + i.ToString() })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].MinimumCharge)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model[i].MaximumCharge, new { @class = "form-control numeric2", id = "txtMaximumCharge" + i.ToString() })
+                                <i></i>
+                            </div>
+                                @Html.ValidationMessageFor(m => Model[i].MaximumCharge)
+                        </td>
+                        <td>
+                            <div class="select">
+                                @Html.DropDownListFor(m => Model[i].RateTypeId, new SelectList(ViewBag.RateTypeList, "Value", "Name", Model[i].RateTypeId), "Select Rate Type", new { @class = "form-control", id = "ddlRateType" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].RateTypeId)
+                        </td>
+                        <td>
+                            <div class="input">
+                                @Html.TextBoxFor(m => Model[i].Rate, new { @class = "form-control numeric2", id = "txtRate" + i.ToString() })
+                            </div>
+                            @Html.ValidationMessageFor(m => Model[i].Rate)
+                            @Html.HiddenFor(model => Model[i].EntryBy, new { @id = "hdnEntryBy" + i })
+                            @Html.HiddenFor(model => Model[i].EntryDate, new { @id = "hdnEntryDate" + i })
+                        </td>
+                        <td id="trAction"></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="form-footer">
+            <button id="btnSubmit" type="submit" class="btn btn-success primary-btn" tabindex="0">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var transportModeId, routeId, vehicleId, ftlTypeId;
+
+    $(document).ready(function () {
+        SetPageLoad('Vendor Contract', 'Route Based', '', 'Go To Route Criteria', '@Url.Action("RouteBasedCriteria")/' + '@Model[0].ContractId' + '?vendorTypeId=@Html.Raw(@ViewBag.VendorTypeId)', 'Go To Step Selection', '@Url.Action("StepSelection", new { contractId = @Html.Raw(@ViewBag.ContractId), vendorTypeId = @Html.Raw(@ViewBag.VendorTypeId), vendorId = @Html.Raw(@ViewBag.VendorId) })');
+        InitObjects();
+    });
+
+    function InitObjects() {
+        transportModeId = '@Html.Raw(ViewBag.TransportModeId)';
+        routeId = '@Html.Raw(ViewBag.RouteId)';
+        vehicleId = '@Html.Raw(ViewBag.VehicleId)';
+        ftlTypeId = '@Html.Raw(ViewBag.ftlTypeId)';
+        InitGrid('dtRouteBased', false, 8, AttachEvents);
+        if (routeId != '0' && ftlTypeId != '0' && vehicleId != '0') {
+            $('#thAction').hide();
+            $('td:nth-child(9)').hide();
+        }
+        $('#btnSubmit').click(OnSubmit);
+
+        $('[id*="ddlTransportModeId"]').each(function () {
+            var ddlTransportModeId = $(this);
+            var ddlRouteId = $('#' + ddlTransportModeId.Id.replace('ddlTransportModeId', 'ddlRouteId'));
+            var ddlVehicleId = $('#' + ddlTransportModeId.Id.replace('ddlTransportModeId', 'ddlVehicleId'));
+            var ddlFtlTypeId = $('#' + ddlTransportModeId.Id.replace('ddlTransportModeId', 'ddlFtlTypeId'));
+            AddFirstItemDropDownList(ddlFtlTypeId, 0, 'All');
+            AddFirstItemDropDownList(ddlVehicleId, 0, 'All');
+
+            if (routeId != 0) {
+                ddlRouteId.attr("disabled", true);
+                ddlRouteId.val(routeId);
+
+                ddlTransportModeId.attr("disabled", true);
+                ddlTransportModeId.val(transportModeId);
+            }
+
+            if (ftlTypeId != 0) {
+                ddlFtlTypeId.attr("disabled", true);
+                ddlFtlTypeId.val(ftlTypeId);
+            }
+
+            OnFtlTypeChange(ddlFtlTypeId, ddlVehicleId);
+            ddlVehicleId.val(vehicleId);
+        });
+    }
+
+    function OnFtlTypeChange(ddlFtlTypeId, ddlVehicleId) {
+        if (ddlFtlTypeId.val() != "") {
+            var requestData = { ftlTypeId: ddlFtlTypeId.val() != '' ? ddlFtlTypeId.val() : 0 };
+            AjaxRequestWithPostAndJson('@Url.Action("GetVehicleByFtlTypeId", "Vehicle",new { @Area= "Master"})', JSON.stringify(requestData), function (responseData) {
+                BindDropDownList(ddlVehicleId.Id, responseData, 'Value', 'Name', '0', 'All');
+            }, ErrorFunction, false);
+        }
+    }
+
+    function AttachEvents() {
+        $('[id*="ddlTransportModeId"]').each(function () {
+            var ddlTransportModeId = $(this);
+            var ddlRouteId = $('#' + ddlTransportModeId.Id.replace('ddlTransportModeId', 'ddlRouteId'));
+            var ddlVehicleId = $('#' + ddlTransportModeId.Id.replace('ddlTransportModeId', 'ddlVehicleId'));
+            var ddlFtlTypeId = $('#' + ddlTransportModeId.Id.replace('ddlTransportModeId', 'ddlFtlTypeId'));
+
+            ddlTransportModeId.change(function () {
+                var requestData = { transportModeId: ddlTransportModeId.val() != '' ? ddlTransportModeId.val() : 0, locationId: 0};
+                AjaxRequestWithPostAndJson('@Url.Action("GetRouteListByTransportModeId", "Route", new { @Area = "Master" })', JSON.stringify(requestData), GetRouteListSuccess, ErrorFunction, false);
+            });
+
+            function GetRouteListSuccess(responseData) {
+                BindDropDownList(ddlRouteId.attr('Id'), responseData, 'Value', 'Name', '', 'Select Route');
+
+            }
+
+            ddlFtlTypeId.change(function () {
+                OnFtlTypeChange(ddlFtlTypeId, ddlVehicleId);
+            });
+
+            ddlRouteId.change(function () {
+                try {
+                    IsRouteBasedContractExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    SetFormFieldFocus($(this).attr('id'));
+                }
+            });
+
+            ddlVehicleId.change(function () {
+                try {
+                    IsRouteBasedContractExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    SetFormFieldFocus($(this).attr('id'));
+                }
+            });
+
+            ddlFtlTypeId.change(function () {
+                try {
+                    IsRouteBasedContractExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    SetFormFieldFocus($(this).attr('id'));
+                }
+            });
+        });
+    }
+
+    function IsRouteBasedContractExist(obj) {
+        if (obj.val() != '') {
+            var outertr = obj.closest('tr');
+            var outerddlRouteId = outertr.find('[id*="ddlRouteId"]');
+            var outerddlVehicleId = outertr.find('[id*="ddlVehicleId"]');
+            var outerddlFtlTypeId = outertr.find('[id*="ddlFtlTypeId"]');
+
+            $('#dtRouteBased tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innerddlRouteId = innertr.find('[id*="ddlRouteId"]');
+                var innerddlVehicleId = innertr.find('[id*="ddlVehicleId"]');
+                var innerddlFtlTypeId = innertr.find('[id*="ddlFtlTypeId"]');
+
+                if (innerddlRouteId.attr('id') != outerddlRouteId.attr('id') && innerddlRouteId.val() == outerddlRouteId.val() &&
+                    innerddlVehicleId.val() == outerddlVehicleId.val() && innerddlFtlTypeId.val() == outerddlFtlTypeId.val()) {
+                    ShowMessage("Route contract is already exist");
+                    throw (true);
+                }
+            });
+        }
+    }
+
+    function OnSubmit() {
+        var form = $("#j-forms");
+        form.validate();
+        if (form.valid()) {
+            $('[id*="ddlTransportModeId"]').removeAttr('disabled');
+            $('[id*="ddlVehicleId"]').removeAttr('disabled');
+            $('[id*="ddlRouteId"]').removeAttr('disabled');
+            $('[id*="ddlFtlTypeId"]').removeAttr('disabled');
+        }
+        else
+            return false;
+    }
+
+</script>

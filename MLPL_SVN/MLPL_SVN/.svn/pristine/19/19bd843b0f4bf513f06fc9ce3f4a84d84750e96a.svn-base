@@ -1,0 +1,137 @@
+﻿@using CodeLock.Models
+@model IEnumerable<CodeLock.Models.DocketStatus>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("DocketStatusCustomerList", "Docket", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+<div class="widget-wrap">
+    <div class="page-separator">Search Docket</div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "Fromdate", FieldCaption = "From Date", IsDateOnly = true, IsRequired = true, AllowFutureDate = false })
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "ToDate", FieldCaption = "To Date", IsDateOnly = true, IsRequired = true, AllowFutureDate = false})
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                Customer
+                <div class="select">
+                    @Html.DropDownList("CustomerId", new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Customer", new { @class = "form-control select2", @id = "CustomerId" })
+                    <i></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-footer">
+        <button type="submit" class="btn btn-success primary-btn" tabindex="0">Search</button>
+    </div>
+
+    <div class="widget-wrap material-table-widget">
+
+        <div class="page-separator">Docket Status List</div>
+        <table id="dtBins">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DocketNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DocketDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Origin)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Destination)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ModeOfTransport)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ConsigneeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.InvoiceNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.EDD)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Status)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Remarks)
+                    </th>
+                    @*<th>
+                        Action
+                    </th>*@
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DocketNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DocketDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Origin)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Destination)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ModeOfTransport)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ConsigneeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InvoiceNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EDD)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Remarks)
+                        </td>
+
+                        @*<td class="td-center">
+                            <div class="btn-toolbar" role="toolbar">
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("DocketStatus", new { DocketId = item.DocketId })"><span class="zmdi zmdi-edit"></span></a>
+                                </div>
+                            </div>
+                        </td>*@
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+}
+
+    <script>
+        $(document).ready(function () {
+            SetPageLoad('Docket', 'Status');
+            LoadDataTable('dtBins', true, true, true);
+            drDocumentDate = InitDateRange('drDocumentDate', DateRange.LastWeek, false);
+            $('#CustomerId').val(@ViewBag.CustomerId);
+        });
+    </script>
+

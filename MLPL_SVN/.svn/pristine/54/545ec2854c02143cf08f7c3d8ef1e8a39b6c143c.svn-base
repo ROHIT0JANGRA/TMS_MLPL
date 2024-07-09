@@ -1,0 +1,118 @@
+﻿//  
+// Type: CodeLock.Areas.WMS.Controllers.AsnController
+//  
+//  
+//  
+
+using CodeLock.Areas.Master.Repository;
+using CodeLock.Areas.WMS.Repository;
+using CodeLock.Models;
+using Microsoft.CSharp.RuntimeBinder;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Runtime.CompilerServices;
+using System.Web.Mvc;
+
+namespace CodeLock.Areas.WMS.Controllers
+{
+  public class AsnController : Controller
+  {
+    public readonly IAsnRepository asnRepository;
+    public readonly IGeneralRepository generalRepository;
+
+    public AsnController()
+    {
+    }
+
+    public AsnController(IAsnRepository _asnRepository, IGeneralRepository _generalrepository)
+    {
+      this.asnRepository = _asnRepository;
+      this.generalRepository = _generalrepository;
+    }
+
+    public ActionResult View(byte? companyId, short? warehouseId, long? id)
+    {
+      if (!id.HasValue)
+        return (ActionResult) new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+      Asn byId = this.asnRepository.GetById(id.Value, warehouseId.Value, companyId.Value);
+      if (byId == null)
+        return (ActionResult) this.HttpNotFound();
+      return (ActionResult) this.View((object) byId);
+    }
+
+    public ActionResult Insert()
+    {
+            ((dynamic)base.ViewBag).AsnTypeList = this.generalRepository.GetByIdList(31);
+            Asn asn = new Asn();
+            asn.Details.Add(new AsnDetail());
+            return base.View(asn);
+        }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult Insert(Asn objAsn)
+    {
+            //if (this.ModelState.IsValid)
+            //{
+                objAsn.CompanyId = SessionUtility.CompanyId;
+        objAsn.WarehouseId = SessionUtility.WarehouseId;
+        objAsn.EntryBy = SessionUtility.LoginUserId;
+        objAsn.EntryDate = DateTime.Now;
+        Asn asn1 = objAsn;
+        DateTime dateTime = objAsn.AsnDateTime.Value;
+        DateTime date = dateTime.Date;
+        asn1.AsnDate = date;
+        Asn asn2 = objAsn;
+        dateTime = objAsn.AsnDateTime.Value;
+        TimeSpan timeOfDay = dateTime.TimeOfDay;
+        asn2.AsnTime = timeOfDay;
+        objAsn.Details.ForEach((Action<AsnDetail>) (m => m.AsnDate = objAsn.AsnDate));
+        Response response = this.asnRepository.Insert(objAsn);
+        if (response.IsSuccessfull)
+          return (ActionResult) this.RedirectToAction("Done", (object) new
+          {
+            documentType = "ASN",
+            documentNo = response.DocumentNo,
+            documentId = response.DocumentId,
+            documentTypeId = ModuleHelper.ASN
+          });
+     //}
+            return (ActionResult) this.View((object) objAsn);
+    }
+
+    public ActionResult Done()
+    {
+      return (ActionResult) this.View();
+    }
+
+    public ActionResult Register()
+    {
+      return (ActionResult) this.View((object) new AsnRegister());
+    }
+
+    [HttpPost]
+    public JsonResult GetRegisterAsnDetail(
+      string asnNo,
+      DateTime fromDate,
+      DateTime toDate)
+    {
+      return this.Json((object) this.asnRepository.GetRegisterAsnDetail(asnNo, fromDate, toDate, SessionUtility.FinStartDate, SessionUtility.FinEndDate), JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult GetListForGrn(Asn objAsn)
+    {
+      return this.Json((object) this.asnRepository.GetListForGrn(objAsn.CompanyId, objAsn.WarehouseId, (short) objAsn.SupplierType, objAsn.SupplierId, objAsn.AsnNo.ConvertToString(), objAsn.PoNo.ConvertToString(), objAsn.InvoiceNo.ConvertToString(), objAsn.FromDate, objAsn.ToDate, SessionUtility.FinStartDate, SessionUtility.FinEndDate));
+    }
+
+    public JsonResult GetAsn(long asnId, short warehouseId, byte companyId)
+    {
+      return this.Json((object) this.asnRepository.GetAsn(asnId, warehouseId, companyId));
+    }
+
+    public JsonResult GetDockNumberFromGatePassIn(byte GatepassInId)
+    {
+      return this.Json((object) this.asnRepository.GetDockNumberFromGatePassIn(GatepassInId));
+    }
+  }
+}

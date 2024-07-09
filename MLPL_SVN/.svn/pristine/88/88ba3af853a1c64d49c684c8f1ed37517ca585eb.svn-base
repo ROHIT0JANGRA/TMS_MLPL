@@ -1,0 +1,133 @@
+﻿@model CodeLock.Models.MasterCity
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "City Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "City", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.CityId)
+    @Html.HiddenFor(model => model.CityId)
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CountryId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CountryId, new SelectList(ViewBag.CountryList, "Value", "Name"), "Select Country", new { @class = "form-control", @id = "ddlCountry" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CountryId)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ZoneId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.ZoneId, new SelectList(ViewBag.ZoneList, "Value", "Name"), "Select Zone", new { @class = "form-control", @id = "ddlZone" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ZoneId)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StateId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.StateId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlState" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StateId)
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CityName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CityName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CityName)
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsPermitRequired, new { @class = "label" })
+                    <label class="checkbox">
+                        @*<input type="checkbox">*@
+                        @Html.CheckBoxFor(model => model.IsPermitRequired)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsOdaApplicable, new { @class = "label" })
+                    <label class="checkbox">
+                        @*<input type="checkbox">*@
+                        @Html.CheckBoxFor(model => model.IsOdaApplicable)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.B2CZoneId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.B2CZoneId, new SelectList(ViewBag.ZoneList, "Value", "Name"), "Select B2C Zone", new { @class = "form-control", @id = "ddlB2CZone" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OdaKm, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.OdaKm, new { @class = "form-control", @id = "txtOdaKm" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.OdaKm)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.isMetro, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.isMetro)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('City', 'Update', 'ddlCountry', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.CityId })');
+    });
+</script>

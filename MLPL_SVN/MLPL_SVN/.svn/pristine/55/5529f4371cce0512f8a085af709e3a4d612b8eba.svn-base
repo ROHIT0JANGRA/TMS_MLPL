@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Done";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:150px">
+    <div class="row">
+        <div class="alert alert-success"><h5><span id="spnMassage">Opening Balance Set Successfully</span></h5></div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Set Balance', 'Done', '', 'Go To Set Balance', '@Url.Action("AccountOpening")');
+    });
+</script>
+

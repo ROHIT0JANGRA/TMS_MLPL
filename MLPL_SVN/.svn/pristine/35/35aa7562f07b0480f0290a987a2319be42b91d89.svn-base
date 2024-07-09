@@ -1,0 +1,174 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.IssueSlip
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        baseUrl = '@Url.Action("", "PurchaseOrder", new { Area = "Finance" })';
+    });
+</script>
+
+<script src="@Url.Content("~/Areas/Finance/Views/PurchaseOrder/IssueSlip.js")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("IssueSlip", "PurchaseOrder", FormMethod.Post, new { @class = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.IssueSlipId, new { @id = "hdnIssueSlipId" })
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.IssueSlipNo, new { @class = "label" })
+                                <div class="system-label">
+                                    @Html.Label("<System Generated>")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.MaterialCategoryId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.MaterialCategoryId, new SelectList(ViewBag.MaterialCategoryList, "Value", "Name"), "Select", new { @class = "form-control", @id = "ddlMaterialCategoryId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.MaterialCategoryId)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="inputer floating-label">
+                                    @Html.LabelFor(model => model.VehicleId, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.HiddenFor(m => m.VehicleId, new { @id = "hdnVehicleId" })
+                                        @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "txtVehicleNo" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.VehicleNo)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="inputer floating-label">
+                                    @Html.LabelFor(model => model.JobOrderId, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.HiddenFor(m => m.JobOrderId, new { @id = "hdnJobOrderId" })
+                                        @Html.TextBoxFor(model => model.JobOrderId, new { @class = "form-control", @id = "txtJobOrderNo" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.JobOrderNo)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "IssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.IssueDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsDateOnly = false })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.LocationId, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(m => m.LocationId, new { @Value = @SessionUtility.LoginLocationId, @id = "hdnLocationId" })
+                                    @Html.LabelFor(m => m.LocationCode, @SessionUtility.LoginLocationCode, new { @id = "lblLocationCode" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="inputer floating-label">
+                                    @Html.LabelFor(model => model.SpareRequestId, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.HiddenFor(m => m.SpareRequestId, new { @id = "hdnSpareRequestId" })
+                                        @Html.TextBoxFor(model => model.SpareRequestNo, new { @class = "form-control", @id = "txtSpareRequestNo" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.SpareRequestNo)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "SpareRequestDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.SpareRequestDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsDateOnly = false })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="inputer floating-label">
+                                    @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextAreaFor(model => model.Remarks, new { @class = "form-control js-auto-size" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Remarks)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="dtDetail"></table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="dtDetail">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Description</th>
+                                        <th>Quantity In Stock</th>
+                                        <th>Required Quantity</th>
+                                        <th>Issued Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Total Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.Details.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.HiddenFor(m => Model.Details[i].SkuId, new { @id = "hdnSkuId" + i })
+                                                @Html.TextBoxFor(m => Model.Details[i].SkuName, null, new { @class = "form-control text-complete text-complete-html", @id = "txtSkuName" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].SkuName)
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].Description, new { @class = "form-control", @id = "txtDescription" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].Description)
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].StockQuantity, new { @class = "form-control numeric textlabel", @id = "txtStockQuantity" + i.ToString() })
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].RequiredQuantity, new { @class = "form-control numeric textlabel", @id = "txtRequiredQuantity" + i.ToString() })
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].IssuedQuantity, new { @class = "form-control numeric", @id = "txtIssuedQuantity" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].IssuedQuantity)
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].UnitPrice, new { @class = "form-control numeric2 textlabel", @id = "txtUnitPrice" + i.ToString() })
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].TotalAmount, new { @class = "form-control numeric2 textlabel", @id = "txtTotalAmount" + i.ToString() })
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

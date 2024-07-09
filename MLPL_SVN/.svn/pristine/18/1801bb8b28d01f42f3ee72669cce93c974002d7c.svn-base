@@ -1,0 +1,132 @@
+﻿@model CodeLock.Models.TransitStatus
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label(SessionUtility.DocketNomenClature + " Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.CustomerTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CustomerTypeId, new List<SelectListItem> {
+                        new SelectListItem() {Text = "All",Value="0"},
+                        new SelectListItem() {Text = "Billing Party",Value="1"},
+                        new SelectListItem() {Text = "Consignor",Value="2"},
+                        new SelectListItem() {Text = "Consignee",Value="3"},}, new { @class = "form-control", @id = "ddlCustomerTypeId" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="dvCustomer">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                            @Html.TextBoxFor(model => model.CustomerCode, new { @class = "form-control", @id = "txtCustomerCode" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CustomerCode)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label" })
+                        @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomer" })
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDate, ddlLocationId, ddlCustomerTypeId, hdnCustomerId, txtCustomerCode, lblCustomer, btnSubmit;
+    var docketUrl, customerMasterUrl;
+
+    $(document).ready(function () {
+        SetPageLoad('Transit Status', 'Report', '', '', '');
+
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        ddlLocationId = $('#ddlLocationId');
+        ddlCustomerTypeId = $('#ddlCustomerTypeId');
+        hdnCustomerId = $('#hdnCustomerId');
+        txtCustomerCode = $('#txtCustomerCode');
+        lblCustomer = $('#lblCustomer');
+        btnSubmit = $('#btnSubmit');
+        ddlCustomerTypeId.change(OnCustomerTypeChange);
+        OnCustomerTypeChange();
+        btnSubmit.click(ViewReport);
+
+        docketUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+
+        CustomerAutoComplete('txtCustomerCode', 'hdnCustomerId');
+        txtCustomerCode.blur(function () { return IsCustomerCodeExist(txtCustomerCode, hdnCustomerId, lblCustomer); });
+    });
+
+    function CheckValidCustomerCode(txtCustomerCode, hdnCustomerId) {
+        if (txtCustomerCode.val() != "") {
+            var requestData = { customerCode: txtCustomerCode.val() };
+            AjaxRequestWithPostAndJson(customerMasterUrl + '/CheckValidCustomerCodeByCompanyId', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    hdnCustomerId.val(result.Value);
+                    txtCustomerCode.val(result.Name);
+                    lblCustomer.text(result.Description);
+                }
+                else {
+                    ShowMessage('Customer is not exist');
+                    txtCustomerCode.val('');
+                    hdnCustomerId.val(0);
+                    lblCustomer.text('');
+                    txtCustomerCode.focus();
+                }
+            }, ErrorFunction, false);
+        }
+        else {
+            txtCustomerCode.val('');
+            hdnCustomerId.val(0);
+            lblCustomer.text('');
+        }
+
+    }
+
+    function OnCustomerTypeChange() {
+        $('#dvCustomer').showHide(ddlCustomerTypeId.val() != 0);
+        txtCustomerCode.val('');
+        hdnCustomerId.val(0);
+        lblCustomer.text('');
+    }
+
+    function ViewReport() {
+        if (ddlCustomerTypeId.val() != 0 && txtCustomerCode.val() == '') {
+            ShowMessage('Please enter Customer');
+            txtCustomerCode.focus();
+            return false;
+        }
+        else {
+            var prmList = [
+               { Name: "FromDate", Value: drDate.startDate }, { Name: "ToDate", Value: drDate.endDate }, { Name: "FromLocationId", Value: ddlLocationId.val() }, { Name: "CustomerTypeId", Value: ddlCustomerTypeId.val() }, { Name: "CustomerId", Value: hdnCustomerId.val() }];
+            var reportInfo = { PrmList: prmList, Name: 'TransitStatus', Description: 'Transit Status Report' };
+            return ShowReport(reportInfo);
+        }
+    }
+</script>

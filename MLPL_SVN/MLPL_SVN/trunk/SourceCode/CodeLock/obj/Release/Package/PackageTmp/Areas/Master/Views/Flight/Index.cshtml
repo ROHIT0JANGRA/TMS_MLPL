@@ -1,0 +1,103 @@
+﻿@model IEnumerable<CodeLock.Models.MasterFlight>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap material-table-widget">
+    <table id="dtFlight">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FlightNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Airline)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FromAirport)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ToAirport)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.AirlineId)
+                </th>
+                <th data-hide="phone" style="display:none">
+                    @Html.DisplayNameFor(model => model.IsNRoute)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FlightNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Airline)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FromAirport)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ToAirport)
+                    </td>
+                    <td>
+                        @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Insert", new { id = item.FlightId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.FlightId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.ToAirport)
+                    </td>
+                    <td style="display:none">
+                        @Html.Label("", item.IsNRoute == true ? "Yes" : "No", new { @class = item.IsNRoute == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Flight', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtFlight', true, true, true);
+    });
+</script>
+

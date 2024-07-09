@@ -1,0 +1,74 @@
+﻿@model IEnumerable<CodeLock.Models.MasterServiceVehicle>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtVehicle">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.VehicleNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PreviousServiceKM)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PreviousServiceDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TotalCountServices)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NextServiceKM)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Reminder)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VehicleNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CurrentServiceKM)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CurrentServiceDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalCountServices)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NextServiceKM)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Reminder)
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.MappingId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.MappingId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vehicle', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtVehicle', true, true, true);
+    });
+</script>

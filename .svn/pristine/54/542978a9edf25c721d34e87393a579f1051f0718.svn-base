@@ -1,0 +1,108 @@
+﻿@model CodeLock.Models.MasterAsset
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Asset Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Asset", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.AssetId)
+    @Html.HiddenFor(model => model.AssetId)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AssetCode, new { @class = "label" })
+                    <div class="form-group">
+                        @Html.Label("", Model.AssetCode)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AssetName, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.AssetName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AssetName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AssetPrefix, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.AssetPrefix, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AssetPrefix)
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.AssetGroup, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.AssetGroupId, new SelectList(ViewBag.AssetGroupList, "Value", "Name"), "Select Asset Group", new { @class = "form-control", @id = "ddlAssetGroup" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.AssetGroupId)
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.UnitsOfMeasurement, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.UomId, new SelectList(ViewBag.UnitsOfMeasurementList, "Value", "Name"), "Select Units Of Measurement", new { @class = "form-control", @id = "ddlUom" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.UomId)
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.AssetCategory, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.AssetCategory, new SelectList(ViewBag.AssetCategoryList, "Value", "Name"), "Select Asset Category", new { @class = "form-control", @id = "ddlAssetCategory" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.AssetCategory)
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.DepreciationMethod, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.DepreciationMethod, new SelectList(ViewBag.DepreciationMethodList, "Value", "Name"), "Select Depreciation Method", new { @class = "form-control", @id = "ddlDepreciationMethod" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.DepreciationMethod)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DepreciationRate, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.DepreciationRate, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DepreciationRate)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Asset', 'Update', 'ddlCategory', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.AssetId })');
+    });
+</script>
+

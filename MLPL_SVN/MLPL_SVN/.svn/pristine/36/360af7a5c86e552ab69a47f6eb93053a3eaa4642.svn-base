@@ -1,0 +1,212 @@
+﻿@model CodeLock.Models.MasterPart
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row">
+        @*<div class="col-xs-3">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.PartId)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.PartId)
+                    </dd>
+                </dl>
+            </div>*@
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.PartCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.PartCode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.PartNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.PartNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.PartName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.PartName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EntryByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </dt>
+                <dd>
+                    @Model.EntryDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.UpdateDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        @*<div class="col-xs-3">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.CompanyId)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.CompanyId)
+                    </dd>
+                </dl>
+            </div>*@
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table" id="dtPart">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().PackingTypeId)
+
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().ActualWeight)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().Quantity)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().ActualWeightPerQuantity)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().PackageDimensionsId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().Length)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().Breadth)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().Height)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().CftRatio)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().TotalCubic)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().CubicPerQuantity)
+                        </th>
+                       
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().ConsignorId)
+
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().ConsigneeCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PartDetails.FirstOrDefault().IsReverse)
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.PartDetails.Count; i++)
+                    {
+                        var item = Model.PartDetails.ToArray()[i];
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => item.PackingType)
+                            </td>
+                            <td>
+                                @item.ActualWeight.ToString("0.0000")
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Quantity)
+                            </td>
+                            <td>
+                                @item.ActualWeightPerQuantity.ToString("0.0000")
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.PackageDimensionsId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Length)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Breadth)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Height)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.CftRatio)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.TotalCubic)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.CubicPerQuantity)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(model => item.ConsignorCode)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.ConsigneeCode)
+                            </td>
+                            <td>
+                                @Html.YesNo(item.IsReverse)
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Part', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { id = Model.PartId })');
+    });
+</script>

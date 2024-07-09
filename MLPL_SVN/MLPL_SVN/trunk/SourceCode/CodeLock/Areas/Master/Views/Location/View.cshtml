@@ -1,0 +1,261 @@
+﻿@model CodeLock.Models.MasterLocation
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LocationHierarchyId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.LocationHierarchyName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LocationHierarchyReportingToId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ReportLocationHierarchyName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ReportLocationId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Reportlocation)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LocationCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.LocationCode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LocationName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.LocationName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.CountryNameId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CountryName)
+                </dd>
+            </dl>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.StateNameId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.StateName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.CityId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CityName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Pincode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Pincode)
+                </dd>
+            </dl>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Address)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Address)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MobileNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MobileNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EmailId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EmailId)
+                </dd>
+            </dl>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.StartDate)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.StartDate)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EndDate)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EndDate)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsComputerized)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsComputerized)
+                </dd>
+            </dl>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.OwnershipTypeId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.OwnershipTypeName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsActive)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DataEntryLocation)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SavedDataEntryLocation)
+                </dd>
+            </dl>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ownershipLocationId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.OwnershipLocation)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Longitude)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Longitude)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Latitude)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Latitude)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.InternalLocationCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.InternalLocationCode)
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Location', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { id = Model.LocationId })');
+    });
+</script>
+

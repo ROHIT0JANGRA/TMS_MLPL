@@ -1,0 +1,444 @@
+﻿@using CodeLock.Models
+@model CreditDebitNote
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "CreditDebitNote";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("CreditDebitNote", "CustomerBill", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.NoteId, new { id = "hdnNoteId" })
+            @Html.HiddenFor(m => m.PartyId, new { id = "hdnPartyId" })
+            @Html.HiddenFor(m => m.GstType, new { id = "hdnGstType" })
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="inline-group">
+                                    @Html.LabelFor(model => model.NoteType, new { @class = "label" })
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.NoteType, "1", new { @id = "rdNoteTypeCreditNote", @tabindex = "0", @checked = "checked" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.NoteType, "Credit Note", new { @for = "rdNoteTypeCreditNote" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.NoteType, "2", new { @id = "rdNoteTypeDebitNote", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.NoteType, "Debit Note", new { @for = "rdNoteTypeDebitNote" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            @Html.Label("Bill Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drBillDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="inline-group">
+                                    @Html.LabelFor(model => model.IsGst, new { @class = "label" })
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.IsGst, false, new { @id = "rdBillsWithoutGst", @tabindex = "0", @checked = "checked" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.IsGst, "Without GST", new { @for = "rdBillsWithoutGst" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.IsGst, true, new { @id = "rdBillsWithGst", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.IsGst, "With GST", new { @for = "rdBillsWithGst" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-sm-4" id="dvBillType">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillTypeId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.BillTypeId, Enumerable.Empty<SelectListItem>(), "Select Bill Type", new { @class = "form-control", @id = "ddlBillTypeId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.BillTypeId)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PartyCode, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.PartyId, new { @id = "hdnPartyId" })
+                                    @Html.TextBoxFor(model => model.PartyCode, null, new { @class = "form-control", @id = "txtPartyCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.PartyCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PartyName, new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.PartyName, " ", new { @class = "label-bold", @id = "lblPartyName" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name"), "Select Transport Mode", new { @class = "form-control", @id = "ddlTransportModeId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.TransportModeId)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.BillNo, new { @class = "form-control", @id = "txtBillNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.BillNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualBillNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualBillNo, new { @class = "form-control", @id = "txtManualBillNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualBillNo)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane">
+                    <div class="page-separator">Bill Details</div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.NoteNo, new { @class = "label" })
+                                <div class="system-label">
+                                    @Html.LabelFor(model => model.NoteNo, "<System Generated>")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "NoteDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.NoteDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ReferenceNumber, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ReferenceNumber, null, new { @class = "form-control", @id = "txtReferenceNumber" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.NoteBranchName, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.NoteBranchId, new { @id = "hdnNoteBranchId", @value = SessionUtility.LoginLocationId })
+                                    @Html.LabelFor(model => model.NoteBranchName, SessionUtility.LoginLocationCode, new { @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					<div class="row">
+						<div class="col-sm-3">
+							<div class="form-group">
+								@Html.LabelFor(model => model.BillType, new { @class = "label" })
+								<div class="clearfix">
+									@Html.LabelFor(model => model.BillType, " ", new { @class = "label-bold", @id = "lblBillType" })
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								@Html.LabelFor(model => model.PartyCodeName, new { @class = "label" })
+								<div class="clearfix">
+									@Html.LabelFor(model => model.PartyCodeName, " ", new { @class = "label-bold", @id = "lblPartyCodeName" })
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-3" id="dvIsGstReverse">
+							<div class="form-group">
+								@Html.LabelFor(model => model.IsGstReverse, new { @class = "label", @for = "chkIsGstReverse" })
+								<label class="checkbox">
+									@Html.CheckBoxFor(model => model.IsGstReverse, new { @id = "chkIsGstReverse" })
+									<i></i>
+								</label>
+							</div>
+						</div>
+					</div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.AccountCode, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(m => Model.AccountId, new { id = "hdnAccountId" })
+                                    @Html.TextBoxFor(m => Model.AccountCode, new { @class = "form-control", @id = "txtAccountCode" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.AccountCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.AccountDescription, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => Model.AccountDescription, " ", new { @class = "label-bold", @id = "lblAccountDescription" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.TotalNoteAmount, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.TotalNoteAmount, null, new { @class = "form-control textlabel numeric3", @id = "txtTotalNoteAmount" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">Credit/Debit Note Details</div>
+                    <div class="row">
+                        <table id="dtBillDetails">
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script>
+    var selectedNoteType = "1",selectedBillsIsGst="0", rdNoteTypeDebitNote, rdNoteTypeCreditNote,totalSelectedBills = 0;
+    $(document).ready(function () {
+        SetPageLoad('Credit/Debit Note', 'Billing', '', '', '');
+        InitWizard('dvWizard', [
+            { StepName: 'Criteria', StepFunction: GetCreditDebitNoteBillData },
+            { StepName: 'Note Generation', StepFunction: OnSubmit }
+        ], 'Note Generate');
+
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        customerBillGenerationUrl = '@Url.Action("", "CustomerBill", new { Area = "Finance" })';
+        generalMasterUrl = '@Url.Action("", "General", new { Area = "Master" })';
+        accountMasterUrl = '@Url.Action("", "Account", new { Area = "Master" })';
+        customerBillType = '@GeneralHelper.CustomerBillType';
+        vendorBllType = '@GeneralHelper.VendorBillType';
+        loginLocationId = '@SessionUtility.LoginLocationId';
+        notePurposeList = JSON.parse('@Html.Raw(ViewBag.NotePurposeList)');
+
+        drBillDate = InitDateRange('drBillDate', DateRange.LastWeek, false);
+        rdNoteTypeDebitNote = $('#rdNoteTypeDebitNote');
+        rdNoteTypeCreditNote = $('#rdNoteTypeCreditNote');
+        rdBillsWithoutGst = $('#rdBillsWithoutGst');
+        rdBillsWithGst = $('#rdBillsWithGst');
+        ddlBillTypeId = $('#ddlBillTypeId');
+        ddlTransportModeId = $('#ddlTransportModeId');
+        txtPartyCode = $('#txtPartyCode');
+        txtBillNo = $('#txtBillNo');
+        txtManualBillNo = $('#txtManualBillNo');
+        lblPartyName = $('#lblPartyName');
+        hdnPartyId = $('#hdnPartyId');
+        lblCustomer = $('#lblCustomer');
+        hdnCustomer = $('#hdnCustomer');
+        hdnCustomerId = $('#hdnCustomerId');
+        lblBillType = $('#lblBillType');
+        lblPartyCodeName = $('#lblPartyCodeName');
+        txtAccountCode = $('#txtAccountCode');
+        hdnAccountId = $('#hdnAccountId');
+        lblAccountDescription = $('#lblAccountDescription');
+        txtTotalNoteAmount = $('#txtTotalNoteAmount');
+        dtBillDetails = $('#dtBillDetails');
+
+        dtBillDetails = LoadDataTable('dtBillDetails', false, false, false, null, null, [],
+            [
+                { title: "<div class='clearfix' style='width:80px'>" + SelectAll.GetChkAll('chkAllBill', CountTotalNoteAmount) + "</div>", data: "BillId", width: 80 },
+                { title: 'Bill No', data: "BillNo" },
+                { title: 'Bill Date', data: "BillDate" },
+                { title: 'Bill Amount', data: "BillAmount" },
+                { title: 'Balance Amount', data: "BalanceAmount" },
+                { title: 'Note Amount', data: "NoteAmount" },
+                { title: 'Note Purpose', data: "NotePurpose" },
+                { title: 'Remarks', data: "Remarks" }
+            ]);
+    }
+
+    function AttachEvents() {
+        $('[id*="rdNoteType"]').each(function () { $(this).click(function () { selectedNoteType = $(this).val(); OnNoteTypeChange(); }); });
+        OnNoteTypeChange();
+        txtPartyCode.blur(function () { return CheckIsValid(txtPartyCode, hdnPartyId, lblPartyName); });
+
+        Account.AccountAutoComplete(txtAccountCode.Id, hdnAccountId.Id);
+        txtAccountCode.blur(function () {return Account.CheckValidAccountCode(txtAccountCode, hdnAccountId, lblAccountDescription); });
+		
+    }
+
+    function OnPaybasChange() {
+        txtPartyCode.val('');
+        hdnPartyId.val('');
+        lblPartyName.text('');
+    }
+
+    function OnNoteTypeChange() {
+        hdnPartyId.val('');
+        txtPartyCode.val('');
+        lblPartyName.text('');
+        switch (selectedNoteType) {
+            case "1":
+                CustomerAutoComplete('txtPartyCode', 'hdnPartyId');
+                break;
+            case "2":
+                VendorAutoComplete('txtPartyCode', 'hdnPartyId');
+                break;
+        }
+
+        var requestData = { codeTypeId: selectedNoteType == "1" ? customerBillType : vendorBllType};
+        AjaxRequestWithPostAndJson(generalMasterUrl + '/GetByIdList', JSON.stringify(requestData), GetBillTypeListSuccess, ErrorFunction, false);
+    }
+
+    function CheckIsValid(objCode, objHdnId, objLbl) {
+        switch (selectedNoteType) {
+            case "1":
+                IsCustomerCodeExist(objCode, objHdnId, objLbl);
+                break;
+            case "2":
+                IsVendorCodeExist(objCode, objHdnId, objLbl);
+                break;
+        }
+    }
+
+    function GetBillTypeListSuccess(responseData) {
+        BindDropDownList('ddlBillTypeId', responseData, 'Value', 'Name', '', 'Select Bill Type');
+    }
+
+    function GetCreditDebitNoteBillData() {
+		$('#dvIsGstReverse').showHide(rdBillsWithGst.IsChecked);
+        var requestData = { isCreditNote: rdNoteTypeCreditNote.IsChecked, isGst: rdBillsWithGst.IsChecked, billTypeId: ddlBillTypeId.val(), fromDate: $.displayDate(drBillDate.startDate), toDate: $.displayDate(drBillDate.endDate), partyId: hdnPartyId.val(), billNos: txtBillNo.val(), manualBillNos: txtManualBillNo.val(), transportModeId: ddlTransportModeId.val() == '' ? 0 : ddlTransportModeId.val()}
+
+        AjaxRequestWithPostAndJson(customerBillGenerationUrl + '/CreditDebitNoteBillData', JSON.stringify(requestData), function (responseData) {
+            if (responseData.length === 0) {
+                ShowMessage("Record Not Found");
+                isStepValid = false;
+                return false;
+            }
+
+            lblBillType.text($("#ddlBillTypeId option:selected").text());
+            lblPartyCodeName.text(txtPartyCode.val() + ' : ' + lblPartyName.text());
+            dtBillDetails.fnClearTable();
+            $.each(responseData, function (i, item) {
+                item.BillId = SelectAll.GetChk('chkAllBill', 'chkBill' + i, 'Details[' + i + '].IsChecked', CountTotalNoteAmount) +
+                    "<input type='hidden' value='" + item.BillId + "' name='Details[" + i + "].BillId' id='hdnBillId" + i + "'/>" +
+                    "<label class='label' for='chkBill" + i + "' id='lblBillId" + i + "'></label>";
+                item.BillAmount = '<input class="form-control textlabel numeric3" name="Details[' + i + '].BillAmount" id="txtBillAmount' + i + '" type="text"  value=\'' + item.BillAmount + '\'/>';
+                item.BalanceAmount = '<input class="form-control textlabel numeric3" name="Details[' + i + '].BalanceAmount" id="txtBalanceAmount' + i + '" type="text"  value=\'' + item.BalanceAmount + '\'/>';
+                item.NoteAmount = '<input class="form-control numeric3" name="Details[' + i + '].NoteAmount" id="txtNoteAmount' + i + '" type="text"  value="0"/>' +
+                    '<span data-valmsg-for="Details[' + i + '].NoteAmount" data-valmsg-replace="true"></span>';
+                item.NotePurpose = "<div class='select'>" +
+                    "<select class='form-control' name='Details[" + i + "].NotePurposeId' id='ddlNotePurposeId" + i + "' > " + "</select><i></i>" +
+                    "</div>" +
+                    '<span data-valmsg-for="Details[' + i + '].NotePurposeId" data-valmsg-replace="true"></span>';
+                item.Remarks = '<input class="form-control" name="Details[' + i + '].Remarks" id="txtRemarks' + i + '" type="text"  value=""/>';
+            });
+            dtBillDetails.dtAddData(responseData, [], CountTotalNoteAmount);
+            $("[id*='lblBillId']").each(function () {
+                var tr = $(this).closest('tr');
+                var ddlNotePurposeId = tr.find('[id*="ddlNotePurposeId"]');
+                var txtNoteAmount = tr.find('[id*="txtNoteAmount"]');
+				
+                BindDropDownList(ddlNotePurposeId.Id, notePurposeList, 'Value', 'Name', '', 'Select Note Purpose');
+                txtNoteAmount.blur(CountTotalNoteAmount);
+                txtNoteAmount.change(function () { ValidateNoteAmout(txtNoteAmount) });
+            });
+        }, ErrorFunction, false);
+    }
+
+    function ValidateNoteAmout(objTxtNoteAmount) {
+        var txtNoteAmount = objTxtNoteAmount;
+        var txtBalanceAmount = $('#' + txtNoteAmount.Id.replace('txtNoteAmount', 'txtBalanceAmount'));
+
+        if (parseFloat(txtNoteAmount.val()) > parseFloat(txtBalanceAmount.val())) {
+            ShowMessage('Please enter valid Note Amount');
+            txtNoteAmount.val(0);
+            return false;
+        }
+
+    }
+
+    function CountTotalNoteAmount() {
+        var totalNoteAmount = 0;
+        totalSelectedBills = 0;
+        $('[id*="chkBill"]').each(function () {
+            var chkBill = $(this);
+            var txtNoteAmount = $('#' + chkBill.Id.replace('chkBill', 'txtNoteAmount'));
+			var ddlNotePurposeId = $('#' + chkBill.Id.replace('chkBill', 'ddlNotePurposeId'));
+            if (chkBill.IsChecked) {
+                totalNoteAmount += parseFloat(txtNoteAmount.val());
+                totalSelectedBills++;
+				AddRange(txtNoteAmount, "Please enter Note Amount geater than 0", 1);
+                AddRequired(ddlNotePurposeId, 'Please select Note Purpose');
+            }
+            else {
+                txtNoteAmount.val(0);
+				RemoveRange(txtNoteAmount);
+                RemoveRequired(ddlNotePurposeId);
+            }
+        });
+        txtTotalNoteAmount.val(totalNoteAmount);
+    }
+
+    function OnSubmit() {
+        if (totalSelectedBills === 0) {
+            isStepValid = false;
+            ShowMessage('Please select atleast one Bill');
+            return false;
+        }
+    }
+
+    var Account = {
+        CheckValidAccountCode: function (txtAccountCode, hdnAccountId, lblAccountDescription) {
+            if (txtAccountCode.val() != '') {
+
+                var requestData = { accountCode: txtAccountCode.val().split(':')[0].trim() };
+                AjaxRequestWithPostAndJson(accountMasterUrl + '/IsAccountCodeExist', JSON.stringify(requestData), function (result) {
+                    if (IsObjectNullOrEmpty(result)) {
+                        ShowMessage('Account is not exist');
+                        txtAccountCode.focus();
+                        txtAccountCode.val('');
+                        hdnAccountId.val('');
+                        lblAccountDescription.text('');
+                    }
+                    else {
+                            hdnAccountId.val(result.Value);
+                            txtAccountCode.val(result.Name);
+                            lblAccountDescription.text(result.Description);
+                    }
+                }, ErrorFunction, false);
+            }
+            else {
+                hdnAccountId.val('');
+                lblAccountDescription.text('');
+            }
+            return false;
+        },
+        AccountAutoComplete: function (txtAccountCodeId, hdnAccountId) {
+            AutoComplete(txtAccountCodeId, accountMasterUrl + '/GetAccountAutoCompleteList', 'accountCode', 'l', 'l', 'l', 'd', '', hdnAccountId, '', '', true, '');
+        }
+    }
+
+</script>
+

@@ -1,0 +1,143 @@
+﻿@model CodeLock.Models.GatePass
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "GatePassOut";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/scripts/common-event.js"></script>
+@using (Html.BeginForm("GatePassOut", "GatePass", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Gate Pass In Number
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.GatepassInId, new SelectList(ViewBag.GatePassNoList, "Value", "Name"), "Select Gate Pass", new { @class = "form-control", @id = "ddlGatepassInId" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { DefaultDate = Model.FromDate.ConvertToDateTime(), FieldName = "GatepassInDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.VehicleInDateTime), IsDateOnly = false, IsRequired = true, AllowFutureDate = false, AllowPastDate = false, MinDate = DateTime.Now.Date, MaxDate = DateTime.Now.Date.AddDays(1) })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { DefaultDate = Model.FromDate.ConvertToDateTime(), FieldName = "GatepassOutDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.VehicleInDateTime), IsDateOnly = false, IsRequired = true, AllowFutureDate = false, AllowPastDate = false, MinDate = DateTime.Now.Date, MaxDate = DateTime.Now.Date.AddDays(1) })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EntryFrom, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.EntryFrom, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="From ASN", Value = "1" },
+                                                                            new SelectListItem{ Text="From Purchase Order", Value = "2" },
+
+                                                                         }, new { @class = "form-control", @id = "ddlEntryFrom", @readOnly = true })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SupplierType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.SupplierType, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Supplier", Value = "1" },
+                                                                            new SelectListItem{ Text="Customer", Value = "2" },
+                                                                            new SelectListItem{ Text="Warehouse", Value = "3" },
+                                                                         }, new { @class = "form-control", @id = "ddlSupplierType", @readOnly = true })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SupplierCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SupplierCode, new { @class = "form-control", @id = "txtSupplierCode", @readOnly = true })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AsnNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.AsnNo, new { @class = "form-control", @id = "txtAsnNo", @readOnly = true })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.InvoiceNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.InvoiceNo, new { @class = "form-control", @id = "txtInvoiceNo", @readOnly = true })
+                    </div>
+                </div>
+            </div>
+        
+          </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SupplierCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SupplierCode, new { @class = "form-control", @id = "txtInvoiceDate", @readOnly = true })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleNumber, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.VehicleNumber, new { @class = "form-control", @id = "txtVehicleNumber", @readOnly = true })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DriverName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DriverName, new { @class = "form-control", @id = "txtDriverName", @readOnly = true })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DriverMobileNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DriverMobileNo, new { @class = "form-control", @id = "txtDriverMobileNo", @readOnly = true })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitDateTimePicker("txt" + 'GatepassInDateTime',false, true, false, @Model.FromDate, 'DD/MM/YYYY HH:mm' , @Model.FromDate, @Model.FromDate, true,false,false);
+        if(true)
+            AddRequired( $('#txt' + 'GatepassInDateTime' ),'Please select '+ 'Gate Pass In Date' );
+
+        InitDateTimePicker("txt" + 'GatepassOutDateTime',false, true, false, @Model.FromDate, 'DD/MM/YYYY HH:mm' , @Model.FromDate, @Model.FromDate, true,false,false);
+        if(true)
+            AddRequired( $('#txt' + 'GatepassOutDateTime' ),'Please select '+ 'Gate Pass Out Date' );
+
+    });
+
+</script>

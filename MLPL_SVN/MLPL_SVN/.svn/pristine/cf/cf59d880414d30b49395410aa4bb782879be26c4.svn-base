@@ -1,0 +1,215 @@
+﻿@model CodeLock.Models.MasterVehicleDocumentType
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "VehicleDocumentType", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("VehicleDocumentId", 0);
+    @Html.AntiModelInjectionFor(m => m.VehicleDocumentId)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                        @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "txtVehicleNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.DocumentId, new SelectList(ViewBag.VehicleDocumentList, "Value", "Name"), "Select Document", new { @class = "form-control", @id = "ddlDocumentId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocumentId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentDescription, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocumentDescription, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocumentDescription)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocumentNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocumentNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Notes, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Notes, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Notes)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsStateWiseApplicable, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsStateWiseApplicable)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RenewalAuthorityId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.RenewalAuthorityId, new SelectList(ViewBag.RenewalAuthorityList, "Value", "Name"), "Select Renewal Authority", new { @class = "form-control", @id = "ddlRenewalAuthority" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.RenewalAuthorityId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsAutoMailRequired, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsAutoMailRequired)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Cost, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Cost, new { @class = "form-control numeric2" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Cost)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "DocumentIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DocumentIssueDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "DocumentExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DocumentExpiryDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = false, SetBlank = true, IsValidateFinYear = false })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AutoMailToID, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.AutoMailToID, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AutoMailToID)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AutoMailCcID, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.AutoMailCcID, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AutoMailCcID)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AutoMailBccID, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.AutoMailBccID, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AutoMailBccID)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentAttachment, new { @class = "label" })
+                    <div class="input prepend-big-btn">
+                        <label class="icon-right" for="prepend-big-btn">
+                            <i class="fa fa-download"></i>
+                        </label>
+                        <div class="file-button">
+                            Browse
+                            <input class="form-control" id="fuDocumentAttachment" type="file" name="DocumentAttachment" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                        </div>
+                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReminderDays, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ReminderDays, new { @class = "form-control numeric" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReminderDays)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StateName, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.StateId, new { @id = "hdnStateId" })
+                        @Html.TextBoxFor(model => model.StateName, new { @class = "form-control", @id = "txtStateName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StateName)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Contents, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Contents, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Contents)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vehicle Document', 'Insert', 'VehicleNo', 'Go To List', '@Url.Action("Index")');
+        VehicleAutoComplete('txtVehicleNo', 'hdnVehicleId');
+        $('#txtVehicleNo').blur(function () { IsVehicleNoExist($('#txtVehicleNo'), $('#hdnVehicleId')); });
+        StateAutoComplete('txtStateName', 'hdnStateId');
+        $('#txtStateName').blur(function () { IsStateNameExist($('#txtStateName'), $('#hdnStateId')); });
+    });
+</script>
+

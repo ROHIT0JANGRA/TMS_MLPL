@@ -1,0 +1,92 @@
+﻿
+using CodeLock.Areas.WMS.Repository;
+using CodeLock.Models;
+using System;
+using System.Web.Mvc;
+
+namespace CodeLock.Areas.WMS.Controllers
+{
+  public class OrderController : Controller
+  {
+    private readonly IOrderRepository orderRepository;
+
+    public OrderController()
+    {
+    }
+
+    public OrderController(IOrderRepository _orderRepository)
+    {
+      this.orderRepository = _orderRepository;
+    }
+
+
+        public ActionResult InsertTEST()
+        {
+            return (ActionResult)this.View((object)new Order()
+            {
+                OrderDetails = {
+          new OrderDetail()
+        }
+            });
+        }
+
+
+        public ActionResult Insert()
+    {
+      return (ActionResult) this.View((object) new Order()
+      {
+        OrderDetails = {
+          new OrderDetail()
+        }
+      });
+    }
+
+    [HttpPost]
+    public ActionResult Insert(Order objOrder)
+    {
+            //if (!this.ModelState.IsValid)
+            //    return (ActionResult)this.View((object)objOrder);
+
+            objOrder.CompanyId = SessionUtility.CompanyId;
+      objOrder.WarehouseId = SessionUtility.WarehouseId;
+      objOrder.EntryBy = SessionUtility.LoginUserId;
+      objOrder.EntryDate = DateTime.Now;
+
+      Order order1 = objOrder;
+      DateTime dateTime = objOrder.OrderDate;
+      DateTime date = dateTime.Date;
+      order1.OrderDate = date;
+
+      Order order2 = objOrder;
+      dateTime = objOrder.OrderDate;
+      TimeSpan timeOfDay = dateTime.TimeOfDay;
+      order2.OrderTime = timeOfDay;
+      objOrder.OrderDetails.ForEach((Action<OrderDetail>) (m => m.OrderDate = objOrder.OrderDate));
+      Response response = this.orderRepository.Insert(objOrder);
+      if (response.IsSuccessfull)
+        return (ActionResult) this.RedirectToAction("Done", "Asn", (object) new
+        {
+          documentType = "Order",
+          documentNo = response.DocumentNo,
+          documentId = response.DocumentId,
+          documentTypeId = ModuleHelper.Order
+        });
+      this.TempData["result"] = (object) response;
+      return (ActionResult) this.View((object) objOrder);
+    }
+
+    public ActionResult Register()
+    {
+      return (ActionResult) this.View((object) new OrderRegister());
+    }
+
+    [HttpPost]
+    public JsonResult GetRegisterOrderDetail(
+      string orderNo,
+      DateTime fromDate,
+      DateTime toDate)
+    {
+      return this.Json((object) this.orderRepository.GetRegisterOrderDetail(orderNo, fromDate, toDate, SessionUtility.FinStartDate, SessionUtility.FinEndDate), JsonRequestBehavior.AllowGet);
+    }
+  }
+}

@@ -1,0 +1,412 @@
+﻿@using CodeLock.Models
+@model GeneralLedger
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            @Html.LabelFor(model => model.ReportTypeId, new { @class = "label" })
+                            <div class="clearfix">
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.ReportTypeId, "1", new { @id = "rdReportTypeGenLedger", @tabindex = "0", @checked = "checked" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.ReportTypeId, "Gen. Ledger", new { @for = "rdReportTypeGenLedger" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.ReportTypeId, "2", new { @id = "rdReportTypeSubLedger", @tabindex = "0" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.ReportTypeId, "Sub. Ledger", new { @for = "rdReportTypeSubLedger" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.ReportTypeId, "10", new { @id = "rdReportTypeDocument", @tabindex = "0" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.ReportTypeId, "Document/Cheque No. Search", new { @for = "rdReportTypeDocument" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="dvAccount">
+				<div class="col-sm-4">
+					@*<div class="form-group">
+			@Html.LabelFor(model => model.AccountId, new { @class = "label" })
+			<div class="input">
+				@Html.HiddenFor(model => model.AccountId, new { @id = "hdnAccountId" })
+				@Html.TextBoxFor(model => model.AccountCode, null, new { @class = "form-control text-complete text-complete-html", @id = "txtAccountCode" })
+			</div>
+		</div>*@
+					<div class="form-group">
+						@Html.LabelFor(model => model.AccountId, new { @class = "label" })
+						<div class="select">
+							@Html.DropDownListFor(model => model.AccountCode, Enumerable.Empty<SelectListItem>(), "Select Account", new { @class = "form-control select2-multiple", @id = "ddlAccountCode", @multiple = "multiple" })<i></i>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        @Html.Label(" ", " ", new { @class = "label-bold", @id = "lblAccountName" })
+                    </div>
+                </div>
+            </div>
+
+            <div id="dvSubLedger">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <div class="inline-group">
+                                @Html.LabelFor(model => model.SubLedger, new { @class = "label" })
+                                <div class="clearfix">
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.SubLedger, "2", new { @id = "rdSubLedgerCustomerWise", @tabindex = "0", @checked = "checked" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.SubLedger, "Customer Wise", new { @for = "rdSubLedgerCustomerWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.SubLedger, "3", new { @id = "rdSubLedgerVendorWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.SubLedger, "Vendor Wise", new { @for = "rdSubLedgerVendorWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.SubLedger, "1", new { @id = "rdSubLedgerEmployeeWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.SubLedger, "Employee Wise", new { @for = "rdSubLedgerEmployeeWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.SubLedger, "5", new { @id = "rdSubLedgerDriverWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.SubLedger, "Driver Wise", new { @for = "rdSubLedgerDriverWise" })
+                                    </label>
+                                    <label class="radio">
+                                        @Html.RadioButtonFor(model => model.SubLedger, "6", new { @id = "rdSubLedgerVehicleNoWise", @tabindex = "0" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.SubLedger, "Vehicle No Wise", new { @for = "rdSubLedgerVehicleNoWise" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CodeId, new { @class = "label", @id = "lblCode" })
+                            <div class="input">
+                                @Html.HiddenFor(model => model.CodeId, new { @id = "hdnCodeId" })
+                                @Html.TextBoxFor(model => model.Code, null, new { @class = "form-control", @id = "txtCode" })
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Label(" ", new { @class = "label" })
+                            @Html.Label(" ", " ", new { @class = "label-bold", @id = "lblCodeName" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="dvDocument">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocumentNo, new { @class = "label" })
+                        <div class="input-wrapper">
+                            @Html.TextBoxFor(model => model.DocumentNo, null, new { @class = "form-control", @id = "txtDocumentNo" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ChequeNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.ChequeNo, null, new { @class = "form-control", @id = "txtChequeNo" })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="dvIsIndividual">
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            @Html.Label(" ", new { @class = "label" })
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.IsIndividual, true, new { @id = "rdIndividual" })
+                                <i></i>
+                                @Html.LabelFor(model => model.IsIndividual, "Individual", new { @for = "rdIndividual" })
+                            </label>
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.IsIndividual, false, new { @id = "rdCumulative" })
+                                <i></i>
+                                @Html.LabelFor(model => model.IsIndividual, "Cumulative(Transaction includes all branches)", new { @for = "rdCumulative" })
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row" id="dvLocation">
+                <div class="col-sm-4">
+                    @Html.Label("Voucher Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.LocationId, Enumerable.Empty<SelectListItem>(), " ", new { @class = "form-control", @id = "ddlLocationId" })
+                            <i></i>
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationId)
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("lblAccountCategoryId", "Category", new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownList("ddlAccountCategoryId", new SelectList(ViewBag.AccountCategoryList, "Value", "Name"), new { @class = "form-control", @id = "ddlAccountCategoryId" })
+                            <i></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="inline-group">
+                            <div class="clearfix">
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.IsNormal, "1", new { @id = "rdIsNormal", @tabindex = "0", @checked = "checked" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsNormal, "Normal", new { @for = "rdIsNormal" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.IsNormal, "2", new { @id = "rdMonthWise", @tabindex = "0" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsNormal, "Month Wise", new { @for = "rdMonthWise" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    var selectedReportType = "1", selectedSubLedger = "2";
+    var ddlCompanyId, rdGenLedger, rdSubLedger, rdDocument, hdnAccountId, txtAccountCode, txtCode, rdIndividual, rdCumulative, ddlLocationId, ddlAccountCategoryId, rdIsNormal, drDate, btnSubmit, lblCode;
+    var dvSubLedger, dvDocument, dvIsIndividual, dvAccount, dvLocation;
+    $(document).ready(function () {
+        SetPageLoad('Finance Report', 'General Ledger', '', '', '');
+        locationId = '@SessionUtility.LoginLocationId';
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        drDate = InitDateRange('drDate', DateRange.LastWeek,false);
+        ddlCompanyId = $('#ddlCompanyId');
+        rdGenLedger = $('#rdGenLedger');
+        rdSubLedger = $('#rdSubLedger');
+        rdDocument = $('#rdDocument');
+		ddlAccountCode = $('#ddlAccountCode');
+        rdIndividual = $('#rdIndividual');
+        rdCumulative = $('#rdCumulative');
+        ddlLocationId = $('#ddlLocationId');
+        ddlAccountCategoryId = $('#ddlAccountCategoryId');
+        rdIsNormal = $('#rdIsNormal');
+        dvSubLedger = $('#dvSubLedger');
+        dvIsIndividual = $('#dvIsIndividual');
+        dvDocument = $('#dvDocument');
+        dvAccount = $('#dvAccount');
+        dvLocation = $('#dvLocation');
+        lblCode = $('#lblCode');
+        txtCode = $('#txtCode');
+        hdnCodeId = $('#hdnCodeId');
+        lblCodeName = $('#lblCodeName');
+        lblAccountName = $('#lblAccountName');
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        $('#ddlAccountCategoryId option').eq(0).before($('<option>', { value: '0', text: 'All' }));
+        ddlAccountCategoryId.val('0');
+        rdIndividual = $('#rdIndividual');
+        rdCumulative = $('#rdCumulative');
+        locationUrl = '@Url.Action("", "Location", new { Area = "Master" })';
+        accountList = JSON.parse('@Html.Raw(ViewBag.AccountList)');
+
+    }
+
+    function AttachEvents() {
+        BindDropDownList('ddlAccountCode', accountList, 'Value', 'Name', '', 'All Accounts');
+		InitMultiSelect(ddlAccountCode.Id, false, false, true, true);
+        $('[id*="rdReportType"]').each(function () { $(this).click(function () { selectedReportType = $(this).val(); OnReportTypeChange(); }); });
+        $('[id*="rdSubLedger"]').each(function () { $(this).click(function () { selectedSubLedger = $(this).val(); OnSubLedgerChange(); }); });
+        CustomerAutoComplete('txtCode', 'hdnCodeId');
+        txtCode.blur(function () { return CheckIsValid(txtCode, hdnCodeId, lblCodeName); });
+        OnReportTypeChange();
+        OnIsIndividualChange();
+        rdIndividual.change(OnIsIndividualChange);
+        rdCumulative.change(OnIsIndividualChange);
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    }
+
+    function OnReportTypeChange() {
+        switch (selectedReportType) {
+            case "1":
+                dvAccount.show();
+                dvSubLedger.hide();
+                dvDocument.hide();
+                dvIsIndividual.show();
+                dvLocation.show();
+                break;
+            case "2":
+                dvAccount.show();
+                dvSubLedger.show();
+                dvDocument.hide();
+                dvIsIndividual.hide();
+                dvLocation.show();
+                break;
+            case "10":
+                dvAccount.hide();
+                dvSubLedger.hide();
+                dvDocument.show();
+                dvIsIndividual.hide();
+                dvLocation.hide();
+                break;
+        }
+    }
+
+    function OnSubLedgerChange() {
+        txtCode.val('');
+        lblCodeName.text('');
+        switch (selectedSubLedger) {
+            case "2":
+                lblCode.text("Customer");
+                CustomerAutoComplete('txtCode', 'hdnCodeId');
+                break;
+            case "3":
+                lblCode.text("Vendor");
+                VendorAutoComplete('txtCode', 'hdnCodeId');
+                break;
+            case "1":
+                lblCode.text("Employee");
+                UserAutoComplete('txtCode', 'hdnCodeId');
+                break;
+            case "5":
+                lblCode.text("Driver");
+                DriverCodeAutoCompleteByLocation('txtCode', 'hdnCodeId');
+                break;
+            case "6":
+                lblCode.text("Vehicle No");
+                VehicleAutoComplete('txtCode', 'hdnCodeId');
+                break;
+        }
+    }
+
+    function CheckIsValid(objName, objHdnId, objLabel) {
+        switch (selectedSubLedger) {
+            case "2":
+                IsCustomerCodeExist(objName, objHdnId, objLabel);
+                break;
+            case "3":
+                IsVendorCodeExist(objName, objHdnId, objLabel);
+                break;
+            case "1":
+                IsUserNameExist(objName, objHdnId);
+                break;
+            case "5":
+                IsDriverCodeExistByLocation(objName, objHdnId, objLabel);
+                break;
+            case "6":
+                IsVehicleNoExist(objName, objHdnId);
+                break;
+        }
+    }
+
+    function CheckValidCustomerCode(txtCustomerCode, hdnCustomerId) {
+        if (txtCustomerCode.val() != "") {
+            var requestData = { customerCode: txtCustomerCode.val() };
+            AjaxRequestWithPostAndJson(customerMasterUrl + '/CheckValidCustomerCodeByCompanyId', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    hdnCustomerId.val(result.Value);
+                    txtCustomerCode.val(result.Name + ' : ' + result.Description);
+                }
+                else {
+                    ShowMessage('Customer is not exist');
+                    txtCustomerCode.val('');
+                    hdnCustomerId.val('');
+                    txtCustomerCode.focus();
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function OnIsIndividualChange() {
+        var requestData = { isRegion: rdIndividual.IsChecked }
+        AjaxRequestWithPostAndJson(locationUrl + '/GetLocationByHierarchyId', JSON.stringify(requestData), function (responseData) {
+            BindDropDownList('ddlLocationId', responseData, 'Value', 'Name', '', 'Select Location');
+        }, ErrorFunction, false);
+    }
+
+    function ViewReport() {
+        var prmList = [{ Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+            { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+            { Name: "FinYear", Value: '@SessionUtility.FinYear' },
+            { Name: "CalYear", Value: '@SessionUtility.CalenderYear' },
+            { Name: "IsCumulative", Value: rdCumulative.IsChecked },
+			{ Name: "Accounts", Value: ddlAccountCode.multiVal() == 'All' ? 0 : ddlAccountCode.multiVal() },
+            { Name: "Groups", Value: 0 },
+            { Name: "Category", Value: ddlAccountCategoryId.val() == '0' ? 'All' : ddlAccountCategoryId.val() },
+            { Name: "CostCenter", Value: txtCode.val() == '' ? 'All' : txtCode.val().split(':')[0].trim() },
+            { Name: "LocationId", Value: ddlLocationId.val() },
+            { Name: "ReportType", Value: selectedReportType == 2 ? parseInt(selectedSubLedger) : selectedReportType == 1 ? 0 : 10 },
+            { Name: "ReportSubType", Value: 'All' },
+            { Name: "DataType", Value: 'All' },
+            { Name: "IsInclusive", Value: true },
+            { Name: "DocumentNos", Value: $('#txtDocumentNo').val() == '' ? 'All' : $('#txtDocumentNo').val() },
+            { Name: "DataSubType", Value: rdIsNormal.IsChecked ? '1' : '2' },
+            { Name: "ChequeNo", Value: $('#txtChequeNo').val() == '' ? 'All' : $('#txtChequeNo').val() },
+            { Name: "Company", Value: '@SessionUtility.CompanyId' }];
+
+       /* alert(prmList[0].Value);
+        alert(prmList[1].Value);
+        alert(prmList[2].Value);
+        alert(prmList[3].Value);
+        alert(prmList[4].Value);
+        alert(prmList[5].Value);
+        alert(prmList[6].Value);
+        alert(prmList[7].Value);
+        alert(prmList[8].Value);
+        alert(prmList[9].Value);
+        alert(prmList[10].Value);
+        alert(prmList[11].Value);
+        alert(prmList[12].Value);
+        alert(prmList[13].Value);
+        alert(prmList[14].Value);
+        alert(prmList[15].Value);
+        alert(prmList[16].Value);
+        alert(prmList[17].Value);*/
+
+        var reportInfo = { PrmList: prmList, Name: 'GeneralLedgerRegister', Description: 'General Ledger' };
+
+        return ShowReport(reportInfo);
+    }
+
+</script>

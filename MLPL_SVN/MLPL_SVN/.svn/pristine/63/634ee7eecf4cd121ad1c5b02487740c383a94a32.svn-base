@@ -1,0 +1,113 @@
+﻿@model CodeLock.Models.MasterPackagingMeasurement
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "PackagingMeasurement Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "PackagingMeasurement", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.PackagingTypeId)
+    @Html.Hidden("PackagingTypeId", 0)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PackagingType, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PackagingType, new { @class = "form-control", @id = "txtPackagingType" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PackagingType)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Length, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Length, new { @class = "form-control", @id = "txtLength" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Length)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Breadth, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Breadth, new { @class = "form-control", @id = "txtBreadth" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Breadth)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Height, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Height, new { @class = "form-control", @id = "txtHeight" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Height)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MeasurementType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.MeasurementType, new List<SelectListItem> {
+                        new SelectListItem() {Text = "CM", Value="C"},
+                        new SelectListItem() {Text = "Meter", Value="M"},
+                        new SelectListItem() {Text = "Inch", Value="I"},
+                        new SelectListItem() {Text = "Feet", Value="F"} }, new { @class = "form-control", @id = "ddlMeasurementType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MeasurementType)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Packaging Measurement', 'Add', 'PackagingType', 'Go To List', '@Url.Action("Index")');
+        $('#btnSubmit').click(ValidateOnSubmit);
+    });
+
+    function ValidateOnSubmit() {
+        if ($('#txtPackagingType').val() <= "") {
+            ShowMessage("Please enter PackagingType Value");
+            $('#txtMaximumOctroiAmount').focus();
+            return false;
+        }
+        else if ($('#txtLength').val() <= 0 || $('#txtLength').val() >= 999) {
+            ShowMessage("Length value greater than 1 and less than 999");
+            $('#txtLength').focus();
+            return false;
+        }
+        else if ($('#txtBreadth').val() <= 0 || $('#txtBreadth').val() >= 999) {
+            ShowMessage("Breadth value greater than 1 and less than 999");
+            $('#txtBreadth').focus();
+            return false;
+        }
+        else if ($('#txtHeight').val() <= 0 || $('#txtHeight').val() >= 999) {
+            ShowMessage("Height value greater than 1 and less than 999");
+            $('#txtHeight').focus();
+            return false;
+        }
+    }
+</script>

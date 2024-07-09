@@ -1,0 +1,49 @@
+﻿//  
+// Type: CodeLock.Areas.WMS.Repository.RepackingRepository
+//  
+//  
+//  
+
+using CodeLock.Helper;
+using CodeLock.Models;
+using CodeLock.Repository;
+using Dapper;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+
+namespace CodeLock.Areas.WMS.Repository
+{
+  public class RepackingRepository : BaseRepository, IRepackingRepository, IDisposable
+  {
+    public IEnumerable<RepackingDetail> GetRepackingList(
+      byte warehouseId,
+      byte companyId,
+      DateTime fromDate,
+      DateTime toDate,
+      string repackingNos,
+      string grnNos,
+      DateTime finStartDate,
+      DateTime finEndDate)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@WareHouseId", (object) warehouseId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@CompanyId", (object) companyId, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FromDate", (object) fromDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@ToDate", (object) toDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@RepackingNos", (object) repackingNos, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@GrnNos", (object) grnNos, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinStartDate", (object) finStartDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      dynamicParameters.Add("@FinEndDate", (object) finEndDate, new DbType?(DbType.DateTime), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return (IEnumerable<RepackingDetail>) DataBaseFactory.QuerySP<RepackingDetail>("Usp_Repacking_GetRepackingList", (object) dynamicParameters, "Repacking - GetRepackingList").ToList<RepackingDetail>();
+    }
+
+    public Response Insert(Repacking objRepacking)
+    {
+      DynamicParameters dynamicParameters = new DynamicParameters();
+      dynamicParameters.Add("@XmlRepacking", (object) XmlUtility.XmlSerializeToString((object) objRepacking), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+      return DataBaseFactory.QuerySP<Response>("Usp_Repacking_Insert", (object) dynamicParameters, "Repacking  - Insert").FirstOrDefault<Response>();
+    }
+  }
+}

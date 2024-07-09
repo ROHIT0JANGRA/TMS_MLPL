@@ -1,0 +1,329 @@
+﻿@model CodeLock.Models.TaxProGetEwayDetailsForTransporterByStateApiResponse
+@{
+    ViewBag.Title = "eWay Bill View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    eWay Bill No.
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.ewbNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    eWay Bill Date
+                    <div class="clearfix">
+                        @Model.ewayBillDate
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Valid Date
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.validUpto, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Bill Status
+                    <div class="clearfix">
+                        @Model.status
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    User Gstin
+                    <div class="clearfix">
+                        @Model.userGstin
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Document Type
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.docType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Document No.
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.docNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Document Date
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.docDate, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="page-separator">Consignor Information </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Gstin of Consignor
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.fromGstin, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Legal Name of Consignor
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.fromTrdName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Address1 of Consignor
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.fromAddr1, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Address2 of Consignor
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.fromAddr2, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Place of Consignor
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.fromPlace, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Pincode of Consignor
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.fromPincode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    State Code of Consignor
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.fromStateCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    State of Consignor
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.fromStateName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Consignee Information </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Gstin of Consignee
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.toGstin, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Legal Name of Consignee
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.toTrdName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Address1 of Consignee
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.toAddr1, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Address2 of Consignee
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.toAddr2, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Place of Consignee
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.toPlace, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Pincode of Consignee
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.toPincode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    State Code of Consignee
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.toStateCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                     State  of Consignee
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.toStateName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="page-separator">Vehicle Information </div>
+        @foreach (var item in Model.VehiclListDetails)
+        {
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Vehicle No.
+                        <div class="clearfix">
+                            @Html.DisplayFor(modelItem => item.vehicleNo, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Transporter ID
+                        <div class="clearfix">
+                            @Html.DisplayFor(model => model.transporterId, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Transporter Name
+                        <div class="clearfix">
+                            @Html.DisplayFor(model => model.transporterName, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Transportation Distance
+                        <div class="clearfix">
+                            @Html.DisplayFor(model => model.actualDist, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        }
+            <div class="page-separator">Invoice Information </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Total Invoice Value
+                        <div class="clearfix">
+                            @Html.DisplayFor(model => model.totInvValue, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Taxable Amount
+                        <div class="clearfix">
+                            @Html.DisplayFor(model => model.totalValue, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Cgst Amount
+                        <div class="clearfix">
+                            @Html.DisplayFor(model => model.cgstValue, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Sgst Amount
+                        <div class="clearfix">
+                            @Html.DisplayFor(model => model.sgstValue, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        Igst Amount
+                        <div class="clearfix">
+                            @Html.DisplayFor(model => model.igstValue, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('eWay Bill', 'View Detail', '', 'Goto List', '@Url.Action("eWayTaxProList")');
+
+      });
+</script>

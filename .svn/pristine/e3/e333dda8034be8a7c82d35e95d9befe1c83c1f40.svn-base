@@ -1,0 +1,170 @@
+﻿@model CodeLock.Models.DrsClose
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        drsUrl = '@Url.Action("", "DRS", new { Area = "Operation" })';
+       // vehicleMasterUrl = '@Url.Action("", "Vehicle", new { Area = "Master" })';
+        currentDate = '@DateTime.Now';
+        dateTimeFormat = '@ConfigHelper.JsDateFormat' + ' ' + '@ConfigHelper.TimeFormat';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Operation/Views/DRS/Close.js?version=@DateTime.Now.Ticks")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Close", "Drs", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.HiddenFor(model => model.DrsId, new { @id = "hdnDrsId" })
+            @Html.AntiForgeryToken()
+
+                <div class="tab-content">
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div>
+                                    @Html.Label("DRS Date", new { @class = "label" })
+                                </div>
+                                <div id="drDrsDate"></div>
+                            </div>
+                        </div>
+                        <div class="page-separator">OR</div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DrsNos, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.DrsNos, new { @class = "form-control", @id = "txtDrsNo" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Label(" ", new { @class = "label" })
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div>
+                                    <table id="dtDrsDetails"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DrsNo, new { @class = "label" })
+                                    @Html.Label(" ", new { @id = "lblDrsNo", @class = "label-bold" })
+                                    @Html.HiddenFor(model => model.DrsNo, new { @id = "hdnDrsNo" })
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DrsDate, new { @class = "label" })
+                                    @Html.Label(" ", new { @id = "lblDrsDate", @class = "label-bold" })
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DriverName, new { @class = "label" })
+                                    @Html.Label(" ", new { @id = "lblDriverName", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.StartKm, new { @class = "label" })
+                                    @Html.Label(" ", new { @id = "lblStartKm", @class = "label-bold" })
+                                    @Html.HiddenFor(model => model.StartKm, new { @id = "hdnStartKm" })
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                                    @Html.Label(" ", new { @id = "lblVehicleNo", @class = "label-bold" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.EndKm, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.EndKm, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.EndKm)
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DrsCloseRemarks, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.DrsCloseRemarks, new { @class = "form-control", @id = "txtDrsCloseRemarks" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-separator">Docket List</div>
+                        <span id="spnDocketDetails">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div>
+                                        @*<table id="dtDocketDetails"></table>*@
+                                        <table id="dtDocketDetails">
+                                            <thead>
+                                                <tr>
+                                                    @{ string lblDocket = SessionUtility.DocketNomenClature + "<br/> Booking Date <br/> Pay Basis <br/> EDD <br/> Origin - Destination";}
+                                                    <th style="min-width: 11%;"><label class="label-bold">@Html.Raw(lblDocket)</label></th>
+                                                    <th style="min-width: 11%;"><label class="label-bold">@Html.Raw("Consignor <br/> Consignee")</label></th>
+                                                    <th style="min-width: 11%;"><label class="label-bold">@Html.Raw("Pkgs. <br/> Booked <br/> Arrived <br/> Pending <br/> Delivered")</label></th>
+                                                    <th style="min-width: 11%;">
+                                                        <div class="input">
+                                                            @Html.TextBox("PersonName", "", new { @class = "form-control", @id = "txtHeaderPersonName", @placeholder = "Person" })
+                                                        </div>
+                                                        <div class="input">
+                                                            @Html.TextBox("Remarks", "", new { @class = "form-control", @id = "txtHeaderRemarks", @placeholder = "Remarks" })
+                                                        </div>
+                                                        <div class='input'><label class='icon-right' for='txtDeliveryDate" + i + "'><i class='fa fa-calendar'></i></label>
+                                                            @Html.TextBox("DeliveryDateTime", "", new { @class = "form-control datepicker", @id = "txtHeaderDeliveryDateTime", @placeholder = "Delivery Date Time" })
+                                                        </div>
+                                                    </th>
+                                                    <th style="min-width: 11%;">
+                                                        <div class="select" id="dvHeaderLateDeliveryReason">
+                                                            @Html.DropDownList("LateDeliveryReason", Enumerable.Empty<SelectListItem>(), "Late Delivery Reason", new { @class = "form-control", @id = "ddlHeaderLateDeliveryReasonId" })
+                                                            <i></i>
+                                                        </div>
+                                                        <div class="select" id="dvHeaderPartDeliveryReason">
+                                                            @Html.DropDownList("PartDeliveryReason", Enumerable.Empty<SelectListItem>(), "Part Delivery Reason", new { @class = "form-control", @id = "ddlHeaderPartDeliveryReasonId" })
+                                                            <i></i>
+                                                        </div>
+                                                        <div class="select" id="dvHeaderUnDeliveryReason">
+                                                            @Html.DropDownList("UnDeliveryReason", Enumerable.Empty<SelectListItem>(), "Un Delivery Reason", new { @class = "form-control", @id = "ddlHeaderUnDeliveryReasonId" })
+                                                            <i></i>
+                                                        </div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            </span>
+                    </div>
+                </div>
+          
+        }
+    </div>
+</div>

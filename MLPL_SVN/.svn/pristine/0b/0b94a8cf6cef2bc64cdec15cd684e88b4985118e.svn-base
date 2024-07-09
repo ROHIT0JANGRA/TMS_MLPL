@@ -1,0 +1,1050 @@
+﻿@model CodeLock.Models.Docket
+
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="page-separator">Basic Details</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.HiddenFor(model => model.DocketId, new { @id = "hdnDocketId" })
+                    @Html.HiddenFor(model => model.IsRcm, new { @id = "hdnIsRcm" })
+                    @Html.HiddenFor(model => model.IsGst, new { @id = "IsGst" })
+                    @Html.LabelFor(model => model.DocketNo, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.DocketNo, "Country", new { @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketDate, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.DocketDate.ToDisplayDateTime()
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaybasId, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.Paybas, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.CustomerCode, new { @class = "label" }) : @Html.DisplayFor(model => model.CustomerName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromLocation, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.FromLocation, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToLocation, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ToLocation, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.VehicleNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Movement Details</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TransportModeId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.TransportMode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ServiceTypeId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.HiddenFor(model => model.ServiceTypeId, new { @id = "hdnServiceTypeId" })
+                        @Html.DisplayFor(model => model.ServiceType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FtlTypeId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.FtlType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PickupDeliveryTypeId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.PickupDeliveryType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromCityId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.FromCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToCityId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ToCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PackagingTypeId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.PackagingType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ProductTypeId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ProductType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remarks, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.Remarks, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BusinessTypeId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.HiddenFor(model => model.BusinessTypeId, new { @id = "hdnBusinessTypeId" })
+                        @Html.DisplayFor(model => model.BusinessType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsVolumetric, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(model => model.IsVolumetric, new { @id = "hdnIsVolumetric" })
+                        @Html.YesNo(Model.IsVolumetric)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsOda, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.YesNo(Model.IsOda)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsCod, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.YesNo(Model.IsCod)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsDacc, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.YesNo(Model.IsDacc)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsLocal, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.YesNo(Model.IsLocal)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IndustryId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.Industry, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LoadTypeId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.LoadType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DivisionId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.Division, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsPermit, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.YesNo(Model.IsPermit)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsDeferment, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.YesNo(Model.IsDeferment)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsPickupThroughSameVehicle, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.YesNo(Model.IsPickupThroughSameVehicle)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsDeliveryThroughSameVehicle, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.YesNo(Model.IsDeliveryThroughSameVehicle)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Consignor & Consignee Details</div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsConsignorFromMaster, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorFrom, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsConsigneeFromMaster, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeFrom, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorName, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeName, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorAddressCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorAddressCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeAddressCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeAddressCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorAddress1, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorAddress1, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeAddress1, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeAddress1, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorAddress2, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorAddress2, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeAddress2, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeAddress2, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorPincode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorPincode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneePincode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneePincode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorMobileNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorMobileNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeMobileNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeMobileNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorEmailId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorEmailId, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeEmailId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeEmailId, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorGstTinNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorGstTinNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeGstTinNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeGstTinNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <table id="dtDocument"></table>
+            </div>
+        </div>
+        <div class="page-separator">Other Details</div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsCarrierRisk, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.RiskType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PolicyNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.PolicyNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PolicyDate, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.PolicyDate.ToDisplayDate()
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ModvatCovers, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.TextBoxFor(model => model.ModvatCovers, new { @Class = "textlabel form-control", @style = "text-align: right" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.InternalCovers, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.TextBoxFor(model => model.InternalCovers, new { @Class = "textlabel form-control", @style = "text-align: right" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerReferenceNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.CustomerReferenceNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerReferenceDate, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.CustomerReferenceDate.ToDisplayDate()
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerGatepassNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.CustomerGatepassNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerDeliveryNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.CustomerDeliveryNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PrivateMark, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.PrivateMark, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TPNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.TPNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EntrysheetNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.EntrysheetNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ObdNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ObdNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EngineNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.EngineNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ModelNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ModelNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GpsNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.GpsNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ChassisNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ChassisNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">GP & RO Details</div>
+        <div class="row">
+            <div>
+                <table id="dtGPROProduct"></table>
+            </div>
+        </div>
+
+
+
+
+        <div class="page-separator">Invoice Details</div>
+        <div class="row">
+            <div>
+                <table id="dtInvoice"></table>
+            </div>
+        </div>
+        <div class="page-separator">Payment Details</div>
+        <div class="row" id="dvFreight">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FreightRate, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.TextBoxFor(model => model.FreightRate, new { @Class = "textlabel form-control", @style = "text-align: right" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RateTypeId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.RateType, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Freight, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.TextBoxFor(model => model.Freight, new { @Class = "textlabel form-control", @style = "text-align: right" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillLocation, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.BillLocation, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Edd, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Model.Edd.ToDisplayDate()
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4" id="dvServiceTaxPayer">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GstPayerId, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.GstPayer, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvServiceTax">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsServiceTaxExempted, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.YesNo(Model.IsServiceTaxExempted)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ServiceTaxRegisterNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ServiceTaxRegisterNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocalServiceTaxRegisterNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.LocalServiceTaxRegisterNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FovRate, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.TextBoxFor(model => model.FovRate, new { @Class = "textlabel form-control", @style = "text-align: right" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Fov, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.TextBoxFor(model => model.Fov, new { @Class = "textlabel form-control", @style = "text-align: right" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="dvGstDetail">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.GstBillingParty, new { @class = "label-bold" }) <div class="clearfix">
+                            @Html.DisplayFor(model => model.GstBillingParty, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.GstSacName, new { @class = "label-bold" }) <div class="clearfix">
+                            @Html.DisplayFor(model => model.GstSacName, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.GstServiceType, new { @class = "label-bold" }) <div class="clearfix">
+                            @Html.DisplayFor(model => model.GstServiceType, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TransportMode, new { @class = "label-bold" }) <div class="clearfix">
+                            @Html.DisplayFor(model => model.TransportMode, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.GstState, new { @class = "label-bold" }) <div class="clearfix">
+                            @Html.DisplayFor(model => model.GstState, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsInterState, new { @class = "label-bold" }) <div class="clearfix">
+                            @Html.DisplayFor(model => model.InterState, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsBillingPartyGstPayer, new { @class = "label-bold" }) <div class="clearfix">
+                            @Html.DisplayFor(model => model.GstPayerName, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.GstTinNo, new { @class = "label-bold" }) <div class="clearfix">
+                            @Html.DisplayFor(model => model.GstTinNo, new { @class = "label" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2" id="divImageLink">
+                    <div class="form-group">
+                        <label class="label-bold">Declaration Document</label>
+                        <div class="input">
+                            @{ var fileNamelnkId = "lnkAttachment";}
+                            <a href="#" id=@fileNamelnkId onclick="return ViewAttachment(this);">View</a>
+                            @Html.HiddenFor(model => model.GstExemptionDeclarationFileName, new { id = "hdnDocumentName" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2" id="divLink">
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.GstRate, new { @class = "label-bold" }) <div class="clearfix">
+                            @Html.TextBoxFor(model => model.GstRate, new { @Class = "textlabel form-control", @style = "text-align: right" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.GstAmount, new { @class = "label-bold" }) <div class="clearfix">
+                            @Html.TextBoxFor(model => model.GstAmount, new { @Class = "textlabel form-control numeric2", @style = "text-align: right", @id = "txtGstAmount" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsRcm, new { @class = "label-bold" })
+                        <div class="clearfix">
+                            @Html.YesNo(Model.IsRcm)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.GstCharged, new { @class = "label-bold" }) <div class="clearfix">
+                            @Html.TextBoxFor(model => model.GstCharged, new { @Class = "textlabel form-control", @style = "text-align: right" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvCharges">
+            <div class="col-sm-6">
+                <div>
+                    <table id="dtCharges"></table>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div>
+                    <table id="dtTax"></table>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvTotal">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SubTotal, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.TextBoxFor(model => model.SubTotal, new { @Class = "textlabel form-control", @style = "text-align: right" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TaxTotal, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.TextBoxFor(model => model.TaxTotal, new { @Class = "textlabel form-control", @style = "text-align: right" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GrandTotal, new { @class = "label-bold" })
+                    <div class="clearfix">
+                        @Html.TextBoxFor(model => model.GrandTotal, new { @Class = "textlabel form-control", @style = "text-align: right" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+        LoginUserRoleName = '@SessionUtility.LoginUserRoleName';
+        SetPageLoad(docketNomenclature, 'View Detail', '', 'Add New', '@Url.Action("Insert")');
+        dtInvoice = $('#dtInvoice');
+        dtDocument = $('#dtDocument');
+        dtCharges = $('#dtCharges');
+        dtTax = $('#dtTax');
+        dtGPROProduct = $('#dtGPROProduct');
+
+        dtGPROProduct = LoadDataTable('dtGPROProduct', false, false, false, null, null, [],
+            [
+                { title: 'Sr No.', data: "SNo" },
+                { title: 'GP No.', data: "GPNo" },
+                { title: 'GP Date', data: "GPDate" },
+                { title: 'RO No', data: "RONo" },
+                { title: 'RO Date', data: "RODate" }
+            ]);
+
+        dtDocument = LoadDataTable('dtDocument', false, false, false, null, null, [],
+            [
+                { title: 'State Name', data: "StateName" },
+                { title: 'Document Name', data: "DocumentName" },
+                { title: 'Document Type', data: "DocumentType" },
+                { title: 'Document No', data: "DocumentNo" }
+            ]);
+        dtInvoice = LoadDataTable('dtInvoice', false, false, false, null, null, [],
+            [
+                { title: 'Invoice No', data: "InvoiceNo", width: 80 },
+                { title: 'Invoice Date', data: "InvoiceDate", width: 80 },
+                { title: 'Invoice Amount', data: "InvoiceAmount", width: 80 },
+                { title: 'Eway Bill No', data: "EwayBillNo", width: 80 },
+                { title: 'Eway Bill Issue Date', data: "EwayBillIssueDate", width: 80 },
+                { title: 'Eway Bill Expiry Date', data: "EwayBillExpiryDate", width: 80 },
+                { title: 'Length', data: "Length" },
+                { title: 'Breadth', data: "Breadth" },
+                { title: 'Height', data: "Height" },
+                { title: 'Packages', data: "Packages", width: 80 },
+                { title: 'Actual Weight', data: "ActualWeight" },
+                { title: 'Volumetric Weight', data: "VolumetricWeight" },
+                { title: 'Charged Weight', data: "ChargedWeight" }
+                //{ title: 'Part Details', data: "PartDetails", width: 400 }
+            ]);
+        dtCharges = LoadDataTable('dtCharges', false, false, false, null, null, [],
+            [
+                { title: 'Charge Name', data: "ChargeName" },
+                { title: 'Charge Amount', data: "ChargeAmount" }
+            ]);
+        dtTax = LoadDataTable('dtTax', false, false, false, null, null, [],
+            [
+                { title: 'Tax Name', data: "TaxName" },
+                { title: 'Tax Amount', data: "TaxAmount" }
+            ]);
+
+        OnPageLoad();
+        AlignTableColumns('dtCharges', [1]);
+        AlignTableColumns('dtTax', [1]);
+
+        if ($('#hdnIsVolumetric').val() == "False")
+            HideTableColumns('dtInvoice', [6, 7, 8, 11]);
+
+        //if (LoginUserRoleName !== "SITE ADMIN" && LoginUserRoleName !== "CORPORATE OFFICE") {
+        //    $('#dvFreight').hide();
+        //    $('#dvCharges').hide();
+        //    $('#dvTotal').hide();
+        //}
+
+    });
+
+    function HideTableColumns(tblId, columnArr) {
+        $.each(columnArr, function (i, item) {
+            $('#' + tblId + ' tr').each(function () {
+                $(this).find('td:eq(' + item + '),th:eq(' + item + ')').addClass("display-none");
+            });
+        });
+    }
+
+    function AlignTableColumns(tblId, columnArr) {
+        $.each(columnArr, function (i, item) {
+            $('#' + tblId + ' tr').each(function () {
+                $(this).find('td:eq(1),th:eq(1)').addClass("align-right");
+            });
+        });
+    }
+
+    function OnPageLoad() {
+        var requestData = { id: $('#hdnDocketId').val() };
+        AjaxRequestWithPostAndJson('@Url.Action("GetDocumentDetails")', JSON.stringify(requestData), OnDocumentDetailsSuccess, ErrorFunction, false);
+        AjaxRequestWithPostAndJson('@Url.Action("GetInvoiceDetails")', JSON.stringify(requestData), OnInvoiceDetailsSuccess, ErrorFunction, false);
+        AjaxRequestWithPostAndJson('@Url.Action("GetTaxDetails")', JSON.stringify(requestData), OnTaxDetailsSuccess, ErrorFunction, false);
+        requestData = { id: $('#hdnDocketId').val(), businessTypeId: $('#hdnBusinessTypeId').val(), serviceTypeId: $('#hdnServiceTypeId').val() };
+        AjaxRequestWithPostAndJson('@Url.Action("GetChargeDetails")', JSON.stringify(requestData), OnChargeDetailsSuccess, ErrorFunction, false);
+
+        requestData = { id: $('#hdnDocketId').val() };
+        AjaxRequestWithPostAndJson('@Url.Action("GetGPRODetails")', JSON.stringify(requestData), OnGPRODetailsSuccess, ErrorFunction, false);
+
+        $('#dvServiceTaxPayer').showHide($('#hdnIsGst').val() == "False");
+        $('#dvServiceTax').showHide($('#IsGst').val() == "False");
+        $('#dvGstDetail').showHide($('#IsGst').val() == "True");
+        $('#divImageLink').showHide($('#hdnDocumentName').val() != '');
+        $('#divLink').showHide(!$('#hdnDocumentName').val() != '');
+        $('#txtGstAmount').val(parseFloat($('#txtGstAmount').val()).toFixed(2));
+    }
+
+    function OnDocumentDetailsSuccess(responseData) {
+        dtDocument.fnClearTable()
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.DocumentType = item.IsInbound ? 'Inbound' : 'Outbound';
+            });
+            dtDocument.dtAddData(responseData);
+        }
+        else dtDocument.hide();
+    }
+
+    function OnInvoiceDetailsSuccess(responseData) {
+        dtInvoice.fnClearTable();
+
+        var str;
+        var VolumetricWeight, ActualWeight, ChargedWeight;
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.InvoiceDate = $.displayDate(item.InvoiceDate);
+                item.InvoiceAmount = '<input type="text" value=' + item.InvoiceAmount + ' class="textlabel" style="text-align: right;width:100%;" disabled/>';
+                item.Length = '<input type="text" value=' + item.Length + ' class="textlabel" style="text-align: right;width:100%;" disabled/>';
+                item.Breadth = '<input type="text" value=' + item.Breadth + ' class="textlabel" style="text-align: right;width:100%;" disabled/>';
+                item.Height = '<input type="text" value=' + item.Height + ' class="textlabel" style="text-align: right;width:100%;" disabled/>';
+                item.Packages = '<input type="text" value=' + item.Packages + ' class="textlabel" style="text-align: right;width:100%;" disabled/>';
+                item.ActualWeight = '<input type="text" value=' + item.ActualWeight + ' class="textlabel" style="text-align: right;width:100%;" disabled/>';
+                item.VolumetricWeight = '<input type="text" value=' + item.VolumetricWeight + ' class="textlabel" style="text-align: right;width:100%;" disabled/>';
+                item.ChargedWeight = '<input type="text" value=' + item.ChargedWeight + ' class="textlabel" style="text-align: right;width:100%;" disabled/>';
+                item.EwayBillIssueDate = $.displayDate(item.EwayBillIssueDate);
+                item.EwayBillExpiryDate = $.displayDate(item.EwayBillExpiryDate);
+                str = "";
+                VolumetricWeight = 0;
+                ActualWeight = 0;
+                ChargedWeight = 0;
+
+                str = '<table width="100%" id="dtPartDetails' + i + '" class="innerTable"><thead><th>Part Name</th><th>Part Quantity</th><th>Part Amount</th><th>Is COD</th></thead>' +
+                    '<tbody>';
+
+                if (item.PartList.length > 0) {
+
+                    $.each(item.PartList, function (j, partItem) {
+                        var isCod = partItem.IsCod ? "Yes" : "No";
+                            str = str + '<tr class="innerRow">' ;
+                            str = str + '<td>' + partItem.PartName + '</td>';
+                            str = str + '<td><input type = "text" value = ' + partItem.PartQuantity + ' class="textlabel" style = "text-align: right;width:100%;" disabled /></td>';
+                            str = str + '<td><input type = "text" value = ' + partItem.PartAmount + ' class="textlabel" style = "text-align: right;width:100%;" disabled /></td>';
+                            str = str + '<td>' + isCod + '</td>';
+                            str = str + '</tr>';
+                            VolumetricWeight = VolumetricWeight + parseFloat(partItem.PartVolumetricWeight).toFixed(3);
+                            ActualWeight = ActualWeight + parseFloat(partItem.PartActualWeight).toFixed(3);
+                            ChargedWeight = ChargedWeight + parseFloat(partItem.PartChargedWeight).toFixed(3);
+
+                        });
+                }
+
+                    str = str + '</tbody>';
+                    //str = str + ' <tfoot><tr><td></td><td></td><td></td><td></td><td>' + VolumetricWeight + '</td><td>' + ActualWeight + '</td><td>' + ChargedWeight + '</td> </tr></tfoot></table>';
+
+                    //item.PartDetails = str;
+
+            });
+            dtInvoice.dtAddData(responseData);
+
+
+        }
+    }
+
+    //dtGPROProduct
+    function OnGPRODetailsSuccess(responseData) {
+
+        dtGPROProduct.fnClearTable();
+        $.each(responseData, function (i, item) {
+
+            if (item.GPDate != "")
+            {
+                item.GPDate = $.displayDate(item.GPDate);
+            }
+
+            if (item.RODate != "") {
+                item.RODate = $.displayDate(item.RODate);
+            }
+        });
+
+        dtGPROProduct.dtAddData(responseData);
+    }
+
+    function OnChargeDetailsSuccess(responseData) {
+        dtCharges.fnClearTable();
+        var response = [];
+        $.each(responseData, function (i, item) {
+            if (item.ChargeAmount > 0) {
+                item.ChargeAmount = item.ChargeAmount.toFixed(2);
+                response.push(item);
+            }
+        });
+        if (response.length > 0)
+            dtCharges.dtAddData(response);
+        else dtCharges.hide();
+    }
+
+    function OnTaxDetailsSuccess(responseData) {
+        dtTax.fnClearTable();
+        var response = [];
+        $.each(responseData, function (i, item) {
+            if (item.TaxAmount > 0) {
+                item.TaxAmount = item.TaxAmount.toFixed(2);
+                response.push(item);
+            }
+        });
+        if (response.length > 0)
+            dtTax.dtAddData(response);
+        else dtTax.hide();
+    }
+
+    function ViewAttachment(obj) {
+        var hdnDocumentName = $('#hdnDocumentName');
+        var FilePath = "@AzureStorageHelper.CloudStorageString";
+        window.open(FilePath + hdnDocumentName.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+        return false;
+    }
+</script>
+
+

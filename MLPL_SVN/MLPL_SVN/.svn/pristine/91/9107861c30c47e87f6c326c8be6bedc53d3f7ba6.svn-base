@@ -1,0 +1,64 @@
+﻿@model IEnumerable<CodeLock.Models.DepsDocket>
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "k-forms" }))
+{
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="dtDeps">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.DepsNo)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.DocketNo)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FoundPackages)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Remark)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Packages)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.DepsNo)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.DocketNo)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FoundPackages)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Remark)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Packages)
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="0" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('DEPS', 'History List', 'filter', '', '');
+        LoadDataTable('dtDeps', false, false, false);
+    });
+</script>

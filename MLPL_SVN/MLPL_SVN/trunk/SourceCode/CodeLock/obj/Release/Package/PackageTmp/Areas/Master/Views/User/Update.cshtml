@@ -1,0 +1,359 @@
+﻿@model CodeLock.Models.MasterUser
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Update", "User", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.UserId)
+    @Html.HiddenFor(m => m.UserId, new { @id = "hdnUserId" })
+    @Html.HiddenFor(m => m.UserName)
+    @Html.HiddenFor(m => m.Password)
+    @Html.HiddenFor(m => m.DefaultCompanyId)
+    @Html.HiddenFor(m => m.DefaultWarehouseId)
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <dl>
+                        <dd>
+                            @Html.DisplayNameFor(model => model.UserName)
+                        </dd>
+                        <dt>
+                            @Html.DisplayFor(model => model.UserName)
+                        </dt>
+                    </dl>
+                </div>
+
+            </div>
+            <div class="col-sm-4" id="dvRegisterGstDetail">
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="clearfix">
+                    </div>
+                    <a href="#" onclick="javascript: ChangePassword(); return false;">Change Password</a>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control select2", @id = "ddlLocationId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Name, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Name)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MobileNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MobileNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MobileNo)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EmailId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.EmailId, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.EmailId)
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.Gender, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.Gender, true, new { @id = "rdMale", @class = "form-control", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.Gender, "Male", new { @for = "rdMale" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.Gender, false, new { @id = "rdFemale", @class = "form-control" })
+                            <i></i>
+                            @Html.LabelFor(model => model.Gender, "Female", new { @for = "rdFemale" })
+                        </label>
+
+                        @Html.ValidationMessageFor(model => model.Gender)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker()
+               {
+                   FieldName = "DoB",
+                   FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DoB),
+                   AllowFutureDate = false,
+                   AllowPastDate = true,
+                   MinDate = new DateTime(1950, 1, 1),
+                   MaxDate = DateTime.Now.AddDays(-18 * 365),
+                   SetBlank = false,
+                   IsRequired = true,
+                   IsValidateFinYear = false,
+                   DefaultDate = Model.DoB,
+               })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker()
+               {
+                   FieldName = "DoJ",
+                   FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DoJ),
+                   AllowFutureDate = false,
+                   AllowPastDate = true,
+                   MinDate = Model.CompanyStartDate == null ? new DateTime(1950, 1, 1) : Model.CompanyStartDate,
+                   MaxDate = DateTime.Now.AddDays(5),
+                   SetBlank = false,
+                   IsRequired = true,
+                   IsValidateFinYear = false,
+                   DefaultDate = Model.DoJ
+               })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Address, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Address, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Address)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                        @Html.LabelFor(model => model.IsActive, " ", new { @class = "label" })
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PhotoAttachment, new { @class = "label" })
+                    <div class="input prepend-big-btn">
+                        <label class="icon-right" for="prepend-big-btn">
+                            <i class="fa fa-download"></i>
+                        </label>
+                        <div class="file-button">
+                            Browse
+                            <input class="form-control" id="fuPhotoAttachment" type="file" name="PhotoAttachment" onchange="document.getElementById('prepend-big-btn').value = this.value;">
+                            @*@Html.HiddenFor(model => model.DeclarationDocumentName, new { @id = "hdnDeclarationDocumentName", @Value = Model.DeclarationDocumentName })*@
+                        </div>
+                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1" id="divImageLink">
+                <div class="form-group">
+                    <label></label>
+                    <div class="input-wrapper">
+                        @{ var fileNamelnkId = "lnkAttachment";}
+                        <a href="#" id=@fileNamelnkId onclick="return ViewAttachment();">View</a>
+                        @Html.HiddenFor(model => model.Photo, new { id = "hdnPhotoName", @Name = "Photo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RoleId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.RoleId, new SelectList(ViewBag.RoleList, "Value", "Name"), "Select Role", new { @class = "form-control select2", @id = "ddlRole" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.RoleId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UserStatusId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.UserStatusId, new SelectList(ViewBag.UserStatusList, "Value", "Name"), "Select User Status", new { @class = "form-control select2", @id = "ddlUserStatus" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UserStatusId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ManagerName, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.ManagerId, new { @id = "hdnManagerId" })
+                        @Html.TextBoxFor(model => model.ManagerName, null, new { @class = "form-control", @id = "txtManagerName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ManagerName)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UserTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.UserTypeId, new SelectList(ViewBag.UserTypeList, "Value", "Name"), "Select User Type", new { @class = "form-control select2", @id = "ddlUserType" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UserTypeId)
+                </div>
+            </div>
+            <div id="dvUserTypeMapDetail">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.UserTypeMapCode, new { @class = "label", @id = "lblUserTypeMapCode" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.UserTypeMapId, new { @id = "hdnUserTypeMapId" })
+                            @Html.TextBoxFor(model => model.UserTypeMapCode, null, new { @class = "form-control", @id = "txtUserTypeMapCode" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.UserTypeMapCode)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.LabelFor(model => model.UserTypeMapName, " ", new { @class = "label-bold", @id = "lblUserTypeMapName" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.UserCompany, new { @class = "label" })
+                @Html.HiddenFor(model => model.UserCompany, new { @id = "hdnUserCompany" })
+                @Html.HiddenFor(model => model.SavedUserCompany, new { @id = "hdnSavedUserCompany" })
+                @Html.DropDownListFor(model => model.UserCompany, new SelectList(ViewBag.CompanyList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlUserCompany", @placeholder = "Select Company" })
+                @Html.ValidationMessageFor(model => model.UserCompany)
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('User', 'Edit', 'UserName', 'Add New', '@Url.Action("Insert")', 'Details', '@Url.Action("View", new { id = Model.UserId })', 'Go To List', '@Url.Action("Index")');
+        ddlUserType = $('#ddlUserType');
+        hdnUserTypeMapId = $('#hdnUserTypeMapId');
+        txtUserTypeMapCode = $('#txtUserTypeMapCode');
+        txtManagerName = $('#txtManagerName');
+        hdnManagerId = $('#hdnManagerId');
+        txtUserTypeMapCode = $('#txtUserTypeMapCode');
+        lblUserTypeMapName = $('#lblUserTypeMapName');
+        UserAutoComplete('txtManagerName', 'hdnManagerId', 'Manager Name');
+        txtManagerName.blur(function () { return IsUserNameExist(txtManagerName, hdnManagerId, 'Manager Name'); });
+        txtUserTypeMapCode.blur(function () { return CheckIsValid(txtUserTypeMapCode, hdnUserTypeMapId); });
+        OnPageLoad();
+        ddlUserType.change(OnUserTypeChange);
+        $('#btnSubmit').click(OnSubmit);
+    });
+
+    function OnPageLoad() {
+        $('#divImageLink').showHide($('#hdnPhotoName').val() != '');
+        $('#dvUserTypeMapDetail').show();
+        lblUserTypeMapName.text('@Model.UserTypeMapName');
+        if (ddlUserType.val() == 3) {
+            AutoComplete('txtUserTypeMapCode', '@Url.Action("GetAutoCompleteVendorList", "Vendor")', 'vendorCode', 'l', 'l', 'l', 'd', '', 'hdnUserTypeMapId', '', '');
+            $('#lblUserTypeMapCode').text("Vendor");
+            AddRequired(txtUserTypeMapCode, "Please enter Vendor");
+        }
+        else if (ddlUserType.val() == 4) {
+            AutoComplete('txtUserTypeMapCode', '@Url.Action("GetAutoCompleteCustomerList", "Customer")', 'customerCode', 'l', 'l', 'l', 'd', '', 'hdnUserTypeMapId', '', '');
+            $('#lblUserTypeMapCode').text("Customer");
+            AddRequired(txtUserTypeMapCode, "Please enter Customer");
+        }
+        else {
+            $('#dvUserTypeMapDetail').hide();
+            RemoveRequired(txtUserTypeMapCode);
+        }
+
+        InitMultiSelect(ddlUserCompany.Id, true, false, true);
+        DropDownChange('ddlUserCompany', function () {
+            $('#hdnUserCompany').val($(this).val());
+        });
+
+        var selectedCountryValue = $('#hdnSavedUserCompany').val();
+        $('#hdnUserCompany').val(selectedCountryValue);
+        if (selectedCountryValue != "") {
+            selectedCountryValue = selectedCountryValue.split(',');
+            $("#ddlUserCompany").val(selectedCountryValue).trigger('change');
+            SavedUserCompany = selectedCountryValue;
+        }
+    }
+
+    function ViewAttachment() {
+        var hdnPhotoName = $('#hdnPhotoName');
+        var filePath = '';
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = "@ConfigHelper.JsLocalStoragePath"+'User/';
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+        window.open(filePath + hdnPhotoName.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+        return false;
+    }
+
+    function OnUserTypeChange() {
+        hdnUserTypeMapId.val('');
+        txtUserTypeMapCode.val('');
+        $('#dvUserTypeMapDetail').show();
+        if (ddlUserType.val() == 3) {
+            AutoComplete('txtUserTypeMapCode', '@Url.Action("GetAutoCompleteVendorList", "Vendor")', 'vendorCode', 'l', 'l', 'l', 'd', '', 'hdnUserTypeMapId', '', '');
+            $('#lblUserTypeMapCode').text("Vendor");
+            AddRequired(txtUserTypeMapCode, "Please enter Vendor");
+        }
+        else if (ddlUserType.val() == 4) {
+            AutoComplete('txtUserTypeMapCode', '@Url.Action("GetAutoCompleteCustomerList", "Customer")', 'customerCode', 'l', 'l', 'l', 'd', '', 'hdnUserTypeMapId', '', '');
+            $('#lblUserTypeMapCode').text("Customer");
+            AddRequired(txtUserTypeMapCode, "Please enter Customer");
+        }
+        else {
+            $('#dvUserTypeMapDetail').hide();
+            RemoveRequired(txtUserTypeMapCode);
+        }
+    }
+
+    function CheckIsValid(objName, objHdnId) {
+        if (ddlUserType.val() == 3) {
+            IsVendorCodeExist(objName, objHdnId, lblUserTypeMapName, 'Vendor');
+        }
+        else if (ddlUserType.val() == 4) {
+            IsCustomerCodeExist(objName, objHdnId, lblUserTypeMapName, 'Customer');
+        }
+    }
+
+    function ChangePassword() {
+        window.location.replace("../../User/ChangePassword/" + $('#hdnUserId').val());
+    }
+
+    function OnSubmit() {
+        if (ddlUserType.val() == 1 || ddlUserType.val() == 2 || ddlUserType.val() == 5 || ddlUserType.val() == 6)
+            hdnUserTypeMapId.val($('#hdnUserId').val());
+    }
+</script>

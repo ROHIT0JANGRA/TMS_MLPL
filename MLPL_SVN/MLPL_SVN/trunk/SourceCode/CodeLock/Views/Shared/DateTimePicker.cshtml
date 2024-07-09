@@ -1,0 +1,66 @@
+﻿@using CodeLock.Helper
+@model CodeLock.Models.DateTimePicker
+@{
+    DateTime defaultDate = Model.DefaultDate ?? DateTime.Now;
+    DateTime minDate = Model.MinDate ?? DateTime.Now;
+    DateTime maxDate = Model.MaxDate ?? DateTime.Now;
+
+    string fieldId = Model.FieldId != "" ? Model.FieldId : Model.FieldName.Contains('.') ? Model.FieldName.Split('.').Last() : Model.FieldName;
+    string dateTimeFormat, jsDateTimeFormat;
+
+    if (Model.FieldName.Contains('.'))
+    {
+        var arrFieldName = Model.FieldName.Split('.');
+        string fieldIdNo = string.Empty;
+
+        if (Model.FieldName.Contains('['))
+        {
+            for (int i = 0; i < arrFieldName.Length - 1; i++)
+            {
+                fieldIdNo = fieldIdNo + arrFieldName[i].Split('[', ']')[1] + "_";
+            }
+        }
+
+        fieldId = fieldId + fieldIdNo.Trim(new Char[] { ' ', '*', '.', '_' });
+    }
+
+    if (Model.IsTimeOnly)
+    {
+        dateTimeFormat = ConfigHelper.TimeFormat;
+        jsDateTimeFormat = ConfigHelper.JsTimeFormat;
+    }
+    else
+    {
+        dateTimeFormat = Model.IsDateOnly ? ConfigHelper.DateFormat : ConfigHelper.DateTimeFormat;
+        jsDateTimeFormat = Model.IsDateOnly ? ConfigHelper.JsDateFormat : ConfigHelper.JsDateTimeFormat;
+    }
+}
+
+@{
+    if (@Model.UseFieldCaption)
+    {
+        @Html.Label(Model.FieldName, Model.FieldCaption, new { @id = "lbl" + fieldId, @class = "label" })
+    }
+    <div class="input">
+        <label class="icon-right">
+            @if (@Model.IsTimeOnly)
+            {<i class="fa fa-clock-o"></i>}
+            else
+            {<i class="zmdi zmdi-calendar"></i>}
+        </label>
+        @Html.TextBox(Model.FieldName, String.Format("{0:" + ConfigHelper.DateFormat + "}", DateTime.Now.ToShortDateString()), new { @id = "txt" + fieldId, @class = "form-control text-datetime" })
+        @Html.Hidden("hdn" + fieldId, String.Join(",", new string[] { Model.FieldCaption, Model.IsRequired.ToString().ToLower() }), new { @class = "hidden-datetime" })
+    </div>
+    if (@Model.IsRequired)
+    {
+        @Html.ValidationMessage(Model.FieldName)
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitDateTimePicker("txt" + '@fieldId',@Model.AllowFutureDate.ToString().ToLower(), @Model.AllowPastDate.ToString().ToLower(), @Model.SetBlank.ToString().ToLower(), '@defaultDate.ToString(@dateTimeFormat)', '@jsDateTimeFormat' , '@minDate.ToString(@dateTimeFormat)', '@maxDate.ToString(@dateTimeFormat)', @Model.IsValidateFinYear.ToString().ToLower(),@Model.IsDateOnly.ToString().ToLower(),@Model.IsTimeOnly.ToString().ToLower());
+        if(@Model.IsRequired.ToString().ToLower())
+            AddRequired( $('#txt' + '@fieldId' ),'Please select '+ '@Model.FieldCaption' );
+    });
+</script>
+

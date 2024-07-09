@@ -1,0 +1,497 @@
+﻿@model  CodeLock.Models.CustomerContractChargeMatrixSTD
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "ChargeMatrixSTD", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.ContractId, new { @id = "hdnContractId" })
+    @Html.HiddenFor(m => m.BaseOn1, new { @id = "hdnBaseOn1" })
+    @Html.HiddenFor(m => m.BaseOn2, new { @id = "hdnBaseOn2" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Contract ID", new { @id = "lblCustomer", @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.ManualContractId
+                    </div>
+                </div>
+            </div>
+            @if (@ViewBag.isCustomerContract == false)
+            {
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Vendor", new { @id = "lblCustomer", @class = "label-bold" })
+                        <div class="clearfix">
+                            @ViewBag.CustomerCode : @ViewBag.CustomerName
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Customer", new { @id = "lblCustomer", @class = "label-bold" })
+                        <div class="clearfix">
+                            @ViewBag.CustomerCode : @ViewBag.CustomerName
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="inline-group">
+                        <label class="label">Charge Type</label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsBooking, true, new { @id = "rdBooking", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsBooking, "Booking", new { @for = "rdBooking" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsBooking, false, new { @id = "rdDelivery" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsBooking, "Delivery", new { @for = "rdDelivery" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4" id="divBaseOnName">
+                <label class="label">@ViewBag.BaseOnName</label>
+                <div class="select">
+                    @Html.DropDownListFor(m => Model.BaseCode1, new SelectList(ViewBag.BaseCodeList, "Value", "Name", Model.BaseCode1), new { @class = "form-control", @id = "ddlBaseCode1" })
+                    <i></i>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ChargeCode, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.ChargeCode, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlChargeCode" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ChargeCode)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4" id="divBaseCode2" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BaseCode2, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.BaseCode2, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "form-control", @id = "ddlBaseCode2" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BaseCode2)
+                </div>
+            </div>
+            <div class="col-sm-4" id="divTransportMode" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name"), "Select Transport Mode", new { @class = "form-control", @id = "ddlTransportModeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TransportModeId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4" id="divMatrixType" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MatrixType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.MatrixType, new SelectList(ViewBag.MatrixTypeList, "Value", "Name"), "Select Matrix Type", new { @class = "form-control", @id = "ddlMatrixType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MatrixType)
+                </div>
+            </div>
+            <div class="col-sm-4" id="divFromLocation" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromLocation, new { @class = "label" })
+                    @Html.HiddenFor(model => model.FromLocation, new { @id = "hdnFromLocation" })
+                    <div class="input">
+                        @Html.TextBox("FromLocationName", null, new { @class = "form-control", @id = "txtFromLocationCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FromLocationCode)
+                </div>
+            </div>
+            <div class="col-sm-4" id="divToLocation" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToLocation, new { @class = "label" })
+                    @Html.HiddenFor(model => model.ToLocation, new { @id = "hdnToLocation" })
+                    <div class="input">
+                        @Html.TextBox("ToLocationName", null, new { @class = "form-control", @id = "txtToLocationCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ToLocationCode)
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4" id="divFtlType" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FtlTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.FtlTypeId, new SelectList(ViewBag.FtlTypeList, "Value", "Name"), "Select FTL Type", new { @class = "form-control", @id = "ddlFtlTypeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FtlTypeId)
+                </div>
+            </div>
+            <div class="col-sm-4" id="divConsignor" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ConsignorName, new { @class = "form-control", @id = "txtConsignorName" })
+                        @Html.HiddenFor(model => model.ConsignorId, new { @id = "hdnConsignorId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ConsignorName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("", " ", new { @class = "label" })
+                    @Html.Label("ConsignorName", " ", new { @class = "label-bold", @id = "lblConsignorName" })
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-4" id="divConsignee" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ConsigneeName, new { @class = "form-control", @id = "txtConsigneeName" })
+                        @Html.HiddenFor(model => model.ConsigneeId, new { @id = "hdnConsigneeId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ConsigneeName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("", " ", new { @class = "label" })
+                    @Html.Label("ConsigneeName", " ", new { @class = "label-bold", @id = "lblConsigneeName" })
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn">Next</button>
+        </div>
+    </div>
+}
+
+<script>
+    var hdnFromLocation, txtFromLocationCode, hdnToLocation, txtToLocationCode, txtConsignorName, txtConsigneeName, hdnConsignorId, hdnConsignorId, lblConsignorName, lblConsigneeName;
+    $(document).ready(function () {
+
+        if ('@ViewBag.isCustomerContract' == "False") {
+            SetPageLoad('Vendor Contract', 'Standard Charges Criteria', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = Model.ContractId })');
+        }
+        else {
+            SetPageLoad('Customer Contract', 'Standard Charges Criteria', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = Model.ContractId })');
+
+        }
+        Init();
+        $('#ddlBaseCode1').change(OnBaseCode1Change);
+        $('#ddlChargeCode').change(OnChargeCodeChange);
+        $('#rdBooking').click(OnBaseCode1Change);
+        $('#rdDelivery').click(OnBaseCode1Change);
+        $('#ddlMatrixType').change(OnMatrixTypeChange);
+        hdnFromLocation = $('#hdnFromLocation'); txtFromLocationCode = $('#txtFromLocationCode'); hdnToLocation = $('#hdnToLocation'); txtToLocationCode = $('#txtToLocationCode');
+        txtConsignorName = $('#txtConsignorName'); txtConsigneeName = $('#txtConsigneeName'); hdnConsignorId = $('#hdnConsignorId'); hdnConsigneeId = $('#hdnConsigneeId'); lblConsignorName = $('#lblConsignorName'); lblConsigneeName = $('#lblConsigneeName')
+        txtFromLocationCode.blur(function () { return CheckIsValid(txtFromLocationCode, hdnFromLocation); });
+        txtToLocationCode.blur(function () { return CheckIsValid(txtToLocationCode, hdnToLocation); });
+        OnBaseCode1Change();
+        OnMatrixTypeChange();
+        $('#btnSubmit').click(OnSubmit);
+
+        txtConsignorName.blur(function () { IsCustomerCodeExist(txtConsignorName, hdnConsignorId, lblConsignorName, 'Consignor') });
+        txtConsigneeName.blur(function () { IsCustomerCodeExist(txtConsigneeName, hdnConsigneeId, lblConsigneeName, 'Consignee') });
+        CustomerAutoComplete(txtConsignorName.Id, hdnConsignorId.Id, 'Consignor');
+        CustomerAutoComplete(txtConsigneeName.Id, hdnConsigneeId.Id, 'Consignee');
+    });
+
+    function Init() {
+        if ($('#hdnBaseOn1').val() == 0) {
+            $('#divBaseOnName').hide();
+            $('#ddlBaseCode1').disable();
+        }
+    }
+
+    function OnBaseCode1Change() {
+        if ($('#ddlBaseCode1').val() != '') {
+            var requestData = { contractId: $('#hdnContractId').val(), baseOn: $('#hdnBaseOn1').val(), baseCode: 0, isBooking: $('#rdBooking').is(':checked') };
+            AjaxRequestWithPostAndJson('@Url.Action("GetChargeList")', JSON.stringify(requestData), GetChargeNameListSuccess, ErrorFunction, false);
+            var requestData = { contractId: $('#hdnContractId').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("CheckOdaApplicable")', JSON.stringify(requestData), function (result) {
+                if (result) {
+                    $('#ddlChargeCode').append($("<option></option>").val(7).html('ODA'));
+                    $('#ddlChargeCode').val('');
+                }
+
+            }, ErrorFunction, false);
+        }
+        if ($('#ddlChargeCode').val() == '') {
+            $('#ddlBaseCode2').empty();
+            $('#ddlBaseCode2').append($("<option></option>").val('').html('Select'));
+            SetDropDownValue($('#ddlBaseCode2'), '');
+        }
+    }
+
+    function GetChargeNameListSuccess(responseData) {
+        BindDropDownList('ddlChargeCode', responseData, 'Value', 'Name', '', 'Select Charge');
+        $('#ddlChargeCode').append($("<option></option>").val(101).html('Fleet Charge'));
+        $('#ddlChargeCode').val('');
+
+    }
+
+    function OnChargeCodeChange() {
+        txtFromLocationCode.val('');
+        txtToLocationCode.val('');
+        hdnFromLocation.val('');
+        hdnToLocation.val('');
+        $('#ddlTransportModeId').val('');
+        $('#ddlMatrixType').val('');
+        $('#ddlFtlTypeId').val('');
+        txtFromLocationCode.enable();
+        txtToLocationCode.enable();
+        $('#ddlTransportModeId').enable();
+        $('#ddlMatrixType').enable();
+        $('#ddlFtlTypeId').enable();
+        txtConsignorName.val('');
+        txtConsigneeName.val('');
+        txtConsignorName.enable();
+        txtConsigneeName.enable();
+        hdnConsignorId.val('');
+        hdnConsigneeId.val('');
+        lblConsignorName.text('');
+        lblConsigneeName.text('');
+        if ($('#ddlChargeCode').val() != '') {
+            $('#hdnBaseOn2').val($('#ddlChargeCode').val());
+            var requestData = { contractId: $('#hdnContractId').val(), baseOn: $('#hdnBaseOn1').val(), baseCode: 0, isBooking: $('#rdBooking').is(':checked'), chargeCode: $('#ddlChargeCode').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetBaseCode2List")', JSON.stringify(requestData), GetBaseCode2ListSuccess, ErrorFunction, false);
+            requestData = { contractId: $('#hdnContractId').val(), baseOn: $('#hdnBaseOn1').val(), baseCode: 0, isBooking: $('#rdBooking').is(':checked'), chargeCode: $('#ddlChargeCode').val() };
+            if ($('#ddlChargeCode').val() != 101)
+                AjaxRequestWithPostAndJson('@Url.Action("GetChargeBase")', JSON.stringify(requestData), GetChargeBaseSuccess, ErrorFunction, false);
+            if ($('#ddlChargeCode').val() != 7) {
+                requestData = { contractId: $('#hdnContractId').val(), baseOn: $('#hdnBaseOn1').val(), baseCode: 0, isBooking: $('#rdBooking').is(':checked'), chargeCode: $('#ddlChargeCode').val() };
+                AjaxRequestWithPostAndJson('@Url.Action("GetDetail")', JSON.stringify(requestData), GetDetailSuccess, ErrorFunction, false);
+            }
+            else {
+                $('#ddlTransportModeId').disable();
+                $('#ddlBaseCode2').disable();
+                $('#ddlMatrixType').disable();
+                $('#txtFromLocationCode').disable();
+                $('#txtToLocationCode').disable();
+                $('#ddlFtlTypeId').disable();
+                txtConsignorName.disable();
+                txtConsigneeName.disable();
+            }
+        }
+        OnMatrixTypeChange();
+    }
+
+    function GetBaseCode2ListSuccess(responseData) {
+        BindDropDownList('ddlBaseCode2', responseData, 'Value', 'Name');
+        if ($('#ddlBaseCode2').val() == 0) {
+            $('#ddlBaseCode2').disable();
+            $('#divBaseCode2').hide();
+            $('#ddlBaseCode2').val(0);
+        }
+        else {
+            $('#divBaseCode2').show();
+            $('#ddlBaseCode2').enable();
+        }
+    }
+
+    function GetChargeBaseSuccess(responseData) {
+        $('#hdnBaseOn2').val(responseData);
+        if (responseData == 1)
+            $('#lblBaseCode2').text("Product Type");
+        else if (responseData == 2)
+            $('#lblBaseCode2').text("Packaging Type");
+    }
+
+    var useFrom = 0, useTo = 0, useTransportMode = 0, useFtlType, slabType = '';
+    function GetDetailSuccess(responseData) {
+        useFrom = responseData.UseFrom;
+        useTo = responseData.UseTo;
+        useTransportMode = responseData.UseTransportMode;
+        useFtlType = responseData.UseFtlType;
+        slabType = responseData.SlabType;
+        useConsignor = responseData.UseConsignor;
+        useConsignee = responseData.UseConsignee;
+        if (responseData.UseFrom && responseData.UseTo) {
+            $('#divMatrixType').show();
+            $('#divFromLocation').show();
+            $('#divToLocation').show();
+            $('#ddlMatrixType').enable();
+            $('#txtFromLocationCode').enable();
+            $('#txtToLocationCode').enable();
+        }
+        else if (!responseData.UseFrom && !responseData.UseTo) {
+            $('#divMatrixType').hide();
+            $('#divFromLocation').hide();
+            $('#divToLocation').hide();
+            $('#ddlMatrixType').disable();
+            $('#txtFromLocationCode').disable();
+            $('#txtToLocationCode').disable();
+        }
+        else if (!responseData.UseFrom && responseData.UseTo) {
+            $('#divMatrixType').show();
+            $('#ddlMatrixType').enable();
+            $('#divFromLocation').hide();
+            $('#txtFromLocationCode').disable();
+            $('#divToLocation').show();
+            $('#txtToLocationCode').enable();
+        }
+        else if (responseData.UseFrom && !responseData.UseTo) {
+            $('#divMatrixType').show();
+            $('#ddlMatrixType').enable();
+            $('#divFromLocation').show();
+            $('#txtFromLocationCode').enable();
+            $('#divToLocation').hide();
+            $('#txtToLocationCode').disable();
+        }
+
+        if (responseData.UseTransportMode) {
+            $('#divTransportMode').show();
+            $('#ddlTransportModeId').enable();
+        }
+        else {
+            $('#divTransportMode').hide();
+            $('#ddlTransportModeId').disable();
+        }
+        if (responseData.UseFtlType) {
+            $('#divFtlType').show();
+            $('#ddlFtlTypeId').enable();
+        }
+        else {
+            $('#divFtlType').hide();
+            $('#ddlFtlTypeId').disable();
+        }
+        $('#divConsignor').showHide(responseData.UseConsignor);
+        $('#divConsignee').showHide(responseData.UseConsignee);
+        txtConsigneeName.enable(responseData.UseConsignee);
+        txtConsignorName.enable(responseData.UseConsignor);
+    }
+
+    function OnMatrixTypeChange() {
+        txtFromLocationCode.val(''); txtToLocationCode.val(''); hdnFromLocation.val(''); hdnToLocation.val('');
+        if ($('#ddlMatrixType').val() == '') {
+            txtFromLocationCode.prop('disabled', true);
+            txtToLocationCode.prop('disabled', true);
+        }
+        else {
+            txtFromLocationCode.prop('disabled', false);
+            txtToLocationCode.prop('disabled', false);
+        }
+        if ($('#ddlMatrixType').val() == 1) {
+            CityAutoComplete('txtFromLocationCode', 'hdnFromLocation');
+            CityAutoComplete('txtToLocationCode', 'hdnToLocation');
+        }
+        else if ($('#ddlMatrixType').val() == 2) {
+            LocationAutoComplete('txtFromLocationCode', 'hdnFromLocation');
+            LocationAutoComplete('txtToLocationCode', 'hdnToLocation');
+        }
+        else if ($('#ddlMatrixType').val() == 3) {
+            ZoneAutoComplete('txtFromLocationCode', 'hdnFromLocation');
+            ZoneAutoComplete('txtToLocationCode', 'hdnToLocation');
+        }
+    }
+
+    function CheckIsValid(objName, objHdnId) {
+        if ($('#ddlMatrixType').val() == 1) {
+            IsCityNameExist(objName, objHdnId);
+        }
+        else if ($('#ddlMatrixType').val() == 2) {
+            IsLocationCodeExist(objName, objHdnId);
+        }
+        else if ($('#ddlMatrixType').val() == 3) {
+            IsZoneNameExist(objName, objHdnId);
+        }
+    }
+
+    function ValidateForm(form) {
+        var hasError = false;
+        var inputs = $(":text(:visible),:radio,:checkbox,select,textarea");
+        var elements = form.find(inputs);
+        $(elements).each(function (idx) {
+            if (!$(this).hasAttr('disabled')) {
+                var isValid = form.validate().element($(this));
+                if (!isValid) { hasError = true; }
+            }
+        });
+        return !hasError;
+    }
+
+    function OnSubmit() {
+        RemoveRequired($('#ddlFtlTypeId'));
+
+        var contractId = $('#hdnContractId').val();
+        var baseOn1 = $('#hdnBaseOn1').val();
+        var baseOn2 = $('#hdnBaseOn2').val();
+        var baseCode1 = "0";
+        var baseCode2 = $('#ddlBaseCode2').val() == '' ? 0 : $('#ddlBaseCode2').val();
+        var chargeCode = $('#ddlChargeCode').val() == '' ? 0 : $('#ddlChargeCode').val();
+        var matrixType = $('#ddlMatrixType').val() == '' ? 0 : $('#ddlMatrixType').val();
+        var fromLocation = txtFromLocationCode.val() == '' ? 0 : hdnFromLocation.val();
+        var toLocation = txtToLocationCode.val() == '' ? 0 : hdnToLocation.val();
+        var transportModeId = $('#ddlTransportModeId').val() == '' ? 0 : $('#ddlTransportModeId').val();
+        var isBooking = $('#rdBooking').is(':checked');
+        var ftlTypeId = $('#ddlFtlTypeId').val() == '' ? 0 : $('#ddlFtlTypeId').val();
+
+        var consignorId = txtConsignorName.val() == '' ? 0 : hdnConsignorId.val();
+        var consigneeId = txtConsigneeName.val() == '' ? 0 : hdnConsigneeId.val();
+
+        var form = $('#btnSubmit').closest('form');
+        var hasError = ValidateForm(form);
+        if (!hasError)
+            return false;
+
+        if ($('#divFromLocation').is(':visible') && (txtFromLocationCode.val() == '') && $('#divToLocation').is(':visible') && (txtToLocationCode.val() == '') && $('#ddlChargeCode').val() != 101) {
+            ShowMessage("Please enter From or To");
+            return false;
+        }
+
+        if ($('#divFtlType').is(':visible') && ($('#ddlFtlTypeId').val() == '')) {
+            ShowMessage("Please select FTL Type");
+            return false;
+        }
+
+        if ($('#ddlChargeCode').val() == 7) {
+            window.location.href = "@Url.Action("ODA")/" + contractId;
+            return false;
+        }
+
+        if ($('#ddlChargeCode').val() == 4) {
+            window.location.href = "@Url.Action("FovRate")/" + contractId + "?baseOn1=" + baseOn1 + "&baseOn2=" + baseOn2 + "&baseCode1=" + baseCode1 + "&baseCode2=" + baseCode2 + "&chargeCode=" + chargeCode + "&matrixType=" + matrixType + "&fromLocation=" + fromLocation + "&toLocation=" + toLocation + "&transportModeId=" + transportModeId + "&isBooking=" + isBooking + "&ftlTypeId=" + ftlTypeId + '&consignorId=' + consignorId + '&consigneeId=' + consigneeId;
+            return false;
+        }
+        else if ($('#ddlChargeCode').val() == 8) {
+            window.location.href = "@Url.Action("FuelSurcharge")/" + contractId + "?baseOn1=" + baseOn1 + "&baseOn2=" + baseOn2 + "&baseCode1=" + baseCode1 + "&baseCode2=" + baseCode2 + "&chargeCode=" + chargeCode + "&matrixType=" + matrixType + "&fromLocation=" + fromLocation + "&toLocation=" + toLocation + "&transportModeId=" + transportModeId + "&isBooking=" + isBooking + "&ftlTypeId=" + ftlTypeId + '&consignorId=' + consignorId + '&consigneeId=' + consigneeId;
+            return false;
+        }
+
+        if ($('#ddlChargeCode').val() == 101) {
+            window.location.href = "@Url.Action("FleetCharge")/" + contractId + "?baseOn1=" + baseOn1 + "&baseOn2=" + baseOn2 + "&baseCode1=" + baseCode1 + "&baseCode2=" + baseCode2 + "&chargeCode=" + chargeCode + "&matrixType=" + matrixType + "&fromLocation=" + fromLocation + "&toLocation=" + toLocation + "&transportModeId=" + transportModeId + "&isBooking=" + isBooking + "&ftlTypeId=" + ftlTypeId + '&consignorId=' + consignorId + '&consigneeId=' + consigneeId;
+            return false;
+        }
+
+        else if (slabType != 'N') {
+            window.location.href = "@Url.Action("RateMatrixSelection")/" + contractId + "?baseOn1=" + baseOn1 + "&baseOn2=" + baseOn2 + "&baseCode1=" + baseCode1 + "&baseCode2=" + baseCode2 + "&chargeCode=" + chargeCode + "&matrixType=" + matrixType + "&fromLocation=" + fromLocation + "&toLocation=" + toLocation + "&transportModeId=" + transportModeId + "&isBooking=" + isBooking + "&ftlTypeId=" + ftlTypeId + '&consignorId=' + consignorId + '&consigneeId=' + consigneeId;
+            + '&ConsignorId=' + consignorId + '&ConsigneeId=' + consigneeId;
+            return false;
+        }
+        else {
+            window.location.href = "@Url.Action("StandardCharge")/" + contractId + "?baseOn1=" + baseOn1 + "&baseOn2=" + baseOn2 + "&baseCode1=" + baseCode1 + "&baseCode2=" + baseCode2 + "&chargeCode=" + chargeCode + "&matrixType=" + matrixType + "&fromLocation=" + fromLocation + "&toLocation=" + toLocation + "&transportModeId=" + transportModeId + "&isBooking=" + isBooking + "&ftlTypeId=" + ftlTypeId + '&consignorId=' + consignorId + '&consigneeId=' + consigneeId;
+            return false;
+        }
+
+    }
+</script>

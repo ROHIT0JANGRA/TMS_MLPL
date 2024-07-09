@@ -1,0 +1,21 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+    <div class="col-sm-3">
+        <h4></h4>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function () {
+
+        spnMassage = $('#spnMassage');
+        SetPageLoad('Account Insert', 'Error', '', 'Go To Account Creation', '@Url.Action("Insert")');
+        spnMassage.html(GetUrlValue()["documentNo"]);
+
+    });
+
+</script>

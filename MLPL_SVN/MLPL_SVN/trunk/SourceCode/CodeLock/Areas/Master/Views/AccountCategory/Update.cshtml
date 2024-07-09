@@ -1,0 +1,54 @@
+﻿@model CodeLock.Models.MasterAccountCategory
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "AccountCategory Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "AccountCategory", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.AccountCategoryId)
+    @Html.HiddenFor(model => model.AccountCategoryId)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CategoryName, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.CategoryName, new { @class = "form-control", @id = "txtCategoryName" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CategoryName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsMain, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsMain)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Account Category', 'Update', 'txtCategoryName', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.AccountCategoryId })');
+    });
+</script>
+

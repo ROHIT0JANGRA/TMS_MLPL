@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Docket Hold Done";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+</div>
+<script>
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        var status = GetUrlValue()["status"];
+        if (status == "DocketHold") {
+            spnMassage.text("Docket Hold Successfully");
+            SetPageLoad('Docket', 'Hold Done', '', 'Go To Docket Hold', '@Url.Action("DocketHoldIndex")');
+        }
+        else if (status == "DocketUnhold") {
+            spnMassage.text("Docket Unhold Successfully");
+            SetPageLoad('Docket', 'Unhold Done', '', 'Go To Docket Hold List', '@Url.Action("DocketHoldIndex")');
+        }
+    }
+</script>
+
+
+

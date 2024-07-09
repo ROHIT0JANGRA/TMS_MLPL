@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "VirtualLogin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "j-forms", @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label class="label">Location</label>
+                    @Html.DropDownList("ddlLocation", new SelectList(ViewBag.LocationList, "Value", "Name", SessionUtility.LoginLocationId), new { @class = "form-control select2", @id = "ddlLocation" })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label class="label">Company</label>
+                    @Html.DropDownList("ddlCompany", new SelectList(ViewBag.CompanyList, "Value", "Name", SessionUtility.CompanyId), new { @class = "form-control select2", @id = "ddlCompany" })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label class="label">Warehouse</label>
+                    @Html.DropDownList("ddlWarehouse", new SelectList(ViewBag.WarehouseList, "Value", "Name", SessionUtility.CompanyId), new { @class = "form-control select2", @id = "ddlWarehouse" })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label class="label">Financial Year</label>
+                    @Html.DropDownList("ddlFinYear", new SelectList(ViewBag.FinYearList, "Value", "Name", SessionUtility.FinYear), new { @class = "form-control select2", @id = "ddlFinYear" })
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Virtual Login', 'Update', 'ddlLocation');
+
+        $('#ddlCompany').change(OnChange);
+        $('#ddlWarehouse').change(OnChange);
+        $('#ddlLocation').change(OnChange);
+        $('#ddlFinYear').change(OnChange);
+    });
+
+    function OnChange() {
+        window.location.href = '@Url.Action("VirtualLogin", "Home", new { id = "" })/' + $('#ddlLocation').val() + '?companyId=' + $('#ddlCompany').val() + '&warehouseId=' + $('#ddlWarehouse').val() + '&finYearId=' + $('#ddlFinYear').val();
+    }
+</script>
+

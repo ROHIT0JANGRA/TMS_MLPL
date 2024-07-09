@@ -1,0 +1,155 @@
+﻿@using CodeLock.Models
+@model CustomerBillSubmission
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Submission";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        employeeMasterUrl = '@Url.Action("", "Employee", new { Area = "Master" })';
+        billGenerationUrl = '@Url.Action("", "CustomerBill", new { Area = "Finance" })';
+        submittedByUserList = JSON.parse('@Html.Raw(ViewBag.SubmittedByUserList)');
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+    });
+</script>
+<script src="~/areas/finance/views/customerbill/submission.js?version=@DateTime.Now.Ticks"></script>
+<div  id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Submission", "CustomerBill", FormMethod.Post, new { @class = "j-forms j-multistep", @id = "j-forms", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Bill Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drBillDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.PaybasId, new SelectList(ViewBag.PaybasList, "Value", "Name"), "Select Bill Type", new { @class = "form-control", @id = "ddlPaybasId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.PaybasId)
+                            </div>
+                        </div>
+                        <div class="col-sm-4" id="dvCustomerType">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerTypeId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.CustomerTypeId, new SelectList(ViewBag.CustomerTypeList, "Value", "Name"), "Select Customer Type", new { @class = "form-control", @id = "ddlCustomerType" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CustomerTypeId)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                                    @Html.TextBoxFor(model => model.CustomerCode, null, new { @class = "form-control", @id = "txtCustomerCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CustomerCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerCode, " ", new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.CustomerCode, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.BillNo, new { @class = "form-control", @id = "txtBillNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.BillNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualBillNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualBillNo, new { @class = "form-control", @id = "txtManualBillNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualBillNo)
+                            </div>
+                        </div>
+                      
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.CustomerCode, " ", new { @class = "label-bold", @id = "lblCustomer" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "SubmissionDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.SubmissionDateTime), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, MinDate = DateTime.Now.Date.AddDays(-30), MaxDate = DateTime.Now, IsDateOnly = false })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SubmittedTo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.SubmittedTo, new { @class = "form-control", @id = "txtSubmittedTo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.SubmittedTo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SubmittedContactNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.SubmittedContactNo, new { @class = "form-control", @id = "txtSubmittedContactNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.SubmittedContactNo)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillSubmissionRemarks, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.BillSubmissionRemarks, new { @class = "form-control", @id = "txtBillSubmissionRemarks" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.BillSubmissionRemarks)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtCustomerBillList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>

@@ -1,0 +1,178 @@
+﻿@using CodeLock.Models
+@model BaBillEntry
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "BaBillEntry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        vendorPaymentUrl = '@Url.Action("", "VendorPayment", new { Area = "Finance" })';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+    });
+</script>
+<script src="~/areas/finance/views/vendorpayment/babillentry.js"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("BaBillEntry", "VendorPayment", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Select Transaction Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drTransactionDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorCode, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                                    @Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.VendorCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorCode, " ", new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.VendorCode, " ", new { @class = "label-bold", @id = "lblVendorName" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DocumentNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.DocumentNo, new { @class = "form-control", @id = "txtDocumentNo" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Label(" ", new { @class = "label" })
+                                    <div class="clearfix">
+                                        @Html.Label("(seperated by comma if multiple)")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDocumentList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "BillDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.BillDateTime), IsRequired = true, AllowFutureDate = false, AllowPastDate = false, MinDate = DateTime.Now.Date, MaxDate = DateTime.Now.Date.AddDays(1) })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualBillNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualBillNo, new { @class = "form-control", @id = "txtManualBillNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualBillNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="label">Vendor</label>
+                            <div class="clearfix">
+                                @Html.LabelFor(model => model.VendorCode, " ", new { id = "lblVendorNameStep3" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillAmount, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.BillAmount, new { @class = "form-control textlabel numeric2", @id = "txtBillAmount" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.BillAmount)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "BillDueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.BillDueDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = false, MinDate = DateTime.Now.Date, MaxDate = DateTime.Now.Date.AddDays(1) })
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txtRemark" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Remarks)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDocumentDetailList"></table>
+                                @Html.HiddenFor(model => model.VendorChargeList, new { @id = "hdnVendorChargeList" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.Partial("Tax", new CodeLock.Models.Tax() { })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.OtherDeduction, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.OtherDeduction, new { @class = "form-control numeric2", @id = "txtOtherDeduction" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.OtherDeduction)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DiscountReceived, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.DiscountReceived, new { @class = "form-control numeric2", @id = "txtDiscountReceived" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.DiscountReceived)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.NetPayableAmount, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.NetPayableAmount, new { @class = "form-control textlabel numeric2", @id = "txtNetPayableAmount" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.NetPayableAmount)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

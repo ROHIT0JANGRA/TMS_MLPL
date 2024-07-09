@@ -1,0 +1,348 @@
+﻿@model IEnumerable<CodeLock.Models.MasterDriver>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div id="dvCustomers" class="widget-wrap material-table-widget">
+
+</div>
+
+<script>
+    var getAllCustomersUrl = ''
+    $(document).ready(function () {
+       $(document).ready(function () {
+        SetPageLoad('Driver', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtDriver', true, true, true);
+    });
+        GetCustomerData();
+    });
+
+
+    function GetCustomerData() {
+        var tblCustomersContent = '<table id="dtDriver" class="table table-bordered table-striped display nowrap" style="width:100%"><thead class="bg-primary" ><tr>\
+                             <th>Id</th>\
+                            <th>Driver Code</th>\
+                            <th>Driver Name</th>\
+                            <th>LicenseNo</th>\
+                            <th>Is Active</th>\
+                            <th>Is Walk-In</th>\
+                            <th>Action</th>\
+                            </tr></thead><tbody></tbody></table>';
+        $("#dvCustomers").html(tblCustomersContent);
+        table = $('#dtDriver').dataTable({
+            clear: true,
+            destroy: true,
+            serverSide: true,
+            searchable:true,
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, 100, 100000], [10, 25, 50, 100, "All"]],
+            autoFill: false,
+            "initComplete": function (settings, json) {
+                $(this.api().table().container()).find('input').attr('autocomplete', 'off');
+            },
+            "language": {
+                "emptyTable": "No record found.",
+                "processing":
+                    '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
+            },
+            "ajax": {
+                url: '@Url.Action("GetDriverListByPagination", "Driver")',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: function (d) {
+                    var data = { data: d };
+                    return JSON.stringify(data);
+                },
+                AutoWidth: false,
+                "dataSrc": function (json) {
+                    var data = json;
+                    json.draw = data.draw;
+                    json.recordsTotal = data.recordsTotal;
+                    json.recordsFiltered = data.recordsFiltered;
+                    json.data = JSON.parse(data.data);
+                    return json.data;
+                }
+            },
+
+            "columns": [
+                //{
+                //    "data": "GroupCode", "width": "10px", "orderable": false, "name": "GroupCode"
+                //},
+                //{
+                //    "data": "a", "width": "15px", "orderable": false, "name": "m.LicNo", "render": function (data, type, row, meta) {
+                //        return '<div style="text-align:center;"><input type="checkbox" class="SelectedChk" id="' + row.LicNo + '" value="' + row.LicNo + '" class="filled-in chk-col-success" title="Select All"/></div>';
+                //    },
+                //    "searchable": false  
+                //},
+                {
+                    "data": "DriverId", "name": "DriverId", "searchable": true
+                },
+                {
+                    "data": "DriverCode", "name": "DriverCode", "searchable": true
+                },
+                { "data": "DriverName", "name": "DriverName", "searchable": true },
+                { "data": "LicenseNo", "name": "LicenseNo", "searchable": true },
+
+                {
+                    "data": "IsActive", "width": "15px", "orderable": false, "name": "IsActive",
+                    "render": function (data, type, row, meta) {
+                        var isActive = row.IsActive ? 'Yes' : 'No';
+                        var activeClass = row.IsActive ? 'label label-success' : 'label label-default';
+                        return '<label class="' + activeClass +'">' + isActive +'</label>';
+                    },"searchable": false
+                },
+                {
+                    "data": "IsWalkIn", "width": "15px", "orderable": false, "name": "IsWalkIn",
+                    "render": function (data, type, row, meta) {
+                        var isWalkIn = row.IsWalkIn ? 'Yes' : 'No';
+                        var activeClass = row.IsWalkIn ? 'label label-success' : 'label label-default';
+                        return '<label class="' + activeClass + '">' + isWalkIn + '</label>';
+                    }, "searchable": false
+                },
+                {
+                    "data": "DriverId", "name": "DriverId", "orderable": false, "name": "DriverId",
+                    "render": function (data, type, row, meta) {
+                        var updateUrl = '@Url.Action("Update", new { id = "__customerId__" })';
+                        var viewUrl = '@Url.Action("View", new { id = "__customerId__" })';
+                        return '<div class="btn-toolbar" role="toolbar">\
+                            <div class="btn-group" role="group">\
+                                <a class="btn btn-default btn-sm m-user-edit" href="'+ updateUrl.replace('__customerId__', row.DriverId) +'"><span class="zmdi zmdi-edit"></span></a>\
+                                <a class="btn btn-default btn-sm m-user-edit" href="'+ viewUrl.replace('__customerId__', row.DriverId) +'"><span class="fa fa-file"></span></a>\
+                            </div>\
+                        </div>';
+                    }, "searchable": false
+                }
+
+            ]
+        });
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+@*<div class="widget-wrap material-table-widget">
+        <table id="dtDriver">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DriverCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DriverName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ManualDriverCode)
+                    </th>
+                    <th data-hide="phone">
+                        @Html.DisplayNameFor(model => model.DriverLocationCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.IsActive)
+                    </th>
+                    <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.DriverFatherName)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.VehicleNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.MobileNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.PermanentAddress)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.PermanentCityName)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.PermanentPincode)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.UsePermanentAddressAsCurrentAddress)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.CurrentAddress)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.CurrentCityName)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.CurrentPincode)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.LicenseNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.LicenseValidityDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.LicenseIssueBy)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.GuarantorName)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.CategoryId)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.DoB)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.Ethnicity)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.LicenseInitialIssueDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.LicenseCurrentIssueDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.IsLicenseVerified)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.IsAddressVerified)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.LicenseVerifiedDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.EntryByName)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.EntryDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.UpdateBy)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.UpdateDate)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DriverCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DriverName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ManualDriverCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DriverLocationCode)
+                        </td>
+                        <td>
+                            @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                        </td>
+                        <td class="td-center">
+                            <div class="btn-toolbar" role="toolbar">
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.DriverId })"><span class="zmdi zmdi-edit"></span></a>
+                                    <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.DriverId })"><span class="fa fa-file"></span></a>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.DriverFatherName)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.VehicleNo)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.MobileNo)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.PermanentAddress)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.PermanentCityName)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.PermanentPincode)
+                        </td>
+                        <td style="display:none">
+                            @Html.Label("", item.UsePermanentAddressAsCurrentAddress == true ? "Yes" : "No", new { @class = item.UsePermanentAddressAsCurrentAddress == true ? "label label-success" : "label label-default" })
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.CurrentAddress)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.CurrentCityName)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.CurrentPincode)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.LicenseNo)
+                        </td>
+                        <td style="display:none">
+                            @item.LicenseValidityDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.LicenseIssueBy)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.GuarantorName)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.Category)
+                        </td>
+                        <td style="display:none">
+                            @item.DoB.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.DriverEthnicity)
+                        </td>
+                        <td style="display:none">
+                            @item.LicenseInitialIssueDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @item.LicenseCurrentIssueDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @Html.Label("", item.IsLicenseVerified == true ? "Yes" : "No", new { @class = item.IsLicenseVerified == true ? "label label-success" : "label label-default" })
+                        </td>
+                        <td style="display:none">
+                            @Html.Label("", item.IsAddressVerified == true ? "Yes" : "No", new { @class = item.IsAddressVerified == true ? "label label-success" : "label label-default" })
+                        </td>
+                        <td style="display:none">
+                            @item.LicenseVerifiedDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.EntryByName)
+                        </td>
+                        <td style="display:none">
+                            @item.EntryDate.ToDisplayDateTime()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.UpdateByName)
+                        </td>
+                        <td style="display:none">
+                            @item.UpdateDate.ToDisplayDateTime()
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(document).ready(function () {
+            SetPageLoad('Driver', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+            LoadDataTable('dtDriver', true, true, true);
+        });
+    </script>*@
+

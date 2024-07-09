@@ -1,0 +1,88 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.DocumentTracking
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="@Url.Content("~/Areas/Operation/Views/Tracking/IndexPOD.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        trackingUrl = '@Url.Action("", "Tracking", new { Area = "Operation" })';
+        docketUrl = '@Url.Action("Details", "Docket", new { Area = "Operation" })';
+        filePath = "@ConfigHelper.LocalStoragePath";
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+    });
+
+</script>
+<script src="@Url.Content("~/Areas/Operation/Views/Tracking/IndexPOD.js")"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Select Document Date", new { @class = "label" })
+                            <div id="drDocumentDate"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocumentNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.DocumentNo, null, new { @class = "form-control", @id = "txtDocumentNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.DocumentNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                @Html.Label("(seperated by comma if multiple)")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualDocumentNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualDocumentNo, null, new { @class = "form-control", @id = "txtManualDocumentNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualDocumentNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                @Html.Label("(seperated by comma if multiple)")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row" id="dvDocketDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDocketDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

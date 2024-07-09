@@ -1,0 +1,455 @@
+﻿@using CodeLock.Models
+@model FSCRate
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+
+    @using (Html.BeginForm("GetFSCRateDetails", "FSCRate", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+    {
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    Customer
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CustomerId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Customer", new { @class = "form-control select2", @id = "CustomerId" })
+                        <i></i>
+                    </div>@Html.ValidationMessageFor(model => model.CustomerId)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="0" id="btnNext">Next</button>
+        </div>
+
+    }
+
+    @using (Html.BeginForm("Create", "FSCRate", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+    {
+        if (Model.Details != null)
+        {
+            <div class="page-separator">FSC Rate Master Entry</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="material-table-widget">
+                        @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                        <table id="dtFSCRateMaster">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Details[0].LaneId)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Details[0].MasterLaneId)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Details[0].RouteId)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Details[0].FTLTypeId)
+                                    </th>
+                                    <th style="width: 156px;">
+                                        @Html.DisplayNameFor(model => model.Details[0].PeriodFrom)
+                                    </th>
+                                    <th style="width: 156px;">
+                                        @Html.DisplayNameFor(model => model.Details[0].PeriodTo)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Details[0].VariableBaseAmtPerTrip)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Details[0].FuelBasePrice)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Details[0].NewFuelPrice)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Details[0].TotalTripFSCAmount)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Details[0].IsActive)
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.Details.Count; i++)
+                                {
+                                    <tr>
+                                        <td id="@("tdLaneId" + i)">
+                                            <div class="select">
+                                                @Html.DropDownListFor(model => model.Details[i].LaneId, new SelectList(ViewBag.LaneList, "Value", "Name", Model.Details[i].ID.ToString()), "Select Lane",
+                                                        new
+                                                             {
+                                                                 @class = "form-control",
+                                                                 @id = "ddlLaneId" + i.ToString(),
+                                                                 @style = "width: 100px;",
+                                                                 @enabled = true
+                                                        })
+                                                <i></i>
+                                            </div>
+                                            @Html.ValidationMessageFor(model => Model.Details[i].LaneId)
+                                            @Html.HiddenFor(model => model.Details[i].CustomerId, new { @id = "hdnCustomerId" + i })
+                                            @Html.HiddenFor(model => model.Details[i].LaneId, new { @id = "hdnLaneId" + i, @value = "" })
+                                            @Html.HiddenFor(model => model.Details[i].ID, new { @id = "hdnID" + i, @value = "0" })
+                                            @Html.HiddenFor(model => model.Details[i].ContractID, new { @id = "hdnContractID" + i })
+                                            @Html.HiddenFor(model => model.Details[i].FSCRateId, new { @id = "hdnFSCRateId" + i })
+                                        </td>
+                                        <td id="@("tdMasterLaneId" + i)">
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => Model.Details[i].MasterLaneId, new { @class = "form-control readonly", @id = "txtMasterLaneId" + i.ToString(), @style = "width: 100px;", @readonly = true })
+                                            </div>
+                                        </td>
+                                        <td id="@("tdRouteName" + i)">
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => Model.Details[i].RouteName, new { @class = "form-control readonly", @id = "txtRouteName" + i.ToString(), @style = "width: 100px;", @readonly = true })
+                                            </div>
+                                        </td>
+                                        <td id="@("tdVehicleTypeDesc" + i)">
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => Model.Details[i].FTLTypeDesc, new { @class = "form-control readonly", @id = "txtFTLTypeDesc" + i.ToString(), @style = "width: 100px;", @readonly = true })
+                                            </div>
+                                        </td>
+                                        <td style="width: 156px;" id="@("tdPeriodFrom" + i)">
+                                            @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "Details[" + i + "].PeriodFrom", FieldCaption = @Html.DisplayNameFor(m => Model.Details[i].PeriodFrom).ToString(), DefaultDate = Model.Details[i].PeriodFrom, UseFieldCaption = false, IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true })
+                                            @Html.ValidationMessageFor(modelItem => Model.Details[i].PeriodFrom)
+                                        </td>
+                                        <td style="width: 156px;" id="@("tdPeriodTo" + i)">
+                                            @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "Details[" + i + "].PeriodTo", FieldCaption = @Html.DisplayNameFor(m => Model.Details[i].PeriodTo).ToString(), DefaultDate = Model.Details[i].PeriodTo, UseFieldCaption = false, IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true })
+                                            @Html.ValidationMessageFor(modelItem => Model.Details[i].PeriodTo)
+                                        </td>
+                                        <td id="@("tdVariableBaseAmtPerTrip" + i)">
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => Model.Details[i].VariableBaseAmtPerTrip, new { @class = "form-control readonly", @id = "txtVariableBaseAmtPerTrip" + i.ToString(), @style = "width: 100px;", @readonly = true })
+                                            </div>
+                                            @Html.ValidationMessageFor(modelItem => Model.Details[i].VariableBaseAmtPerTrip)
+                                        </td>
+                                        <td id="@("tdFuelBasePrice" + i)">
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => Model.Details[i].FuelBasePrice, new { @class = "form-control readonly", @id = "txtFuelBasePrice" + i.ToString(), @style = "width: 100px;", @readonly = true })
+                                            </div>
+                                            @Html.ValidationMessageFor(modelItem => Model.Details[i].FuelBasePrice)
+                                        </td>
+                                        <td id="@("tdNewFuelPrice" + i)">
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => Model.Details[i].NewFuelPrice, new { @class = "form-control", @id = "txtNewFuelPrice" + i.ToString(), @style = "width: 100px;" })
+                                            </div>
+                                            @Html.ValidationMessageFor(modelItem => Model.Details[i].NewFuelPrice)
+                                        </td>
+                                        <td id="@("tdTotalTripFSCAmount" + i)">
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => Model.Details[i].TotalTripFSCAmount, new { @class = "form-control", @id = "txtTotalTripFSCAmount" + i.ToString(), @style = "width: 100px;" })
+                                            </div>
+                                            @Html.ValidationMessageFor(modelItem => Model.Details[i].TotalTripFSCAmount)
+                                        </td>
+                                        <td id="@("tdIsActive" + i)">
+                                            <div class="input">
+                                                @Html.CheckBoxFor(m => Model.Details[i].IsActive, new { @class = "checkbox", @id = "chkIsActive" + i.ToString() })
+                                            </div>
+                                        </td>
+                                        <td id="@("tdAction" + i)"></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-footer">
+                        <button type="submit" class="btn btn-success primary-btn" tabindex="0">Save</button>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="page-separator">No Records Found</div>
+        }
+    }
+</div>
+
+<script>
+    var MessageText = "", MessageType = "", currentDate, currentDateTime, customerId;
+    MessageText = '@ViewBag.MessageText';
+    MessageType = '@ViewBag.MessageType';
+    customerId = '@Model.CustomerId';
+    companyId = '@Model.CompanyId';
+    $(document).ready(function () {
+        if (MessageType != null && MessageType != "" && MessageType != undefined)
+            $.alert({
+                title: MessageType,
+                content: MessageText,
+            });
+        SetPageLoad('FSC Rate Master', '', 'filter', 'Go to List', '@Url.Action("Index")');
+        if ($("#dtFSCRateMaster").length > 0) {
+            $("#btnNext").prop("disabled", true);
+            $("#CustomerId").prop("disabled", true);
+            InitTableGrid('dtFSCRateMaster', false, 11, InitControl);
+            InitControl();
+        }
+        LoadDataTable('dtFSCRateMaster', false, false, false, false, null, null, null, false);
+    });
+
+    function InitControl() {
+        $('[id*="ddlLaneId"]').not('span').each(function () {
+            var ddlLaneId = $(this);
+            var hdnCustomerId = $('#' + ddlLaneId.Id.replace('ddlLaneId', 'hdnCustomerId'));
+            var hdnID = $('#' + ddlLaneId.Id.replace('ddlLaneId', 'hdnID'));
+
+            var dtPeriodFrom = $('#' + ddlLaneId.Id.replace('ddlLaneId', 'txtPeriodFrom'));
+            var dtPeriodTo = $('#' + ddlLaneId.Id.replace('ddlLaneId', 'txtPeriodTo'));
+            var txtVariableBaseAmtPerTrip = $('#' + ddlLaneId.Id.replace('ddlLaneId', 'txtVariableBaseAmtPerTrip'));
+
+            hdnCustomerId.val($("#CustomerId").val());
+            if (hdnID.val() == null || hdnID.val() == undefined || hdnID.val() == "")
+                hdnID.val(0);
+
+            $('#' + ddlLaneId.Id).on("change", function () { GetLaneDetail(ddlLaneId) });
+
+            if (ddlLaneId.val() != "" && ddlLaneId.val() != undefined && hdnID.val() != "0" && hdnID.val() != undefined) {
+                ddlLaneId.prop("readonly", true);
+                ddlLaneId.prop("disabled", true);
+                txtVariableBaseAmtPerTrip.prop("readonly", true);
+
+                if (dtPeriodFrom.data("DateTimePicker") == null) {
+                    InitDateTimePicker(dtPeriodFrom.Id, false, true, false, currentDate, jsDateFormat, '', '');
+                    InitDateTimePicker(dtPeriodTo.Id, false, true, false, currentDate, jsDateFormat, '', '');
+                    $("#" + dtPeriodFrom.Id).blur(function () { CheckDuplicateDataInTable('dtFSCRateMaster', "ddlLaneId", "txtPeriodFrom", "txtPeriodTo", ddlLaneId, dtPeriodFrom, dtPeriodTo); });
+                    $("#" + dtPeriodTo.Id).blur(function () { CheckDuplicateDataInTable('dtFSCRateMaster', "ddlLaneId", "txtPeriodFrom", "txtPeriodTo", ddlLaneId, dtPeriodFrom, dtPeriodTo); });
+                }
+            }
+            else {
+                ddlLaneId.prop("readonly", false);
+                ddlLaneId.prop("disabled", false);
+                txtVariableBaseAmtPerTrip.prop("readonly", false);
+
+                if (dtPeriodFrom.data("DateTimePicker") == null) {
+                    InitDateTimePicker(dtPeriodFrom.Id, false, true, false, currentDate, jsDateFormat, '', '');
+                    InitDateTimePicker(dtPeriodTo.Id, false, true, false, currentDate, jsDateFormat, '', '');
+                    $("#" + dtPeriodFrom.Id).blur(function () { CheckDuplicateDataInTable('dtFSCRateMaster', "ddlLaneId", "txtPeriodFrom", "txtPeriodTo", ddlLaneId, dtPeriodFrom, dtPeriodTo); });
+                    $("#" + dtPeriodTo.Id).blur(function () { CheckDuplicateDataInTable('dtFSCRateMaster', "ddlLaneId", "txtPeriodFrom", "txtPeriodTo", ddlLaneId, dtPeriodFrom, dtPeriodTo); });
+               }
+            }
+        });
+    }
+
+    function GetLaneDetail(ele) {
+        txtObj = $("#" + ele.Id);
+        var hdnID = $("#" + txtObj.Id.replace("ddlLaneId", "hdnID"));
+        var hdnLaneId = $("#" + txtObj.Id.replace("ddlLaneId", "hdnLaneId"));
+        var hdnFSCRateId = $("#" + txtObj.Id.replace("ddlLaneId", "hdnFSCRateId"));
+        var hdnCustomerId = $('#' + txtObj.Id.replace('ddlLaneId', 'hdnCustomerId'));
+        var txtMasterLaneId = $("#" + txtObj.Id.replace("ddlLaneId", "txtMasterLaneId"));
+        var txtRouteName = $("#" + txtObj.Id.replace("ddlLaneId", "txtRouteName"));
+        var txtFTLTypeDesc = $("#" + txtObj.Id.replace("ddlLaneId", "txtFTLTypeDesc"));
+        var hdnContractID = $("#" + txtObj.Id.replace("ddlLaneId", "hdnContractID"));
+        var txtVariableBaseAmtPerTrip = $("#" + txtObj.Id.replace("ddlLaneId", "txtVariableBaseAmtPerTrip"));
+        var txtFuelBasePrice = $("#" + txtObj.Id.replace("ddlLaneId", "txtFuelBasePrice"));
+
+        var dtPeriodFrom = $('#' + txtObj.Id.replace('ddlLaneId', 'txtPeriodFrom'));
+        var dtPeriodTo = $('#' + txtObj.Id.replace('ddlLaneId', 'txtPeriodTo'));
+        try {
+            if (txtObj.val() == undefined || txtObj.val() == "") {
+                ClearDetails(ele);
+            }
+            else {
+                if (!CheckDuplicateDataInTable('dtFSCRateMaster', "ddlLaneId", "txtPeriodFrom", "txtPeriodTo", txtObj, dtPeriodFrom, dtPeriodTo)) {
+                    ClearDetails(ele);
+                    return false;
+                }
+                if (dtPeriodFrom.data("DateTimePicker") == null)
+                    InitDateTimePicker(dtPeriodFrom.Id, false, true, false, currentDate, jsDateFormat, '', '');
+                if (dtPeriodTo.data("DateTimePicker") == null)
+                    InitDateTimePicker(dtPeriodTo.Id, false, true, false, currentDate, jsDateFormat, '', '');
+
+                var requestData = { companyId: companyId, customerId: hdnCustomerId.val(), LaneId: txtObj.val() };
+                AjaxRequestWithPostAndJson(ReplaceUrl("FSCRate", "GetLaneDetails", "Master"), JSON.stringify(requestData), function (result) {
+                    console.log(result);
+                    if (result.length > 0) {
+                        oData = result[0];
+                        hdnID.val(oData.ID);
+                        hdnLaneId.val(oData.LaneId);
+                        hdnFSCRateId.val(oData.FSCRateId);
+
+                        txtMasterLaneId.val(oData.MasterLaneId);
+                        txtRouteName.val(oData.RouteName);
+                        txtFTLTypeDesc.val(oData.FTLTypeDesc);
+                        txtVariableBaseAmtPerTrip.val(oData.VariableBaseAmtPerTrip);
+                        hdnContractID.val(oData.ContractID);
+                        txtFuelBasePrice.val(oData.FuelBasePrice);
+                    }
+                    else {
+                        ShowMessage("No Data Found for Selected Lane");
+                    }
+                    return false;
+                }, ErrorFunction, false);
+            }
+        }
+        catch (e) {
+            console.log(e);
+            ShowMessage(e.message);
+        }
+        return false;
+    }
+
+    function ClearDetails(ele) {
+        txtObj = $("#" + ele.Id);
+
+        var hdnID = $("#" + txtObj.Id.replace("ddlLaneId", "hdnID"));
+        var hdnLaneId = $("#" + txtObj.Id.replace("ddlLaneId", "hdnLaneId"));
+        var txtMasterLaneId = $("#" + txtObj.Id.replace("ddlLaneId", "txtMasterLaneId"));
+        var txtRouteName = $("#" + txtObj.Id.replace("ddlLaneId", "txtRouteName"));
+        var txtFTLTypeDesc = $("#" + txtObj.Id.replace("ddlLaneId", "txtFTLTypeDesc"));
+        var dtPeriodFrom = $('#' + txtObj.Id.replace('ddlLaneId', 'txtPeriodFrom'));
+        var dtPeriodTo = $('#' + txtObj.Id.replace('ddlLaneId', 'txtPeriodTo'));
+        var hdnPeriodFrom = $('#' + txtObj.Id.replace('ddlLaneId', 'hdnPeriodFrom'));
+        var hdnPeriodTo = $('#' + txtObj.Id.replace('ddlLaneId', 'hdnPeriodTo'));
+        var hdnContractID = $('#' + txtObj.Id.replace('ddlLaneId', 'hdnContractID'));
+        var txtVariableBaseAmtPerTrip = $("#" + txtObj.Id.replace("ddlLaneId", "txtVariableBaseAmtPerTrip"));
+        var txtFuelBasePrice = $('#' + txtObj.Id.replace('ddlLaneId', 'txtFuelBasePrice'));
+        var txtNewFuelPrice = $('#' + txtObj.Id.replace('ddlLaneId', 'txtNewFuelPrice'));
+        var chkIsActive = $('#' + txtObj.Id.replace('ddlLaneId', 'chkIsActive'));
+
+        hdnID.val("");
+        hdnLaneId.val("");
+        txtMasterLaneId.val("");
+        txtRouteName.val("");
+        txtFTLTypeDesc.val("");
+        dtPeriodFrom.val("");
+        dtPeriodTo.val("");
+        txtVariableBaseAmtPerTrip.val("0");
+        txtFuelBasePrice.val("0");
+        txtNewFuelPrice.val("0");
+        hdnContractID.val("");
+    }
+
+
+    function CheckDuplicateDataInTable(tableId, fieldId, fieldId2, fieldId3, obj, obj2, obj3) {
+        try {
+            if (obj.val() != "" && obj2.val() != "" && obj3.val() != "") {
+                var msg = "";
+                var startDate1 = $.setDateTime(obj2.val());
+                var endDate1 = $.setDateTime(obj3.val());
+                if (startDate1 >= endDate1) {
+                    obj3.val("");
+                    ShowMessage("From Date should be smaller than To date!");
+                    obj3.focus();
+                    return false;
+                }
+                var i = 0;
+                $('#' + tableId + ' tr:not(:first)').each(function () {
+                    var ele = $(this).find('[id*=' + fieldId + ']');
+                    var ele2 = $(this).find('[id*=' + fieldId2 + ']');
+                    var ele3 = $(this).find('[id*=' + fieldId3 + ']');
+                    i = i + 1;
+                    if (ele.val() != "" && ele3.val() != "" && ele2.val() != "") {
+                        var startDate2 = $.setDateTime(ele2.val());
+                        var endDate2 = $.setDateTime(ele3.val());
+                        if (msg == "") {
+                            if (ele.length > 0 && obj.length > 0 && ele.val() != '' && ele.Id != obj.Id && ele.val() == obj.val()) {
+                                if ((startDate1 >= startDate2 && startDate1 <= endDate2) || (endDate1 >= startDate2 && endDate1 <= endDate2)) {
+                                    obj2.val("");
+                                    obj3.val("");
+                                    obj2.focus();
+                                    msg = "Date range already exists for Row: " + i.toString();
+                                }
+                                else if ((startDate1 <= startDate2 && startDate1 <= endDate2) && (endDate1 >= startDate2 && endDate1 >= endDate2)) {
+                                    obj2.val("");
+                                    obj3.val("");
+                                    obj2.focus();
+                                    msg = "Date range already exists for Row: " + i.toString();
+                                }
+                            }
+                        }
+                    }
+                });
+                if (msg != "") {
+                    ShowMessage(msg);
+                    return false;
+                }
+            }
+        }
+        catch (e) {
+            ShowMessage(e);
+            return false;
+        }
+        return true;
+    }
+
+    function InitTableGrid(objId, allowDeleteAllRow, actionColumnIndex, rowEventFunction, useDeleteOnly, sizeArr) {
+
+        if (IsObjectNullOrEmpty(useDeleteOnly)) useDeleteOnly = false;
+
+        $('#' + objId).addClass('table table-striped data-tbl dataTable no-footer dtr-inline');
+        //$('#' + objId + ' > tbody > tr:last').attr('data-row-id', '0');
+        $('#' + objId + ' > thead > th').css("tabindex", "-1");
+
+        if (sizeArr !== undefined && sizeArr !== null) {
+            $.each(sizeArr, function (i, item) {
+                $('#' + objId + ' thead tr th:eq(' + item[0] + ')').css('min-width', item[1]).css('max-width', item[1]);
+            });
+        }
+
+        $('#' + objId).removeClass('dataTable');
+        $('#' + objId).wrap('<div class="table-responsive"></div>');
+        var fnName = arguments[3].name;
+
+        var buttons = (useDeleteOnly ? '' : '<button type="button" id="btnAdd" onclick="return AddTableGridRow(\'' + objId + '\',' + allowDeleteAllRow + ',' + fnName + ')" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i></button>') +
+            '<button type="button" id="btnRemove" onclick="return RemoveGridRow($(this),\'' + objId + '\',' + allowDeleteAllRow + ',' + fnName + ')" class="btn btn-danger" style="margin-left: 3px;"><i class="fa fa-times" aria-hidden="true"></i></button>';
+
+        $('#' + objId + ' > tbody > tr').each(function () {
+            $(this).find('td:eq(' + actionColumnIndex + ')').html(buttons).css("min-width", "75px");
+
+        });
+
+        ManageTableAddRemove(objId, allowDeleteAllRow);
+
+        if (rowEventFunction != null && rowEventFunction != '' && rowEventFunction != undefined)
+            rowEventFunction.call(this, objId);
+    }
+
+    function AddTableGridRow(objId, allowDeleteAllRow, rowEventFunction, asFirstRow) {
+
+        if (IsObjectNullOrEmpty(asFirstRow)) asFirstRow = false;
+        addRow(objId, allowDeleteAllRow, asFirstRow);
+        rowEventFunction.call(this, objId);
+    }
+
+    var addRow = function (tableId, allowDeleteAll, asFirstRow) {
+        if (IsObjectNullOrEmpty(asFirstRow)) asFirstRow = false;
+        var trFirst = $('#' + tableId + ' > tbody > tr:first');
+        var trLast = $('#' + tableId + ' > tbody > tr:last');
+        var trNew = trFirst.clone();
+
+        if (asFirstRow) {
+            trFirst.before(trNew);
+            trNew.attr('data-row-id', '-1');
+        }
+        else {
+            RenameCloneIdsAndNames(trNew, true);
+            if (trNew.attr('data-row-id'))
+                trLast.after(trNew);
+        }
+
+        ManageTableAddRemove(tableId, allowDeleteAll);
+
+        RegisterValidation();
+        trLast = $('#' + tableId + ' > tbody > tr:last');
+        //var elements = trLast.find(':text,:radio,:checkbox,select,textarea').filter(function () {
+        //    return !this.readOnly &&
+        //        !this.disabled &&
+        //        $(this).parentsUntil('form', 'div').css('display') != "none";
+        //});
+        //if (elements.length > 0)
+        //    elements[0].focus();
+
+        $('#' + tableId + ' > tbody > tr:last').find('[id*=ddlLaneId]').trigger('change');
+
+        trLast.find('select:first(:visible,not:disabled)').val("");
+        trLast.find('select:first(:visible,not:disabled)').focus();
+        $('#' + tableId + ' > tbody > tr:last').find('[id*=chk]').val('true');
+        return false;
+    }
+
+</script>
+
+

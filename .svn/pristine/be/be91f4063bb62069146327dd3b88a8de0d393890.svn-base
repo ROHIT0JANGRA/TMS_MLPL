@@ -1,0 +1,1219 @@
+﻿@using CodeLock.Helper
+@model CodeLock.Models.Docket
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.DocketId, new { id = "hdnPaymentDocketId" })
+    @Html.HiddenFor(m => m.ContractId, new { id = "hdnPaymentContractId" })
+    @Html.HiddenFor(m => m.ConsigneeId, new { id = "hdnPaymentConsigneeId" })
+    @Html.HiddenFor(m => m.ConsignorId, new { id = "hdnPaymentConsignorId" })
+    @Html.HiddenFor(m => m.IsAdd, new { id = "hdnPaymentIsAdd" })
+    @*<div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">*@
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FreightRate, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.FreightRate, new { @class = "form-control numeric2", @id = "txtPaymentFreightRate" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FreightRate)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RateTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.RateTypeId, Enumerable.Empty<SelectListItem>(), new { @id = "ddlPaymentRateType", @class = "form-control" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.RateTypeId)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Freight, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Freight, new { @class = "form-control numeric2", @id = "txtPaymentFreight", @readonly = "readonly" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Freight)
+                    @Html.Label("lblPaymentMinimumFreightMessage", " ", new { @style = "color:red", @id = "lblPaymentMinimumFreightMessage" })
+                </div>
+            </div>
+
+            @*</div>
+                <div class="row">*@
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.Label("", "Rate Per KG", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.TextBox("RatePerKg", "0.00", new { @class = "form-control textlabel label-bold numeric2", @id = "txtPaymentRatePerKg" })
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="dvPaymentKm" style="display:none">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Km, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(m => m.Km, new { @class = "numeric", @id = "txtPaymentKm" })
+
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Km)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillLocation, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.BillLocationId, new { @id = "hdnPaymentBillLocationId" })
+                        @Html.TextBoxFor(model => model.BillLocation, null, new { @class = "form-control", @id = "txtPaymentBillLocation" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BillLocation)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "Edd", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.Edd), IsRequired = true, AllowFutureDate = true, AllowPastDate = false })
+                </div>
+            </div>
+
+        </div>
+        <div class="row" id="dvPaymentGst1">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GstPayerId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.GstPayerId, Enumerable.Empty<SelectListItem>(), new { @id = "ddlPaymentGstPayer", @class = "form-control", @disabled = "disabled" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GstPayerId)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstBillingParty, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.GstBillingParty, " ", new { @id = "lblPaymentGstBillingParty", @class = "label-bold" })
+                        @Html.Hidden("hdnPaymentWalkingGstTinNo")
+                        @Html.Hidden("hdnPaymentWalkinCode")
+                        @Html.HiddenFor(m => m.IsGst, new { @id = "hdnPaymentIsGst" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsGst, new { @class = "label", @for = "chkIsGst" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsGst, new { @id = "chkIsGst" })
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4" id="dvPaymentDeclarationDocumentDetail" style="display:none">
+                <div class="unit">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.GstExemptionDeclarationFileName, new { @class = "label" })
+                        <div class="input prepend-big-btn">
+                            <label class="icon-right" for="prepend-big-btn">
+                                <i class="fa fa-download"></i>
+                            </label>
+                            <div class="file-button">
+                                Browse
+                                @* <input class="form-control" id="fuDeclarationFileName" type="file" name="DeclarationFileName" onchange="$('#prepend-big-btn').val($(this).val())">*@
+                                @Html.TextBoxFor(model => model.GstExemptionDeclarationFile, null, new { @class = "form-control", @id = "fuDeclarationFileName", @type = "file", @onchange = "$('#prepend-big-btn').val($(this).val())" })
+                                @Html.HiddenFor(model => model.GstExemptionDeclarationFileName, new { @id = "hdnPaymentGstExemptionDeclarationFileName" })
+                            </div>
+                            <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                        </div>
+                        @Html.ValidationMessageFor(model => model.GstExemptionDeclarationFile)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2" id="dvPaymentRegisterGstDetail">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        <a href="#" onclick="javascript:OpenGstRegisterForm();">Register GST Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvPaymentGst2">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstState, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(m => m.GstState, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlPaymentGstState" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.GstState)
+                    @Html.HiddenFor(m => m.GstStateId, new { @id = "hdnPaymentGstStateId" })
+                    @Html.HiddenFor(m => m.GstTinNo, new { @id = "hdnPaymentGstTinNo" })
+                    @Html.HiddenFor(m => m.PartyGstId, new { @id = "hdnPaymentPartyGstId" })
+                </div>
+            </div>
+            <div class="col-sm-2" id="dvPaymentGstTinNoDetail">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstTinNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(m => m.GstTinNo, " ", new { @class = "form-control", @id = "txtPaymentPartyGstTinNo", @readonly = "readonly" })
+                        @*@Html.HiddenFor(m => m.DeclarationFileName, new { @id = "hdnPaymentDeclarationFileName" })*@
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GstTinNo)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CompanyGstState, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(m => m.CompanyGstState, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlPaymentCompanyGstState" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.CompanyGstState)
+                    @Html.HiddenFor(m => m.CompanyGstStateId, new { @id = "hdnPaymentCompanyGstStateId" })
+                    @Html.HiddenFor(m => m.CompanyGstTinNo, new { @id = "hdnPaymentCompanyGstTinNo" })
+                    @Html.HiddenFor(m => m.CompanyGstId, new { @id = "hdnPaymentCompanyGstId" })
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CompanyGstTinNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(m => m.CompanyGstTinNo, " ", new { @class = "form-control", @id = "txtPaymentCompanyGstTinNo", @readonly = "readonly" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CompanyGstTinNo)
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvPaymentGst3">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.TransportMode, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.TransportMode, " ", new { @id = "lblPaymentTransportMode", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstServiceType, new { @class = "label" })
+                    <div class="select">
+                        @Html.HiddenFor(m => m.GstServiceTypeId, new { @id = "hdnPaymentGstServiceTypeId" })
+                        <div id="dvPaymentddlPaymentGstServiceType">
+                            @Html.DropDownListFor(m => m.GstServiceType, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlPaymentGstServiceType" })<i></i>
+                        </div>
+                    </div>
+                    @Html.LabelFor(m => m.GstServiceType, " ", new { @id = "lblPaymentGstServiceType", @class = "label-bold" })
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstSacName, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.GstSacName, " ", new { @id = "lblPaymentGstSacName", @class = "label-bold" })
+                        @Html.HiddenFor(m => m.GstSacId, new { @id = "hdnPaymentGstSacId" })
+                    </div>
+                </div>
+            </div>
+            @*<div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.GstServiceType, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.LabelFor(m => m.GstServiceType, " ", new { @id = "lblPaymentGstServiceType", @class = "label-bold" })
+                            @Html.HiddenFor(m => m.GstServiceTypeId, new { @id = "hdnPaymentGstServiceTypeId" })
+                        </div>
+                    </div>
+                </div>*@
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IsRcm, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(m => m.IsRcm, new { @id = "hdnPaymentIsRcm" })
+                        @Html.LabelFor(m => m.IsRcm, new { @class = "form-control textlabel label-bold", @id = "lblPaymentIsRcm" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IsInterState, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.IsInterState, " ", new { @id = "lblPaymentIsInterState", @class = "label-bold" })
+                        @Html.HiddenFor(m => m.IsInterState, new { @id = "hdnPaymentIsInterState" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2" id="divDeclarationFileLink" style="display:none">
+                <div class="form-group">
+                    <label>Declaration File</label>
+                    <div class="input">
+                        @{ var fileNamelnkId = "lnkAttachment";}
+                        <a href="#" id=@fileNamelnkId onclick="return ViewAttachment();">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvPaymentGst4">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstRate, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.TextBoxFor(m => m.GstRate, new { @class = "form-control textlabel label-bold numeric2", @id = "txtPaymentGstRate" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstAmount, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.TextBoxFor(m => m.GstAmount, new { @class = "form-control textlabel label-bold numeric2", @id = "txtPaymentGstAmount" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstCharged, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.TextBoxFor(m => m.GstCharged, new { @class = "form-control textlabel label-bold numeric2", @id = "txtPaymentGstCharge" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvPaymentFov">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FovRate, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.FovRate, new { @class = "form-control numeric2", @id = "txtPaymentFovRate" })
+                        @Html.Hidden("hdnPaymentFovRate", "%", new { @class = "numeric2", @id = "hdnPaymentFovRateType" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FovRate)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Fov, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(m => m.Fov, new { @class = "form-control numeric2", @id = "txtPaymentFov" })
+                        @Html.HiddenFor(m => m.FovRateTypeId)
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Fov)
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvPaymentCharges">
+            <div class="col-sm-4">
+                <div>
+                    <table id="dtPaymentCharges1" class="table-bordPaymentered"></table>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div>
+                    <table id="dtPaymentCharges2" class="table-bordPaymentered"></table>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div>
+                    <table id="dtPaymentTax" class="table-bordPaymentered"></table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SubTotal, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(model => model.SubTotal, new { @id = "hdnPaymentSubTotal" })
+                        @Html.LabelFor(model => model.SubTotal, "0", new { @id = "lblPaymentSubTotal", @class = "label-bold numeric2" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TaxTotal, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(model => model.TaxTotal, new { @id = "hdnPaymentTaxTotal" })
+                        @Html.Hidden("hdnPaymentTaxPercentageTotal")
+                        @Html.LabelFor(model => model.TaxTotal, "0", new { @id = "lblPaymentTaxTotal", @class = "label-bold numeric2" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GrandTotal, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(model => model.GrandTotal, new { @id = "hdnPaymentGrandTotal" })
+                        @Html.LabelFor(model => model.GrandTotal, "0", new { @id = "lblPaymentGrandTotal", @class = "label-bold numeric2" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*<div class="form-footer">
+                <button type="submit" id="btnPaymentSubmit" class="btn btn-primary primary-btn">Create Docket</button>
+            </div>*@
+    </div>
+    @*</div>
+            </div>
+        </div>*@
+}
+<script>
+    var dtPaymentCharges1, dtPaymentCharges2;
+    var gstPaymentDetails = { IsGst: true, IsRcm: false, GstRate: 18.00, IsInterState: false, CustomerCode: '', CustomerName: '', WalkingGstTinNo: '', DeclarationDocumentName: '', StateList: [] };
+     $(document).ready(function () {
+         SetPageLoad('Docket', 'History List', 'filter', '', '');
+         baseUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+         customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+         customerAddressUrl = '@Url.Action("", "CustomerAddress", new { Area = "Master" })';
+         locationMasterUrl = '@Url.Action("", "Location", new { Area = "Master" })';
+         gstMasterUrl = '@Url.Action("", "Gst", new { Area = "Master" })';
+         vehicleMasterUrl = '@Url.Action("", "Vehicle", new { Area = "Master" })';
+		/*step 1 object initialization*/dvPaymentEntryType = $('#dvPaymentEntryType'); divDisplayDocketNo = $('#divDisplayDocketNo'); lblPaymentComputerizedEntry = $('#lblPaymentComputerizedEntry'); lblPaymentManualEntry = $('#lblPaymentManualEntry'); dvPaymentComputerized = $('#dvPaymentComputerized'); dvPaymentManual = $('#dvPaymentManual'); rdPaymentComputerized = $('#rdPaymentComputerized'); rdPaymentManual = $('#rdPaymentManual'); txtPaymentDocketNo = $('#txtPaymentDocketNo'); hdnPaymentDocketId = $('#hdnPaymentDocketId'); lblPaymentDocketNo = $('#lblPaymentDocketNo'); hdnPaymentDocketNo = $('#hdnPaymentDocketNo'); chkIsOld = $('#chkIsOld'); dvPaymentIsOld = $('#dvPaymentIsOld'); txtPaymentDocketDateTime = $('#txtPaymentDocketDateTime'); ddlPaymentPaybas = $('#ddlPaymentPaybas'); txtPaymentCustomerCode = $('#txtPaymentCustomerCode'); lblPaymentCustomerName = $('#lblPaymentCustomerName'); hdnPaymentCustomerId = $('#hdnPaymentCustomerId'); txtPaymentToLocation = $('#txtPaymentToLocation'); hdnPaymentToLocationId = $('#hdnPaymentToLocationId'); hdnPaymentVehicleId = $('#hdnPaymentVehicleId'); txtPaymentVehicleNo = $('#txtPaymentVehicleNo'); dvPaymentStep1 = $('#dvPaymentStep1'); btnStep1 = $('#btnStep1'); hdnPaymentUsePreviousHistory = $('#hdnPaymentUsePreviousHistory');
+		/*step 2 object initialization*/dvPaymentConsignorType = $('#dvPaymentConsignorType'); dvPaymentConsignorFromMaster = $('#dvPaymentConsignorFromMaster'); dvPaymentConsignorWalkin = $('#dvPaymentConsignorWalkin'); rdPaymentConsignorFromMaster = $('#rdPaymentConsignorFromMaster'); rdPaymentConsignorWalkin = $('#rdPaymentConsignorWalkin'); dvPaymentConsignorGst = $('#dvPaymentConsignorGst'); hdnPaymentConsignorGstId = $('#hdnPaymentConsignorGstId'); txtPaymentConsignorGstTinNo = $('#txtPaymentConsignorGstTinNo'); dvPaymentConsignorGroupCode = $('#dvPaymentConsignorGroupCode'); ddlPaymentConsignorGroupCode = $('#ddlPaymentConsignorGroupCode'); hdnPaymentConsignorId = $('#hdnPaymentConsignorId'); txtPaymentConsignorCode = $('#txtPaymentConsignorCode'); txtPaymentConsignorName = $('#txtPaymentConsignorName'); txtPaymentConsignorAddressCode = $('#txtPaymentConsignorAddressCode'); hdnPaymentConsignorAddressId = $('#hdnPaymentConsignorAddressId'); txtPaymentConsignorAddress1 = $('#txtPaymentConsignorAddress1'); txtPaymentConsignorAddress2 = $('#txtPaymentConsignorAddress2'); hdnPaymentConsignorCityId = $('#hdnPaymentConsignorCityId '); txtPaymentConsignorCity = $('#txtPaymentConsignorCity'); txtPaymentConsignorPincode = $('#txtPaymentConsignorPincode'); txtPaymentConsignorMobileNo = $('#txtPaymentConsignorMobileNo'); txtPaymentConsignorEmailId = $('#txtPaymentConsignorEmailId'); dvPaymentConsigneeType = $('#dvPaymentConsigneeType'); dvPaymentConsigneeFromMaster = $('#dvPaymentConsigneeFromMaster'); dvPaymentConsigneeWalkin = $('#dvPaymentConsigneeWalkin'); rdPaymentConsigneeFromMaster = $('#rdPaymentConsigneeFromMaster'); rdPaymentConsigneeWalkin = $('#rdPaymentConsigneeWalkin'); dvPaymentConsigneeGst = $('#dvPaymentConsigneeGst'); hdnPaymentConsigneeGstId = $('#hdnPaymentConsigneeGstId'); txtPaymentConsigneeGstTinNo = $('#txtPaymentConsigneeGstTinNo'); dvPaymentConsigneeGroupCode = $('#dvPaymentConsigneeGroupCode'); ddlPaymentConsigneeGroupCode = $('#ddlPaymentConsigneeGroupCode'); hdnPaymentConsigneeId = $('#hdnPaymentConsigneeId'); txtPaymentConsigneeCode = $('#txtPaymentConsigneeCode'); txtPaymentConsigneeName = $('#txtPaymentConsigneeName'); txtPaymentConsigneeAddressCode = $('#txtPaymentConsigneeAddressCode'); hdnPaymentConsigneeAddressId = $('#hdnPaymentConsigneeAddressId'); txtPaymentConsigneeAddress1 = $('#txtPaymentConsigneeAddress1'); txtPaymentConsigneeAddress2 = $('#txtPaymentConsigneeAddress2'); hdnPaymentConsigneeCityId = $('#hdnPaymentConsigneeCityId '); txtPaymentConsigneeCity = $('#txtPaymentConsigneeCity'); txtPaymentConsigneePincode = $('#txtPaymentConsigneePincode'); txtPaymentConsigneeMobileNo = $('#txtPaymentConsigneeMobileNo'); txtPaymentConsigneeEmailId = $('#txtPaymentConsigneeEmailId'); dvPaymentStep2 = $('#dvPaymentStep2'); btnStep2 = $('#btnStep2');
+		/*step 3 object initialization*/lblPaymentBillingPartyCode = $('#lblPaymentBillingPartyCode'), lblPaymentBillingPartyName = $('#lblPaymentBillingPartyName'), hdnPaymentBillingPartyId = $('#hdnPaymentBillingPartyId'), dvPaymentBillingParty = $('#dvPaymentBillingParty'), ddlPaymentTransportMode = $('#ddlPaymentTransportMode'); ddlPaymentServiceType = $('#ddlPaymentServiceType'); ddlPaymentFtlType = $('#ddlPaymentFtlType'); ddlPaymentPickupDelivery = $('#ddlPaymentPickupDelivery'); ddlPaymentPackagingType = $('#ddlPaymentPackagingType'); ddlPaymentProductType = $('#ddlPaymentProductType'); ddlPaymentBusinessType = $('#ddlPaymentBusinessType'); ddlPaymentIndustry = $('#ddlPaymentIndustry'); ddlPaymentLoadType = $('#ddlPaymentLoadType'); ddlPaymentDivision = $('#ddlPaymentDivision'); chkVolumetric = $('#chkVolumetric'); chkOda = $('#chkOda'); chkCod = $('#chkCod'); chkDacc = $('#chkDacc'); chkLocal = $('#chkLocal'); chkPermit = $('#chkPermit'); chkDeferment = $('#chkDeferment'); chkServiceTaxExempted = $('#chkServiceTaxExempted'); txtPaymentFromCity = $('#txtPaymentFromCity'); txtPaymentToCity = $('#txtPaymentToCity'); hdnPaymentFromCityId = $('#hdnPaymentFromCityId'); hdnPaymentToCityId = $('#hdnPaymentToCityId'); txtPaymentRemarks = $('#txtPaymentRemarks'); hdnPaymentIsLocal = $('#hdnPaymentIsLocal'); chkMultiPickup = $('#chkMultiPickup'); chkMultiDelivery = $('#chkMultiDelivery'); txtPaymentMotherdPaymentocketNo = $('#txtPaymentMotherdPaymentocketNo'); hdnPaymentMotherdPaymentocketId = $('#hdnPaymentMotherdPaymentocketId'); dvPaymentStep3 = $('#dvPaymentStep3'); btnStep3 = $('#btnStep3');
+		/*step 4 object initialization*/rdPaymentCarrierRisk = $('#rdPaymentCarrierRisk'); rdPaymentOwnerRisk = $('#rdPaymentOwnerRisk'); txtPaymentPolicyNo = $('#txtPaymentPolicyNo'); txtPaymentPolicyDate = $('#txtPaymentPolicyDate'); txtPaymentModvPaymentatCovers = $('#txtPaymentModvPaymentatCovers'); txtPaymentInternalCovers = $('#txtPaymentInternalCovers'); txtPaymentCustomerReferenceNo = $('#txtPaymentCustomerReferenceNo'); txtPaymentCustomerReferenceDate = $('#txtPaymentCustomerReferenceDate'); txtPaymentCustomerGatepassNo = $('#txtPaymentCustomerGatepassNo'); txtPaymentCustomerdPaymenteliveryNo = $('#txtPaymentCustomerdPaymenteliveryNo'); txtPaymentPrivateMark = $('#txtPaymentPrivateMark'); txtPaymentTPNo = $('#txtPaymentTPNo'); txtPaymentEntrysheetNo = $('#txtPaymentEntrysheetNo'); txtPaymentObdNo = $('#txtPaymentObdNo'); txtPaymentEngineNo = $('#txtPaymentEngineNo'); txtPaymentModelNo = $('#txtPaymentModelNo'); txtPaymentGpsNo = $('#txtPaymentGpsNo'); txtPaymentChassisNo = $('#txtPaymentChassisNo'); hdnPaymentContractId = $('#hdnPaymentContractId'); dvPaymentDocument = $('#dvPaymentDocument'); dvPaymentPermit1 = $('#dvPaymentPermit1'); dvPaymentPermit2 = $('#dvPaymentPermit2'); txtPaymentPermitNo = $('#txtPaymentPermitNo'); txtPaymentPermitDate = $('#txtPaymentPermitDate'); txtPaymentPermitValidityDate = $('#txtPaymentPermitValidityDate'); txtPaymentPermitReceivedDate = $('#txtPaymentPermitReceivedDate'); ddlPaymentPermitReceivedAt = $('#ddlPaymentPermitReceivedAt'); dvPaymentStep4 = $('#dvPaymentStep4'); btnStep4 = $('#btnStep4');
+		/*step 5 object initialization*/dvPaymentCft = $('#dvPaymentCft'); dvPaymentInvoice = $('#dvPaymentInvoice'); txtPaymentCftRatio = $('#txtPaymentCftRatio'); hdnPaymentTotalPackages = $('#hdnPaymentTotalPackages'); hdnPaymentTotalActualWeight = $('#hdnPaymentTotalActualWeight'); hdnPaymentTotalChargedWeight = $('#hdnPaymentTotalChargedWeight'); dvPaymentStep5 = $('#dvPaymentStep5'); btnStep5 = $('#btnStep5');
+		/*step 6 object initialization*/dvPaymentFov = $('#dvPaymentFov'); divPaymentRiskType = $('#divPaymentRiskType'); ddlPaymentGstPayer = $('#ddlPaymentGstPayer'); txtPaymentFreight = $('#txtPaymentFreight'); txtPaymentFreightRate = $('#txtPaymentFreightRate'); ddlPaymentRateType = $('#ddlPaymentRateType'); lblPaymentMinimumFreightMessage = $('#lblPaymentMinimumFreightMessage'); dvPaymentKm = $('#dvPaymentKm'); txtPaymentKm = $('#txtPaymentKm'); txtPaymentBillLocation = $('#txtPaymentBillLocation'); hdnPaymentBillLocationId = $('#hdnPaymentBillLocationId'); txtPaymentEdd = $('#txtPaymentEdd'); txtPaymentFov = $('#txtPaymentFov'); txtPaymentFovRate = $('#txtPaymentFovRate'); lblPaymentSubTotal = $('#lblPaymentSubTotal'); hdnPaymentSubTotal = $('#hdnPaymentSubTotal'); lblPaymentTaxTotal = $('#lblPaymentTaxTotal'); hdnPaymentTaxTotal = $('#hdnPaymentTaxTotal'); hdnPaymentTaxPercentageTotal = $('#hdnPaymentTaxPercentageTotal'); lblPaymentGrandTotal = $('#lblPaymentGrandTotal'); hdnPaymentGrandTotal = $('#hdnPaymentGrandTotal'); dvPaymentStep6 = $('#dvPaymentStep6'); btnReinvokeContract = $('#btnReinvokeContract'); dvPaymentReinvokeContract = $('#dvPaymentReinvokeContract'); btnPaymentSubmit = $('#btnPaymentSubmit');
+		/*GST initialization*/ dvPaymentGstRegister = $('dvPaymentGstRegister'); txtPaymentServiceTaxRegisterNo = $('#txtPaymentServiceTaxRegisterNo'); txtPaymentLocalServiceTaxRegisterNo = $('#txtPaymentLocalServiceTaxRegisterNo'); lblPaymentGstBillingParty = $('#lblPaymentGstBillingParty'); hdnPaymentWalkingGstTinNo = $('#hdnPaymentWalkingGstTinNo'); hdnPaymentWalkinCode = $('#hdnPaymentWalkinCode'); hdnPaymentIsGst = $('#hdnPaymentIsGst'); hdnPaymentIsRcm = $('#hdnPaymentIsRcm'); ddlPaymentGstState = $('#ddlPaymentGstState'); hdnPaymentGstStateId = $('#hdnPaymentGstStateId'); hdnPaymentGstTinNo = $('#hdnPaymentGstTinNo'); txtPaymentPartyGstTinNo = $('#txtPaymentPartyGstTinNo'); hdnPaymentPartyGstId = $('#hdnPaymentPartyGstId'); ddlPaymentCompanyGstState = $('#ddlPaymentCompanyGstState'); txtPaymentPartyGstTinNo = $('#txtPaymentPartyGstTinNo'); chkIsGst = $('#chkIsGst'); ddlPaymentGstServiceType = $('#ddlPaymentGstServiceType'); dvPaymentddlPaymentGstServiceType = $('#dvPaymentddlPaymentGstServiceType'); hdnPaymentGstServiceTypeId = $('#hdnPaymentGstServiceTypeId'); hdnPaymentGstExemptionDeclarationFileName = $('#hdnPaymentGstExemptionDeclarationFileName'); hdnPaymentIsGst = $('#hdnPaymentIsGst'); lblPaymentFromLocation = $('#lblPaymentFromLocation'); hdnPaymentWalkingGstTinNo = $('#hdnPaymentWalkingGstTinNo'); lblPaymentGstBillingParty = $('#lblPaymentGstBillingParty'); ddlPaymentCompanyGstState = $('#ddlPaymentCompanyGstState'); hdnPaymentCompanyGstStateId = $('#hdnPaymentCompanyGstStateId'); hdnPaymentCompanyGstTinNo = $('#hdnPaymentCompanyGstTinNo'); ddlPaymentGstState = $('#ddlPaymentGstState'); hdnPaymentGstStateId = $('#hdnPaymentGstStateId'); hdnPaymentGstTinNo = $('#hdnPaymentGstTinNo'); lblPaymentTransportMode = $('#lblPaymentTransportMode'); lblPaymentGstSacName = $('#lblPaymentGstSacName'); hdnPaymentGstSacId = $('#hdnPaymentGstSacId'); lblPaymentGstServiceType = $('#lblPaymentGstServiceType'); hdnPaymentGstServiceTypeId = $('#hdnPaymentGstServiceTypeId'); rdPaymentTransporter = $('#rdPaymentTransporter'); rdPaymentBillingParty = $('#rdPaymentBillingParty'); txtPaymentPartyGstTinNo = $('#txtPaymentPartyGstTinNo'); txtPaymentCompanyGstTinNo = $('#txtPaymentCompanyGstTinNo'); hdnPaymentPartyGstId = $('#hdnPaymentPartyGstId'); hdnPaymentCompanyGstId = $('#hdnPaymentCompanyGstId'); hdnPaymentDeclarationFileName = $('#hdnPaymentDeclarationFileName'); txtPaymentGstRate = $('#txtPaymentGstRate'); txtPaymentGstAmount = $('#txtPaymentGstAmount'); lblPaymentIsRcm = $('#lblPaymentIsRcm'); txtPaymentGstCharge = $('#txtPaymentGstCharge'); lblPaymentIsInterState = $('#lblPaymentIsInterState'); hdnPaymentIsInterState = $('#hdnPaymentIsInterState'); dvPaymentGstTinNoDetail = $('#dvPaymentGstTinNoDetail'); dvPaymentRegisterGstDetail = $('#dvPaymentRegisterGstDetail');
+
+
+         hdnPaymentDocketId.val(@ViewBag.DocketId);
+         isFinancialUpdate = '@ViewBag.IsFinancialUpdate';
+         LoadPaymentStep6();
+         InitPaymentGstObjects();
+    });
+
+    function LoadPaymentStep6() {
+        debugger;
+        var requestData = { docketId: hdnPaymentDocketId.val()};
+        isSuccessfull = true;
+        AjaxRequestWithPostAndJson(baseUrl + '/GetPaymentDetail', JSON.stringify(requestData), function (responseData) {
+            dvPaymentStep6.showHide(responseData.Keys.IsSuccessfull);
+            dvPaymentStep5.pointerEvent(!responseData.Keys.IsSuccessfull);
+            if (!responseData.Keys.IsSuccessfull) {
+                ShowMessage(responseData.Keys.ErrorMessage);
+                isStepValid = false;
+                return false;
+            }
+            contractKeys = responseData.Keys;
+            gstPaymentDetails.CustomerId = hdnBillingPartyId.val();
+            gstPaymentDetails.CustomerCode = lblBillingPartyCode.text();
+            gstPaymentDetails.CustomerName = lblBillingPartyName.text();
+            gstPaymentDetails.IsGst = ddlPaymentPaybas.val() != 4 ? responseData.IsGst : false;
+            //gstPaymentDetails.IsGst = false
+            isRoundOff = contractKeys.IsRoundOff;
+            dvPaymentFov.showHide(contractKeys.IsFovChargeApplicable);
+            divPaymentRiskType.showHide(contractKeys.IsFovChargeApplicable);
+            BindDropDownList('ddlPaymentGstPayer', responseData.ServiceTaxPayerList, 'Value', 'Name', '', 'Select GST Payer');
+
+            if (responseData.ServiceTaxPayerList.length > 0)
+                ddlPaymentGstPayer.val(contractKeys.DefaultServiceTaxPayer).enable(contractKeys.IsServiceTaxPayerEnabled);
+            else
+                ddlPaymentGstPayer.disable();
+
+            SetBillingPartyGstTinNo(contractKeys.DefaultServiceTaxPayer);
+            taxList = responseData.TaxList.sort(ComparerTax);
+            minimumFreightDetails = responseData.MinimumFreightDetails;
+            var chargeList = responseData.OtherChargeList.sort(ComparerCharge);
+            chargeCount = 0;
+            SetOtherCharge(chargeList, dtPaymentCharges1, true);
+            SetOtherCharge(chargeList, dtPaymentCharges2, false);
+            BindDropDownList('ddlPaymentRateType', responseData.RateTypeList, 'Value', 'Name');
+
+            txtPaymentFreight.val(contractKeys.Freight);
+            txtPaymentFreightRate.val(contractKeys.FreightRate);
+            freightRateDb = contractKeys.FreightRate;
+            ddlPaymentRateType.val(contractKeys.RateTypeId == 0 ? $("#ddlPaymentRateType option:first").val() : contractKeys.RateTypeId);
+            hdnPaymentBillLocationId.val(contractKeys.BillLocationId);
+            txtPaymentBillLocation.val(contractKeys.BillLocationCode);
+            txtPaymentEdd.val(moment(contractKeys.Edd).format('DD/MM/YYYY'));
+
+
+            //$('#dvPaymentGst1').showHide(ddlPaymentPaybas.val() != 4);
+            //$('#dvPaymentGst2').showHide(ddlPaymentPaybas.val() != 4);
+            //$('#dvPaymentGst3').showHide(ddlPaymentPaybas.val() != 4);
+            //$('#dvPaymentGst4').showHide(ddlPaymentPaybas.val() != 4);
+            //$('#dvPaymentGst5').showHide(ddlPaymentPaybas.val() != 4);
+
+
+            if (chkMultiPickup.IsChecked && chkMultiDelivery.IsChecked) {
+                txtPaymentFreight.val(0).readOnly();
+                freightRateDb = 0;
+                txtPaymentFreightRate.val(0).readOnly();
+                ddlPaymentRateType.val(1);
+                $('#txtPaymentRatePerKg').val(0);
+                hdnPaymentSubTotal.val(0);
+            }
+
+            txtPaymentFreightRate.blur();
+        }, ErrorFunction, false);
+
+        //$('#dvPaymentStaxPayer').showHide(!gstPaymentDetails.IsGst);
+        //$('#dvPaymentStax').showHide(!gstPaymentDetails.IsGst);
+        $('#dvPaymentGst1').showHide(gstPaymentDetails.IsGst);
+        $('#dvPaymentGst2').showHide(gstPaymentDetails.IsGst);
+        $('#dvPaymentGst3').showHide(gstPaymentDetails.IsGst);
+        $('#dvPaymentGst4').showHide(gstPaymentDetails.IsGst);
+        //$('#dvPaymentGst5').showHide(gstPaymentDetails.IsGst);
+        //ManageFreightRateValidation();
+        ddlPaymentCompanyGstState.enable(gstPaymentDetails.IsGst);
+        ddlPaymentGstState.enable(gstPaymentDetails.IsGst);
+
+        if (gstPaymentDetails.IsGst) {
+            hdnPaymentIsGst.val(true);
+            GetPaymentGstRate();
+        }
+        debugger;
+        if (hdnPaymentDocketId.val() != 0) GetStep6PaymentDetailById();
+
+    }
+
+    function GetStep6PaymentDetailById() {
+        debugger;
+        var requestData = { docketId: hdnPaymentDocketId.val() };
+        AjaxRequestWithPostAndJson(baseUrl + '/GetStep6DetailById', JSON.stringify(requestData), function (result) {
+            dvPaymentReinvokeContract.show();
+            hdnPaymentBillLocationId.val(result.BillLocationId);
+            txtPaymentBillLocation.val(result.BillLocation);
+            txtPaymentEdd.val($.entryDate(result.Edd));
+            ddlPaymentGstPayer.val(result.GstPaidById);
+            $('#dvPaymentRegisterGstDetail').hide();
+            $('#divDeclarationFileLink').showHide(result.DeclarationFileName != '');
+            ddlPaymentGstServiceType.val(result.GstServiceTypeId).change();
+            ddlPaymentGstState.enable(result.DeclarationFileName == '' || IsObjectNullOrEmpty(result.DeclarationFileName));
+
+            if (result.DeclarationFileName == '') {
+                $.each($("#" + ddlPaymentGstState.attr('id') + " > option"), function (i, item) {
+                    var value = item.value.split('~');
+                    if ((value[3]) == result.PartyGstId && (value[3]) != undefined) {
+                        SetStateGstTin(ddlPaymentGstState, hdnPaymentGstStateId, hdnPaymentGstTinNo, true, txtPaymentPartyGstTinNo, hdnPaymentPartyGstId);
+                        ddlPaymentGstState.val(item.value);
+                    }
+                });
+            }
+            else {
+                rdPaymentTransporter.check(result.GstPayer);
+                hdnPaymentGstExemptionDeclarationFileName.val(result.DeclarationFileName);
+                hdnPaymentIsRcm.val(result.DeclarationFileName);
+                lblPaymentIsRcm.text(result.DeclarationFileName == "true" ? "Yes" : "No");
+                $('#hdnPaymentIsRcm').val(result.DeclarationFileName == "true" ? true : false);
+            }
+            ddlPaymentGstState.val(result.GstStateId + '~' + result.GstTinNo + '~' + (result.IsPartyGstStateIsUnionTerritory == true ? 1 : 0) + '~' + result.PartyGstId);
+            ddlPaymentCompanyGstState.val(result.CompanyGstStateId + '~' + result.CompanyGstTinNo + '~' + (result.IsCompanyGstStateIsUnionTerritory == true ? 1 : 0) + '~' + result.CompanyGstId);
+            ddlPaymentCompanyGstState.change();
+            txtPaymentGstAmount.val(result.GstAmount);
+            txtPaymentGstCharge.val(result.GstCharged);
+            txtPaymentPartyGstTinNo.val(result.GstTinNo);
+            txtPaymentFreightRate.val(result.FreightRate);
+            ddlPaymentRateType.val(result.RateTypeId);
+            txtPaymentFreight.val(result.Freight);
+            hdnPaymentSubTotal.val(result.SubTotal);
+            lblPaymentSubTotal.text(result.SubTotal);
+            hdnPaymentTaxTotal.val(result.TaxTotal);
+            lblPaymentTaxTotal.text(result.TaxTotal);
+            hdnPaymentGrandTotal.val(result.GrandTotal);
+            lblPaymentGrandTotal.text(result.GrandTotal);
+
+            if (chkMultiPickup.IsChecked && chkMultiDelivery.IsChecked) {
+                txtPaymentFreightRate.val(0);
+                ddlPaymentRateType.val(1);
+                txtPaymentFreight.val(0);
+                hdnPaymentSubTotal.val(0);
+                lblPaymentSubTotal.text(0);
+                hdnPaymentTaxTotal.val(0);
+                lblPaymentTaxTotal.text(0);
+                hdnPaymentGrandTotal.val(0);
+                lblPaymentGrandTotal.text(0);
+            }
+            debugger;
+            if (result.ChargeList.length > 0) {
+                $.each(result.ChargeList, function (index, value) {
+                    $('[id*="hdnPaymentChargeCode"]').each(function () {
+                        var hdnPaymentChargeCode = $(this);
+                        var txtPaymentCharge = $('#' + this.id.replace('hdnPaymentChargeCode', 'txtPaymentCharge'));
+                        if (hdnPaymentChargeCode.val() == value.ChargeCode)
+                            txtPaymentCharge.val(value.ChargeAmount);
+                    });
+                });
+            }
+
+            if (result.TaxList.length > 0) {
+                $.each(result.TaxList, function (index, value) {
+                    $('[id*="hdnPaymentTaxCode"]').each(function () {
+                        var hdnPaymentTaxCode = $(this);
+                        var lblPaymentTaxAmount = $('#' + this.id.replace('hdnPaymentTaxCode', 'lblPaymentTaxAmount'));
+                        if (hdnPaymentTaxCode.val() == value.TaxCode)
+                            lblPaymentTaxAmount.text(value.TaxAmount);
+                    });
+                });
+            }
+        }, ErrorFunction, false);
+        return false;
+    }
+
+
+    function InitPaymentGstObjects() {
+        ddlPaymentGstState.change(function () { SetStateGstTin(ddlPaymentGstState, hdnPaymentGstStateId, hdnPaymentGstTinNo, true, txtPaymentPartyGstTinNo, hdnPaymentPartyGstId); }).change();
+        ddlPaymentCompanyGstState.change(function () { SetStateGstTin(ddlPaymentCompanyGstState, hdnPaymentCompanyGstStateId, hdnPaymentCompanyGstTinNo, false, txtPaymentCompanyGstTinNo, hdnPaymentCompanyGstId); }).change();
+    }
+
+
+    function CalculatePaymentGST() {
+        if (gstPaymentDetails.IsGst) {
+            lblPaymentIsRcm.text(gstPaymentDetails.IsRcm && gstPaymentDetails.ApplyGst ? 'Yes' : 'No');
+            $('#hdnPaymentIsRcm').val(gstPaymentDetails.IsRcm && gstPaymentDetails.ApplyGst ? true : false);
+            CalculateTotal();
+        }
+    }
+
+    function ValidatePaymentGstDetails() {
+        if (gstPaymentDetails.IsGst && lblPaymentGstBillingParty.text() == '') {
+            ShowMessage('Please select GST Billing Party');
+            return false;
+        }
+        if (gstPaymentDetails.IsGst && hdnPaymentCompanyGstTinNo.val() == '') {
+            ShowMessage('Please select Company GST State');
+            return false;
+        }
+        if (gstPaymentDetails.IsGst && txtPaymentPartyGstTinNo.val() == '' && hdnPaymentDeclarationFileName.val() == '') {
+            ShowMessage('Please complete GST registration');
+            return false;
+        }
+        gstPaymentDetails.IsRcm = gstPaymentDetails.ApplyGst;
+        return true;
+    }
+
+    function OnPaymentGstServiceTypeChange() {
+        $.each(gstSacDetails, function (i, item) {
+            if (item.ServiceTypeId == ddlPaymentGstServiceType.val()) {
+                hdnPaymentGstSacId.val(item.SacId);
+                lblPaymentGstSacName.text(item.SacName);
+                hdnPaymentGstServiceTypeId.val(item.ServiceTypeId);
+                lblPaymentGstServiceType.text(item.ServiceType);
+                txtPaymentGstRate.val(item.GstRate);
+                gstPaymentDetails.GstRate = item.GstRate;
+                gstPaymentDetails.IsRcm = item.IsRcm;
+                gstPaymentDetails.GstSacId = item.SacId;
+                gstPaymentDetails.GstServiceTypeId = item.ServiceTypeId;
+
+                gstPaymentDetails.TransportMode = $("#ddlPaymentTransportMode :selected").text();
+                SetGstRateAndCategory();
+            }
+        });
+    }
+
+
+    function SetGstRateAndCategory() {
+        if (gstPaymentDetails.IsGst) {
+
+            lblPaymentGstBillingParty.text(gstPaymentDetails.CustomerCode + ' : ' + gstPaymentDetails.CustomerName);
+            lblPaymentTransportMode.text(gstPaymentDetails.TransportMode);
+
+            lblPaymentGstSacName.text(gstPaymentDetails.GstSacName);
+            lblPaymentGstServiceType.text(gstPaymentDetails.GstServiceType);
+
+            hdnPaymentGstSacId.val(gstPaymentDetails.GstSacId);
+            hdnPaymentGstServiceTypeId.val(gstPaymentDetails.GstServiceTypeId);
+            BindPaymentGstState();
+            //rdPaymentBillingParty.prop('checked', false);
+            //rdPaymentTransporter.prop('checked', true);
+            //BindPaymentGstState();
+
+            //rdPaymentBillingParty.prop('checked', true);
+            //rdPaymentTransporter.prop('checked', false);
+            //BindPaymentGstState();
+
+            if (gstPaymentDetails.IsEdit) {
+                if ($('#' + controlIdPrefix + 'hdnPaymentGstPayer').val() == 'P') {
+                    ddlPaymentGstPayer.val(3);
+                    ddlPaymentGstState.val('');
+                    $("#" + ddlPaymentGstState.attr('id') + " > option").each(function () {
+                        if (this.value.indexOf(hdnPaymentGstStateId) != -1)
+                            ddlPaymentGstState.val(this.value);
+                    });
+                }
+                else {
+                    ddlPaymentGstPayer.val(4);
+                }
+            }
+            $('#trBillingPartySelection').hide();
+            CalculatePaymentGST();
+        }
+
+        ShowHideGstDetails();
+    }
+
+    function BindPaymentGstState(company) {
+        var requestData = {};
+        requestData.ownerId = ddlPaymentGstPayer.val() == '4' ? loginCompanyId : ddlPaymentGstPayer.val() == '3' ? gstPaymentDetails.CustomerId : ddlPaymentGstPayer.val() == '2' ? hdnPaymentConsigneeId.val() : hdnPaymentConsignorId.val();
+        requestData.ownerType = ddlPaymentGstPayer.val() == '4' ? '1' : '3';
+        requestData.locationId = 0;
+        if (company != null && company != undefined) {
+            requestData.ownerType = '1';
+            requestData.ownerId = loginCompanyId;
+        }
+        if (requestData.ownerType == '1') {
+            SetBillLocation();
+            requestData.locationId = hdnPaymentBillLocationId.val();
+        }
+
+        if (gstPaymentDetails.WalkingGstTinNo != '') {
+            requestData.ownerId = gstPaymentDetails.WalkingGstTinNo;
+            requestData.ownerType = '3';
+            requestData.locationId = 0;
+        }
+        gstPaymentDetails.GstPayer = requestData.ownerType;
+        debugger;
+        AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstStateList', JSON.stringify(requestData), function (result) {
+            // if (requestData.ownerType == '1' && ddlPaymentGstPayer.val() == '4') {
+            var ddlPaymentState = requestData.ownerType == '1' && ddlPaymentGstPayer.val() == '4' && company == null && company == undefined ? ddlPaymentGstState : requestData.ownerType == '1' ? ddlPaymentCompanyGstState : ddlPaymentGstState;
+            var hdnPaymentStateCode = requestData.ownerType == '1' && ddlPaymentGstPayer.val() == '4' && company == null && company == undefined ? hdnPaymentGstStateId : requestData.ownerType == '1' ? hdnPaymentCompanyGstStateId : hdnPaymentGstStateId;
+            var hdnPaymentGstTin = requestData.ownerType == '1' && ddlPaymentGstPayer.val() == '4' && company == null && company == undefined ? hdnPaymentGstTinNo : requestData.ownerType == '1' ? hdnPaymentCompanyGstTinNo : hdnPaymentGstTinNo;
+            var txtPaymentGstTin = requestData.ownerType == '1' && ddlPaymentGstPayer.val() == '4' && company == null && company == undefined ? txtPaymentPartyGstTinNo : requestData.ownerType == '1' ? txtPaymentCompanyGstTinNo : txtPaymentPartyGstTinNo;
+            var hdnPaymentGstId = requestData.ownerType == '1' && ddlPaymentGstPayer.val() == '4' && company == null && company == undefined ? hdnPaymentPartyGstId : requestData.ownerType == '1' ? hdnPaymentCompanyGstId : hdnPaymentPartyGstId;
+            // }
+            //else {
+            //    var ddlPaymentState = requestData.ownerType == '1' ? ddlPaymentCompanyGstState : ddlPaymentGstState;
+            //    var hdnPaymentStateCode = requestData.ownerType == '1' ? hdnPaymentCompanyGstStateId : hdnPaymentGstStateId;
+            //    var hdnPaymentGstTin = requestData.ownerType == '1' ? hdnPaymentCompanyGstTinNo : hdnPaymentGstTinNo;
+            //    var txtPaymentGstTin = requestData.ownerType == '1' ? txtPaymentCompanyGstTinNo : txtPaymentPartyGstTinNo;
+            //    var hdnPaymentGstId = requestData.ownerType == '1' ? hdnPaymentCompanyGstId : hdnPaymentPartyGstId;
+
+            //}
+
+            ddlPaymentState.empty();
+
+            if (result.length > 1 || result.length == 0)
+                ddlPaymentState.append($("<option></option>").val('').html('--Select State--'));
+            $.each(result, function (key, item) {
+                ddlPaymentState.append($("<option></option>").val(item.Value).html(item.Name));
+            });
+
+            ddlPaymentState.refresh();
+            //BindDropDownList(ddlPaymentState.Id, result, 'Value', 'Name', '', 'Select State');
+
+            SetStateGstTin(ddlPaymentState, hdnPaymentStateCode, hdnPaymentGstTin, requestData.ownerType != '1', txtPaymentGstTin, hdnPaymentGstId);
+
+            if (requestData.ownerType != '1' && hdnPaymentDeclarationFileName.val() == '')
+                ShowHideRegisterGst(result.length == 0);
+
+            if (requestData.ownerType != '1') {
+                if (ddlPaymentGstState.find("option").length == 0) {
+                    ddlPaymentGstPayer.val('4');
+                    CalculatePaymentGST();
+                }
+            }
+        }, ErrorFunction, false);
+    }
+
+    function ShowHideRegisterGst(isRegister) {
+        dvGstTinNoDetail.showHide(isRegister);
+        dvRegisterGstDetail.showHide(isRegister);
+    }
+
+    function SetStateGstTin(ddlPaymentState, hdnPaymentStateCode, hdnPaymentGstTin, isCustomer, txtPaymentGstTin, hdnPaymentGstId) {
+        if (ddlPaymentState.val() == '0' || IsObjectNullOrEmpty(ddlPaymentState.val()) || $("#" + ddlPaymentState.attr('id') + " > option").length == 0) {
+            txtPaymentPartyGstTinNo.val('');
+            hdnPaymentStateCode.val(0);
+            hdnPaymentGstTin.val('');
+            gstPaymentDetails.ApplyGst = false;
+            gstPaymentDetails.IsState = true;
+        }
+        else {
+            var stateGst = ddlPaymentState.val().split('~');
+            hdnPaymentStateCode.val(stateGst[0]);
+            hdnPaymentGstTin.val(stateGst[1]);
+            txtPaymentGstTin.val(stateGst[1]);
+            if (stateGst[1] == '')
+                SetBillingPartyGstTinNo(ddlPaymentGstPayer.val(), true);
+            txtPaymentGstTin.readOnly(stateGst[1] != '');
+            if (isCustomer)
+                gstPaymentDetails.ApplyGst = true;
+            gstPaymentDetails.IsState = stateGst[2] == "0";
+            hdnPaymentGstId.val(stateGst[3]);
+        }
+        CheckGstInterState();
+    }
+
+    var BillingState;
+    function CheckGstInterState() {
+        if (gstPaymentDetails.IsGst) {
+            SetBillLocation();
+            var isCheck = false;
+            if (gstPaymentDetails.BillLocation == null) {
+                gstPaymentDetails.BillLocation = hdnPaymentBillLocationId.val();
+                isCheck = true;
+            }
+            if (gstPaymentDetails.BillLocation != hdnPaymentBillLocationId.val() || isCheck) {
+                gstPaymentDetails.BillLocation = hdnPaymentBillLocationId.val();
+                var requestData = { locationId: hdnPaymentBillLocationId.val() };
+                AjaxRequestWithPostAndJson(gstMasterUrl + '/GetStateByLocation', JSON.stringify(requestData), function (result) {
+                    if (result == 0)
+                        ShowMessage('There is some issue while fetching Billing State');
+                    else {
+                        //gstPaymentDetails.IsInterState = hdnPaymentStateId.val() != result;
+                        //hdnPaymentIsInterState.val(gstPaymentDetails.IsInterState);
+                        //lblPaymentIsInterState.text(gstPaymentDetails.IsInterState ? 'Inter State' : 'Intra State');
+                        //CalculateTotal();
+                        BillingState = result;
+                        BindPaymentGstState('company');
+                    }
+                }, ErrorFunction, false);
+            }
+            if (BillingState != null && BillingState != undefined) {
+                gstPaymentDetails.IsInterState = hdnPaymentGstStateId.val() != BillingState;
+                hdnPaymentIsInterState.val(gstPaymentDetails.IsInterState);
+                if (gstPaymentDetails.IsInterState)
+                    lblPaymentIsInterState.text('Inter State');
+                else
+                    lblPaymentIsInterState.text('Intra State');
+                CalculatePaymentGST();
+            }
+        }
+    }
+
+    function SetBillLocation() {
+        if (txtPaymentBillLocation.val() == '') {
+            if (ddlPaymentPaybas.val() == '3') {
+                txtPaymentBillLocation.val(txtPaymentToLocation.val());
+                hdnPaymentBillLocationId.val(hdnPaymentToLocationId.val());
+            }
+            else {
+                txtPaymentBillLocation.val(lblPaymentFromLocation.text());
+                hdnPaymentBillLocationId.val(loginLocationId);
+            }
+        }
+    }
+
+    function RegisterGst() {
+        OpenGstRegisterForm();
+    }
+
+    function SetGstPayer() {
+        if (hdnPaymentDeclarationFileName.val() == '') {
+            rdPaymentBillingParty.prop('checked', true);
+            rdPaymentTransporter.prop('checked', false);
+            gstPaymentDetails.ApplyGst = true;
+        }
+        else {
+            rdBillingParty.prop('checked', false);
+            rdTransporter.prop('checked', true);
+            gstPaymentDetails.ApplyGst = false;
+        }
+        if ($('#hdnPaymentWalkinCode').val() != '')
+            gstPaymentDetails.CustomerCode = $('#hdnPaymentWalkinCode').val();
+
+        lblPaymentGstBillingParty.text(gstPaymentDetails.CustomerCode + ' : ' + gstPaymentDetails.CustomerName);
+    }
+
+    function ProcessorGstDetails() {
+        hdnPaymentDeclarationFileName.val(gstPaymentDetails.DeclarationFileName);
+        hdnPaymentWalkingGstTinNo.val(gstPaymentDetails.WalkingGstTinNo);
+        SetGstPayer();
+        if (hdnPaymentDeclarationFileName.val() == '') {
+            BindPaymentGstState();
+            ddlPaymentGstState.focus();
+        }
+        else
+            ShowHideRegisterGst(false);
+        CalculatePaymentGST();
+        ddlPaymentGstState.enable(!(ddlPaymentGstState.find('option').length == 1 && ddlPaymentGstState.val() == '')).refresh();
+    }
+
+    function ShowHideGstDetails(showHide) {
+        if (showHide == null || showHide == undefined) showHide = gstPaymentDetails.IsGst;
+        $('[id*="dvGst"]').showHide(showHide);
+    }
+
+    function GetCustomerGstDetail() {
+        var requestData = { customerId: hdnPaymentBillingPartyId.val(), cityId: hdnPaymentFromCityId.val() };
+        AjaxRequestWithPostAndJson(gstMasterUrl + '/GetCustomerGstDetailByCustomerIdAndCityId', JSON.stringify(requestData), function (result) {
+            //lblPaymentGstPaymentParty.text(lblPaymentBillingPartyCode.text() + ' : ' + lblPaymentBillingPartyName.text());
+            //lblPaymentPaybas.text($("#ddlPaymentPaybas :selected").text());
+            if (!IsObjectNullOrEmpty(result)) {
+                ddlPaymentGstState.append($('<option></option>').val(result.StateId).html(result.StateName));
+                ddlPaymentGstState.val(result.StateId);
+                //dvGstTinNoDetail.showHide(result.StateId != 0);
+                dvRegisterGstDetail.showHide(result.StateId == 0);
+                txtPaymentPartyGstTinNo.val(result.GstTinNo);
+            }
+            // lblPaymentPaybas.text($("#ddlPaymentPaybas :selected").text());
+            lblPaymentTransportMode.text(($("#ddlPaymentTransportMode :selected").text()));
+        }, ErrorFunction, false);
+
+    }
+
+
+    function SetOtherCharge(list, dtPaymentCharge, isOdd) {
+        debugger;
+        var tableId = (isOdd ? 'dtPaymentCharges1' : 'dtPaymentCharges2');
+        if (dtPaymentCharge != null)
+            $('#' + tableId).addClass('dataTable');
+        //if (dtPaymentCharge == null)
+            dtPaymentCharge = LoadDataTable(tableId, false, false, false, null, null, [],
+                [
+                    { title: 'Charge Name', data: 'ChargeDetail', width: 150 },
+                    { title: 'Charge', data: 'ChargeAmount', width: 60 }
+                ]);
+        dtPaymentCharge.fnClearTable();
+
+        var newList = [];
+        if (list.length > 0) {
+            $.each(list, function (i, item) {
+                if ((isOdd && (((i + 1) % 2) != 0)) || (!isOdd && (((i + 1) % 2) == 0))) {
+                    item.ChargeDetail = '<input type="hidden" name="ChargeList[' + chargeCount + '].ChargeCode" id="hdnPaymentChargeCode' + i + '" value="' + item.ChargeCode + '"/>' +
+                        '<input type="hidden" name="ChargeList[' + chargeCount + '].IsOperator" id="hdnPaymentOperator' + i + '" value="' + (item.IsOperator ? '+' : '-') + '"/>' +
+                        '<label class="label" id="lblPaymentChargeName' + chargeCount + '">' + item.ChargeName + '(' + (item.IsOperator ? '+' : '-') + ')' + '</label>';
+                    item.ChargeAmount = '<input class="form-control numeric2" data-val="true" data-val-required="Please enter ' + item.ChargeName + '" ' +
+                        'name="ChargeList[' + chargeCount + '].ChargeAmount" value="' + item.ChargeAmount.toFixed(2) + '" id="txtPaymentCharge' + i + '" type="text" />' +
+                        '<span data-valmsg-for="ChargeList[' + chargeCount + '].Charge" data-valmsg-replace="true"></span>'
+                    newList.push(item);
+                    chargeCount++;
+                }
+            });
+            dtPaymentCharge.dtAddData(newList);
+        }
+        if (isOdd)
+            dtPaymentCharges1 = dtPaymentCharge;
+        else
+            dtPaymentCharges2 = dtPaymentCharge;
+        AttachChargeEvent();
+    }
+
+    function CalculateFreight(caller) {
+        var freightRate = parseFloat(txtPaymentFreightRate.val());
+        var freight = parseFloat(txtPaymentFreight.val());
+        var chargedWeight = parseFloat($('#lblPaymentTotalChargedWeight').text()),
+            packages = parseFloat($('#lblPaymentTotalPackages').text());
+        $('#dvPaymentPaymentKm').showHide(ddlPaymentRateType.val() == 7);
+        if (caller == 'RateType')
+            txtPaymentKm.val(0);
+        if (caller == 'Rate' || caller == 'RateType' || caller == 'Km') {
+            freight = CalculateRate(ddlPaymentRateType.val(), freightRate, packages, chargedWeight, parseInt(txtPaymentKm.val()), 0, 0);
+        } else {
+            switch (ddlPaymentRateType.val()) {
+                case RateTypes.Flat: freightRate = freight; break;//Flat
+                case RateTypes.PerGram: freightRate = freight / (1000 * chargedWeight); break;//Per Gram
+                case RateTypes.PerKG: freightRate = freight / chargedWeight; break;//Per KG
+                case RateTypes.PerQuintal: freightRate = freight * 100 / chargedWeight; break;//Per Quintal
+                case RateTypes.PerTon: freightRate = freight * 1000 / chargedWeight; break;//Per Ton
+                case RateTypes.PerPackage: freightRate = freight / packages; break;//Per Package
+                case RateTypes.PerKm: freightRate = freight * txtPaymentKm.val(); break;//Per KM
+                default: freightRate = 0; break;
+            }
+        }
+        txtPaymentFreight.val(freight);
+        txtPaymentFreightRate.val(freightRate);
+        $('#txtPaymentRatePerKg').val(freightRate / chargedWeight);
+        CalculateMinimumFreight();
+        CalculateTotal();
+    }
+
+    function AttachChargeEvent() {
+        $('[id*=txtPaymentCharge]').each(function () {
+            var txtPaymentCharge = $(this);
+            txtPaymentCharge.blur(CalculateTotal);
+        });
+    }
+
+    function CalculateTotal() {
+        var freight = parseFloat(txtPaymentFreight.val());
+        var fov = parseFloat(txtPaymentFov.val());
+        var subTotal = freight + fov;
+
+        $('[id*=hdnPaymentChargeCode]').each(function () {
+            var hdnPaymentChargeCode = $(this);
+            var hdnPaymentOperator = $('#' + this.id.replace('hdnPaymentChargeCode', 'hdnPaymentOperator'));
+            var txtPaymentCharge = $('#' + this.id.replace('hdnPaymentChargeCode', 'txtPaymentCharge'));
+            subTotal += (hdnPaymentOperator.val() == "+" ? 1 : -1) * parseFloat(txtPaymentCharge.val());
+        });
+
+        //subTotal = subTotal + fov;
+        hdnSubTotal.val(subTotal);
+
+        var serviceTax = 0, totalTax = 0;
+        var taxPercentageTotal = 0;
+        //if (!gstPaymentDetails.IsGst)
+        //    $.each(taxList, function (i, item) {
+        //        if (chkServiceTaxExempted.IsChecked || ddlPaymentGstPayer.val() != 4)
+        //            item.TaxAmount = item.ActualTaxPercentage = 0;
+        //        else if (subTotal > item.ExceedAmount) {
+        //            var taxPercentage = item.TaxPercentage * (100 - item.RebatePercentage) / 100;
+        //            item.TaxAmount = (item.BaseOn == 1 ? subTotal : serviceTax) * taxPercentage / 100;
+        //            serviceTaxPercentageTotal += (item.BaseOn == 1 ? taxPercentage : (item.TaxAmount * 100 / subTotal));
+        //            item.TaxAmount = item.TaxAmount.toFixed(2);
+        //            if (item.TaxCode == 1)
+        //                serviceTax = item.TaxAmount;
+        //            totalTax += parseFloat(item.TaxAmount);
+        //            item.ActualTaxPercentage = taxPercentage;
+        //        }
+        //        else
+        //            item.TaxAmount = item.ActualTaxPercentage = 0;
+        //    });
+        if (gstPaymentDetails.IsGst) {
+            taxPercentageTotal = gstPaymentDetails.GstRate;
+            totalTax = parseFloat(hdnSubTotal.val()) * gstPaymentDetails.GstRate / 100;
+            txtPaymentGstAmount.val(totalTax);
+            if (gstPaymentDetails.IsRcm && gstPaymentDetails.ApplyGst) {
+                totalTax = taxPercentageTotal = 0;
+                $.each(taxList, function (i, item) {
+                    item.TaxAmount = item.ActualTaxPercentage = 0;
+                });
+            }
+            else {
+                $.each(taxList, function (i, item) {
+                    if (gstPaymentDetails.IsInterState && item.TaxName == 'IGST') {
+                        item.TaxAmount = totalTax;
+                        item.ActualTaxPercentage = gstPaymentDetails.GstRate;
+                    }
+                    else if (!gstPaymentDetails.IsInterState) {
+                        if ((gstPaymentDetails.IsState && item.TaxName == 'SGST') || (!gstPaymentDetails.IsState && item.TaxName == 'UGST') || item.TaxName == 'CGST') {
+                            item.TaxAmount = totalTax / 2;
+                            item.ActualTaxPercentage = gstPaymentDetails.GstRate / 2;
+                        }
+                        else
+                            item.TaxAmount = item.ActualTaxPercentage = 0;
+                    }
+                    else
+                        item.TaxAmount = item.ActualTaxPercentage = 0;
+                });
+            }
+            txtPaymentGstCharge.val(totalTax);
+        }
+
+        hdnTaxPercentageTotal.val(taxPercentageTotal);
+
+        var grandTotal = subTotal + totalTax;
+
+        lblPaymentSubTotal.text(subTotal.toFixed(2));
+        hdnSubTotal.val(lblPaymentSubTotal.text());
+
+        lblPaymentTaxTotal.text(totalTax.toFixed(2));
+        hdnTaxTotal.val(lblPaymentTaxTotal.text());
+
+        if (isRoundOff)
+            lblPaymentGrandTotal.text(grandTotal.toFixed(0));
+        else
+            lblPaymentGrandTotal.text(grandTotal.toFixed(2));
+
+        hdnGrandTotal.val(lblPaymentGrandTotal.text());
+
+        if (dtTax == null)
+            dtTax = LoadDataTable('dtTax', false, false, false, null, null, [],
+                [
+                    { title: 'Tax Code', data: 'TaxCode', hidden: true },
+                    { title: 'Tax Name', data: 'TaxDetail' },
+                    { title: 'Tax Amount', data: 'TaxAmount' }
+                ]);
+        else {
+            $('#dtTax').addClass('dataTable');
+            dtTax.fnClearTable();
+        }
+        if (taxList.length > 0) {
+            $.each(taxList, function (i, item) {
+                item.TaxDetail = '<input type="hidden" name="TaxList[' + i + '].TaxCode" id="hdnTaxCode' + i + '" value="' + item.TaxCode + '"/>' +
+                    '<input type="hidden" name="TaxList[' + i + '].TaxAmount" id="hdnTaxAmount' + i + '" value="' + parseFloat(item.TaxAmount).toFixed(2) + '"/>' +
+                    '<label class="label" id="lblPaymentTaxName' + i + '">' + item.TaxName + '</label>' +
+                    '<input type="hidden" name="TaxList[' + i + '].TaxPercentage" id="hdnTaxPercentage' + i + '" value="' + item.ActualTaxPercentage + '"/>';
+                item.TaxAmount = '<label class=\'align-right\' style=\'width:100%\' id="lblPaymentTaxAmount' + i + '">' + parseFloat(item.TaxAmount).toFixed(2) + '</label>';
+            });
+            dtTax.dtAddData(taxList);
+            $('#dtTax').DataTable().column(0).visible(false);
+        }
+    }
+
+    function CalculateMinimumFreight() {
+        if (!IsObjectNullOrEmpty(minimumFreightDetails)) {
+            if (minimumFreightDetails.UseMinimumFreightTypeBaseWise)
+                CalculateMinimumFreightBaseWise();
+            else
+                CalculateMinimumFreightPercentWise();
+        }
+    }
+
+    function CalculateMinimumFreightBaseWise() {
+        var minFreight = 0;
+        var minimumFreightRate = minimumFreightDetails.MinimumFreightRate;
+        var minimumFreightRateType = minimumFreightDetails.MinimumFreightRateType;
+        var freighRate = txtPaymentFreightRate.toFloat();
+
+        if (minimumFreightRateType == RateTypes.Flat) {
+            minFreight = minimumFreightRate;
+        }
+        else if (minimumFreightRateType == RateTypes.PerPackage) {
+            if (totalPackages < minimumFreightRate)
+                totalPackages = minimumFreightRate;
+            minFreight = totalPackages * freighRate;
+        }
+        else if (minimumFreightRateType == RateTypes.PerKG || minimumFreightRateType == RateTypes.PerGram || minimumFreightRateType == RateTypes.PerTon || minimumFreightRateType == RateTypes.PerKm) {
+            var totalChargedWeightTemp = GetWeightByType(minimumFreightRateType, totalChargedWeight);
+            if (totalChargedWeightTemp < minimumFreightRate)
+                totalChargedWeightTemp = minimumFreightRate;
+            minFreight = $.toRound(totalChargedWeightTemp * freighRate, 2);
+            totalChargedWeight = totalChargedWeightTemp;
+        }
+        //$('#lblPaymentMinimumFreightMessage').text('');
+
+        if (txtPaymentFreight.toFloat() < minFreight) {
+            txtPaymentFreight.val(minFreight.toFixed(2));
+            $('#lblPaymentMinimumFreightMessage').text("Minimum Freight in " + GetRateTypeName(minimumFreightRateType) + " is applied.").blur();
+        }
+
+        //if (txtPaymentFreight.toFloat() < minimumFreightDetails.MinimumFreightRate) {
+        //    $('#lblPaymentMinimumFreightMessage').text("Minimum Freight is applied.");
+        //    ddlPaymentRateType.val(RateTypes.Flat);
+        //    txtPaymentFreight.val(minimumFreightDetails.MinimumFreightRate.toFixed(2));
+        //}
+
+        $('#lblPaymentTotalPackages').text(totalPackages);
+        $('#lblPaymentTotalChargedWeight').text(totalChargedWeight);
+
+        return true;
+    }
+
+    function CalculateMinimumFreightPercentWise() {
+        var freightRate = txtPaymentFreightRate.toFloat();
+
+        if (minimumFreightDetails.UseFreightRateLimit) {
+            var minFreightLowerLimit = minimumFreightDetails.MimimumFreightLowerLimit;
+            var minFreightUpperLimit = minimumFreightDetails.MimimumFreightUpperLimit;
+
+            var lowerLimit = $.toRound(freightRateDb * minFreightLowerLimit / 100, 2);
+            var upperLimit = $.toRound(freightRateDb * minFreightUpperLimit / 100, 2);
+
+            if (freightRate < lowerLimit) {
+                ShowMessage("Freight Rate Lower Limit Reached. Lower Freight Rate Applied.");
+                txtPaymentFreightRate.val(lowerLimit);
+            }
+
+            if (freightRate > upperLimit) {
+                ShowMessage("Freight Rate Upper Limit Reached. Upper Freight Rate Applied.");
+                txtPaymentFreightRate.val(upperLimit);
+            }
+
+            //txtPaymentFreightRate.blur();
+
+            var freight = txtPaymentFreight.round(2);
+            if (freight < minimumFreightDetails.MinimumFreight) {
+                ShowMessage("Minimum Freight in Flat applied");
+                txtPaymentFreight.val(minimumFreightDetails.MinimumFreight);
+            }
+        }
+        return true;
+    }
+
+    function GetRateTypeName(rateType) {
+        var rateTypeDescription = '';
+        switch (rateType) {
+            case RateTypes.Flat: rateTypeDescription = 'Flat'; break;
+            case RateTypes.PerGram: rateTypeDescription = 'Per Gram'; break;
+            case RateTypes.PerKG: rateTypeDescription = 'Per KG'; break;
+            case RateTypes.PerTon: rateTypeDescription = 'Per Ton'; break;
+            case RateTypes.PerPackage: rateTypeDescription = 'Per Package'; break;
+            case RateTypes.PerKm: rateTypeDescription = 'Per KM'; break;
+        }
+        return rateTypeDescription;
+    }
+
+    function GetWeightByType(weightType, weight) {
+        switch (weightType) {
+            case RateTypes.PerGram: weight = weight * 1000; break;
+            case RateTypes.PerKG: weight = weight; break;
+            case RateTypes.PerQuintal: weight = $.toRound(weight / 100, 2); break;
+            case RateTypes.PerTon: weight = $.toRound(weight / 1000, 2); break;
+            default: newWeight = weight; break;
+        }
+        return weight;
+    }
+
+    function CalculateRate(rateTypeId, rate, packages, chargedWeight, km, freight, invoiceAmount) {
+        var amount = 0;
+        switch (rateTypeId) {
+            case RateTypes.Flat: amount = rate; break;//Flat
+            case RateTypes.PerGram:
+            case RateTypes.PerKG:
+            case RateTypes.PerQuintal:
+            case RateTypes.PerTon: amount = rate * GetWeightByType(rateTypeId, chargedWeight); break;//Per TON
+            case RateTypes.PerPackage: amount = rate * packages; break;//Per Package
+            case RateTypes.PerKm: amount = rate * km; break;//Per KM
+            case RateTypes.PercentageOfFreight: amount = rate * freight / 100; break;// % of Freight
+            case RateTypes.PercentageOfInvoice: amount = rate * invoiceAmount / 100; break;// % of Invoice
+            default: freight = 0; break;
+        }
+        return amount;
+    }
+
+    function CalculateFov() {
+        var fovCharge = 0;
+        var fovRate = txtPaymentFovRate.round(2);
+        var totalInvoiceAmount = parseFloat($('#lblPaymentTotalInvoiceAmount').text());
+
+        if (hdnFovRateType.val() == "%")
+            fovCharge = totalInvoiceAmount * fovRate / 100;
+        else
+            fovCharge = fovRate;
+        fovCharge = $.toRound(fovCharge, 2);
+        txtPaymentFov.val(fovCharge);
+    }
+
+    function CheckValidCustomerCode(showErrorMessage, allowWalkIn, fieldName) {
+        return docketScript.CheckValidCustomerCode(txtPaymentCustomerCode, lblPaymentCustomerName, hdnCustomerId, 'ContractParty', fieldName, showErrorMessage, allowWalkIn)
+    }
+
+    function GetPaymentGstRate() {
+        var requestData = { transportModeId: ddlPaymentTransportMode.val() };
+        AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstServiceAndSacCategoryByTransportModeId', JSON.stringify(requestData), function (result) {
+            if (!IsObjectNullOrEmpty(result)) {
+                gstSacDetails = result;
+                BindDropDownList('ddlPaymentGstServiceType', result, 'ServiceTypeId', 'ServiceType', '', '');
+                BindPaymentGstState();
+                dvPaymentddlPaymentGstServiceType.showHide(result.length > 1);
+                lblPaymentGstServiceType.showHide(result.length == 1);
+                ddlPaymentGstServiceType.change();
+            }
+        }, ErrorFunction, false);
+    }
+
+    function SetBillingPartyGstTinNo(taxPayer, isWalkIn) {
+        if (IsObjectNullOrEmpty(isWalkIn)) isWalkIn = false;
+        if (taxPayer == 1) {
+            lblPaymentGstBillingParty.text(txtPaymentConsignorCode.val() + ' : ' + txtPaymentConsignorName.val());
+            txtPaymentPartyGstTinNo.val(txtPaymentConsignorGstTinNo.val());
+        }
+        else if (taxPayer == 2) {
+            lblPaymentGstBillingParty.text(txtPaymentConsigneeCode.val() + ' : ' + txtPaymentConsigneeName.val());
+            txtPaymentPartyGstTinNo.val(txtPaymentConsigneeGstTinNo.val());
+        }
+        else if (taxPayer == 3) {
+            if (hdnBillingPartyId.val() == hdnConsignorId.val()) {
+                lblPaymentGstBillingParty.text(txtPaymentConsignorCode.val() + ' : ' + txtPaymentConsignorName.val());
+                txtPaymentPartyGstTinNo.val(txtPaymentConsignorGstTinNo.val());
+            }
+            else if (hdnBillingPartyId.val() == hdnConsigneeId.val()) {
+                lblPaymentGstBillingParty.text(txtPaymentConsigneeCode.val() + ' : ' + txtPaymentConsigneeName.val());
+                txtPaymentPartyGstTinNo.val(txtPaymentConsigneeGstTinNo.val());
+            }
+        }
+        else if (taxPayer == 4) {
+            lblPaymentGstBillingParty.text(loginCompanyCode + ' : ' + loginCompanyName);
+            txtPaymentPartyGstTinNo.val(txtPaymentCompanyGstTinNo.val());
+        }
+        else {
+            lblPaymentGstBillingParty.text('');
+            txtPaymentPartyGstTinNo.val('');
+        }
+
+        if (!isWalkIn)
+            BindPaymentGstState();
+        BindPaymentGstState('company');
+    }
+
+
+
+</script>

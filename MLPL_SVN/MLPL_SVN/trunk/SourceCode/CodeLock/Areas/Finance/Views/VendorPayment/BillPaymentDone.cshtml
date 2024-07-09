@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "BillPaymentDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:300px">
+    <div class="alert alert-success"><h5>Bill Payment Done Successfully</h5></div>
+    <div class="row">
+        <div class="col-sm-3">
+            <h4>Payment No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblPaymentNo", @class = "label-bold" })
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return PaymentView();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <h4>Voucher No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblVoucherNo", @class = "label-bold" })
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return VoucherView();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+    var voucherId = 0, billType = 0;
+    $(document).ready(function () {
+        SetPageLoad('Bill Payment', 'Done', '', 'Go To Bill Payment', '@Url.Action("BillPayment")');
+        $('#lblVoucherNo').html(GetUrlValue()["voucherNo"]);
+        $('#lblPaymentNo').html(GetUrlValue()["PaymentNo"]);
+        voucherId = GetUrlValue()["voucherId"];
+        billType = GetUrlValue()["billType"];
+		paymentId = GetUrlValue()["PaymentId"];
+    });
+    function VoucherView() {
+        var prmList = [{ Name: "VoucherId", Value: voucherId }];
+        if (billType == 2) {
+            var reportInfo = { PrmList: prmList, Name: 'VoucherDetailView', Description: 'VoucherDetailView' };
+            return ShowReport(reportInfo);
+        }
+        else {
+            var reportInfo = { PrmList: prmList, Name: 'VoucherDetailView', Description: 'VoucherDetailView' };
+            return ShowReport(reportInfo);
+        }
+    }
+    function PaymentView() {
+		var prmList = [{ Name: "VendorBillPaymentId", Value: paymentId }];
+		var reportInfo = { PrmList: prmList, Name: 'VendorBillPaymentView', Description: 'PaymentView' };
+            return ShowReport(reportInfo);
+    }
+</script>
+
+

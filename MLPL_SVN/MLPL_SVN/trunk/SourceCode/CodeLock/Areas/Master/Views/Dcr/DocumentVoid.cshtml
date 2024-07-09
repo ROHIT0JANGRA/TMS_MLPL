@@ -1,0 +1,69 @@
+﻿@model CodeLock.Models.MasterDcr
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.DocumentTypeId, new SelectList(ViewBag.DocumentTypeList, "Value", "Name"), "Select Document Type", new { @class = "form-control", @id = "ddlDocumentTypeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocumentTypeId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.DocumentNumber, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocumentNumber, new { @class = "form-control", @id = "txtDocumentNo" })
+                        @Html.HiddenFor(m => m.Id, new { @id = "hdnDcrId" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.DocumentNumber)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var docketId,docketFieldList, txtDocumentNo, btnSubmit;
+
+    $(document).ready(function () {
+        SetPageLoad('Document Void', 'Insert', '', '', '');
+        ddlDocumentTypeId = $('#ddlDocumentTypeId');
+        txtDocumentNo = $('#txtDocumentNo');
+        hdnDcrId = $('#hdnDcrId'); 
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+    });
+
+    function OnSubmit() {
+        if (!$("#j-forms").valid()) { return false; }
+        if (txtDocumentNo.val() != '' && ddlDocumentTypeId != '') {
+            var requestData = { documentTypeId: ddlDocumentTypeId.val(),documentNo: txtDocumentNo.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("IsDocumentAvailableForVoid", "Dcr")', JSON.stringify(requestData), function (result) {
+                if (!IsObjectNullOrEmpty(result)) {
+                    if (!result.IsSuccessfull) {
+                        ShowMessage(result.ErrorMessage);
+                        txtDocumentNo.val('').focus();
+                        return false;
+                    }
+                    else {
+                        hdnDcrId.val(result.DocumentId)
+                    }
+                }
+                return false;
+            }, ErrorFunction, false);
+        }
+        return true;
+    }
+</script>
+

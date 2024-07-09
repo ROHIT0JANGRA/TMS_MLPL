@@ -1,0 +1,167 @@
+﻿@model CodeLock.Models.MasterCustomerBillFormat
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Mapping", "CustomerBillFormat", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GroupCode, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.GroupCode, new SelectList(ViewBag.GroupCodeList, "Value", "Name"), "Select Group Code", new { @class = "form-control", @id = "ddlGroupCode" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GroupCode)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                    <div class="select">
+                        @Html.HiddenFor(model => model.PaybasId, new { @id = "hdnPaybasId" })
+                        @Html.DropDownListFor(model => model.Paybas, new SelectList(ViewBag.PaybasList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "multiple", @placeholder = "Select Paybas", @id = "ddlPaybasId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Paybas)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.HiddenFor(model => model.TransportModeId, new { @id = "hdnTransportModeId" })
+                        @Html.DropDownListFor(model => model.TransportMode, new SelectList(ViewBag.TransportModeList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "multiple", @placeholder = "Select Transport Mode", @id = "ddlTransportModeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TransportMode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ServiceTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.HiddenFor(model => model.ServiceTypeId, new { @id = "hdnServiceTypeId" })
+                        @Html.DropDownListFor(model => model.ServiceType, new SelectList(ViewBag.ServiceTypeList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "multiple", @placeholder = "Select Service Type", @id = "ddlServiceTypeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ServiceType)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FormatId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.FormatId, new SelectList(ViewBag.BillFormatList, "Value", "Name"), new { @class = "form-control", @id = "ddlFormatId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FormatId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CustomerCode, new { @class = "label" })
+                    <div class="select">
+
+                        @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                        @Html.TextBoxFor(model => model.CustomerCode, null, new { @class = "form-control", @id = "ddlCustomerCode" })
+
+                        <i></i>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(model => model.CustomerCode)
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    @Html.Label(" ", " ", new { @class = "label-bold", @id = "lblCodeName" })
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSave">Save</button>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    var ddlGroupCode, dtCustomerDetails, ddlPaybasId, ddlTransportModeId, ddlServiceTypeId, ddlFormatId, lblCodeName, hdnCustomerId;
+    $(document).ready(function () {
+        SetPageLoad('Customer Bill Format', 'List');
+        ddlGroupCode = $('#ddlGroupCode');
+        ddlPaybasId = $('#ddlPaybasId');
+        ddlTransportModeId = $('#ddlTransportModeId');
+        ddlServiceTypeId = $('#ddlServiceTypeId');
+        ddlFormatId = $('#ddlFormatId');
+        ddlCustomerCode = $('#ddlCustomerCode');
+        hdnCustomerId = $('#hdnCustomerId');
+        lblCodeName = $('#lblCodeName');
+
+        //ddlGroupCode.change(OnCustomerGroupCodeChange);
+        DropDownChange('ddlPaybasId', function () {
+            $('#hdnPaybasId').val($(this).val());
+        });
+        InitMultiSelect('ddlPaybasId', true, true);
+        DropDownChange('ddlTransportModeId', function () {
+            $('#hdnTransportModeId').val($(this).val());
+        });
+        InitMultiSelect('ddlTransportModeId', true, true);
+        DropDownChange('ddlServiceTypeId', function () {
+            $('#hdnServiceTypeId').val($(this).val());
+        });
+        InitMultiSelect('ddlServiceTypeId', true, true);
+        //DropDownChange('ddlCustomerCode', function () {
+        //    $('#hdnCustomerId').val($(this).val());
+        //});
+        CustomerAutoComplete('ddlCustomerCode', 'hdnCustomerId');
+        ddlCustomerCode.blur(function () { IsCustomerCodeExist(ddlCustomerCode, hdnCustomerId, lblCodeName) });
+        //InitMultiSelect('ddlCustomerCode', true, true);
+        //ddlGroupCode.change(GetBillFormat);
+        //ddlPaybasId.change(GetBillFormat);
+        //ddlTransportModeId.change(GetBillFormat);
+        //ddlServiceTypeId.change(GetBillFormat);
+        //ddlFormatId.change(GetBillFormat);
+    });
+
+    @*function OnCustomerGroupCodeChange() {
+        if (ddlGroupCode.val() != "") {
+            var requestData = { groupCode: ddlGroupCode.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetCustomerListByGroupCode","Customer")', JSON.stringify(requestData), GetCustomerListSuccess, ErrorFunction, false);
+            InitMultiSelect('ddlCustomerCode', true, true);
+        }
+    }
+
+    function GetCustomerListSuccess(responseData) {
+        BindDropDownList('ddlCustomerCode', responseData, 'Value', 'Name', '', '');
+        InitMultiSelect('ddlCustomerCode', true, true);
+    }*@
+
+    function GetBillFormat() {
+        if (ddlGroupCode.val() != "") {
+            var requestData = { paybasId: $('#hdnPaybasId').val(), transportModeId: $('#hdnTransportModeId').val(), serviceTypeId: $('#hdnServiceTypeId').val(), formatId: ddlFormatId.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetBillFormat")', JSON.stringify(requestData), function (result) {
+                if (result.length > 0) {
+                    $('#hdnCustomerId').val('');
+                    $.each(result, function (i, item) {
+                        $('#hdnCustomerId').val($('#hdnCustomerId').val() + ',' + item.CustomerId);
+                    });
+                    $('#hdnCustomerId').val($('#hdnCustomerId').val().substr(1));
+                    var selectedValue = $('#hdnCustomerId').val();
+                    if (selectedValue != "") {
+                        selectedValue = selectedValue.split(',');
+                        $("#ddlCustomerCode").val(selectedValue).trigger('change');
+                    }
+                }
+
+            }, ErrorFunction, false);
+        }
+    }
+</script>

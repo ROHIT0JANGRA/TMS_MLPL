@@ -1,0 +1,168 @@
+﻿@model IEnumerable<CodeLock.Models.MasterVehicleDocumentType>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtVehicleDocument">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.VehicleNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Document)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DocumentDescription)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsStateWiseApplicable)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RenewalAuthorityId)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.DocumentNo)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.Notes)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.IsAutoMailRequired)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.Cost)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.DocumentIssueDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.DocumentExpiryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.AutoMailToID)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.AutoMailCcID)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.AutoMailBccID)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.ReminderDays)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.StateName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.Contents)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VehicleNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Document)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DocumentDescription)
+                    </td>
+                    <td>
+                        @Html.Label("", item.IsStateWiseApplicable == true ? "Yes" : "No", new { @class = item.IsStateWiseApplicable == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RenewalAuthorityName)
+                    </td>
+                    <td>
+                        @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.VehicleDocumentId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.VehicleDocumentId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.DocumentNo)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Notes)
+                    </td>
+                    <td style="display:none">
+                        @Html.Label("", item.IsAutoMailRequired == true ? "Yes" : "No", new { @class = item.IsAutoMailRequired == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Cost)
+                    </td>
+                    <td style="display:none">
+                        @item.DocumentIssueDate.ToDisplayDate()
+                    </td>
+                    <td style="display:none">
+                        @item.DocumentExpiryDate.ToDisplayDate()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.AutoMailToID)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.AutoMailCcID)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.AutoMailBccID)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.ReminderDays)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.StateName)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Contents)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vehicle Document', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtVehicleDocument', true, true, true);
+    });
+</script>

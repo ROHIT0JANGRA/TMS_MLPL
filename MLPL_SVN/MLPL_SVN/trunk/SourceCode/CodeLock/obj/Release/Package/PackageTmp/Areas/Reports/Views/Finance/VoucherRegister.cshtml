@@ -1,0 +1,61 @@
+﻿@model CodeLock.Models.VoucherRegister
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                @Html.Label("Voucher Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drVoucherDate"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VoucherEntryModule, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VoucherEntryModule, new SelectList(ViewBag.VoucherTypeList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "multiple" ,@id = "ddlVoucherType" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var ddlTripsheetDateType, drTripsheetDate, ddlLocationId, ddlTripsheetStatus, hdnVehicleId, txtVehicleNo, txtTripsheetNo;
+
+    var drVoucherDate, ddlLocationId, ddlVoucherType, btnSubmit;
+    $(document).ready(function () {
+        SetPageLoad('Voucher', 'Register', '', '', '');
+        ddlLocationId = $('#ddlLocationId');
+        ddlVoucherType = $('#ddlVoucherType');
+        btnSubmit = $('#btnSubmit');
+        drVoucherDate = InitDateRange('drVoucherDate', DateRange.LastWeek);
+        InitMultiSelect(ddlVoucherType.Id, true, true);
+        btnSubmit.click(ViewReport);
+    });
+
+    function ViewReport() {
+        var prmList = [
+              { Name: "FromDate", Value: drVoucherDate.startDate },
+              { Name: "ToDate", Value: drVoucherDate.endDate },
+              { Name: "LocationId", Value: ddlLocationId.val() },
+              { Name: "VoucherType", Value: ddlVoucherType.multiVal() }];
+        var reportInfo = { PrmList: prmList, Name: 'VoucherRegister', Description: 'Voucher Register' };
+        return ShowReport(reportInfo);
+    }
+</script>

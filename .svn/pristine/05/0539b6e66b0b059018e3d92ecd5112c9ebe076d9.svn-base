@@ -1,0 +1,108 @@
+﻿@model IEnumerable<CodeLock.Models.MasterVehicleColdChainRate>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtVehicleColdChainRate">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.VehicleNo)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.OutsideCityDryKmpl)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.WithinCityDryKmpl)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.OutsideCityReeferKmpl)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.WithinCityReeferKmpl)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.OutsideCityEmptyKmpl)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.WithinCityEmptyKmpl)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryBy)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateBy)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <th>
+                        @Html.DisplayFor(modelItem => item.VehicleNo)
+                    </th>
+                    <td>
+                        @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Insert", new { id = item.VehicleId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.VehicleId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(model => item.OutsideCityDryKmpl)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(model => item.WithinCityDryKmpl)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(model => item.OutsideCityReeferKmpl)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(model => item.WithinCityReeferKmpl)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(model => item.OutsideCityEmptyKmpl)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(model => item.WithinCityEmptyKmpl)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(model => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(model => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('KMPL for Cold Chain Master', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtVehicleColdChainRate', true, true, true);
+    });
+</script>

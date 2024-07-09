@@ -1,0 +1,338 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.MasterLocation
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Location Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "Location", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.LocationId)
+    @Html.Hidden("LocationId", 0)
+
+<div class="widget-wrap">
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.LocationHierarchyId, new { @class = "label" })
+				<div class="select">
+					@Html.DropDownListFor(model => model.LocationHierarchyId, new SelectList(ViewBag.LocationHierarchyList, "Value", "Name"), "Select Location Hierarchy", new { @class = "form-control", @id = "ddlLocationHierarchy" })
+					<i></i>
+				</div>
+				@Html.ValidationMessageFor(model => model.LocationHierarchyId)
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.LocationHierarchyReportingToId, new { @class = "label" })
+				<div class="select">
+					@Html.DropDownListFor(model => model.LocationHierarchyReportingToId, new SelectList(ViewBag.LocationHierarchyList, "Value", "Name"), "Select Location Hierarchy", new { @class = "form-control", @id = "ddlReportLocationHierarchy" })
+					<i></i>
+				</div>
+				@Html.ValidationMessageFor(model => model.LocationHierarchyReportingToId)
+			</div>
+		</div>
+
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.ReportLocationId, new { @class = "label" })
+				<div class="select">
+					@Html.DropDownListFor(model => model.ReportLocationId, new SelectList(ViewBag.ReportLocationHierarchyList, "Value", "Name"), "Select Reporting Location", new { @class = "form-control", @id = "ddlReportLocation" })
+					<i></i>
+				</div>
+				@Html.ValidationMessageFor(model => model.ReportLocationId)
+			</div>
+		</div>
+
+
+	</div>
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.LocationCode, new { @class = "label" })
+				<div class="input">
+					@Html.TextBoxFor(model => model.LocationCode, new { @class = "form-control" })
+				</div>
+				@Html.ValidationMessageFor(model => model.LocationCode)
+			</div>
+		</div>
+
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.LocationName, new { @class = "label" })
+				<div class="input">
+					@Html.TextBoxFor(model => model.LocationName, new { @class = "form-control" })
+				</div>
+				@Html.ValidationMessageFor(model => model.LocationName)
+			</div>
+		</div>
+
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.CountryNameId, new { @class = "label" })
+				<div class="select">
+					@Html.DropDownListFor(model => model.CountryNameId, new SelectList(ViewBag.CountryList, "Value", "Name"), "Select Country", new { @class = "form-control", @id = "ddlCountry" })
+					<i></i>
+				</div>
+				@Html.ValidationMessageFor(model => model.CountryNameId)
+			</div>
+		</div>
+		@*<div class="col-sm-4">
+				<div class="form-group">
+					@Html.LabelFor(model => model.LocationType, new { @class = "label" })
+					<div class="select">
+						@Html.DropDownListFor(model => model.LocationType, new SelectList(ViewBag.LocationTypeList, "Value", "Name"), "Select Location Type", new { @class = "form-control", @id = "ddlLocationType" })
+						<i></i>
+					</div>
+					@Html.ValidationMessageFor(model => model.LocationType)
+
+				</div>
+			</div>*@
+	</div>
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.StateNameId, new { @class = "label" })
+				<div class="select">
+					@Html.DropDownListFor(model => model.StateNameId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlState" })
+					<i></i>
+				</div>
+				@Html.ValidationMessageFor(model => model.StateNameId)
+			</div>
+		</div>
+
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.CityId, new { @class = "label" })
+				<div class="select">
+					@Html.DropDownListFor(model => model.CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control select2-multiple", @id = "ddlCity" })
+					<i></i>
+				</div>
+				@Html.ValidationMessageFor(model => model.CityId)
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.Pincode, new { @class = "label" })
+				<div class="input">
+					@Html.TextBoxFor(model => model.Pincode, new { @class = "form-control" })
+				</div>
+				@Html.ValidationMessageFor(model => model.Pincode)
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.Address, new { @class = "label" })
+				<div class="input">
+					@Html.TextBoxFor(model => model.Address, new { @class = "form-control" })
+				</div>
+				@Html.ValidationMessageFor(model => model.Address)
+			</div>
+		</div>
+
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.MobileNo, new { @class = "label" })
+				<div class="input">
+					@Html.TextBoxFor(model => model.MobileNo, new { @class = "form-control" })
+				</div>
+				@Html.ValidationMessageFor(model => model.MobileNo)
+			</div>
+		</div>
+
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.EmailId, new { @class = "label" })
+				<div class="input">
+					@Html.TextBoxFor(model => model.EmailId, new { @class = "form-control" })
+				</div>
+				@Html.ValidationMessageFor(model => model.EmailId)
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.Partial("DateTimePicker", new DateTimePicker() { DefaultDate = Model.StartDate, FieldName = "StartDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.StartDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = true, SetBlank = true })
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.Partial("DateTimePicker", new DateTimePicker() { DefaultDate = Model.EndDate, FieldName = "EndDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.EndDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = true, SetBlank = true })
+			</div>
+		</div>
+
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.IsComputerized, new { @class = "label" })
+				<label class="checkbox">
+					@Html.CheckBoxFor(model => model.IsComputerized)
+					<i></i>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.OwnershipTypeId, new { @class = "label" })
+				<div class="select">
+					@Html.DropDownListFor(model => model.OwnershipTypeId, new SelectList(ViewBag.OwnershipTypeList, "Value", "Name"), "Select OwnershipType", new { @class = "form-control", @id = "ddlOwnershipTypeId" })
+					<i></i>
+				</div>
+				@Html.ValidationMessageFor(model => model.OwnershipTypeId)
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.IsActive, new { @class = "label" })
+				<label class="checkbox">
+					@Html.CheckBoxFor(model => model.IsActive)
+					<i></i>
+				</label>
+			</div>
+		</div>
+		<div class="col-sm-4">
+			@Html.LabelFor(model => model.DataEntryLocation, new { @class = "label" })
+			@Html.HiddenFor(model => model.DataEntryLocation, new { @id = "hdnDataEntryLocation" })
+			@Html.DropDownListFor(model => model.DataEntryLocation, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlDataEntryLocation", @placeholder = "Select Location" })
+			@Html.ValidationMessageFor(model => model.DataEntryLocation)
+		</div>
+	</div>
+	<div class="row" id="dvownershipLocation">
+		<div class="col-sm-4">
+			<div class="form-group">
+				@Html.LabelFor(model => model.ownershipLocationId, new { @class = "label" })
+				<div class="select">
+					@Html.DropDownListFor(model => model.ownershipLocationId, new SelectList(ViewBag.OwnershipLocationList, "Value", "Name"), "Select Ownership Location", new { @class = "form-control", @id = "ddlownershipLocationId" })
+					<i></i>
+				</div>
+			</div>
+		</div>
+
+	</div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Longitude, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.Longitude, new { @class = "form-control", @id = "txtLongitude" })
+                </div>
+                @* @Html.ValidationMessageFor(model => model.Longitude)*@
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Latitude, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.Latitude, new { @class = "form-control", @id = "txtLatitude" })
+                </div>
+                @*  @Html.ValidationMessageFor(model => model.Latitude)*@
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.InternalLocationCode, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.InternalLocationCode, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+    </div>
+	<div class="form-footer">
+		<button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+	</div>
+</div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Location', 'Create', 'ddlLocationHierarchy', 'Goto List', '@Url.Action("Index")');
+
+        var currentDate = '@DateTime.Now.ToShortDateString()';
+        var dateTimeFormat = '@ConfigHelper.JsDateFormat';
+        InitDateTimePicker("txt" + 'StartDate', true, false, false, currentDate, dateTimeFormat, currentDate, currentDate, false, true, false);
+
+        InitDateTimePicker("txt" + 'EndDate', true, false, false, currentDate, dateTimeFormat, currentDate, currentDate, false, true, false);
+
+        $('#txtEndDate').val('');
+
+        $('#ddlCountry').change(OnCountryChange).change();
+        $('#ddlState').change(OnStateChange);
+        $('#ddlReportLocationHierarchy').change(OnLocationHierarchyChange);
+        $('#ddlOwnershipTypeId').change(OnownershipLocationChange).change();
+
+        DropDownChange('ddlDataEntryLocation', function () {
+            $('#hdnDataEntryLocation').val($(this).val());
+        });
+    });
+
+    function OnownershipLocationChange() {
+
+        $('#dvownershipLocation').hide();
+
+        if ($('#ddlOwnershipTypeId').val() == "4" || $('#ddlOwnershipTypeId').val() == "6") {
+            $('#dvownershipLocation').show();
+        } else {
+            $('#ddlownershipLocationId').val('');
+        }
+    }
+
+    function OnLocationHierarchyChange() {
+        if ($('#ddlReportLocationHierarchy').val() != "") {
+            var requestData = { locationHierarchy: $('#ddlReportLocationHierarchy').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetByLocationHierarchy", "Location")', JSON.stringify(requestData), GetLocationHierarchySuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetLocationHierarchySuccess(responseData) {
+        BindDropDownList('ddlReportLocation', responseData, 'Value', 'Name', '', 'Select Reporting Location');
+    }
+
+    function OnCountryChange() {
+        if ($('#ddlCountry').val() != "") {
+            var requestData = { countryId: $('#ddlCountry').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetStateListByCountryId", "State")', JSON.stringify(requestData), GetStateListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetStateListSuccess(responseData) {
+        BindDropDownList('ddlState', responseData, 'Value', 'Name', '', 'Select State');
+    }
+
+    function OnStateChange() {
+        if ($('#ddlState').val() != "") {
+            var requestData = { stateId: $('#ddlState').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetCityListByStateId", "City")', JSON.stringify(requestData), GetCityListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetCityListSuccess(responseData) {
+        BindDropDownList('ddlCity', responseData, 'Value', 'Name', '', 'Select City');
+    }
+
+</script>
+
+
+
+@*<script>
+    $(document).ready(function () {
+        SetPageLoad('Location', 'Create', 'ddlLocationHierarchy', 'Goto List', '@Url.Action("Index")');
+
+        txtArea = $('#txtArea');
+        txtLength = $('#txtLength');
+        txtBreadth = $('#txtBreadth');
+        txtHeight = $('#txtHeight');
+
+        txtLength.blur(AreaCalculation);
+        txtBreadth.blur(AreaCalculation);
+        txtHeight.blur(AreaCalculation);
+    });
+
+    function AreaCalculation() {
+        parseFloat(txtArea.val((parseFloat(txtLength.val()) * parseFloat(txtBreadth.val()) * parseFloat(txtHeight.val())) / 1728));
+    }
+
+</script>*@

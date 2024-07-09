@@ -1,0 +1,118 @@
+﻿@using CodeLock.Models
+@model LabourDCModule
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        trackingUrl = '@Url.Action("GetManifestListForLabourDCForTracking", "Manifest", new { Area = "Operation" })';
+    });
+
+</script>
+<script src="@Url.Content("~/Areas/Operation/Views/Tracking/IndexLabourDC.js")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label("Document Date", new { @class = "label" })
+                            </div>
+                            <div id="drDocketDate"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                                @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2", @id = "ddlLocationId", @placeholder = "Select Location" })
+                                @Html.ValidationMessageFor(model => model.LocationId)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocumentType, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.DocumentType, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="All", Value = "0" },
+                                                                            new SelectListItem{ Text="DRS", Value = "1" },
+                                                                            new SelectListItem{ Text="PRS", Value = "2" },
+                                                                            new SelectListItem{ Text="THC", Value = "3" },
+                                                                         }, new { @class = "form-control", @id = "ddlDocumentType" })
+
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.DocumentType)
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row" id="divTHCType">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.THCType, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.THCType, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="All", Value = "0" },
+                                                                            new SelectListItem{ Text="Load", Value = "1" },
+                                                                            new SelectListItem{ Text="Unload", Value = "2" },
+                                                                         }, new { @class = "form-control", @id = "ddlTHCType" })
+
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorCodeTracking, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                                    @Html.TextBoxFor(model => model.VendorCodeTracking, null, new { @class = "form-control", @id = "txtVendorCode" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.HiddenFor(model => model.VendorName, new { @id = "hdnVendorName" })
+                                    @Html.Label("VendorName", " ", new { @class = "label-bold", @id = "lblVendorName" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.Label("lblDocumentName", "Document No.", new { @class = "label", @id = "lblDocumentName" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManifestsNo, new { @class = "form-control", @id = "txtManifestsNo" })
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                <div class="tab-pane">
+                    <div class="row" id="dvDocketDetails">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtDocketDetails"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

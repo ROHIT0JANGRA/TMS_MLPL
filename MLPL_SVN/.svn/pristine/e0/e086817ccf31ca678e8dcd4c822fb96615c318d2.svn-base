@@ -1,0 +1,196 @@
+﻿@model CodeLock.Models.PurchaseOrder
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        skuMasterUrl = '@Url.Action("", "Sku", new { Area = "Master" })';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Finance/Views/PurchaseOrder/Insert.js")"></script>
+<div class="row" id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Insert", "PurchaseOrder", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.HiddenFor(model => model.PoId, new { @id = "hdnPoId" })
+            @Html.HiddenFor(model => model.LocationId, new { @id = "hdnLocationId", @Value = @SessionUtility.LoginLocationId })
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PoNo, new { @class = "label" })
+                                <div class="system-label">
+                                    @Html.Label("<System Generated>")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualPoNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.ManualPoNo, new { @class = "form-control", @id = "txtManualPoNo" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.ManualPoNo)
+                                </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.MaterialCategoryId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.MaterialCategoryId, new SelectList(ViewBag.MaterialCategoryList, "Value", "Name"), "Select", new { @class = "form-control", @id = "ddlMaterialCategoryId" })<i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.MaterialCategoryId)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "PoDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.PoDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.VendorId, new { @class = "label" })
+                                
+                                <div class="input-wrapper">
+                                    @Html.HiddenFor(m => m.VendorId, new { @id = "hdnVendorId" })
+                                    @Html.TextBoxFor(m => m.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                                </div>
+                                    @Html.ValidationMessageFor(m => m.VendorCode)
+                                </div>
+                            </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @class = "label-bold", @id = "lblName" })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control ", @id = "txtVendorRemarks" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Remarks)
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="dtDetail">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Description</th>
+                                        <th>Quantity</th>
+                                        <th>Rate</th>
+                                        <th>% Of Discount</th>
+                                        <th>% Of Tax</th>
+                                        <th>Total Amount</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.Details.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                
+                                                    @Html.HiddenFor(m => Model.Details[i].SkuId, new { @id = "hdnSkuId" + i })
+                                                    @Html.TextBoxFor(m => Model.Details[i].SkuName, null, new { @class = "form-control ", @id = "txtSkuName" + i.ToString() })
+                                                    @Html.ValidationMessageFor(m => Model.Details[i].SkuName)
+                                                
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].Description, new { @class = "form-control", @id = "txtDescription" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].Description)
+                                            </td>
+                                            <td>
+                                                @Html.HiddenFor(m => Model.Details[i].PendingQuantity, new { @id = "hdnPendingQuantity" + i })
+                                                @Html.TextBoxFor(m => Model.Details[i].Quantity, new { @class = "form-control ", @id = "txtQuantity" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].Quantity)
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].Rate, new { @class = "form-control ", @id = "txtRate" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].Rate)
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].DiscountPercentage, new { @class = "form-control ", @id = "txtDiscountPercentage" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].DiscountPercentage)
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].TaxPercentage, new { @class = "form-control", @id = "txtTaxPercentage" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].TaxPercentage)
+                                            </td>
+                                            <td>
+                                                @Html.TextBoxFor(m => Model.Details[i].TotalAmount, new { @class = "form-control ", @id = "txtTotalAmount" + i.ToString() })
+                                                @Html.ValidationMessageFor(m => Model.Details[i].TotalAmount)
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th>
+                                            @Html.TextBoxFor(model => Model.Amount, new { @class = "form-control ", @id = "txtAmount" })
+                                        </th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                        </div>
+                        <div class="col-sm-4">
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.AdvanceAmount, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.AdvanceAmount, new { @class = "form-control ", @id = "txtAdvanceAmount" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.AdvanceAmount)
+                                </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                        </div>
+                        <div class="col-sm-4">
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.BalanceAmount, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.TextBoxFor(m => m.BalanceAmount, new { @class = "form-control", @id = "txtBalanceAmount" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

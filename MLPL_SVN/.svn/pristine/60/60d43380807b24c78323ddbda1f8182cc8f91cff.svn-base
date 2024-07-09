@@ -1,0 +1,166 @@
+﻿@model CodeLock.Models.MasterVehicleCapacityRate
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VendorCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VendorCode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VendorName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VendorName)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.StartDate)
+                </dt>
+                <dd>
+                    @Model.StartDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EndDate)
+                </dt>
+                <dd>
+                    @Model.EndDate.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EmailId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EmailId)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ContentForAutoMail)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ContentForAutoMail)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EntryByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </dt>
+                <dd>
+                    @Model.EntryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.UpdateDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <table id="dtVehicleCapacityRate">
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Transport Mode</th>
+                    <th>Vehicle Type</th>
+                    <th>Vehicle Capacity</th>
+                    <th>Allowed Weight</th>
+                    <th>Allowed Mimumum Rate</th>
+                    <th>Allowed Maximum Rate</th>
+                    <th>Rate Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Details)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LocationCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.TransportMode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.VehicleType)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.VehicleCapacity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.AllowedWeight)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.AllowedMimumumRate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.AllowedMaximumRate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.RateType)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vehicle Capacity-wise Rate', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Insert", new { id = Model.VendorId })');
+        LoadDataTable('dtVehicleCapacityRate', false, false, false);
+    });
+</script>

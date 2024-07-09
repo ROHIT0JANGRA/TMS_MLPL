@@ -1,0 +1,1400 @@
+﻿@using CodeLock.Models
+@model SpecialCostVoucher
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("SpecialCostVoucher", "Accounts", FormMethod.Post, new { @class = "j-forms", enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        @Html.HiddenFor(model => model.CompanyId, new { @id = "hdnCompanyId", @Value = @SessionUtility.CompanyId })
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VoucherNo, new { @class = "label" })
+                    <div class="system-label">
+                        @Html.LabelFor(model => model.VoucherNo, "<System Generated>")
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "VoucherDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.VoucherDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ManualNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(m => m.ManualNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.ManualNo)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PreparedLocationId, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(m => m.PreparedLocationId, new { @Value = @SessionUtility.LoginLocationId })
+                        @Html.LabelFor(model => model.PreparedLocationCode, @SessionUtility.LoginLocationCode, new { @id = "lblPreparedLocationCode", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BusinessTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.BusinessTypeId, new SelectList(ViewBag.BusinessTypeList, "Value", "Name"), new { @class = "form-control", @id = "ddlBusinessTypeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BusinessTypeId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AccountingLocationId, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(m => m.AccountingLocationId, new { @Value = @SessionUtility.LoginLocationId })
+                        @Html.LabelFor(model => model.AccountingLocationCode, @SessionUtility.LoginLocationCode, new { @id = "lblAccountingLocationCode", @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CompanyGstId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CompanyGstId, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "form-control", @id = "ddlCompanyGstId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CompanyGstId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CompanyGstTinNo, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.CompanyGstTinNo, " ", new { @id = "lblCompanyGstTinNo", @class = "label-bold" })
+                        @Html.HiddenFor(model => model.CompanyGstStateId, new { @id = "hdnCompanyGstStateId" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ReferenceNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(m => m.ReferenceNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReferenceNo)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.CodeType, "2", new { @id = "rdCodeTypeCustomer", @tabindex = "0", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.CodeType, "Customer", new { @for = "rdCodeTypeCustomer" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.CodeType, "3", new { @id = "rdCodeTypeVendor", @tabindex = "0" })
+                            <i></i>
+                            @Html.LabelFor(model => model.CodeType, "Vendor", new { @for = "rdCodeTypeVendor" })
+                        </label><label class="radio">
+                            @Html.RadioButtonFor(model => model.CodeType, "1", new { @id = "rdCodeTypeEmployee", @tabindex = "0" })
+                            <i></i>
+                            @Html.LabelFor(model => model.CodeType, "Employee", new { @for = "rdCodeTypeEmployee" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.CodeType, "5", new { @id = "rdCodeTypeDriver", @tabindex = "0" })
+                            <i></i>
+                            @Html.LabelFor(model => model.CodeType, "Driver", new { @for = "rdCodeTypeDriver" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.CodeType, "6", new { @id = "rdCodeTypeVehicle", @tabindex = "0" })
+                            <i></i>
+                            @Html.LabelFor(model => model.CodeType, "Vehicle", new { @for = "rdCodeTypeVehicle" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.CodeType, "8", new { @id = "rdCodeTypeOther", @tabindex = "0" })
+                            <i></i>
+                            @Html.LabelFor(model => model.CodeType, "Other", new { @for = "rdCodeTypeOther" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CodeId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.CodeId, new { @id = "hdnCodeId" })
+                        @Html.TextBoxFor(model => model.Code, null, new { @class = "form-control text-complete text-complete-html", @id = "txtCode" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Code)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label("", " ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label("", " ", new { @class = "label-bold", @id = "lblCode" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" id="dvOther" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PartyName, new { @class = "label", @id = "lblPartyName" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PartyName, null, new { @class = "form-control", @id = "txtPartyName" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.PartyName)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PartyGstId, new { @class = "label" })
+                    <div class="select">
+                        @Html.HiddenFor(model => model.PartyGstStateId, new { @id = "hdnPartyGstStateId" })
+                        @Html.DropDownListFor(model => model.PartyGstId, Enumerable.Empty<SelectListItem>(), "Select State", new { @class = "form-control", @id = "ddlPartyGstId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PartyGstId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstTinNo, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(m => m.GstTinNo, " ", new { @id = "lblGstTinNo", @class = "label-bold" })
+                        @Html.HiddenFor(model => model.IsPartyRegistered, new { @id = "hdnIsRegistered" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Narration, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Narration, null, new { @class = "form-control", @id = "txtCommanNarration" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Narration)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.DocumentTypeId, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.DocumentTypeId, "5", new { @id = "rdDocumentTypeDocket", @tabindex = "0", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DocumentTypeId, @SessionUtility.DocketNomenClature, new { @for = "rdDocumentTypeDocket" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.DocumentTypeId, "10", new { @id = "rdDocumentTypeDrs", @tabindex = "0" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DocumentTypeId, "Delivery Run Sheet", new { @for = "rdDocumentTypeDrs" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.DocumentTypeId, "11", new { @id = "rdDocumentTypePrs", @tabindex = "0" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DocumentTypeId, "PRS", new { @for = "rdDocumentTypePrs" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.DocumentTypeId, "9", new { @id = "rdDocumentTypeThc", @tabindex = "0" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DocumentTypeId, "THC", new { @for = "rdDocumentTypeThc" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.DocumentTypeId, "8", new { @id = "rdDocumentTypeTripsheet", @tabindex = "0" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DocumentTypeId, "Tripsheet", new { @for = "rdDocumentTypeTripsheet" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.DocumentTypeId, "4", new { @id = "rdDocumentTypeVehicle", @tabindex = "0" })
+                            <i></i>
+                            @Html.LabelFor(model => model.DocumentTypeId, "Vehicle", new { @for = "rdDocumentTypeVehicle" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <table id="dtDetails">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].GstExempted)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].TdsExempted)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].IsProduct)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].AccountCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].AccountDescription)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].CostCenterType)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].CostCenterId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].DocumentId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].SacId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].Units)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].Narration)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].Amount)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].Rcm)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].GstRate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].GstAmount)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].GstCharged)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Details[0].TotalAmount)
+                        </th>
+                        <th style="min-width:85px">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Details.Count; i++)
+                    {
+                        var j = i.ToString();
+                        <tr>
+                            <td>
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(m => Model.Details[i].GstExempted, new { @tabindex = "0", @class = "selectrow", @id = "chkGstExempted" + i, @Name = "Details[" + i.ToString() + "].GstExempted" })
+                                    <i></i>
+                                </label>
+                            </td>
+                            <td>
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(m => Model.Details[i].TdsExempted, new { @tabindex = "0", @class = "selectrow", @id = "chkTdsExempted" + i, @Name = "Details[" + i.ToString() + "].TdsExempted" })
+                                    <i></i>
+                                </label>
+                            </td>
+                            <td>
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(m => Model.Details[i].IsProduct, new { @tabindex = "0", @class = "selectrow", @id = "chkIsProduct" + i, @Name = "Details[" + i.ToString() + "].IsProduct" })
+                                    <i></i>
+                                </label>
+                            </td>
+                            <td>
+                                @Html.HiddenFor(m => Model.Details[i].AccountId, new { id = "hdnAccountId" + i, @Name = "Details[" + i + "].AccountId" })
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.Details[i].AccountCode, new { @class = "form-control input-small", @id = "txtAccountCode" + i.ToString() })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.Details[i].AccountCode)
+                            </td>
+                            <td>
+                                @Html.LabelFor(m => Model.Details[i].AccountDescription, " ", new { @class = "label", @id = "lblAccountDescription" + i })
+                            </td>
+                            <td>
+                                <div class="select">
+                                    @Html.DropDownListFor(m => Model.Details[i].CostCenterType, new SelectList(ViewBag.CostCenterList, "Value", "Name", Model.Details[i].CostCenterType), "Select", new { @class = "form-control", @id = "ddlCostCenterType" + i.ToString() })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.Details[i].CostCenterType)
+                            </td>
+                            <td>
+                                @Html.HiddenFor(m => Model.Details[i].CostCenterId, new { @id = "hdnCostCenterId" + i.ToString() })
+                                <div class="input">
+                                    @Html.TextBoxFor(m => m.Details[i].CostCenter, new { @class = "form-control", @id = "txtCostCenter" + i.ToString() })
+                                    @Html.Label("", "", new { @id = "lblCostCenter" + i.ToString(), @class = "lable" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Details[i].CostCenter)
+                            </td>
+                            <td>
+                                <div class="input">
+                                    @Html.HiddenFor(m => Model.Details[i].DocumentId, new { @id = "hdnDocumentId" + i.ToString() })
+                                    @Html.TextBoxFor(m => m.Details[i].DocumentNo, new { @class = "form-control", @id = "txtDocumentNo" + j })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Details[i].DocumentNo)
+                            </td>
+                            <td>
+                                <div class="select">
+                                    @Html.DropDownListFor(model => Model.Details[i].SacId, new SelectList(ViewBag.SacList, "Value", "Name", Model.Details[i].SacId), "Select", new { @class = "form-control", @id = "ddlSacId" + i.ToString() })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.Details[i].SacId)
+                            </td>
+                            <td>
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.Details[i].Units, "0", new { @class = "form-control input-small numeric", @id = "txtUnits" + i.ToString(), @style = "width: 200px;" })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.Details[i].Units)
+                            </td>
+                            <td>
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.Details[i].Narration, new { @class = "form-control ", @id = "txtNarration" + i.ToString() })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.Details[i].Narration)
+                            </td>
+                            <td>
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.Details[i].Amount, "0.00", new { @class = "form-control input-small numeric2", @id = "txtAmount" + i.ToString() })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.Details[i].Amount)
+                            </td>
+                            <td>
+                                @Html.LabelFor(m => Model.Details[i].Rcm, "No", new { @class = "label", @id = "lblRcm" + i })
+                                @Html.HiddenFor(m => Model.Details[i].IsRcm, new { id = "hdnIsRcm" + i, @Name = "Details[" + i + "].IsRcm" })
+                            </td>
+                            <td>
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.Details[i].GstRate, "0.00", new { @class = "form-control numeric2  input-small", @id = "txtGstRate" + i.ToString() })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.Details[i].GstRate)
+                            </td>
+                            <td>
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.Details[i].GstAmount, "0.00", new { @class = "form-control textlabel textlabel-small numeric2", @id = "txtGstAmount" + i.ToString() })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.Details[i].GstAmount)
+                            </td>
+                            <td>
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.Details[i].GstCharged, "0.00", new { @class = "form-control textlabel textlabel-small numeric2", @id = "txtGstCharged" + i.ToString() })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.Details[i].GstCharged)
+                            </td>
+                            <td>
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.Details[i].TotalAmount, "0.00", new { @class = "form-control textlabel textlabel-small numeric2", @id = "txtTotalAmount" + i.ToString() })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.Details[i].TotalAmount)
+                            </td>
+                            <td style="min-width:85px"></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="row" id="dvDocumentDetails" style="display:none">
+            <div class="col-sm-3">
+                @Html.LabelFor(model => model.GstExemptedCategory, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.GstExemptedCategory, new List<SelectListItem> {
+                                    new SelectListItem() {Text = "Select",Value=""},
+                                    new SelectListItem() {Text = "NEWSPAPER", Value="1"},}, new { @class = "form-control", @id = "ddlGstExemptedCategory" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.GstExemptedCategory)
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentName, new { @class = "label" })
+                    <div class="input prepend-big-btn">
+                        <label class="icon-right" for="prepend-big-btn">
+                            <i class="fa fa-download"></i>
+                        </label>
+                        <div class="file-button">
+                            Browse
+                            <input type="file" id="fuDocumentAttachment" name="Attachment" class="form-control" onchange="document.getElementById('prepend-big-btn').value = this.value;" />
+                        </div>
+                        <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SubTotal, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SubTotal, "0.00", new { @Class = "textlabel form-control numeric2", @id = "txtSubTotal" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Igst, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Igst, "0.00", new { @Class = "textlabel form-control numeric2", @id = "txtIgst" })
+                        @Html.HiddenFor(model => model.IgstPercentage, new { @id = "hdnIgstPercentage" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Cgst, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Cgst, "0.00", new { @Class = "textlabel form-control numeric2", @id = "txtCgst" })
+                        @Html.HiddenFor(model => model.CgstPercentage, new { @id = "hdnCgstPercentage" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Sgst, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Sgst, "0.00", new { @Class = "textlabel form-control numeric2", @id = "txtSgst" })
+                        @Html.HiddenFor(model => model.SgstPercentage, new { @id = "hdnSgstPercentage" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Ugst, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Ugst, "0.00", new { @Class = "textlabel form-control numeric2", @id = "txtUgst" })
+                        @Html.HiddenFor(model => model.UgstPercentage, new { @id = "hdnUgstPercentage" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.GstTotal, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.GstTotal, "0.00", new { @Class = "textlabel form-control numeric2", @id = "txtGstTotal" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Amount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Amount, "0.00", new { @Class = "textlabel form-control numeric2", @id = "txtTotalAmount" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.NetAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.NetAmount, "0.00", new { @Class = "textlabel form-control numeric2", @id = "txtNetAmount" })
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(model => model.NetAmount)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TdsRate, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.TdsRate, new { @class = "form-control numeric2", @id = "txtTdsRate" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TdsRate)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TdsAccountId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.TdsAccountId, new SelectList(ViewBag.TdsList, "Value", "Name"), "Select TDS Section", new { @class = "form-control", @id = "ddlTdsSection" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TdsAccountId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TdsAmount, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.TdsAmount, new { @class = "form-control textlabel numeric2", @id = "txtTdsAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TdsAmount)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.Partial("Payment", new PaymentControl() { })
+                </div>
+            </div>
+        </div>
+        <div class="row form-buttons">
+            <div class="col-sm-offset-5 col-sm-7">
+                <input type="submit" value="Submit" class="btn btn-success primary-btn" id="btnSubmit" />
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    var hdnCompanyId, ddlCompanyGstId, hdnCompanyGstStateId, lblCompanyGstTinNo, hdnCodeId, txtCode, dvOther, txtPartyName, lblPartyName, txtCommanNarration, ddlPartyGstId, hdnPartyGstStateId, lblGstTinNo, hdnIsRegistered;
+    var chkGstExempted, chkTdsExempted;
+    var employeeMasterUrl, docketNomenClature, customerMasterUrl, docketUrl, drsUrl, prsUrl, thcUrl, tripsheetUrl, gstMasterUrl, stateMasterUrl, vendorMasterUrl, vehicleMasterUrl, driverMasterUrl;
+    var selectedCodeType = "2", selectedDocumentType = "5", ownerType = 2, locationId;
+    var companyId, isState, interState, isTdsExempted = false, isGstExempted = false, isRcm = false, isRegistered = false;
+    $(document).ready(function () {
+        SetPageLoad('Special Cost', 'Voucher', '', '', '');
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        companyId = '@SessionUtility.CompanyId';
+        locationId = '@SessionUtility.LoginLocationId';
+        docketNomenClature = '@SessionUtility.DocketNomenClature';
+        hdnCompanyId = $('#hdnCompanyId');
+        ddlCompanyGstId = $('#ddlCompanyGstId');
+        hdnCompanyGstStateId = $('#hdnCompanyGstStateId');
+        lblCompanyGstTinNo = $('#lblCompanyGstTinNo');
+        hdnCodeId = $('#hdnCodeId');
+        txtCode = $('#txtCode');
+        dvOther = $('#dvOther');
+        txtPartyName = $('#txtPartyName');
+        lblPartyName = $('#lblPartyName');
+        txtCommanNarration = $('#txtCommanNarration');
+        ddlPartyGstId = $('#ddlPartyGstId');
+        hdnPartyGstStateId = $('#hdnPartyGstStateId');
+        lblGstTinNo = $('#lblGstTinNo');
+        hdnIsRegistered = $('#hdnIsRegistered');
+        chkGstExempted = $('#chkGstExempted');
+        chkTdsExempted = $('#chkTdsExempted');
+        lblCode = $('#lblCode');
+        accountMasterUrl = '@Url.Action("", "Account", new { Area = "Master" })';
+        employeeMasterUrl = '@Url.Action("", "Employee", new { Area = "Master" })';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        docketUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+        drsUrl = '@Url.Action("", "DRS", new { Area = "Operation" })';
+        prsUrl = '@Url.Action("", "PRS", new { Area = "Operation" })';
+        thcUrl = '@Url.Action("", "THC", new { Area = "Operation" })';
+        tripsheetUrl = '@Url.Action("", "Tripsheet", new { Area = "FMS" })';
+        gstMasterUrl = '@Url.Action("", "Gst", new { Area = "Master" })';
+        stateMasterUrl = '@Url.Action("", "State", new { Area = "Master" })';
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        vehicleMasterUrl = '@Url.Action("", "Vehicle", new { Area = "Master" })';
+        driverMasterUrl = '@Url.Action("", "Driver", new { Area = "Master" })';
+        hsnMasterUrl = '@Url.Action("", "Hsn", new { Area = "Master" })';
+        InitGrid('dtDetails', false, 17, Init);
+    }
+
+    function AttachEvents() {
+        $('[id*="rdCodeType"]').each(function () { $(this).click(function () { selectedCodeType = $(this).val(); OnCodeTypeChange(); }); });
+        $('[id*="rdDocumentType"]').each(function () { $(this).click(function () { selectedDocumentType = $(this).val(); OnDocumentTypeChange(); }); });
+        GetCompanyGstState();
+        ddlCompanyGstId.change(function () { GetCompanyGstDetails(ddlCompanyGstId, lblCompanyGstTinNo, hdnCompanyGstStateId); });
+        AutoComplete('txtCode', customerMasterUrl + '/GetAutoCompleteListByCompanyId', 'customerCode', 'l', 'l', 'l', 'd', '', 'hdnCodeId', '', '');
+        txtCode.blur(function () { return CheckIsValid(txtCode, hdnCodeId, lblCode); });
+        ddlPartyGstId.change(function () {
+            GetGstDetail(ddlPartyGstId, lblGstTinNo, hdnPartyGstStateId);
+            interState = hdnPartyGstStateId.val() == hdnCompanyGstStateId.val() ? false : true;
+            CalculateAmount();
+        });
+        $('#txtCommanNarration').blur(SetCommanNarration);
+        chkGstExempted.change(OnGstExemptedChange);
+        chkTdsExempted.change(OnTdsExemptedChange);
+        $('#txtTdsRate').blur(CalculateAmount);
+        OnCodeTypeChange();
+        $('#dvTdsDetails').hide();
+    }
+
+    function OnCodeTypeChange() {
+        txtCode.val('');
+        lblCode.text('');
+        hdnCodeId.val('');
+        txtPartyName.val('');
+        ddlPartyGstId.empty();
+        ddlPartyGstId.append($("<option></option>").val('').html('Select State'));
+        ddlPartyGstId.val('');
+        dvOther.hide();
+        lblGstTinNo.text('');
+        $('[id*="ddlSacId"]').val('');
+        $('[id*="txtGstRate"]').val(0);
+        $('[id*="txtGstAmount"]').val(0);
+        $('[id*="txtGstCharged"]').val(0);
+        $('[id*="txtTotalAmount"]').val(0);
+        switch (selectedCodeType) {
+            case "1":
+                UserAutoComplete('txtCode', 'hdnCodeId');
+                break;
+            case "2":
+                CustomerAutoComplete('txtCode', 'hdnCodeId');
+                break;
+            case "3":
+                VendorAutoComplete('txtCode', 'hdnCodeId');
+                break;
+            case "5":
+                DriverCodeAutoCompleteByLocation('txtCode', 'hdnCodeId');
+                break;
+            case "6":
+                VehicleAutoComplete('txtCode', 'hdnCodeId');
+                break;
+            case "8":
+                txtCode.autocomplete("destroy");
+                break;
+        }
+    }
+
+    function OnDocumentTypeChange() {
+        $('[id*="txtDocumentNo"]').val('');
+    }
+
+    function GetCompanyGstState() {
+        var requestData = { ownerType: 1, ownerId: companyId, locationId: 0 };
+        AjaxRequestWithPostAndJson(gstMasterUrl + '/GetStateListByOwnerTypeIdAndOwnerId', JSON.stringify(requestData), function (responseData) {
+            BindDropDownList(ddlCompanyGstId.Id, responseData, 'Value', 'Name', '', (responseData.length > 1 ? 'Select Company GST State' : ''));
+            GetCompanyGstDetails(ddlCompanyGstId, lblCompanyGstTinNo, hdnCompanyGstStateId);
+            CheckIsStateOrUnionTerritory();
+        }, ErrorFunction, false);
+    }
+
+    function GetCompanyGstDetails(ddlCompanyGstId, lblCompanyGstTinNo, hdnCompanyGstStateId) {
+        if (ddlCompanyGstId.val() != '' && ddlCompanyGstId.val() != 0) {
+            var requestData = { gstId: ddlCompanyGstId.val() };
+            AjaxRequestWithPostAndJson(gstMasterUrl + '/GetById', JSON.stringify(requestData), function (result) {
+                lblCompanyGstTinNo.text(result.GstTinNo);
+                hdnCompanyGstStateId.val(result.StateId);
+            }, ErrorFunction, false);
+        }
+    }
+
+    function GetGstDetail(ddlGst, lblGstTin, hdnGstState) {
+        if (ddlGst.val() != '' && ddlGst.val() != 0 && hdnIsRegistered.val() == 'true') {
+            var requestData = { gstId: ddlGst.val() };
+            AjaxRequestWithPostAndJson(gstMasterUrl + '/GetById', JSON.stringify(requestData), function (result) {
+                lblGstTin.text(result.GstTinNo);
+                hdnGstState.val(result.StateId);
+            }, ErrorFunction, false);
+        }
+        else {
+            lblGstTin.text('');
+            hdnGstState.val(ddlGst.val());
+        }
+    }
+
+    function CheckIsStateOrUnionTerritory() {
+        if (ddlCompanyGstId.val() != '' && ddlCompanyGstId.val() != 0) {
+            var requestData = { stateId: hdnCompanyGstStateId.val() };
+            AjaxRequestWithPostAndJson(stateMasterUrl + '/CheckIsStateOrUnionTerritory', JSON.stringify(requestData), function (result) {
+                isState = result;
+            }, ErrorFunction, false);
+        }
+    }
+
+    function CheckIsValid(objCode, objHdnId, objLbl) {
+        
+        lblGstTinNo.text('');
+        hdnPartyGstStateId.val('');
+        $('[id*="ddlSacId"]').val('');
+        $('[id*="txtGstRate"]').val(0);
+        $('[id*="txtGstAmount"]').val(0);
+        $('[id*="txtGstCharged"]').val(0);
+        $('[id*="txtTotalAmount"]').val(0);
+        switch (selectedCodeType) {
+            case "1":
+                ownerType = 1;
+                IsUserCodeExist(objCode, objHdnId, objLbl);
+                dvOther.hide();
+                if (objCode.val() != '')
+                    GetCompanyGstStateForOther(hdnCompanyId, ownerType);
+                RemoveRequired(txtPartyName);
+                txtPartyName.val(objLbl.text());
+                break;
+            case "2":
+                ownerType = 2;
+                IsCustomerCodeExist(objCode, objHdnId, objLbl);
+                dvOther.showHide(objHdnId.val() == 1);
+                GetGstState(objHdnId, ownerType);
+                lblPartyName.text("Customer");
+                if (objHdnId.val() != 1 && objHdnId.val() != '') {
+                    RemoveRequired(txtPartyName);
+                    txtPartyName.val(objLbl.text());
+                }
+                else {
+                    txtPartyName.val('');
+                    AddRequired(txtPartyName, 'Please enter Customer');
+                }
+                break;
+            case "3":
+                ownerType = 4;
+                IsVendorCodeExist(objCode, objHdnId, objLbl);
+                dvOther.showHide(objHdnId.val() == 1);
+                GetGstState(objHdnId, ownerType);
+                lblPartyName.text("Vendor");
+                if (objHdnId.val() != 1 && objHdnId.val() != '') {
+                    RemoveRequired(txtPartyName);
+                    txtPartyName.val(objLbl.text());
+                }
+                else {
+                    txtPartyName.val('');
+                    AddRequired(txtPartyName, 'Please enter Vendor');
+                }
+                break;
+            case "5":
+                ownerType = 1;
+                IsDriverCodeExistByLocation(objCode, objHdnId, objLbl);
+                dvOther.showHide(objHdnId.val() == 1);
+                lblPartyName.text("Driver");
+                if (objCode.val() != '')
+                    GetCompanyGstStateForOther(hdnCompanyId, ownerType);
+                if (objHdnId.val() != 1 && objHdnId.val() != '') {
+                    RemoveRequired(txtPartyName);
+                    txtPartyName.val(objLbl.text());
+                }
+                else {
+                    txtPartyName.val('');
+                    AddRequired(txtPartyName, 'Please enter Driver');
+                }
+                break;
+            case "6":
+                ownerType = 1;
+                IsVehicleNoExist(objCode, objHdnId);
+                dvOther.showHide(objHdnId.val() == 1);
+                lblPartyName.text("Vehicle");
+                if (objCode.val() != '')
+                    GetCompanyGstStateForOther(hdnCompanyId, ownerType);
+                if (objHdnId.val() != 1 && objCode.val() != '') {
+                    RemoveRequired(txtPartyName);
+                    txtPartyName.val(objCode.val());
+                }
+                else {
+                    txtPartyName.val('');
+                    AddRequired(txtPartyName, 'Please enter Vehicle');
+                }
+                break;
+            case "8":
+                ownerType = 1;
+                dvOther.hide();
+                if (objCode.val() != '')
+                    GetCompanyGstStateForOther(hdnCompanyId, ownerType);
+                txtPartyName.val(objCode.val());
+                break;
+        }
+
+		SetPaymentPartyTypeAndParty(selectedCodeType, objHdnId.val());
+    }
+
+    function CheckValidUserName(txtEmployee, hdnEmployeeId) {
+        if (txtEmployee.val() != "") {
+            var requestData = { userName: txtEmployee.val().split(':')[0].trim() };
+            AjaxRequestWithPostAndJson(employeeMasterUrl + '/CheckValidUserName', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    hdnEmployeeId.val(result.Value);
+                    txtEmployee.val(result.Name + ' : ' + result.Description);
+                }
+                else {
+                    ShowMessage('Employee is not exist');
+                    txtEmployee.val('');
+                    hdnEmployeeId.val('');
+                    txtEmployee.focus();
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function CheckValidCustomerCode(txtCustomerCode, hdnCustomerId) {
+        if (txtCustomerCode.val() != "") {
+            var requestData = { customerCode: txtCustomerCode.val().split(':')[0].trim() };
+            AjaxRequestWithPostAndJson(customerMasterUrl + '/IsCustomerCodeExist', JSON.stringify(requestData), function (result) {
+                if (result.Value > 0) {
+                    hdnCustomerId.val(result.Value);
+                    txtCustomerCode.val(result.Name + ' : ' + result.Description);
+                }
+                else {
+                    ShowMessage('Customer is not exist');
+                    txtCustomerCode.val('');
+                    hdnCustomerId.val('');
+                    txtCustomerCode.focus();
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function GetCompanyGstStateForOther(objHdnId, ownerType) {
+        if (objHdnId.val() != '' && objHdnId.val() != 0) {
+            var requestData = { ownerType: ownerType, ownerId: objHdnId.val(), locationId: 0 };
+            AjaxRequestWithPostAndJson(gstMasterUrl + '/GetStateListByOwnerTypeIdAndOwnerId', JSON.stringify(requestData), function (responseData) {
+                if (responseData.length != 0) {
+                    BindDropDownList(ddlPartyGstId.Id, responseData, 'Value', 'Name', '', 'Select GST State');
+                    isRegistered = true;
+                    hdnIsRegistered.val(true);
+                }
+            }, ErrorFunction, false);
+        }
+        else {
+            ddlPartyGstId.empty();
+            ddlPartyGstId.append($("<option></option>").val('').html('Select State'));
+            ddlPartyGstId.val('');
+            hdnIsRegistered.val(false);
+        }
+    }
+
+    function SetCommanNarration() {
+        $('[id*="txtNarration"]').val($('#txtCommanNarration').val());
+    }
+
+    function GetGstState(objHdnId, ownerType) {
+        if (objHdnId.val() != 1 && objHdnId.val() != 0) {
+            var requestData = { ownerType: ownerType, ownerId: objHdnId.val(), locationId: 0 };
+            AjaxRequestWithPostAndJson(gstMasterUrl + '/GetStateListByOwnerTypeIdAndOwnerId', JSON.stringify(requestData), function (responseData) {
+                if (responseData.length != 0) {
+                    BindDropDownList(ddlPartyGstId.Id, responseData, 'Value', 'Name', '', 'Select GST State');
+                    isRegistered = true;
+                }
+                else {
+                    requestData = {};
+                    AjaxRequestWithPostAndJson(stateMasterUrl + '/GetStateList', JSON.stringify(requestData), function (responseData) {
+                        BindDropDownList(ddlPartyGstId.Id, responseData, 'Value', 'Name', '', 'Select State');
+                    }, ErrorFunction, false);
+                    isRegistered = false;
+                }
+                hdnIsRegistered.val(isRegistered);
+            }, ErrorFunction, false);
+        }
+        else if (objHdnId.val() == 1) {
+            requestData = {};
+            AjaxRequestWithPostAndJson(stateMasterUrl + '/GetStateList', JSON.stringify(requestData), function (responseData) {
+                BindDropDownList(ddlPartyGstId.Id, responseData, 'Value', 'Name', '', 'Select State');
+            }, ErrorFunction, false);
+            isRegistered = false;
+            hdnIsRegistered.val(isRegistered);
+        }
+        else {
+            ddlPartyGstId.empty();
+            ddlPartyGstId.append($("<option></option>").val('').html('Select State'));
+            ddlPartyGstId.val('');
+            hdnIsRegistered.val(isRegistered);
+        }
+    }
+
+    function Init() {
+        $('[id*="hdnAccountId"]').each(function () {
+            var hdnAccountId = $(this);
+            var txtAccountCode = $('#' + this.Id.replace('hdnAccountId', 'txtAccountCode'));
+            var lblAccountDescription = $('#' + this.Id.replace('hdnAccountId', 'lblAccountDescription'));
+            var hdnDocumentId = $('#' + this.Id.replace('hdnAccountId', 'hdnDocumentId'));
+            var txtDocumentNo = $('#' + this.Id.replace('hdnAccountId', 'txtDocumentNo'));
+            var txtAmount = $('#' + this.Id.replace('hdnAccountId', 'txtAmount'));
+            var chkGstExempted = $('#' + this.Id.replace('hdnAccountId', 'chkGstExempted'));
+            var chkTdsExempted = $('#' + this.Id.replace('hdnAccountId', 'chkTdsExempted'));
+            var chkIsProduct = $('#' + this.Id.replace('hdnAccountId', 'chkIsProduct'));
+            var ddlSacId = $('#' + this.Id.replace('hdnAccountId', 'ddlSacId'));
+            var txtUnits = $('#' + this.Id.replace('hdnAccountId', 'txtUnits'));
+            var lblRcm = $('#' + this.Id.replace('hdnAccountId', 'lblRcm'));
+            var hdnIsRcm = $('#' + this.Id.replace('hdnAccountId', 'hdnIsRcm'));
+            var txtGstRate = $('#' + this.Id.replace('hdnAccountId', 'txtGstRate'));
+            var txtGstAmount = $('#' + this.Id.replace('hdnAccountId', 'txtGstAmount'));
+            var txtGstCharged = $('#' + this.Id.replace('hdnAccountId', 'txtGstCharged'));
+            var txtTotalAmount = $('#' + this.Id.replace('hdnAccountId', 'txtTotalAmount'));
+            var ddlCostCenterType = $('#' + this.Id.replace('hdnAccountId', 'ddlCostCenterType'));
+            var hdnCostCenterId = $('#' + this.Id.replace('hdnAccountId', 'hdnCostCenterId'));
+            var txtCostCenter = $('#' + this.Id.replace('hdnAccountId', 'txtCostCenter'));
+            var lblCostCenterId = $('#' + this.Id.replace('hdnAccountId', 'lblCostCenter'));
+            txtUnits.disable();
+            txtGstRate.readOnly();
+            Account.AccountAutoComplete(txtAccountCode.Id, hdnAccountId.Id);
+            txtAccountCode.blur(function () {
+                return Account.CheckValidAccountCode(txtAccountCode, hdnAccountId, lblAccountDescription);
+            });
+
+            txtCostCenter.blur(function () { return CheckIsCostCenterValid(ddlCostCenterType, txtCostCenter, hdnCostCenterId, lblCostCenterId); });
+            txtDocumentNo.blur(function () { return CheckDocumentNoIsValid(txtDocumentNo, hdnDocumentId); });
+
+            txtCostCenter.blur(function () { return CheckIsCostCenterValid(ddlCostCenterType, txtCostCenter, hdnCostCenterId, lblCostCenterId); });
+            ddlCostCenterType.change(function () { OnCostCenterTypeChange(ddlCostCenterType, txtCostCenter, hdnCostCenterId); });
+
+            chkIsProduct.change(function () {
+                txtUnits.val(0);
+                txtUnits.enable(chkIsProduct.IsChecked);
+                txtGstRate.readOnly(chkIsProduct.IsChecked);
+                lblRcm.text("No");
+                if (chkIsProduct.IsChecked) {
+                    AddRequired(txtUnits, 'Please select Units');
+                    AddRequired(txtGstRate, 'Please select GST Rate');
+                    AddRange(txtUnits, 'Please enter Units', 1);
+                    AddRange(txtGstRate, 'Please enter GST', 0.001);
+                    var requestData = {};
+                    AjaxRequestWithPostAndJson(hsnMasterUrl + '/GetHsnList', JSON.stringify(requestData), function (responseData) {
+                        if (responseData.length != 0) {
+                            BindDropDownList(ddlSacId.Id, responseData, 'Value', 'Name', '', 'Select');
+                        }
+                    }, ErrorFunction, false);
+                    hdnIsRcm.val(false);
+                    lblRcm.text("No");
+                    RemoveRequired(ddlSacId);
+                    AddRequired(ddlSacId, 'Please select HSN');
+                }
+                else {
+                    RemoveRequired(ddlSacId);
+                    AddRequired(ddlSacId, 'Please select SAC');
+                    RemoveRequired(txtUnits);
+                    RemoveRequired(txtGstRate);
+                    RemoveRange(txtUnits);
+                    RemoveRange(txtGstRate);
+                    var requestData = {};
+                    AjaxRequestWithPostAndJson(gstMasterUrl + '/GetList', JSON.stringify(requestData), function (responseData) {
+                        if (responseData.length != 0) {
+                            BindDropDownList(ddlSacId.Id, responseData, 'Value', 'Name', '', 'Select');
+                        }
+                    }, ErrorFunction, false);
+                }
+                CalculateAmount();
+            });
+
+            chkGstExempted.change(OnGstExemptedChange);
+            chkTdsExempted.change(OnTdsExemptedChange);
+            ddlSacId.change(function () {
+                var requestData = { id: ddlSacId.val() };
+                AjaxRequestWithPostAndJson(gstMasterUrl + '/GetDetailById', JSON.stringify(requestData), function (result) {
+                    if (result != null) txtGstRate.val(result.GstRate);
+                    if (selectedCodeType == '1' || selectedCodeType == '5' || selectedCodeType == '6' || selectedCodeType == '8') {
+                        lblRcm.text("No");
+                        isRcm = false;
+                    }
+                    else if (!chkIsProduct.IsChecked) {
+                        if (!isRegistered) {
+                            lblRcm.text("No");
+                            hdnIsRcm.val(false);
+                        }
+                        else {
+                            lblRcm.text(result.IsRcm == true ? "Yes" : "No");
+                            hdnIsRcm.val(result.IsRcm);
+                        }
+                    }
+                }, ErrorFunction, false);
+                CalculateAmount();
+            });
+            txtAmount.blur(CalculateAmount);
+            txtGstRate.blur(CalculateAmount);
+
+            txtAccountCode.blur(function () {
+                try {
+                    IsAccountDetailExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+            txtDocumentNo.blur(function () {
+                try {
+                    IsAccountDetailExist($(this));
+                }
+                catch (e) {
+                    $(this).val('');
+                    $(this).focus();
+                }
+            });
+
+        });
+    }
+
+    var Account = {
+        CheckValidAccountCode: function (txtAccountCode, hdnAccountId, lblAccountDescription) {
+            if (txtAccountCode.val() != '') {
+                var requestData = { accountCode: txtAccountCode.val().split(':')[0].trim() };
+                AjaxRequestWithPostAndJson(accountMasterUrl + '/IsAccountCodeExist', JSON.stringify(requestData), function (result) {
+                    if (IsObjectNullOrEmpty(result)) {
+                        ShowMessage('Account is not exist');
+                        txtAccountCode.focus();
+                        txtAccountCode.val('');
+                        hdnAccountId.val('');
+                        lblAccountDescription.text('');
+                    }
+                    else {
+                        hdnAccountId.val(result.Value);
+                        txtAccountCode.val(result.Name);
+                        lblAccountDescription.text(result.Description);
+                    }
+                }, ErrorFunction, false);
+            }
+            else {
+                hdnAccountId.val('');
+                lblAccountDescription.text('');
+            }
+            return false;
+        },
+        AccountAutoComplete: function (txtAccountCodeId, hdnAccountId) {
+            AutoComplete(txtAccountCodeId, accountMasterUrl + '/GetAccountAutoCompleteList', 'accountCode', 'l', 'l', 'l', 'd', '', hdnAccountId, '', '', true, '');
+        }
+    }
+
+    function CheckDocumentNoIsValid(objName, objHdnId) {
+        switch (selectedDocumentType) {
+            case "5":
+                CheckValidDocketNo(objName, objHdnId);
+                break;
+            case "10":
+                CheckValidDrsNo(objName, objHdnId);
+                break;
+            case "11":
+                CheckValidPrsNo(objName, objHdnId);
+                break;
+            case "9":
+                CheckValidThcCode(objName, objHdnId);
+                break;
+            case "8":
+                IsTripsheetNoExist(objName, objHdnId);
+                break;
+            case "4":
+                IsVehicleNoExist(objName, objHdnId);
+                break;
+        }
+    }
+
+    function CheckValidDocketNo(txtDocketNo, hdnDocketId) {
+        if (txtDocketNo.val() != "") {
+            var requestData = { docketNo: txtDocketNo.val() };
+            AjaxRequestWithPostAndJson(docketUrl + '/CheckValidDocketNo', JSON.stringify(requestData), function (result) {
+                if (IsObjectNullOrEmpty(result)) {
+                    ShowMessage(docketNomenClature + ' No is not exist');
+                    txtDocketNo.val('');
+                    hdnDocketId.val('');
+                    txtDocketNo.focus();
+                }
+                else {
+                    hdnDocketId.val(result.Value);
+                    txtDocketNo.val(result.Name);
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function CheckValidDrsNo(txtDrsNo, hdnDrsId) {
+        if (txtDrsNo.val() != "") {
+            var requestData = { drsNo: txtDrsNo.val() };
+            AjaxRequestWithPostAndJson(drsUrl + '/CheckValidDrsNo', JSON.stringify(requestData), function (result) {
+                if (IsObjectNullOrEmpty(result)) {
+                    ShowMessage('DRS No is not exist');
+                    txtDrsNo.val('');
+                    hdnDrsId.val('');
+                    txtDrsNo.focus();
+                }
+                else {
+                    hdnDrsId.val(result.Value);
+                    txtDrsNo.val(result.Name);
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function CheckValidPrsNo(txtPrsNo, hdnPrsId) {
+        if (txtPrsNo.val() != "") {
+            var requestData = { prsNo: txtPrsNo.val() };
+            AjaxRequestWithPostAndJson(prsUrl + '/CheckValidPrsNo', JSON.stringify(requestData), function (result) {
+                if (IsObjectNullOrEmpty(result)) {
+                    ShowMessage('PRS No is not exist');
+                    txtPrsNo.val('');
+                    hdnPrsId.val('');
+                    txtPrsNo.focus();
+                }
+                else {
+                    hdnPrsId.val(result.Value);
+                    txtPrsNo.val(result.Name);
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function CheckValidThcCode(txtThcNo, hdnThcId) {
+        if (txtThcNo.val() != "") {
+            var requestData = { thcNo: txtThcNo.val() };
+            AjaxRequestWithPostAndJson(thcUrl + '/CheckValidThcCode', JSON.stringify(requestData), function (result) {
+                if (IsObjectNullOrEmpty(result)) {
+                    ShowMessage('THC No is not exist');
+                    txtThcNo.val('');
+                    hdnThcId.val('');
+                    txtThcNo.focus();
+                }
+                else {
+                    hdnThcId.val(result.Value);
+                    txtThcNo.val(result.Name);
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function IsTripsheetNoExist(txtTripsheetNo, hdnTripsheetId) {
+        if (txtTripsheetNo.val() != "") {
+            var requestData = { tripsheetNo: txtTripsheetNo.val() };
+            AjaxRequestWithPostAndJson(tripsheetUrl + '/IsTripsheetNoExist', JSON.stringify(requestData), function (result) {
+                if (IsObjectNullOrEmpty(result)) {
+                    ShowMessage('Tripsheet No is not exist');
+                    txtTripsheetNo.val('');
+                    hdnTripsheetId.val('');
+                    txtTripsheetNo.focus();
+                }
+                else {
+                    hdnTripsheetId.val(result.Value);
+                    txtTripsheetNo.val(result.Name);
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function CheckValidThcNo(txtThcNo, hdnThcId) {
+        if (txtThcNo.val() != '') {
+            var requestData = { thcNo: txtThcNo.val() };
+            AjaxRequestWithPostAndJson(thcUrl + '/CheckValidThcCode', JSON.stringify(requestData), function (result) {
+                if (IsObjectNullOrEmpty(result)) {
+                    ShowMessage('THC is not exist');
+                    txtThcNo.val('');
+                    hdnThcId.val('');
+                    txtThcNo.focus();
+                }
+                else {
+                    hdnThcId.val(result.Value);
+                    txtThcNo.val(result.Name);
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function CheckIsCostCenterValid(objCostCenterType, objName, objHdnId, objLbl) {
+        switch (objCostCenterType.val()) {
+            case "1":
+                CheckValidCustomerCode(objName, objHdnId);
+                if (objHdnId.val() == 1) {
+                    ShowMessage('Customer is not exist');
+                    objName.val('');
+                    objHdnId.val('');
+                    objName.focus();
+                }
+                break;
+            case "2":
+                IsVendorCodeExist(objName, objHdnId, objLbl);
+                if (objHdnId.val() == 1) {
+                    ShowMessage('Vendor is not exist');
+                    objName.val('');
+                    objHdnId.val('');
+                    objName.focus();
+                }
+                break;
+            case "3":
+                IsUserNameExist(objName, objHdnId);
+                break;
+            case "4":
+                IsVehicleNoExist(objName, objHdnId);
+                if (objHdnId.val() == 1) {
+                    ShowMessage('Vehicle is not exist');
+                    objName.val('');
+                    objHdnId.val('');
+                    objName.focus();
+                }
+                break;
+            case "5":
+                CheckValidDocketNo(objName, objHdnId);
+                break;
+            case "6":
+                IsDriverNameExistByLocation(objName, objHdnId);
+                if (objHdnId.val() == 1) {
+                    ShowMessage('Driver is not exist');
+                    objName.val('');
+                    objHdnId.val('');
+                    objName.focus();
+                }
+                break;
+            case "7":
+                IsLocationCodeExist(objName, objHdnId, 'Location');
+                break;
+            case "8":
+                CheckValidTripsheetNo(objName, objHdnId);
+                break;
+            case "9":
+                CheckValidThcNo(objName, objHdnId);
+                break;
+        }
+    }
+
+    function OnCostCenterTypeChange(ddlCostCenterType, txtCostCenter, hdnCostCenterId) {
+        txtCostCenter.val('');
+        hdnCostCenterId.val('');
+        if (ddlCostCenterType.val() == 1)
+            CustomerAutoComplete(txtCostCenter.Id, hdnCostCenterId.Id)
+        else if (ddlCostCenterType.val() == 2)
+            VendorAutoComplete(txtCostCenter.Id, hdnCostCenterId.Id);
+        else if (ddlCostCenterType.val() == 3)
+            UserAutoComplete(txtCostCenter.Id, hdnCostCenterId.Id);
+        else if (ddlCostCenterType.val() == 4)
+            VehicleAutoComplete(txtCostCenter.Id, hdnCostCenterId.Id);
+        else if (ddlCostCenterType.val() == 5)
+            txtCostCenter.autocomplete("destroy");
+        else if (ddlCostCenterType.val() == 6)
+            DriverAutoCompleteByLocation(txtCostCenter.Id, hdnCostCenterId.Id);
+        else if (ddlCostCenterType.val() == 7)
+            LocationAutoComplete(txtCostCenter.Id, hdnCostCenterId.Id);
+        else if (ddlCostCenterType.val() == 8)
+            txtCostCenter.autocomplete("destroy");
+        else if (ddlCostCenterType.val() == 9)
+            txtCostCenter.autocomplete("destroy");
+    }
+
+
+    function IsAccountDetailExist(obj) {
+        if (obj.val() != '') {
+            var outertr = obj.closest('tr');
+            var outertxtAccountCode = outertr.find('[id*="txtAccountCode"]');
+            var outertxtDocumentNo = outertr.find('[id*="txtDocumentNo"]');
+
+            $('#dtDetails tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innertxtAccountCode = innertr.find('[id*="txtAccountCode"]');
+                var innertxtDocumentNo = innertr.find('[id*="txtDocumentNo"]');
+
+                if (innertxtAccountCode.attr('id') != outertxtAccountCode.attr('id') && innertxtAccountCode.val() == outertxtAccountCode.val() &&
+                    innertxtDocumentNo.val() == outertxtDocumentNo.val()) {
+                    ShowMessage("Account Detail is already exist");
+                    throw (true);
+                }
+            });
+        }
+    }
+
+    function OnGstExemptedChange() {
+        var selectedDocumentList = [];
+        $('[id*="chkGstExempted"]').each(function () {
+            var chkGstExempted = $(this);
+            if (chkGstExempted.IsChecked)
+                selectedDocumentList.push($('#' + chkGstExempted.Id).val());
+        });
+        $('#dvDocumentDetails').showHide(selectedDocumentList.length != 0);
+        if (selectedDocumentList.length != 0)
+            AddRequired($('#ddlGstExemptedCategory'), 'Please select GST Exempted Category');
+        else
+            RemoveRequired($('#ddlGstExemptedCategory'));
+        CalculateAmount();
+    }
+
+    function OnTdsExemptedChange() {
+        var isTds = false;
+        $('[id*="chkTdsExempted"]').each(function () {
+            var chkTdsExempted = $(this);
+            if (!chkTdsExempted.IsChecked)
+                isTds = true;
+        });
+        if (!isTds) {
+            RemoveRequired($('#ddlTdsSection'));
+            RemoveRange($('#txtTdsRate'));
+            $('#txtTdsRate').val(0);
+            $('#ddlTdsSection').val(0);
+            $('#txtTdsAmount').val(0);
+        }
+        else {
+            AddRequired($('#ddlTdsSection'), 'Please select TDS Section');
+            AddRange($('#txtTdsRate'), 'Please enter TDS Rate between 0 to 99.99', 0.001, 99.99);
+        }
+        $('#txtTdsRate').readOnly(!isTds);
+        $('#ddlTdsSection').enable(isTds);
+        $('#ddlReceiptTdsAccount').val($('#ddlTdsSection').val());
+        CalculateAmount();
+    }
+
+    function CalculateAmount() {
+        var isTdsExempted = false, isGstExempted = false;
+        var subTotal = 0, totalGstCharged = 0, totalGstRate = 0, totalBillAmount = 0, totalTdsApplicableAmount = 0;
+        $('[id*="txtAmount"]').each(function () {
+            var txtAmount = $(this);
+            var txtGstRate = $('#' + this.Id.replace('txtAmount', 'txtGstRate'));
+            var hdnIsRcm = $('#' + this.Id.replace('txtAmount', 'hdnIsRcm'));
+            var txtGstAmount = $('#' + this.Id.replace('txtAmount', 'txtGstAmount'));
+            var txtGstCharged = $('#' + this.Id.replace('txtAmount', 'txtGstCharged'));
+            var txtTotalAmount = $('#' + this.Id.replace('txtAmount', 'txtTotalAmount'));
+            var chkTdsExempted = $('#' + this.Id.replace('txtAmount', 'chkTdsExempted'));
+            var chkGstExempted = $('#' + this.Id.replace('txtAmount', 'chkGstExempted'));
+            if (txtAmount.val() != '') {
+                subTotal = subTotal + parseFloat(txtAmount.val());
+                txtGstAmount.val(((parseFloat(txtAmount.val()) * parseFloat(txtGstRate.val())) / 100));
+                if (hdnIsRcm.val() == "false" && !chkGstExempted.IsChecked) {
+                    txtGstCharged.val(txtGstAmount.val());
+                    totalGstRate = totalGstRate + parseFloat(txtGstRate.val());
+                }
+                else
+                    txtGstCharged.val(0);
+                totalGstCharged = totalGstCharged + parseFloat(txtGstCharged.val());
+                if (chkGstExempted.IsChecked)
+                    txtTotalAmount.val(parseFloat(txtAmount.val()));
+                else
+                    txtTotalAmount.val(parseFloat(txtAmount.val()) + parseFloat(txtGstCharged.val()));
+                totalBillAmount = totalBillAmount + parseFloat(txtTotalAmount.val());
+            }
+            if (chkTdsExempted.IsChecked)
+                isTdsExempted = true;
+            else
+                totalTdsApplicableAmount = totalTdsApplicableAmount + parseFloat(txtAmount.val());
+
+        });
+        $('#txtSubTotal').val(subTotal);
+        $('#txtTotalAmount').val(totalBillAmount);
+
+        $('#txtGstTotal').val(totalGstCharged);
+        if (totalGstCharged != 0) {
+            if (interState) {
+                $('#txtIgst').val(totalGstCharged);
+                $('#txtSgst').val(0);
+                $('#txtCgst').val(0);
+                $('#txtUgst').val(0);
+                $('#hdnIgstPercentage').val(totalGstRate);
+                $('#hdnSgstPercentage').val(0);
+                $('#hdnCgstPercentage').val(0);
+                $('#hdnUgstPercentage').val(0);
+            }
+            else if (isState) {
+                $('#txtIgst').val(0);
+                $('#txtSgst').val(totalGstCharged / 2);
+                $('#txtCgst').val(totalGstCharged / 2);
+                $('#txtUgst').val(0);
+                $('#hdnIgstPercentage').val(0);
+                $('#hdnSgstPercentage').val(totalGstRate / 2);
+                $('#hdnCgstPercentage').val(totalGstRate / 2);
+                $('#hdnUgstPercentage').val(0);
+            }
+            else if (!isState) {
+                $('#txtIgst').val(0);
+                $('#txtUgst').val(totalGstCharged / 2);
+                $('#txtCgst').val(totalGstCharged / 2);
+                $('#txtSgst').val(0);
+                $('#hdnIgstPercentage').val(0);
+                $('#hdnUgstPercentage').val(totalGstRate / 2);
+                $('#hdnCgstPercentage').val(totalGstRate / 2);
+                $('#hdnSgstPercentage').val(0);
+            }
+        }
+        else {
+            $('#txtIgst').val(0);
+            $('#txtSgst').val(0);
+            $('#txtCgst').val(0);
+            $('#txtUgst').val(0);
+            $('#hdnIgstPercentage').val(0);
+            $('#hdnSgstPercentage').val(0);
+            $('#hdnCgstPercentage').val(0);
+            $('#hdnUgstPercentage').val(0);
+        }
+
+        $('#txtTdsAmount').val((totalTdsApplicableAmount * parseFloat($('#txtTdsRate').val())) / 100);
+        $('#txtNetAmount').val(totalBillAmount - parseFloat($('#txtTdsAmount').val()));
+        SetPaymentAmount($('#txtNetAmount').val());
+    }
+
+</script>

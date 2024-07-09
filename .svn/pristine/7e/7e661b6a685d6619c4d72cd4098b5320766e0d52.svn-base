@@ -1,0 +1,184 @@
+﻿@model CodeLock.Models.FuelSurchargeRevision
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "FuelSurchargeRivision";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "FuelSurchargeRevision", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.RevisionId)
+    @Html.Hidden("RevisionId", 0)
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Date Range", new { @id = "lblDateRange", @class = "label-bold" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "FromDate", FieldCaption = DataAnnotationHelper.GetDisplayName("FuelSurchargeRevision", "FromDate"), IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "ToDate", FieldCaption = DataAnnotationHelper.GetDisplayName("FuelSurchargeRevision", "ToDate"), IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="input">
+                        @Html.HiddenFor(model => model.ContractIdList, new { id = "hdnContractId" })
+                        @Html.TextBox("ManualContractIdList", "", new { @class = "form-control", id = "txtManualContractId", @disabled = "disabled" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ContractIdList)
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <div class="form-footer">
+                    <button class="btn btn-success primary-btn" onclick="return ValidateSelection()">Add</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="overflow-table">
+                    <table class="display" id="dtFuelSurchargeRivision">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayName("Active")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Transport Mode")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Revision Rate(%)")
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.MasterFuelSurchargeRevisionRate.Count; i++)
+                            {
+                                CodeLock.Models.MasterFuelSurchargeRevisionRate item = Model.MasterFuelSurchargeRevisionRate.ToArray()[i];
+                                <tr>
+                                    <td align="center">
+                                        <div class="form-group">
+                                            <label class="checkbox">
+                                                @Html.CheckBoxFor(model => item.IsActive, new { @id = "chkIsActive" + i, @Name = "MasterFuelSurchargeRevisionRate[" + i + "].IsActive" })
+                                                <i></i>
+                                                @Html.Label("chkIsActive" + i, " ", new { @id = "chkIsActive" })
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @item.TransportMode
+                                        @Html.Hidden("MasterFuelSurchargeRevisionRate[" + i + "].TransportModeId", @item.TransportModeId)
+                                    </td>
+                                    <td>
+                                        <div class="input">
+                                            @Html.TextBoxFor(model => Model.MasterFuelSurchargeRevisionRate.ToArray()[i].Rate, new { @class = "form-control numeric2", @id = "txtRate" + i, @Name = "MasterFuelSurchargeRevisionRate[" + i + "].Rate" })
+                                        </div>
+                                        @Html.ValidationMessage("MasterFuelSurchargeRevisionRate[" + i + "].Rate")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" onclick="return CheckValidate();">Create</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Fuel Surcharge Revision', 'Add', '', 'Go To List', '@Url.Action("Index")');
+        LoadDataTable('dtFuelSurchargeRivision', false, false, false);
+        InitSelection();
+
+        $('[id*="chkIsActive"]').click(function () {
+            var chkIsActive = $(this);
+            var txtRate = $('#' + chkIsActive.attr('id').replace('chkIsActive', 'txtRate'));
+            txtRate.prop('disabled', !chkIsActive.is(":checked"));
+        });
+    });
+
+
+    function InitSelection() {
+        $('#dtFuelSurchargeRivision tr:not(:first)').each(function () {
+            var tr = $(this);
+            var chkIsActive = tr.find('[id*="chkIsActive"]');
+            chkIsActive.on('change', function () {
+                OnSelect(chkIsActive.attr('id'));
+            });
+
+            OnSelect(chkIsActive.attr('id'));
+        });
+    }
+
+    function OnSelect(chkIsActiveId) {
+        var chkIsActive = $('#' + chkIsActiveId);
+        var tr = chkIsActive.closest("tr");
+        var txtRate = tr.find('[id*="txtRate"]');
+        if (!chkIsActive.is(":checked"))
+            txtRate.val('0');
+        txtRate.prop('disabled', !chkIsActive.is(":checked"));
+    }
+
+    function CheckValidate() {
+        var count = 0;
+        $('#dtFuelSurchargeRivision tr:not(:first)').each(function () {
+            var tr = $(this);
+            var chkIsActive = tr.find('[id*="chkIsActive"]');
+            if (chkIsActive.is(":checked")) {
+                count++;
+            }
+        });
+        if (count == 0) {
+            ShowMessage('Please select atleast one Transport Mode');
+            return false;
+        }
+        else {
+            var IsValidate = ValidateOnSubmit();
+
+            if (!IsValidate)
+                return false;
+            else
+                return true;
+        }
+    }
+
+    function ValidateOnSubmit() {
+        var xCondition = true;
+        $('#dtFuelSurchargeRivision tr:not(:first)').each(function () {
+            var tr = $(this);
+            var chkIsActive = tr.find('[id*="chkIsActive"]');
+            var txtRate = tr.find('[id*="txtRate"]');
+
+            if (chkIsActive.is(":checked") && txtRate.val() == '0' || txtRate.val() == '0.00') {
+                ShowMessage('Please enter Rate');
+                txtRate.focus();
+                xCondition = false;
+                return false;
+            }
+        });
+        if (!xCondition) { return false; }
+        else { return true; }
+    }
+
+    function ValidateSelection() {
+        var popup;
+        popup = window.open('@Url.Action("PopUpContract", "CustomerContract", new { Area = "Contract" })', "Popup", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=600,width=1300,height=650");
+        popup.focus();
+        return false;
+    }
+</script>

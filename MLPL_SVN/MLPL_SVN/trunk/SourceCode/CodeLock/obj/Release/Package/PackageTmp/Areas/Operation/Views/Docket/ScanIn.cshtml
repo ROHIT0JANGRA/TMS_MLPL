@@ -1,0 +1,321 @@
+﻿@model CodeLock.Models.DocketBarcode
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("ScanIn", "Docket", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row" id="dvDocketNo">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.DocketNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                        @Html.HiddenFor(m => m.DocketId, new { id = "hdnDocketId" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.DocketNo)
+                </div>
+            </div>
+            <div class="col-sm-3" id="dvCustomerName" style="display:none;">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CustomerName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control textlabel", @id = "txtCustomerName" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" id="dvOrigin" style="display:none;">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Origin, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Origin, new { @class = "form-control textlabel", @id = "txtOrigin" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" id="dvDestination" style="display:none;">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Destination, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Destination, new { @class = "form-control textlabel", @id = "txtDestination" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div id="dvBarCode" style="display:none;">
+            <div class="page-separator">Scan Bar Code</div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.BarCode, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.BarCode, new { @class = "form-control", @id = "txtBarCode" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.TobeScan, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.TobeScan, new { @class = "form-control textlabel", @id = "txtTobeScan" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.TotalPkt, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.TotalPkt, new { @class = "form-control textlabel", @id = "txtTotalPkt" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-separator">Bar Code List</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div>
+                        <table id="dtBarCodeDetail">
+                            <thead>
+                                <tr>
+                                    <th width="100">Select</th>
+                                    <th width="300">Bar Code</th>
+                                    <th width="100">Length</th>
+                                    <th width="100">Breadth</th>
+                                    <th width="100">Height</th>
+                                    <th width="100">Actual Weight</th>
+                                     
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                        <br /><br />
+                        <button type="button" id="btnDelete" class="btn btn-danger">Delete Bar Code</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var docketId, docketFieldList, BarcodeList, txtDocketNo, btnSubmit, isFinancialUpdate = false, dtBarCodeDetail, txtBarCode, index, btnDelete;
+
+    $(document).ready(function () {
+        docketFieldList = JSON.parse('@DisplayName.GetList("Docket")'.replace(/&quot;/g, '"'));
+        SetPageLoad('Scan In', 'Bar Code', '', 'New Scan In', '@Url.Action("ScanIn")');
+        txtDocketNo = $('#txtDocketNo');
+        txtBarCode = $('#txtBarCode');
+        hdnDocketId = $('#hdnDocketId');
+        btnSubmit = $('#btnSubmit');
+        btnDelete = $('#btnDelete');
+        btnDelete.hide();
+        btnSubmit.click(OnSubmit);
+        txtDocketNo.change(OnDocketChanges);
+        txtBarCode.change(AddRows);
+
+        BarcodeList =@Html.Raw(Json.Encode(@ViewBag.BarcodeList));
+        txtDocketNo.val("");
+        index = 0;
+        // Find and remove selected table rows
+        $(btnDelete).click(function () {
+            $("table tbody").find('input[name="record"]').each(function () {
+                if ($(this).is(":checked")) {
+                    $(this).parents("tr").remove();
+
+                }
+
+
+            });
+
+            var totalItem =0;
+        
+            $('[id*="hdnbarcodeTrnId"]').each(function () {
+                totalItem = totalItem + 1;
+            }); 
+        
+            $('#txtTobeScan').val(parseInt($('#txtTotalPkt').val())-parseInt(totalItem));
+
+        });
+
+        var message = '@ViewBag.Message';
+
+        if(message != "")
+        {
+            ShowMessage(message);
+        }
+
+    });
+
+    function AddRows() {
+
+        if (txtBarCode.val() == "") return false;
+        var barcodeTrnId = 0;
+        var barcode = txtBarCode.val();
+        var dIndex = 0;
+
+        var PretotalItem =0;
+        
+        $('[id*="hdnbarcodeTrnId"]').each(function () {
+            PretotalItem = PretotalItem + 1;
+        }); 
+
+        if(parseInt($('#txtTotalPkt').val()) <= parseInt(PretotalItem))
+        {
+            ShowMessage('Scaned Pkt should be equal to total Pkt');
+            txtBarCode.val('').focus();
+            return false;
+        }
+
+        $.each(BarcodeList, function( index, value ) {
+
+            if(value.BarCode == barcode)
+            {
+                barcodeTrnId = value.barcodeTrnId;
+            }
+        });
+
+        if (barcodeTrnId == 0)
+        {
+            ShowMessage(barcode + ' is invalid');
+            return;
+        }
+
+        $('[id*="hdnbarcodeTrnId"]').each(function () {
+
+            var hdnbarcodeTrnId = $(this);
+
+            if (barcodeTrnId == hdnbarcodeTrnId.val()) {
+                txtBarCode.val('').focus();
+                dIndex = 1;
+                ShowMessage(barcode + ' is duplicate');
+            }
+        });
+
+        if (dIndex == 1)
+        {
+            return;
+        }
+
+        var markup = "<tr><td><input type='checkbox' name='record'></td><td><input type='hidden' name='BarCodeList[" + index + "].barcodeTrnId' id='hdnbarcodeTrnId" + index + "' value='" + barcodeTrnId + "' /> <input type='text' class='form-control textlabel' name='BarCodeList[" + index + "].BarCode' id='txtBarCode" + index + "' value='" + barcode + "' /> </td> "+
+            "<td><input type='text' class='form-control numeric3' name='BarCodeList[" + index + "].Length' id='txtLength" + index + "' value='0' data-val-range='Please enter length greater than zero' data-val-range-max='999999999' data-val-range-min='0.001' /><span data-valmsg-for='BarCodeList[" + index + "].Length' data-valmsg-replace='true'></span> </td>"+
+            "<td><input type='text' class='form-control numeric3' name='BarCodeList[" + index + "].Breadth' id='txtBreadth" + index + "'value='0'  data-val-range='Please enter breadth greater than zero' data-val-range-max='999999999' data-val-range-min='0.001' /><span data-valmsg-for='BarCodeList[" + index + "].Breadth' data-valmsg-replace='true'></span>  </td>"+
+             "<td><input type='text' class='form-control numeric3' name='BarCodeList[" + index + "].Height' id='txtHeight" + index + "' value='0' data-val-range='Please enter height greater than zero' data-val-range-max='999999999' data-val-range-min='0.001' /><span data-valmsg-for='BarCodeList[" + index + "].Height' data-valmsg-replace='true'></span>  </td>" +
+              "<td><input type='text' class='form-control numeric3' name='BarCodeList[" + index + "].ActualWeight' id='txtActualWeight" + index + "' value='0' data-val-range='Please enter actual weight greater than zero' data-val-range-max='999999999' data-val-range-min='0.001' /><span data-valmsg-for='BarCodeList[" + index + "].ActualWeight' data-valmsg-replace='true'></span>  </td> </tr>" ;
+
+        $("table tbody").append(markup);
+        index = index + 1;
+
+        var totalItem =0;
+        
+        $('[id*="hdnbarcodeTrnId"]').each(function () {
+            totalItem = totalItem + 1;
+        }); 
+        
+        $('#txtTobeScan').val(parseInt($('#txtTotalPkt').val())-parseInt(totalItem));
+
+        btnDelete.show();
+        txtBarCode.val('').focus();
+    }
+
+    function OnDocketChanges() {
+        if (txtDocketNo.val() != "") {
+            var requestData = { docketNo: txtDocketNo.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("CheckValidDocketNoForScanIn", "Docket")', JSON.stringify(requestData), function (result) {
+
+                docketId = result.DocketId;
+
+                if (docketId == 0) {
+                    ShowMessage(GetFieldCaptionByName(docketFieldList, 'DocketNo') + ' is not valid for Scan');
+                    txtDocketNo.val('').focus();
+                    return false;
+                }
+                else
+                {
+                    $('#txtCustomerName').val(result.CustomerName);
+                    $('#txtOrigin').val(result.Origin);
+                    $('#txtDestination').val(result.Destination);
+                    $('#txtTobeScan').val(result.TobeScan);
+                    $('#txtTotalPkt').val(result.TotalPkt);
+                    $('#dvCustomerName').show();
+                    $('#dvOrigin').show();
+                    $('#dvDestination').show();
+                }
+                return false;
+            }, ErrorFunction, false);
+        }
+
+        if (docketId != 0) {
+            hdnDocketId.val(docketId);
+            $('#dvBarCode').show();
+            $('#dvDocketNo').pointerEvent(false);
+            return false;
+        }
+
+        return false;
+    }
+
+
+    function OnSubmit() {
+        var dIndex =0;
+
+        $('[id*="hdnbarcodeTrnId"]').each(function () {
+            dIndex = 1;
+        });
+
+        if(dIndex == 0)
+        {
+            ShowMessage('Please scan bar code');
+            return false;
+        }
+
+        if(parseInt($('#txtTobeScan').val()) != 0)
+        {
+            ShowMessage('Scaned Pkt is not equal to Total Pkt, Please scan again');
+            return false;
+        }
+        var vFlag = 0 ;
+
+        $('[id*="hdnbarcodeTrnId"]').each(function () {
+            var hdnbarcodeTrnId = $(this);
+            var txtLength = $('#' + hdnbarcodeTrnId.Id.replace('hdnbarcodeTrnId', 'txtLength'));
+            var txtBreadth = $('#' + hdnbarcodeTrnId.Id.replace('hdnbarcodeTrnId', 'txtBreadth'));
+            var txtHeight = $('#' + hdnbarcodeTrnId.Id.replace('hdnbarcodeTrnId', 'txtHeight'));
+            var txtActualWeight = $('#' + hdnbarcodeTrnId.Id.replace('hdnbarcodeTrnId', 'txtActualWeight'));
+
+            if(parseFloat(txtLength.val()) <= 0)
+            {
+                vFlag = 1 ;
+            }
+            if(parseFloat(txtBreadth.val()) <= 0)
+            {
+                vFlag = 1 ;
+            }
+            if(parseFloat(txtHeight.val()) <= 0)
+            {
+                vFlag = 1 ;
+            }
+            if(parseFloat(txtActualWeight.val()) <= 0)
+            {
+                vFlag = 1 ;
+            }
+        });
+
+        if(vFlag == 1)
+        {
+            ShowMessage('LBH can not be zero');
+            return false;
+        }
+
+        return true;
+    }
+
+</script>
+

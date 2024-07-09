@@ -1,0 +1,121 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.TripsheetAdvanceCancellation
+@{
+	ViewBag.Title = "AdvanceCancellation";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    var tripsheetUrl = '@Url.Action("")';
+</script>
+<script src="@Url.Content("~/Areas/FMS/Views/Tripsheet/AdvanceCancellation.js")"></script>
+<div id="dvWizard">
+	<div class="panel-body">
+		@using (Html.BeginForm("AdvanceCancellation", "Tripsheet", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+		{
+			@Html.HiddenFor(model => model.TripsheetId, new { @id = "hdnTripsheetId" })
+			@Html.HiddenFor(model => model.VoucherId, new { @id = "hdnVoucherId" })
+			<div class="tab-content">
+				<div class="tab-pane">
+					<div class="row">
+						<div class="col-sm-4">
+							@Html.Label("Select Tripsheet Date", new { @class = "label" })
+							<div class="clearfix">
+								<div id="drDocumentDate"></div>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								@Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+							</div>
+						</div>
+					</div>
+					<div class="page-separator">OR</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="form-group">
+								@Html.LabelFor(model => model.TripsheetNo, new { @class = "label" })
+								<div class="input">
+									@Html.TextBoxFor(model => model.TripsheetNo, new { @class = "form-control", @id = "txtTripsheetNo" })
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								@Html.Label(" ", new { @class = "label" })
+								<div class="clearfix">
+									@Html.Label("(seperated by comma if multiple)")
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="page-separator">OR</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="form-group">
+								@Html.LabelFor(model => model.ManualTripsheetNo, new { @class = "label" })
+								<div class="input">
+									@Html.TextBox("ManualTripsheetNo", " ", new { @class = "form-control", @id = "txtManualTripsheetNo" })
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								@Html.Label(" ", new { @class = "label" })
+								<div class="clearfix">
+									@Html.Label("(seperated by comma if multiple)")
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="page-separator">OR</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="form-group">
+								@Html.LabelFor(model => model.VoucherNo, new { @class = "label" })
+								<div class="input">
+									@Html.TextBox("VoucherNo", " ", new { @class = "form-control", @id = "txtVoucherNo" })
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane">
+					<div class="row">
+						<div class="col-sm-12">
+							<div>
+								<table id="dtTripsheetList"></table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane">
+					<div class="row">
+						<div class="col-sm-12">
+							<div>
+								<table id="dtDriverAdvanceList"></table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane">
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="form-group">
+								@Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CancelDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.CancelDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = false })
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								@Html.LabelFor(model => model.CancelReason, new { @class = "label" })
+								<div class="input-wrapper">
+									@Html.TextBoxFor(model => model.CancelReason, new { @class = "form-control" })
+								</div>
+								@Html.ValidationMessageFor(model => model.CancelReason)
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>}
+	</div>
+</div>

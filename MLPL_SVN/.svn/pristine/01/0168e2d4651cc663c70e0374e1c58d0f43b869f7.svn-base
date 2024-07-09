@@ -1,0 +1,151 @@
+﻿@model IEnumerable<CodeLock.Models.MasterCharge>
+
+@{
+    ViewBag.Title = "View";
+    Layout = null;
+}
+<style>
+    @@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700');
+
+    $base-spacing-unit: 24px;
+    $half-spacing-unit: $base-spacing-unit / 2;
+
+    $color-alpha: #1772FF;
+    $color-form-highlight: #EEEEEE;
+
+    *, *:before, *:after {
+        box-sizing: border-box;
+    }
+
+    body {
+        padding: $base-spacing-unit;
+        font-family: 'Source Sans Pro', sans-serif;
+        margin: 0;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        margin: 0;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin-right: auto;
+        margin-left: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .table {
+        width: 100%;
+        border: 1px solid $color-form-highlight;
+    }
+
+    .table-header {
+        display: flex;
+        width: 100%;
+        background: #000;
+        padding: ($half-spacing-unit * 1.5) 0;
+    }
+
+    .table-row {
+        display: flex;
+        width: 100%;
+        padding: ($half-spacing-unit * 1.5) 0;
+        &:nth-of-type(odd)
+
+    {
+        background: $color-form-highlight;
+    }
+
+    }
+
+    .table-data, .header__item {
+        flex: 1 1 20%;
+        text-align: center;
+    }
+
+    .header__item {
+        text-transform: uppercase;
+    }
+
+    .filter__link {
+        color: white;
+        text-decoration: none;
+        position: relative;
+        display: inline-block;
+        padding-left: $base-spacing-unit;
+        padding-right: $base-spacing-unit;
+        &::after
+
+    {
+        content: '';
+        position: absolute;
+        right: -($half-spacing-unit * 1.5);
+        color: white;
+        font-size: $half-spacing-unit;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    &.desc::after {
+        content: '(desc)';
+    }
+
+    &.asc::after {
+        content: '(asc)';
+    }
+
+    }
+
+    .table-header {
+        display: flex;
+        width: 100%;
+        background: silver;
+        color: #000;
+        padding: ($half-spacing-unit * 1.5) 0;
+    }
+</style>
+
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <br />
+        <div><b>Charges Detail</b> </div>
+        <br />
+        <div class="container">
+
+            <div class="table">
+                <div class="table-header">
+                    <div class="header__item"><a id="name" class="filter__link" href="#">Docket No</a></div>
+                    <div class="header__item"><a id="name" class="filter__link" href="#">Charge Name</a></div>
+                    <div class="header__item"><a id="total" class="filter__link filter__link--number" href="#">Amount</a></div>
+                </div>
+                <div class="table-content">
+
+                    @foreach (var item in Model)
+                    {
+                        <div class="table-row">
+                            <div class="table-data"> @Html.DisplayFor(modelItem => item.ChargeDocketNo)</div>
+                            <div class="table-data"> @Html.DisplayFor(modelItem => item.ChargeName)</div>
+                            <div class="table-data"> @Html.DisplayFor(modelItem => item.ChargeAmount)</div>
+                        </div>
+
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+<script>
+            $(document).ready(function () {
+                docketNomenclature = '@SessionUtility.DocketNomenClature';
+                SetPageLoad(docketNomenclature, 'View Detail', '', 'Add New', '@Url.Action("Insert")');
+
+            }
+
+</script>
+
+

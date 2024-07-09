@@ -1,0 +1,81 @@
+﻿@model CodeLock.Models.VendorBillUpload
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms", enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="unit">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.File, new { @class = "control-label" })
+                        <div class="input prepend-big-btn">
+                            <label class="icon-right" for="prepend-big-btn">
+                                <i class="fa fa-download"></i>
+                            </label>
+                            <div class="file-button">
+                                Browse
+                                @Html.TextBoxFor(m => Model.File, null, new { @class = "form-control", @id = "fuAttachment", @type = "file", @onchange = "$('#prepend-big-btn').val($(this).val())" })
+                            </div>
+                            <input class="form-control" type="text" id="prepend-big-btn" readonly="" placeholder="no file selected">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn">Upload</button>
+        </div>
+    </div>
+    <div class="overflow-table" id="dvResult">
+        <table class="display" id="dtVehicle">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Details.FirstOrDefault().ManualBillNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Details.FirstOrDefault().BillDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Details.FirstOrDefault().DueDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Details.FirstOrDefault().VendorCode)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Details)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ManualBillNo)
+                        </td>
+                        <td>
+                            @item.BillDate.ToDisplayDate()
+                        </td>
+                        <td>
+                            @item.DueDate.ToDisplayDate()
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VendorCode)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        var msg = '@Model.ErrorMessage';
+        if (msg != '')
+            ShowMessage(msg);
+        SetPageLoad('Vendor Bill Upload', '', 'File');
+
+        $('#dvResult').showHide(parseInt('@Model.Details.Count') > 0);
+        LoadDataTable('dtVehicle', true, true, true);
+    });
+</script>

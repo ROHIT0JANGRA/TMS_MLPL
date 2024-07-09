@@ -1,0 +1,441 @@
+﻿@model CodeLock.Models.CustomerPickup
+@using CodeLock.Helper
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "CustomerPickup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("CustomerPickup", "CustomerPanel", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            @*<div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PurchaseOrderNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.PurchaseOrderId, new { @id = "hdnPurchaseOrderId" })
+                            @Html.TextBoxFor(model => model.PurchaseOrderNo, null, new { @class = "form-control", @id = "txtPurchaseOrderNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PurchaseOrderNo)
+                    </div>
+                </div>*@
+            <div class="col-sm-2" id="dvComputerized">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PurchaseOrderNo, new { @class = "label" })
+                    <div class="system-label">
+                        @Html.LabelFor(model => model.PurchaseOrderNo, "<System Generated>")
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "PurchaseOrderDate", FieldCaption = "Purchase Order Date", IsRequired = true, IsDateOnly = true, AllowFutureDate = false, AllowPastDate = false })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SupplierName, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.SupplierName, "RASAYAN LIFESTYLES PVT. LTD", new { @class = "label-bold", @id = "lblSupplierName" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OriginId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.OriginId, new SelectList(ViewBag.CityList, "Value", "Name"), new { @class = "form-control", @id = "ddlOriginId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.OriginId)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DestinationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.DestinationId, new SelectList(ViewBag.CityList, "Value", "Name"), new { @class = "form-control", @id = "ddlDestinationId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DestinationId)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SupplierCityId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.SupplierCityId, new SelectList(ViewBag.CityList, "Value", "Name"), new { @class = "form-control", @id = "ddlSupplierCityId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SupplierCityId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.WarehouseId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.WarehouseId, new SelectList(ViewBag.WarehouseList, "Value", "Name"), new { @class = "form-control", @id = "ddlWarehouseId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.WarehouseId)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OrderBy, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.OrderBy, null, new { @class = "form-control", @id = "txtOrderBy" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.OrderBy)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MobileNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MobileNo, null, new { @class = "form-control", @maxlength = "15", @id = "txtMobileNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MobileNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Remarks, null, new { @class = "form-control", @id = "txtRemarks" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Remarks)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TotalOrderQuantity, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.TotalOrderQuantity, null, new { @class = "form-control numeric", @id = "txtTotalOrderQuantity" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TotalOrderQuantity)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PickedQuantity, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PickedQuantity, null, new { @class = "form-control numeric", @id = "txtPickedQuantity" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PickedQuantity)
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BalanceQuantity, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BalanceQuantity, null, new { @class = "form-control numeric", @id = "txtBalanceQuantity" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BalanceQuantity)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsAddNew, new { @id = "chkIsAddNew" })
+                        <i></i>
+                        @Html.LabelFor(model => model.IsAddNew, new { @class = "label", @for = "chkIsAddNew" })
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsPrintSticker, new { @id = "chkIsPrintSticker" })
+                        <i></i>
+                        @Html.LabelFor(model => model.IsPrintSticker, new { @class = "label", @for = "chkIsPrintSticker" })
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Invoice Details</div>
+        <div class="row" id="dvCustomerPickupDetail">
+            <div class="col-sm-12">
+                <table id="dtCustomerPickupDetail" class="table-bordered">
+                    <thead>
+                        <tr>
+                            <th width="8%" data-sort-ignore="true">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().PickupNo)
+                            </th>
+                            <th width="8%" data-sort-ignore="true">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().Origin)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().CDNo)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().ConsignorReferanceNo)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().TransportModeType)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().InvoiceNo)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().InvoiceDate)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().InvoiceValue)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().EwayBillNo)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().EwayBillExpiryDate)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().PickupDate)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().PickupTime)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().PickupQuantity)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().NoOfBoxes)
+                            </th>
+                            <th width="8%" data-sort-ignore="true" data-hide="phone">
+                                @Html.DisplayNameFor(model => model.CustomerPickupDetails.FirstOrDefault().Status)
+                            </th>
+                            <th width="10%" data-sort-ignore="true" data-hide="phone">
+                                Invoice Detail
+                            </th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.CustomerPickupDetails.Count; i++)
+                        {
+                            var item = Model.CustomerPickupDetails.ToList()[i];
+                        <tr>
+                            <td>
+                                @Html.TextBoxFor(m => item.PickupNo, new { @class = "form-control", id = "txtPickupNo" + i.ToString(), @Name = "CustomerPickupDetails[" + i + "].PickupNo" })
+                                @Html.ValidationMessage("CustomerPickupDetails[" + i + "].PickupNo")
+                            </td>
+                            <td>
+                            <div class="select">
+                                @Html.DropDownListFor(m => item.OriginId, new SelectList(ViewBag.CityList, "Value", "Name"), new { @class = "form-control", @id = "ddlOriginId" + i.ToString(), @Name = "CustomerPickupDetails[" + i + "].ddlOriginId" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessage("CustomerPickupDetails[" + i + "].OriginId")
+                            </td>
+
+                            <td>
+                                @Html.TextBoxFor(m => item.CDNo, new { @class = "form-control", id = "txtCDNo" + i.ToString(), @Name = "CustomerPickupDetails[" + i + "].CDNo" })
+                                @Html.ValidationMessage("CustomerPickupDetails[" + i + "].CDNo")
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => item.ConsignorReferanceNo, new { @class = "form-control", id = "txtConsignorReferanceNo" + i.ToString(), @Name = "CustomerPickupDetails[" + i + "].ConsignorReferanceNo" })
+                                @Html.ValidationMessage("CustomerPickupDetails[" + i + "].ConsignorReferanceNo")
+                            </td>
+                            <td>
+                                <div class="select">
+                                    @Html.DropDownListFor(m => item.TransportModeTypeId, new SelectList(ViewBag.ModeTypeList, "Value", "Name"), "Select Mode Type", new { @class = "form-control", @id = "ddlTransportModeTypeId" + i.ToString(), @Name = "CustomerPickupDetails[" + i + "].TransportModeTypeId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessage("CustomerPickupDetails[" + i + "].TransportModeTypeId")
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => item.InvoiceNo, new { @class = "form-control", id = "txtInvoiceNo" + i.ToString(), @Name = "CustomerPickupDetails[" + i + "].InvoiceNo" })
+                                @Html.ValidationMessage("CustomerPickupDetails[" + i + "].InvoiceNo")
+                            </td>
+                            <td>
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CustomerPickupDetails[" + i + "].InvoiceDate", FieldCaption = @Html.DisplayNameFor(m => item.InvoiceDate).ToString(), UseFieldCaption = false, IsRequired = true, IsDateOnly = true, AllowFutureDate = false, AllowPastDate = true })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => item.InvoiceValue, new { @class = "form-control numeric2", id = "txtInvoiceValue" + i.ToString(), @Name = "CustomerPickupDetails[" + i + "].InvoiceValue", @Value = "0" })
+                                @Html.ValidationMessage("CustomerPickupDetails[" + i + "].InvoiceValue")
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => item.EwayBillNo, new { @class = "form-control", id = "txtEwayBillNo" + i.ToString(), @Name = "CustomerPickupDetails[" + i + "].EwayBillNo" })
+                                @Html.ValidationMessage("CustomerPickupDetails[" + i + "].EwayBillNo")
+                            </td>
+                            <td>
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CustomerPickupDetails[" + i + "].EwayBillExpiryDate", FieldCaption = @Html.DisplayNameFor(m => item.EwayBillExpiryDate).ToString(), UseFieldCaption = false, IsRequired = false, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = true })
+                            </td>
+                            <td>
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CustomerPickupDetails[" + i + "].PickupDate", FieldCaption = @Html.DisplayNameFor(m => item.PickupDate).ToString(), UseFieldCaption = false, IsRequired = true, IsDateOnly = true, AllowFutureDate = false, AllowPastDate = true })
+                            </td>
+                            <td>
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "CustomerPickupDetails[" + i + "].PickupTime", FieldCaption = @Html.DisplayNameFor(m => item.PickupTime).ToString(), UseFieldCaption = false, IsRequired = true, IsTimeOnly = true, AllowFutureDate = false, AllowPastDate = true })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => item.PickupQuantity, new { @class = "form-control numeric", id = "txtPickupQuantity" + i.ToString(), @Name = "CustomerPickupDetails[" + i + "].PickupQuantity", @Value = "0" })
+                                @Html.ValidationMessage("CustomerPickupDetails[" + i + "].PickupQuantity")
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => item.NoOfBoxes, new { @class = "form-control numeric", id = "txtNoOfBoxes" + i.ToString(), @Name = "CustomerPickupDetails[" + i + "].NoOfBoxes", @Value = "0" })
+                                @Html.ValidationMessage("CustomerPickupDetails[" + i + "].NoOfBoxes")
+                            </td>
+                            <td>
+                                @Html.LabelFor(m => item.Status, " ", new { @class = "label", id = "lblStatus" + i.ToString(), @Name = "CustomerPickupDetails[" + i + "].Status" })
+                            </td>
+                            <td>
+                                <div id="dvAddInvoiceDetail_@i.ToString()">
+                                </div>
+                                <button type="button" id="btnAddInvoiceDetail_@i.ToString()" onclick="return AddInvoiceDetail(this)" class="btn btn-primary">Invoice Detail</button>
+                            </td>
+                            <td></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Submit</button>
+            <button type="reset" id="btnClear" class="btn btn-primary primary-btn">Clear</button>
+        </div>
+
+        <div class="modal scale fade" id="largeModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="page-separator">Invoice Details For Invoice</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped table-condensed cf" id="dtInvoiceDetails">
+                                        <thead class="cf">
+                                            <tr>
+                                                <th>Brand Name</th>
+                                                <th>Gender</th>
+                                                <th>Style ID</th>
+                                                <th>Artical Name</th>
+                                                <th>Quantity</th>
+                                                <th>Remark</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.InvoiceDetails.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="select">
+                                                            @Html.DropDownListFor(model => model.InvoiceDetails[i].BrandId, new SelectList(ViewBag.BrandList, "Value", "Name") ,"Select Brand", new { @class = "form-control", @id = "ddlInvoiceDetailsBrandId" + i.ToString() })
+                                                            <i></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="select">
+                                                            @Html.DropDownListFor(model => model.InvoiceDetails[i].GenderId, new SelectList(ViewBag.GenderList, "Value", "Name"), "Select Gender", new { @class = "form-control", @id = "ddlInvoiceDetailsGenderId" + i.ToString() })
+                                                            <i></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input">
+                                                            @Html.TextBoxFor(m => Model.InvoiceDetails[i].StyleId, new { @class = "form-control", @id = "txtInvoiceDetailsStyleId" + i.ToString() })
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="select">
+                                                            @Html.DropDownListFor(model => model.InvoiceDetails[i].ArticalId,new SelectList(ViewBag.ArticalList, "Value", "Name"), "Select Artical", new { @class = "form-control", @id = "ddlInvoiceDetailsArticalId" + i.ToString() })
+                                                            <i></i>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input">
+                                                            @Html.TextBoxFor(model => model.InvoiceDetails[i].Quantity, new { @class = "form-control numeric", @id = "txtInvoiceDetailsQuantity" + i.ToString() })
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input">
+                                                            @Html.TextBoxFor(model => model.InvoiceDetails[i].Remark, new { @class = "form-control", @id = "txtInvoiceDetailsRemark" + i.ToString() })
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-footer">
+                            <button type="button" class="btn btn-success primary-btn" id="btnPopup">Create</button>
+                            <button type="reset" value="Reset" class="btn btn-flat btn-default btn-ripple" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div><!--.modal-content-->
+            </div><!--.modal-dialog-->
+        </div>
+    </div>
+}
+
+<script>
+    var btnPopup;
+    var invoiceObjectId = '';
+    $(document).ready(function () {
+        SetPageLoad('Customer Panel', 'Customer Pickup', '', '', '');
+        //InitObjects();
+        //AttachEvents();
+        InitGrid('dtCustomerPickupDetail', false, 16, InitCustomerPickupDetailTable, false);
+        btnPopup = $('#btnPopup');
+        btnPopup.click(OnPopupClick);
+        InitGrid('dtInvoiceDetails', false, 6, InitInvoiceTable, false);
+    });
+
+    function InitCustomerPickupDetailTable() {
+
+    }
+
+    function AddInvoiceDetail(obj) {
+        invoiceObjectId = obj.Id;
+        $('.modal').modal('show');
+        return false;
+    }
+
+    function InitInvoiceTable() {
+
+    }
+
+    function OnPopupClick() {
+        var dvAddInvoiceDetail = $('#' + invoiceObjectId.replace('btnAddInvoiceDetail', 'dvAddInvoiceDetail'));
+        var htmlText = '<div>';
+        var j = 0;
+        $('[id*=ddlInvoiceDetailsBrandId]').each(function () {
+            var ddlInvoiceDetailsBrandId = $(this);
+            var ddlInvoiceDetailsGenderId = $('#' + ddlInvoiceDetailsBrandId.Id.replace('ddlInvoiceDetailsBrandId', 'ddlInvoiceDetailsGenderId'));
+            var txtInvoiceDetailsStyleId = $('#' + ddlInvoiceDetailsBrandId.Id.replace('ddlInvoiceDetailsBrandId', 'txtInvoiceDetailsStyleId'));
+            var ddlInvoiceDetailsArticalId = $('#' + ddlInvoiceDetailsBrandId.Id.replace('ddlInvoiceDetailsBrandId', 'ddlInvoiceDetailsArticalId'));
+            var txtInvoiceDetailsQuantity = $('#' + ddlInvoiceDetailsBrandId.Id.replace('ddlInvoiceDetailsBrandId', 'txtInvoiceDetailsQuantity'));
+            var txtInvoiceDetailsRemark = $('#' + ddlInvoiceDetailsBrandId.Id.replace('ddlInvoiceDetailsBrandId', 'txtInvoiceDetailsRemark'));
+            htmlText = htmlText + "<input type='hidden' value='" + ddlInvoiceDetailsBrandId.val() + "' name='CustomerPickupDetails[" + i + "].CustomerPickupInvoiceDetails[" + j + "].BrandId' id='hdnBrandId" + i + "_" + j + "'/>" +
+                "<input type='hidden' value='" + ddlInvoiceDetailsGenderId.val() + "' name='CustomerPickupDetails[" + i + "].CustomerPickupInvoiceDetails[" + j + "].GenderId' id='hdnGenderId" + i + "_" + j + "'/>" +
+                "<input type='hidden' value='" + txtInvoiceDetailsStyleId.val() + "' name='CustomerPickupDetails[" + i + "].CustomerPickupInvoiceDetails[" + j + "].StyleId' id='hdnStyleId" + i + "_" + j + "'/>" +
+                "<input type='hidden' value='" + ddlInvoiceDetailsArticalId.val() + "' name='CustomerPickupDetails[" + i + "].CustomerPickupInvoiceDetails[" + j + "].ArticalId' id='hdnArticalId" + i + "_" + j + "'/>" +
+                "<input type='hidden' value='" + txtInvoiceDetailsQuantity.val() + "' name='CustomerPickupDetails[" + i + "].CustomerPickupInvoiceDetails[" + j + "].Quantity' id='hdnQuantity" + i + "_" + j + "'/>" +
+                "<input type='hidden' value='" + txtInvoiceDetailsRemark.val() + "' name='CustomerPickupDetails[" + i + "].CustomerPickupInvoiceDetails[" + j + "].Remark' id='hdnRemark" + i + "_" + j + "'/>";
+            j = j + 1;
+        });
+        htmlText = htmlText + '</div>';
+        dvAddInvoiceDetail.html(htmlText);
+        $('.modal').modal('hide');
+    }
+</script>

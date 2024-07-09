@@ -1,0 +1,329 @@
+﻿@using CodeLock.Models
+@model ContraVoucher
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("ContraVoucher", "Accounts", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VoucherNo, new { @class = "label" })
+                    <div class="system-label">
+                        @Html.Label("<System Generated>")
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "VoucherDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.VoucherDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ManualNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(m => m.ManualNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.ManualNo)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ReferenceNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(m => m.ReferenceNo, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(m => m.LocationId, new { @Value = @SessionUtility.LoginLocationId })
+                        @Html.LabelFor(model => model.LocationCode, @SessionUtility.LoginLocationCode, new { @class = "label-bold" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Narration, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(m => m.Narration, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Narration)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div>
+                    <table id="dtDetails">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Payment Mode
+                                </th>
+                                <th>
+                                    Account Code
+                                </th>
+                                <th>
+                                    Debit
+                                </th>
+                                <th>
+                                    Credit
+                                </th>
+                                <th>
+                                    Cheque No
+                                </th>
+                                <th>
+                                    Cheque Date
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Details.Count; i++)
+                            {
+                                var j = i.ToString();
+                            <tr>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(m => Model.Details[i].PaymentMode, new List<SelectListItem>
+                                                { new SelectListItem{Text="Cash", Value="1"},
+                                                  new SelectListItem{Text="Bank", Value="2"}}, "Select", new { @class = "form-control", @id = "ddlPaymentMode" + j })
+                                        <i></i>
+                                        <div>
+                                            @Html.ValidationMessageFor(m => m.Details[i].PaymentMode)
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(m => Model.Details[i].AccountId, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "form-control", @id = "ddlAccountId" + j })
+                                        <i></i>
+                                        <div>
+                                            @Html.ValidationMessageFor(m => m.Details[i].AccountId)
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].Debit, new { @class = "form-control numeric2", @id = "txtDebit" + j, @Name = "Details[" + j + "].Debit" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.Details[i].Debit)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].Credit, new { @class = "form-control numeric2", @id = "txtCredit" + j, @Name = "Details[" + j + "].Credit" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.Details[i].Credit)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].ChequeRefNo, new { @class = "form-control", @id = "txtChequeRefNo" + j, @name = "Details[" + j + "].ChequeRefNo" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.Details[i].ChequeRefNo)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @*@Html.TextBoxFor(m => Model.Details[i].ChequeRefDate, new { @class = "form-control datepicker", id = "txtChequeRefDate" + i.ToString() })*@
+                                        @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "Details[" + j + "].ChequeRefDate", FieldCaption = @Html.DisplayNameFor(m => Model.Details[i].ChequeRefDate).ToString(), UseFieldCaption = false, IsRequired = true, IsDateOnly = true, AllowFutureDate = false, AllowPastDate = true })
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <div class="row">
+                <div class="col-sm-12">
+                    <input type="submit" value="Submit" class="btn btn-success primary-btn" id="btnSubmit" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    var currentDate, dateTimeFormat, btnSubmit;
+    $(document).ready(function () {
+        SetPageLoad('Contra', 'Voucher', '', '', '');
+        dtDetails = LoadDataTable('dtDetails', false, false, false);
+        dtDetails.dtAddData([], null, null);
+        accountCodeListForPaymentModeBank = JSON.parse('@Html.Raw(ViewBag.AccountCodeListForPaymentModeBank)');
+        currentDate = '@DateTime.Now';
+        dateTimeFormat = '@ConfigHelper.JsDateFormat';
+        Init();
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+    });
+
+    function Init() {
+        $('[id*="ddlPaymentMode"]').each(function () {
+            var ddlPaymentMode = $(this);
+            var ddlAccountId = $('#' + this.id.replace('ddlPaymentMode', 'ddlAccountId'));
+            var txtChequeRefNo = $('#' + this.id.replace('ddlPaymentMode', 'txtChequeRefNo'));
+            var txtChequeRefDate = $('#' + this.id.replace('ddlPaymentMode', 'txtChequeRefDate'));
+            var txtDebit = $('#' + this.id.replace('ddlPaymentMode', 'txtDebit'));
+            var txtCredit = $('#' + this.id.replace('ddlPaymentMode', 'txtCredit'));
+            InitDateTimePicker(txtChequeRefDate.Id, false, true, true, currentDate, dateTimeFormat, '', '');
+            ddlPaymentMode.change(OnPaymentModeChange);
+            ddlAccountId.change(OnAccountChange);
+            txtDebit.change(OnDebitAmountChange);
+            txtCredit.change(OnCreditAmountChange);
+
+            function OnDebitAmountChange() {
+                if (parseFloat(txtDebit.val()) != 0)
+                    txtCredit.val(0);
+                CommanFunction();
+            }
+
+            function OnCreditAmountChange() {
+                if (parseFloat(txtCredit.val()) != 0)
+                    txtDebit.val(0);
+                CommanFunction();
+            }
+
+            function CommanFunction() {
+                if (ddlPaymentMode.val() == 1) {
+                    txtChequeRefNo.disable();
+                    txtChequeRefDate.disable();
+                }
+                else {
+
+                    txtChequeRefNo.enable();
+                    txtChequeRefDate.enable();
+                    
+                  /*if (parseFloat(txtDebit.val()) != 0) {
+                        txtChequeRefNo.disable();
+                        txtChequeRefDate.disable();
+                    }
+                    else {
+                        txtChequeRefNo.enable();
+                        txtChequeRefDate.enable();
+                    }*/
+                }
+            }
+
+            function OnPaymentModeChange() {
+                var ddlNextPaymentMode = ddlPaymentMode.parents('tr').next().find('[id*="ddlPaymentMode"]');
+                var ddlPreviousPaymentMode = ddlPaymentMode.parents('tr').prev().find('[id*="ddlPaymentMode"]')
+                if (ddlPaymentMode.val() == 1) {
+                    txtChequeRefNo.val('');
+                    txtChequeRefDate.val('');
+                    if (ddlPreviousPaymentMode.val() == ddlPaymentMode.val()) {
+                        ShowMessage('Paymode Cash to Cash not Possible');
+                        ddlPaymentMode.val('');
+                        
+                        return false;
+                    }
+                    else if (ddlNextPaymentMode.val() == ddlPaymentMode.val()) {
+                        ShowMessage('Paymode Cash to Cash not Possible');
+                        ddlPaymentMode.val('');
+                        return false;
+                    }
+                    else {
+                        BindAccountDropDown(ddlAccountId, 5, 'Cash');
+                        ddlAccountId.val('');
+                        txtChequeRefNo.disable();
+                        txtChequeRefDate.disable();
+                        AddRequired(ddlAccountId, 'Please select Account');
+                    }
+                }
+                else if (ddlPaymentMode.val() == 2) {
+                    BindAccountDropDown(ddlAccountId, 6, 'Bank');
+                    AddRequired(txtChequeRefNo, 'Please enter Cheque Reference No');
+                    AddRequired(txtChequeRefDate, 'Please select Cheque Date');
+                    txtChequeRefNo.enable();
+                    txtChequeRefDate.enable();
+                   /* if (ddlPreviousPaymentMode.val() == ddlPaymentMode.val()) {
+                        ShowMessage('Paymode Bank to Bank not Possible');
+                        ddlPaymentMode.val('');
+                        return false;
+                    }
+                    else if (ddlNextPaymentMode.val() == ddlPaymentMode.val()) {
+                        ShowMessage('Paymode Bank to Bank not Possible');
+                        ddlPaymentMode.val('');
+                        return false;
+                    }
+                    else
+                    {
+                        BindAccountDropDown(ddlAccountId, 6, 'Bank');
+                        AddRequired(txtChequeRefNo, 'Please enter Cheque Reference No');
+                        AddRequired(txtChequeRefDate, 'Please select Cheque Date');
+                        txtChequeRefNo.enable();
+                        txtChequeRefDate.enable();
+                    }*/
+                    
+                }
+                else {
+                    ddlAccountId.empty();
+                    ddlAccountId.append($("<option></option>").val('').html('Select'));
+                    ddlAccountId.val('');
+                    RemoveRequired(txtChequeRefNo);
+                    RemoveRequired(ddlAccountId);
+                    RemoveRequired(txtChequeRefDate);
+                }
+                CommanFunction();
+            }
+
+            function OnAccountChange() {
+                var ddlNextAccountId = ddlAccountId.parents('tr').next().find('[id*="ddlAccountId"]');
+                var ddlPreviousAccountId = ddlAccountId.parents('tr').prev().find('[id*="ddlAccountId"]')
+                if (ddlPaymentMode.val() == 2) {
+                    if (ddlPreviousAccountId.val() == ddlAccountId.val()) {
+                        ShowMessage('Please select different Bank');
+                        ddlAccountId.val('');
+                        return false;
+                    }
+                    else if (ddlNextAccountId.val() == ddlAccountId.val()) {
+                        ShowMessage('Please select different Bank');
+                        ddlAccountId.val('');
+                        return false;
+                    }
+                }
+            }
+        });
+    }
+
+    function BindAccountDropDown(ddl, category, type) {
+        AjaxRequestWithPostAndJson('@Url.Action("GetListByCategory","Account",new{ Area="Master"})', JSON.stringify({ categoryId: category }), function (result) {
+            BindDropDownList(ddl.Id, result, 'Value', 'Description', '', type + ' Account');
+        }, ErrorFunction, false);
+    }
+
+    function OnSubmit() {
+        $('[id*="txtDebit"]').each(function () {
+            var txtDebit = $(this);
+            var txtCredit = $('#' + this.id.replace('txtDebit', 'txtCredit'));
+            if (parseFloat(txtCredit.val()) == 0 && parseFloat(txtDebit.val()) == 0) {
+                txtCredit.focus();
+                ShowMessage('Please enter Credit or Debit');
+                return false;
+            }
+        });
+
+        var totalDebitAmount = 0, totalCreditAmount = 0;
+        $('[id*="txtDebit"]').each(function () {
+            var txtDebit = $(this);
+            var txtCredit = $('#' + this.id.replace('txtDebit', 'txtCredit'));
+            if (txtDebit.val() != '')
+                totalDebitAmount = totalDebitAmount + parseFloat(txtDebit.val());
+            if (txtCredit.val() != '')
+                totalCreditAmount = totalCreditAmount + parseFloat(txtCredit.val());
+        });
+        if (totalDebitAmount != totalCreditAmount) {
+            ShowMessage('Debit and Credit should be equal');
+            return false;
+        }
+    }
+</script>

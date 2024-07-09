@@ -1,0 +1,55 @@
+﻿//  
+// Type: CodeLock.Areas.WMS.Repository.IPickRepository
+//  
+//  
+//  
+
+using CodeLock.Models;
+using System;
+using System.Collections.Generic;
+
+namespace CodeLock.Areas.WMS.Repository
+{
+  public interface IPickRepository : IDisposable
+  {
+    IEnumerable<Order> GetOrderListForPick(
+      byte companyId,
+      short warehouseId,
+      string orderNo,
+      string invoiceNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate);
+
+    IEnumerable<PickDetail> GetOrderDetails(
+      byte companyId,
+      short warehouseId,
+      long id);
+        IEnumerable<PickDetail> GetPickDetails(
+          byte companyId,
+          short warehouseId,
+          string id);
+        Response Insert(Pick objPick);
+
+    IEnumerable<PickRegister> GetRegisterPickDetail(
+      string pickNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate);
+
+    IEnumerable<Pick> GetPickListForUpdate(
+      byte companyId,
+      short warehouseId,
+      string pickNo,
+      string orderNo,
+      string invoiceNo,
+      DateTime fromDate,
+      DateTime toDate,
+      DateTime finStartDate,
+      DateTime finEndDate);
+
+    Response Update(Pick objPick);
+  }
+}

@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewBag.Title = "VehicleMaintenanceDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    
+    <div id="dvTripsheetDetails">
+        <div class="col-sm-2">
+            <h4>Vehicle Maintenance Updated</h4>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                @Html.ActionLink("Go Back", "VehicleMaintenance", "Tripsheet")
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="widget-wrap material-table-widget">
+        <table id="dtDetails1" class="table-bordered"></table>
+    </div>
+</div>
+<script>
+    baseUrl = '@Url.Action("", "Tripsheet")';
+
+</script>
+<script src="@Url.Content("~/Areas/FMS/Views/Tripsheet/VehicleMaintenanceDone.js")"></script>
+
+<script>
+    var status = "";
+    $(document).ready(function () {
+        lblDocumentNo = $('#lblDocumentNo');
+        hdnDocumentId = $('#hdnDocumentId');
+        //spnMassage = $('#spnMassage');
+
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        lblDocumentNo.val(GetUrlValue()["documentNo"]);
+        hdnDocumentId.val(GetUrlValue()["documentId"]);
+        status = GetUrlValue()["status"];
+        currentDomain = '@Url.Content("~")';
+
+    });
+</script>
+
+

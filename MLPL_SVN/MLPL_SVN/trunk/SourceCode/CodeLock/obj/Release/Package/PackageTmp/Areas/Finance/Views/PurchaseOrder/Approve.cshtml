@@ -1,0 +1,110 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.PurchaseOrderApprove
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+       
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        baseUrl = '@Url.Action("", "PurchaseOrder", new { Area = "Finance" })';
+        purchaseOrderModuleId = '@ModuleHelper.PurchaseOrder';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Finance/Views/PurchaseOrder/Approve.js")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Approve", "PurchaseOrder", FormMethod.Post, new { @class = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("PO Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drPoDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorId, new { @class = "label" })
+                                <div class="input-wrapper">
+                                    @Html.HiddenFor(m => m.VendorId, new { @id = "hdnVendorId" })
+                                    @Html.TextBoxFor(model => model.VendorCode, new { @class = "form-control", @id = "txtVendorCode" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.VendorName, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @class = "label-bold", @id = "lblName" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PoNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.PoNo, new { @class = "form-control", @id = "txtPoNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualPoNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualPoNo, new { @class = "form-control", @id = "txtManualPoNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "ApproveDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.ApproveDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsDateOnly = false })
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtPoList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

@@ -1,0 +1,151 @@
+﻿@model CodeLock.Models.MasterCustomerAddressMapping
+
+@{
+    ViewBag.Title = "CustomerAddress Mapping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Mapping", "CustomerAddress", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CountryId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CountryId, new SelectList(ViewBag.CountryList, "Value", "Name"), "Select Country", new { @class = "form-control", @id = "ddlCountry" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CountryId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StateId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.StateId, new SelectList(ViewBag.StateList, "Value", "Name"), new { @class = "form-control", @id = "ddlState" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StateId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CityId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CityId, new SelectList(ViewBag.CityList, "Value", "Name"), new { @class = "form-control", @id = "ddlCity" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CityId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CustomerId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Customer", new { @class = "form-control", @id = "ddlCustomer" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CustomerId)
+                </div>
+            </div>
+        </div>
+        <div class="overflow-table">
+            <table class="display" id="dtMapping"></table>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+<script>
+    var dtMapping, ddlCustomer;
+    $(document).ready(function () {
+        dtMapping = LoadDataTable('dtMapping', false, false, false, null, null, [],
+            [
+                { title: '@Html.DisplayNameFor(model => model.Address)', data: "AddressId" },
+                { title: '@Html.DisplayNameFor(model => model.AddressCode)', data: "AddressCode" },
+                { title: '@Html.DisplayNameFor(model => model.Pincode)', data: "Pincode" }
+            ]);
+
+
+        ddlCustomer = $('#ddlCustomer');
+        ddlCity = $('#ddlCity');
+        $('#ddlCountry').change(OnCountryChange);
+        $('#ddlState').change(OnStateChange);
+        $('#ddlCity').change(GetAddressList);
+        $('#ddlCustomer').change(GetAddressList);
+        SetPageLoad('Customer to Address', 'Mapping', ddlCustomer.attr('id'), 'Go To List', '@Url.Action("Index")');
+        GetAddressList();
+        OnCountryChange();
+        $('#btnSubmit').click(OnSubmit);
+    });
+
+    function OnCountryChange() {
+        if ($('#ddlCountry').val() != "") {
+            var requestData = { countryId: $('#ddlCountry').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetStateListByCountryId", "State")', JSON.stringify(requestData), GetStateListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetStateListSuccess(responseData) {
+        BindDropDownList('ddlState', responseData, 'Value', 'Name', '', 'Select State');
+    }
+
+    function OnStateChange() {
+        if ($('#ddlState').val() != "") {
+            var requestData = { stateId: $('#ddlState').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetCityListByStateId", "City")', JSON.stringify(requestData), GetCityListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetCityListSuccess(responseData) {
+        BindDropDownList('ddlCity', responseData, 'Value', 'Name', '', 'Select City');
+    }
+
+    function GetAddressList() {
+        if (($('#ddlCity').val() != "") && $('#ddlCustomer').val() != "") {
+            var requestData = { cityId: $('#ddlCity').val(), customerId: $('#ddlCustomer').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetMappingByCustomerIdCityId", "CustomerAddress")', JSON.stringify(requestData), GetAddressListSuccess, ErrorFunction, false);
+        }
+        else GetAddressListSuccess([])
+    }
+
+    function GetAddressListSuccess(responseData) {
+        dtMapping.fnClearTable();
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.AddressId =
+                    "<label class='checkbox'>" +
+                    "<input type='checkbox' class='addressRow' name='AddressList[" + i + "].IsActive' id='AddressList[" + i + "].IsActive'  onclick='SetCheck(this)' value='" + item.IsActive + "'" + (item.IsActive ? "checked" : "") + "/><i></i>  " +
+                    "<input type='hidden' name='AddressList[" + i + "].AddressId' value='" + item.AddressId + "' />" +
+                    "<label class='label' for='AddressList[" + i + "].IsActive'>" + item.Address + "</label>" +
+                    "</label>"
+            });
+            dtMapping.fnAddData(responseData);
+        }
+        else
+        {
+            if (($('#ddlCity').val() != "") && $('#ddlCustomer').val() != "") {
+                ShowMessage("Please enter Address for selected City");
+                return false;
+            }
+        }
+    }
+
+    function SetCheck(obj) {
+        obj.value = obj.checked;
+    }
+
+    function OnSubmit()
+    {
+        if (($('#ddlCity').val() != "") && $('#ddlCustomer').val() != "") {
+            var table = $('#dtMapping').DataTable();
+            if (!table.data().any()) {
+                ShowMessage("Please enter Address for selected City");
+                return false;
+            }
+        }
+    }
+</script>

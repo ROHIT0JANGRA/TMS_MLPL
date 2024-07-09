@@ -1,0 +1,398 @@
+﻿@model CodeLock.Models.MasterDriver
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DriverCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.DriverCode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DriverName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.DriverName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ManualDriverCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ManualDriverCode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DriverFatherName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.DriverFatherName)
+                </dd>
+            </dl>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VehicleNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VehicleNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DriverLocationCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.DriverLocationCode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MobileNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MobileNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.PermanentAddress)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.PermanentAddress)
+                </dd>
+            </dl>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.PermanentCityName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.PermanentCityName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.PermanentPincode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.PermanentPincode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UsePermanentAddressAsCurrentAddress)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.UsePermanentAddressAsCurrentAddress)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.CurrentAddress)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurrentAddress)
+                </dd>
+            </dl>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.CurrentCityName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurrentCityName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.CurrentPincode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurrentPincode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LicenseNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.LicenseNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LicenseValidityDate)
+                </dt>
+                <dd>
+                    @Model.LicenseValidityDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LicenseIssueBy)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.LicenseIssueBy)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.GuarantorName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.GuarantorName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsActive)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.CategoryId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Category)
+                </dd>
+            </dl>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DoB)
+                </dt>
+                <dd>
+                    @Model.DoB.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Ethnicity)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.DriverEthnicity)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LicenseInitialIssueDate)
+                </dt>
+                <dd>
+                    @Model.LicenseInitialIssueDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LicenseCurrentIssueDate)
+                </dt>
+                <dd>
+                    @Model.LicenseCurrentIssueDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsLicenseVerified)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsLicenseVerified)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsAddressVerified)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsAddressVerified)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LicenseVerifiedDate)
+                </dt>
+                <dd>
+                    @Model.LicenseVerifiedDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EntryByName)
+                </dd>
+            </dl>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </dt>
+                <dd>
+                    @Model.EntryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.UpdateDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="page-separator">Driver Document Type</div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table" id="dtDocumentDetail">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.DocumentDetails.FirstOrDefault().DocumentType)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.DocumentDetails.FirstOrDefault().DocumentName)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.DocumentDetails.Count; i++)
+                    {
+                        var item = Model.DocumentDetails.ToArray()[i];
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => item.DocumentType)
+                            </td>
+                            <td>
+                                <div class="input-wrapper">
+                                    @{ var fileNamelnkId = "lnkAttachment" + i;}
+                                    <a href="#" id=@fileNamelnkId onclick="return ViewAttachment(this.id);">View</a>
+                                    @Html.HiddenFor(model => model.DocumentDetails[i].DocumentName, new { id = "hdnDocumentName" + i.ToString() })
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Driver', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { id = Model.DriverId })');
+        currentDomain = '@Url.Content("~")';
+    });
+
+    function ViewAttachment(obj) {
+        var obj = $('#' + obj);
+        var hdnDocumentName = $('#' + obj.Id.replace('lnkAttachment', 'hdnDocumentName'));
+        var filePath = '';
+
+        @*if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath =  "@ConfigHelper.LocalStoragePath" + '/Driver';
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";*@
+
+        filePath = currentDomain + 'Storage/Driver/';
+
+        window.open(filePath + hdnDocumentName.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+        return false;
+    }
+</script>
+

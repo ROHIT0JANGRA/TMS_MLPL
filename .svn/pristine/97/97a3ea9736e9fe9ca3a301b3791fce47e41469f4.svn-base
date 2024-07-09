@@ -1,0 +1,62 @@
+﻿@model CodeLock.Models.MasterJobOrderWorkGroup
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "JobOrderWorkGroup", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.WorkGroupId)
+    @Html.HiddenFor(m => m.WorkGroupId, new { @id = "hdnWorkGroupId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.WorkGroup, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.WorkGroup, new { @class = "form-control text-uppercase" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.WorkGroup)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0"></button>
+        </div>
+    </div>
+}
+
+<script>
+    var isAdd = true;
+    $(document).ready(function () {
+        hdnWorkGroupId = $('#hdnWorkGroupId');
+        btnSubmit = $('#btnSubmit');
+
+        if (hdnWorkGroupId.val() != 0)
+            isAdd = false;
+
+        if (isAdd == false)
+            SetPageLoad('Work Group', 'Update', 'WorkGroup', 'Go To List', '@Url.Action("Index")');
+        else
+            SetPageLoad('Work Group', 'Create', 'WorkGroup', 'Go To List', '@Url.Action("Index")');
+
+
+        btnSubmit.html((isAdd ? 'Create' : 'Update'));
+    });
+
+
+</script>
+
+

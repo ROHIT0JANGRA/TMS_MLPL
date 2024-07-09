@@ -1,0 +1,75 @@
+﻿@model CodeLock.Models.VendorContractDistanceBased
+
+@{
+    ViewBag.Title = "DistanceBasedCriteria";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("DistanceBasedCriteria", "VendorContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(m => m.ContractId, new { @id = "hdnContractId" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name"), new { @class = "form-control", @id = "ddlTransportModeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TransportModeId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FtlTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.FtlTypeId, new SelectList(ViewBag.FtlTypeList, "Value", "Name"), new { @class = "form-control", @id = "ddlFtlTypeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FtlTypeId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VehicleId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlVehicleId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleId)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer" id="divSubmit">
+            <button id="btnSubmit" type="submit" class="btn btn-success primary-btn" tabindex="0">Submit</button>
+        </div>
+    </div>
+}
+<script>
+    var hdnContractId, ddlFtlTypeId, ddlVehicleId, ddlTransportModeId;
+    $(document).ready(function () {
+        SetPageLoad('Vendor Contract', 'Distance Based', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { contractId = Model.ContractId, vendorTypeId = Model.VendorTypeId })');
+        hdnContractId = $('#hdnContractId');
+        ddlTransportModeId = $('#ddlTransportModeId');
+        ddlFtlTypeId = $('#ddlFtlTypeId');
+        ddlVehicleId = $('#ddlVehicleId');
+        AddFirstItemDropDownList(ddlTransportModeId, '0', 'All');
+        AddFirstItemDropDownList(ddlFtlTypeId, '0', 'All');
+        ddlFtlTypeId.change(OnFtlTypeChange);
+        OnFtlTypeChange();
+    });
+
+    function OnFtlTypeChange() {
+        if (ddlFtlTypeId.val() != "") {
+            var requestData = { ftlTypeId: ddlFtlTypeId.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetVehicleByFtlTypeId", "Vehicle", new { @Area = "Master" })', JSON.stringify(requestData), GetVehicleListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetVehicleListSuccess(responseData) {
+        BindDropDownList('ddlVehicleId', responseData, 'Value', 'Name', '0', 'All');
+    }
+
+
+</script>

@@ -1,0 +1,129 @@
+﻿@using CodeLock.Models
+@model  Pfm
+@{
+    ViewBag.Title = "Forward";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    var baseUrl = '@Url.Action("")';
+    loginLocationId = '@SessionUtility.LoginLocationId';
+    loginCompanyId = '@SessionUtility.CompanyId';
+    docketNomenclature = '@SessionUtility.DocketNomenClature';
+</script>
+<script src="~/areas/operation/views/pfm/forward.js"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Forward", "Pfm", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.PfmId, 0);
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div>
+                                @Html.Label(SessionUtility.DocketNomenClature + " Date", new { @class = "label" })
+                            </div>
+                            <div id="drDocketDate"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("txtDocketNo", SessionUtility.DocketNomenClature, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBox("txtDocketNo", "", new { @class = "form-control", @id = "txtDocketNo" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <table id="dtDocketDetails"></table>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualPfmNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualPfmNo, new { @class = "form-control", @id = "txtManualPfmNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualPfmNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "PfmDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.PfmDateTime), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                        <div class="col-sm-4" id="dvForwardType">
+                            <div class="form-group">
+                                <div class="inline-group">
+                                    @Html.LabelFor(model => model.ForwardType, new { @class = "label" })
+                                    <label class="radio" id="dvForwardTypeLocation">
+                                        @Html.RadioButtonFor(model => model.ForwardType, true, new { @id = "rdLocation", @checked = "checked" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ForwardType, "Location", new { @for = "rdLocation" })
+                                    </label>
+                                    <label class="radio" id="dvForwardTypeCustomer">
+                                        @Html.RadioButtonFor(model => model.ForwardType, false, new { @id = "rdCustomer" })
+                                        <i></i>
+                                        @Html.LabelFor(model => model.ForwardType, "Customer", new { @for = "rdCustomer" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ForwardTo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ForwardTo, null, new { @class = "form-control", @id = "txtForwardTo" })
+                                    @Html.HiddenFor(model => model.ForwardToId, new { @id = "hdnForwardToId", @value = "0" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ForwardTo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                @Html.LabelFor(model => model.ForwardTo, " ", new { @class = "label-bold", @id = "lblForwardTo" })
+                                @Html.HiddenFor(model => model.ForwardTo, new { @id = "hdnForwardTo" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CourierName, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.CourierName, new { @class = "form-control", @id = "txtCourierName" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.CourierName)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.WayBillNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.WayBillNo, new { @class = "form-control", @id = "txtWayBillNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.WayBillNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "WayBillDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.WayBillDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

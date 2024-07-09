@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "VendorAdvancePaymentCancellationDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row example-buttons">
+    <div class="col-md-12">
+        <div class="note note-info note-right-striped">
+            <div class="page-separator">Vendor Advance Payments are Cancelled Successfully</div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Advance Payment Cancellation', 'Done', '', 'Go To Advance Payment Cancellation', '@Url.Action("VendorAdvancePaymentCancellation")');
+    });
+</script>
+
+
+
+
+
+
+
+

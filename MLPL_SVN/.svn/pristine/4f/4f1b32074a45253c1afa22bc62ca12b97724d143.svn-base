@@ -1,0 +1,45 @@
+﻿@model CodeLock.Models.MasterCustomerGroup
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "CustomerGroup Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Insert", "CustomerGroup", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.GroupCode)
+    @Html.Hidden("GroupCode", "C");
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GroupName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.GroupName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GroupName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Customer Group', 'Create', 'GroupName', 'Go To List', '@Url.Action("Index")');
+    });
+</script>
+

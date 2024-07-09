@@ -1,0 +1,200 @@
+﻿@model CodeLock.Models.ExpenseRegisterDocumentWise
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "Finance", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.ReportType, new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ReportType, "1", new { @id = "rdReportTypePRS", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ReportType, "PRS", new { @for = "rdReportTypePRS" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ReportType, "2", new { @id = "rdReportTypeTHC" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ReportType, "THC", new { @for = "rdReportTypeTHC" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ReportType, "3", new { @id = "rdReportTypeDRS" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ReportType, "DRS", new { @for = "rdReportTypeDRS" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.ReportType, "7", new { @id = "rdReportTypeOther" })
+                            <i></i>
+                            @Html.LabelFor(model => model.ReportType, "Other Bill", new { @for = "rdReportTypeOther" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                @Html.Label("Select Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drDate"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PartyCode, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.PartyId, new { @id = "hdnPartyId" })
+                        @Html.TextBoxFor(model => model.PartyCode, new { @class = "form-control", @id = "txtPartyCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PartyCode)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    @Html.LabelFor(model => model.PartyName, " ", new { @class = "label-bold", @id = "lblPartyName" })
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6" id="dvIsIndividual">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsIndividual, true, new { @id = "rdIndividual" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsIndividual, "Individual", new { @for = "rdIndividual" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsIndividual, false, new { @id = "rdCumulative" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsIndividual, "Cumulative(Transaction includes all branches)", new { @for = "rdCumulative" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.LocationId, Enumerable.Empty<SelectListItem>(), " ", new { @class = "form-control", @id = "ddlLocationId" })
+                        <i></i>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(model => model.LocationId)
+            </div>
+        </div>
+
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentNos, new { @class = "label", @id = "lblCodeDOC" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocumentNos, new { @class = "form-control", @id = "txtDocumentNos" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="page-separator">OR</div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ManualDocumentNos, new { @class = "label", @id = "lblCode" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ManualDocumentNos, new { @class = "form-control", @id = "txtManualDocumentNos" })
+                    </div>
+                </div>
+            </div>
+            @*<div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.PaybasId, new SelectList(ViewBag.PaybasList, "Value", "Name"), "Select Bill Type", new { @class = "form-control", @id = "ddlPaybasId" })
+                            <i></i>
+                        </div>
+                    </div>
+                </div>*@
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var ReportType = "1"
+    var txtDocumentNos, txtManualDocumentNos, drDate, btnSubmit;
+
+    $(document).ready(function () {
+        SetPageLoad('Vendor Bill Wise Outstanding Report', 'Expense PRS/THC/DRS', '', '', '');
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+
+        txtDocumentNos = $('#txtDocumentNos');
+        txtManualDocumentNos = $('#txtManualDocumentNos');
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        txtPartyCode = $('#txtPartyCode');
+        hdnPartyId = $('#hdnPartyId');
+        lblPartyName = $('#lblPartyName');
+        rdIndividual = $('#rdIndividual');
+        rdCumulative = $('#rdCumulative');
+        ddlLocationId = $('#ddlLocationId');
+        ddlPaybasId = $('#ddlPaybasId');
+        locationUrl = '@Url.Action("", "Location", new { Area = "Master" })';
+
+    }
+
+    function AttachEvents() {
+
+        $('[id*="rdReportType"]').each(function () { $(this).click(function () { ReportType = $(this).val(); }); });
+
+
+        VendorAutoComplete('txtPartyCode', 'hdnPartyId');
+        txtPartyCode.blur(function () { return IsVendorCodeExist(txtPartyCode, hdnPartyId, lblPartyName); });
+        OnIsIndividualChange();
+        rdIndividual.change(OnIsIndividualChange);
+        rdCumulative.change(OnIsIndividualChange);
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    }
+
+    function OnIsIndividualChange() {
+        var requestData = { isRegion: rdIndividual.IsChecked }
+        AjaxRequestWithPostAndJson(locationUrl + '/GetLocationByHierarchyId', JSON.stringify(requestData), function (responseData) {
+            BindDropDownList('ddlLocationId', responseData, 'Value', 'Name', '', 'Select Location');
+        }, ErrorFunction, false);
+    }
+
+    function ViewReport() {
+        if (ddlLocationId.val() == '') {
+            ShowMessage('Please select Location');
+            return false;
+        }
+
+        var prmList = [
+            { Name: "DocumentTypes", Value: ReportType },
+            { Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+            { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+            { Name: "IsCumulative", Value: rdCumulative.IsChecked },
+            { Name: "LocationId", Value: ddlLocationId.val() },
+            { Name: "VendorId", Value: hdnPartyId.val() },
+            { Name: "DocumentNos", Value: txtDocumentNos.val() == '' ? 'ALL' : txtDocumentNos.val() },
+            { Name: "ManualDocumentNos", Value: txtManualDocumentNos.val() == '' ? 'ALL' : txtManualDocumentNos.val() }];
+        var reportInfo = { PrmList: prmList, Name: 'ExpenseRegisterDocumentWiseReport', Description: 'VendorBill Wise Outstanding Report' };
+        return ShowReport(reportInfo);
+    }
+</script>

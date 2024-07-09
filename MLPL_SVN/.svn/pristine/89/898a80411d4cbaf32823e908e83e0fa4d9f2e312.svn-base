@@ -1,0 +1,98 @@
+﻿@model CodeLock.Models.MasterTripCheckList
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "TripCheckList", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.CheckListId)
+    @Html.HiddenFor(m => m.CheckListId, new { @id = "hdnCheckListId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CategoryId, new { @class = "label" })
+                    <div class="select ">
+                        @Html.DropDownListFor(model => model.CategoryId, new SelectList(ViewBag.CategoryList, "Value", "Name"), "Select", new { @class = "form-control", @id = "ddlCategoryId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CategoryId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Description, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.Description, new { @class = "form-control text-uppercase" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Description)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Documents, new { @class = "label" })
+                    <div class="select">
+                        @Html.HiddenFor(model => model.SavedDocuments, new { @id = "hdnSavedDocuments" })
+                        @Html.HiddenFor(model => model.Documents, new { @id = "hdnDocuments" })
+                        @Html.DropDownListFor(model => model.Documents, new SelectList(ViewBag.DocumentsList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlDocuments", @multiple = "multiple", @placeholder = "Select Documents" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Documents)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0"></button>
+        </div>
+    </div>
+}
+
+<script>
+    var isAdd = true;
+    var savedDocuments = [];
+    $(document).ready(function () {
+        hdnCheckListId = $('#hdnCheckListId');
+        btnSubmit = $('#btnSubmit');
+        ddlDocuments = $('#ddlDocuments');
+
+        if (hdnCheckListId.val() != 0)
+            isAdd = false;
+
+        if (isAdd == false) {
+            SetPageLoad('Check List', 'Update', 'ddlCategoryId', 'Go To List', '@Url.Action("Index")');
+            var selectedValue = $('#hdnSavedDocuments').val();
+            $('#hdnDocuments').val(selectedValue);
+            if (selectedValue != "") {
+                selectedValue = selectedValue.split(',');
+                $("#ddlDocuments").val(selectedValue).trigger("change");
+                savedDocuments = selectedValue;
+            }
+        }
+        else
+            SetPageLoad('Check List', 'Create', 'ddlCategoryId', 'Go To List', '@Url.Action("Index")');
+
+        DropDownChange('ddlDocuments', function () {
+            $('#hdnDocuments').val($(this).val());
+        });
+
+        btnSubmit.html((isAdd ? 'Create' : 'Update'));
+    });
+
+</script>
+
+

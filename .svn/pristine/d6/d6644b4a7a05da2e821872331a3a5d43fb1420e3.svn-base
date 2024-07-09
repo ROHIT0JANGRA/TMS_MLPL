@@ -1,0 +1,215 @@
+﻿@model  CodeLock.Models.CustomerContractDefineChargeMatrixHDR
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("DefineChargeMatrix", "CustomerContract", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.ContractId, new { @id = "hdnContractId" })
+    @Html.HiddenFor(m => m.BaseOn, new { @id = "hdnBaseOn" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Contract ID", new { @id = "lblCustomer", @class = "label-bold" })
+                    <div class="clearfix">
+                        @ViewBag.ManualContractId
+                    </div>
+                </div>
+            </div>
+            @if (@ViewBag.isCustomerContract == false)
+            {
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Vendor", new { @id = "lblCustomer", @class = "label-bold" })
+                        <div class="clearfix">
+                            @ViewBag.CustomerCode : @ViewBag.CustomerName
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Customer", new { @id = "lblCustomer", @class = "label-bold" })
+                        <div class="clearfix">
+                            @ViewBag.CustomerCode : @ViewBag.CustomerName
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row">
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="inline-group">
+                        @Html.LabelFor(model => model.IsBooking, new { @class = "label-bold" })
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsBooking, true, new { @id = "rdBooking", @checked = "checked" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsBooking, "Booking", new { @for = "rdBooking" })
+                        </label>
+                        <label class="radio">
+                            @Html.RadioButtonFor(model => model.IsBooking, false, new { @id = "rdDelivery" })
+                            <i></i>
+                            @Html.LabelFor(model => model.IsBooking, "Delivery", new { @for = "rdDelivery" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+            </div>
+            <div class="col-sm-5" id="divBaseOnName">
+                <div class="form-group">
+                    <label class="label">@ViewBag.BaseOnName</label>
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.BaseCode, new SelectList(ViewBag.BaseCodeList, "Value", "Name"), "Select", new { @class = "form-control", @id = "ddlBaseCode" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table id="dtMapping">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(m => Model.Details.FirstOrDefault().ChargeName)</th>
+                    <th width="200px">@Html.DisplayNameFor(m => Model.Details.FirstOrDefault().ChargeBase)</th>
+                    <th>@Html.DisplayNameFor(m => Model.Details.FirstOrDefault().UseTransportMode)</th>
+                    <th>@Html.DisplayNameFor(m => Model.Details.FirstOrDefault().UseFrom)</th>
+                    <th>@Html.DisplayNameFor(m => Model.Details.FirstOrDefault().UseTo)</th>
+                    <th>@Html.DisplayNameFor(m => Model.Details.FirstOrDefault().UseRateType)</th>
+                    <th>@Html.DisplayNameFor(m => Model.Details.FirstOrDefault().UseFtlType)</th>
+                    <th>@Html.DisplayNameFor(m => Model.Details.FirstOrDefault().UseConsignor)</th>
+                    <th>@Html.DisplayNameFor(m => Model.Details.FirstOrDefault().UseConsignee)</th>
+                    <th>@Html.DisplayNameFor(m => Model.Details.FirstOrDefault().SlabType)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Details.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Model.Details[i].ChargeName
+                            @Html.HiddenFor(m => Model.Details[i].ChargeCode, new { @id = "hdnChargeCode" + (i + 1).ToString() })
+                        </td>
+                        <td>
+                            <div class="select">
+                                @Html.DropDownListFor(m => Model.Details[i].ChargeBase, new SelectList(ViewBag.ChargeBaseList, "Value", "Name", Model.Details[i].ChargeBase), "Select Charge Base", new { @class = "form-control", id = "ddlChargeBase" + i.ToString() })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].ChargeBase)
+                        </td>
+                        <td>
+                            @Html.LabelFor(m => Model.Details[i].UseTransportMode, " ", new { @For = "chkTransportMode" + (i + 1).ToString() })
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.Details[i].UseTransportMode, new {  @id = "chkTransportMode" + (i + 1).ToString(), @name = "chkTransportMode" + (i + 1).ToString() })
+                                <i></i>
+                            </label>
+                        </td>
+                        <td>
+                            @Html.LabelFor(m => Model.Details[i].UseFrom, " ", new { @For = "chkFrom" + (i + 1).ToString() })
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.Details[i].UseFrom, new { @id = "chkFrom" + (i + 1).ToString(), @name = "chkFrom" + (i + 1).ToString() })
+                                <i></i>
+                            </label>
+                        </td>
+                        <td>
+                            @Html.LabelFor(m => Model.Details[i].UseTo, " ", new { @For = "chkTo" + (i + 1).ToString() })
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.Details[i].UseTo, new { @id = "chkTo" + (i + 1).ToString(), @name = "chkTo" + (i + 1).ToString() })
+                                <i></i>
+                            </label>
+                        </td>
+                        <td>
+                            @Html.LabelFor(m => Model.Details[i].UseRateType, " ", new { @For = "chkRateType" + (i + 1).ToString() })
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.Details[i].UseRateType, new { @id = "chkRateType" + (i + 1).ToString(), @name = "chkRateType" + (i + 1).ToString() })
+                                <i></i>
+                            </label>
+                        </td>
+                        <td>
+                            @Html.LabelFor(m => Model.Details[i].UseFtlType, " ", new { @For = "chkUseFtlType" + (i + 1).ToString() })
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.Details[i].UseFtlType, new { @id = "chkUseFtlType" + (i + 1).ToString(), @name = "chkUseFtlType" + (i + 1).ToString() })
+                                <i></i>
+                            </label>
+                        </td>
+                        <td>
+                            @Html.LabelFor(m => Model.Details[i].UseConsignor, " ", new { @For = "chkUseConsignor" + (i + 1).ToString() })
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.Details[i].UseConsignor, new { @id = "chkUseConsignor" + (i + 1).ToString(), @name = "chkUseConsignor" + (i + 1).ToString() })
+                                <i></i>
+                            </label>
+                        </td>
+                        <td>
+                            @Html.LabelFor(m => Model.Details[i].UseConsignee, " ", new { @For = "chkUseConsignee" + (i + 1).ToString() })
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.Details[i].UseConsignee, new { @id = "chkUseConsignee" + (i + 1).ToString(), @name = "chkUseConsignee" + (i + 1).ToString() })
+                                <i></i>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.Details[i].SlabType, new SelectList(ViewBag.SlabTypeList, "Value", "Name", Model.Details[i].SlabType),  new { @class = "form-control", @id = "ddlSlabType" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(m => Model.Details[i].SlabType)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+<script>
+    var dtMapping;
+    $(document).ready(function () {
+
+        if ('@ViewBag.isCustomerContract' == "False") {
+            SetPageLoad('Vendor Contract', 'Define Charge Matrix', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = Model.ContractId })');
+        }
+        else {
+            SetPageLoad('Customer Contract', 'Define Charge Matrix', '', 'Go To Step Selection', '@Url.Action("StepSelection", new { id = Model.ContractId })');
+        }
+
+        Init();
+        $('#rdBooking').click(OnCriteriaChange);
+        $('#rdDelivery').click(OnCriteriaChange);
+        $('#ddlBaseCode').change(OnCriteriaChange);
+    });
+
+    function Init() {
+        LoadDataTable('dtMapping', false, false, false);
+        if ($('#ddlBaseCode').val() == 0)
+            $('#divBaseOnName').hide();
+
+        $('[id*="hdnChargeCode"]').each(function () {
+            var hdnChargeCode = $(this);
+            var chkUseFtlType = $('#' + hdnChargeCode.Id.replace('hdnChargeCode', 'chkUseFtlType'));
+            if (hdnChargeCode.val() == '1')
+                chkUseFtlType.uncheck().disable();
+        });
+    }
+
+    function OnCriteriaChange() {
+        var requestData = {
+            ContractId: $('#hdnContractId').val(),
+            IsBooking: $('#rdBooking').is(':checked'),
+            BaseOn: $('#hdnBaseOn').val(),
+            BaseCode: $('#ddlBaseCode').val()
+        };
+        window.location.href = "@Url.Action(null)?IsBooking=" + requestData.IsBooking + "&BaseCode=" + requestData.BaseCode;
+        return false;
+    }
+</script>

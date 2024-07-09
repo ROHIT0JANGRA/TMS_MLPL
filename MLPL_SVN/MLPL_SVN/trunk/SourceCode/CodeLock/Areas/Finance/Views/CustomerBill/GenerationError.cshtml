@@ -1,0 +1,75 @@
+﻿@model IEnumerable<CodeLock.Models.BillFinalizationDetail>
+@{
+    ViewBag.Title = "GenerationDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="alert alert-danger"><h5><span id="spnMassage"></span></h5></div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="widget-wrap material-table-widget">
+                <table id="dtError">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.BillNo)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.BillDate)
+                            </th>
+                            <th>
+                                Message
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Irn)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.AckNo)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.BillNo)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.BillDate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ErrorMessage)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Irn)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.AckNo)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+    <script>
+	$(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        spnMassage.text("List of bill(s)");
+        SetPageLoad('Finalize Bill', 'Error', '', 'Go To Bill Finalization', '@Url.Action("BillFinalizationMLPL")');
+        LoadDataTable('dtError', false, false, false);
+    });
+
+
+    </script>

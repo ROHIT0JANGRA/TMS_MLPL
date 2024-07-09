@@ -1,0 +1,193 @@
+﻿@model CodeLock.Models.MasterRoute
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.RouteName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.RouteName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TransportModeId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.TransportMode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.RouteCategoryIsLongHaul)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Category)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DepartureTime)
+                </dt>
+                <dd>
+                    @Model.DepartureTime.ToString("HH:mm")
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ControlLocationId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.LocationCode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsActive)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.FromAmount)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.FromAmount)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ToAmount)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ToAmount)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EntryByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </dt>
+                <dd>
+                    @Model.EntryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.UpdateDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table" id="dtRoute">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RouteDetailList.FirstOrDefault().LocationCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RouteDetailList.FirstOrDefault().Distance)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RouteDetailList.FirstOrDefault().TransitTimeHour)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RouteDetailList.FirstOrDefault().TransitTimeMin)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RouteDetailList.FirstOrDefault().StoppageTimeHour)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RouteDetailList.FirstOrDefault().StoppageTimeMin)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.RouteDetailList.Count; i++)
+                        {
+                            var item = Model.RouteDetailList.ToArray()[i];
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => item.LocationCode)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Distance)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.TransitTimeHour)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.TransitTimeMin)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.StoppageTimeHour)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.StoppageTimeMin)
+                            </td>
+                        </tr>
+                        }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Route', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Insert", new { id = Model.RouteId })');
+    });
+</script>
+

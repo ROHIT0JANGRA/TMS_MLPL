@@ -1,0 +1,1218 @@
+﻿@using CodeLock.Models
+@model MilkRunBilling
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "TripBill";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/xlsx.full.min.js"></script>
+<script>
+    var txtCustomerCode, ddlPaybasId, hdnCustomerId, lblCustomerName, ddlServiceTypeId, ddlFtlTypeId, ddlPrimaryBillingTypeId, ddlTransactionTypeId, ddlGstServiceTypeId,
+        txtBillDate, txtDueDate, drTransactionDate, dtDocketList, selectedDocketList, customerMasterUrl, customerBillGenerationUrl, ddlCustomerGstStateId,
+        lblLocationCode, loginLocationCode, docketTotal, docketNomenclature, gstMasterUrl, ddlCompanyGstStateId, customerContractMasterUrl, customerSupBillUrl,
+        fromcityid, tocityid, hdnGstServiceTypeId, hdnFromCityId, txtFromCity, hdnToCityId, txtToCity, loginLocationId, ddlGenerationCityId;
+    var allowMandatoryManualBillNo = false, ddlSubmissionCityId, btnStep1, btnSubmit, dvStep1, dvStep2;
+    var txtVehicleCode, hdnVehicleId, lblVehicleName, btnExportExcel;
+
+    $(document).ready(function () {
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        customerBillGenerationUrl = '@Url.Action("", "CustomerBill", new { Area = "Finance" })';
+        customerContractMasterUrl = '@Url.Action("", "CustomerContract", new { Area = "Contract" })';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+        gstMasterUrl = '@Url.Action("", "Gst", new { Area = "Master" })';
+        customerSupBillUrl = '@Url.Action("MiscellaneousBill", "CustomerBill")';
+        cityMasterUrl = '@Url.Action("", "City", new { Area = "Master" })';
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        tripsheetUrl = '@Url.Action("", "Tripsheet", new { Area = "FMS" })';
+        loginLocationId = '@SessionUtility.LoginLocationId';
+        SetPageLoad('Customer', 'Billing', 'ddlGstServiceTypeId', '', '');
+
+        InitObjects();
+        AttachEvents();
+    });
+
+    function ExportLogList() {
+
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:application/vnd.ms-excel,' + encodeURIComponent($('div[id$=dvExport]').html()));
+        element.setAttribute('download', 'Tripsheet Log list');
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+
+    function InitObjects() {
+        txtCustomerCode = $('#txtCustomerCode');
+        lblCustomerName = $('#lblCustomerName');
+
+        txtVehicleCode = $('#txtVehicleCode');
+        hdnVehicleId = $('#hdnVehicleId');
+        lblVehicleName = $('#lblVehicleName');
+
+        ddlPrimaryBillingTypeId = $('#ddlPrimaryBillingTypeId');
+        hdnCustomerId = $('#hdnCustomerId');
+        ddlCustomerGstStateId = $('#ddlCustomerGstStateId');
+        ddlGstServiceTypeId = $('#ddlGstServiceTypeId');
+        ddlTransactionTypeId = $('#ddlTransactionTypeId');
+
+        hdnGstServiceTypeId = $('#hdnGstServiceTypeId');
+        ddlCompanyGstStateId = $('#ddlCompanyGstStateId');
+        ddlGenerationCityId = $('#ddlGenerationCityId');
+        ddlSubmissionCityId = $('#ddlSubmissionCityId');
+        txtTripsheetNo = $('#txtTripsheetNo');
+        btnExportExcel = $('#btnExportExcel');
+        //
+
+        drTransactionDate = InitDateRange('drTransactionDate', DateRange.LastWeek, false);
+        GetCompanyGstState();
+        ddlGstServiceTypeId.change(OnGstServiceTypeChange).change();
+        btnStep1 = $('#btnStep1');
+        btnSubmit = $('#btnSubmit');
+
+        dvStep1 = $('#dvStep1');
+        dvStep2 = $('#dvStep2');
+
+    }
+    function OnGstServiceTypeChange() {
+        var gstServiceType = ddlGstServiceTypeId.val().split('~');
+
+        if (!IsObjectNullOrEmpty(gstServiceType)) {
+            hdnGstServiceTypeId.val(gstServiceType[0]);
+        }
+        else {
+            hdnGstServiceTypeId.val('');
+        }
+    }
+
+    function GetCompanyGstState() {
+        var requestData = { ownerType: 1, ownerId: loginCompanyId, locationId: 0 };
+        AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstStateList', JSON.stringify(requestData), function (responseData) {
+            BindDropDownList(ddlCompanyGstStateId.Id, responseData, 'Description', 'Name', '', (responseData.length > 1 ? 'Select Company GST State' : ''));
+        }, ErrorFunction, false);
+
+        ddlPrimaryBillingTypeId.append($("<option></option>").val(1).html('Inter-State'));
+        ddlPrimaryBillingTypeId.append($("<option></option>").val(0).html('Intra-State'));
+    }
+
+    function AttachEvents() {
+
+        btnExportExcel.click(ExportLogList);
+
+        $('#chkIsExemptGst').click(function () {
+            SelectDocket();
+        });
+
+
+        btnStep1.click(function () {
+
+            if (IsStepValid(dvStep1)) {
+                GetGstDetail();
+            }
+        });
+
+
+
+        btnSubmit.click(function () {
+        });
+
+        CustomerAutoCompleteByLocationPaybas('txtCustomerCode', 'hdnCustomerId', loginLocationId, 0, true);
+        txtCustomerCode.blur(function () {
+
+            if (txtCustomerCode.val() == "")
+            {
+                return;
+            }
+
+            IsCustomerCodeExistByLocationPaybas(txtCustomerCode, hdnCustomerId, lblCustomerName, loginLocationId, 0, true);
+            if (hdnCustomerId.val() > 0) {
+                GetCustomerGstState();
+                //OnGstStateChange();
+            }
+            else {
+                BindDropDownList('ddlCustomerGstStateId', [], null, null, '', 'Select State');
+                txtCustomerCode.focus();
+            }
+        });
+
+        VehicleAutoComplete('txtVehicleCode', 'hdnVehicleId');
+
+        ddlCustomerGstStateId.change(GetCustomerGstDetailsByOwnerTypeAndOwnerAndStateAndCity);
+        ddlCompanyGstStateId.change(GetCompanyGstDetailsByOwnerTypeAndOwnerAndStateAndCity);
+    }
+
+    function GetCustomerGstState() {
+        ddlPrimaryBillingTypeId.enable();
+        var requestData = { ownerType: 3, ownerId: hdnCustomerId.val(), locationId: 0 };
+        AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstStateList', JSON.stringify(requestData), function (responseData) {
+            BindDropDownList(ddlCustomerGstStateId.Id, responseData, 'Description', 'Name', '', (responseData.length > 1 ? 'Select Party GST State' : ''));
+        }, ErrorFunction, false);
+    }
+    function OnGstStateChange() {
+        ddlPrimaryBillingTypeId.enable();
+        if (ddlCustomerGstStateId.val() != '') {
+            if (ddlCompanyGstStateId.val() == ddlCustomerGstStateId.val())
+                ddlPrimaryBillingTypeId.val(0).disable();
+            else
+                ddlPrimaryBillingTypeId.val(1).disable();
+        }
+    }
+
+    var creditDays = 0;
+    function GetGstDetail() {
+
+        if (ddlTransactionTypeId.val() == 1) {
+            try {
+                selectedDocketList = [];
+
+                var requestData = { customerId: hdnCustomerId.val(), fromDate: drTransactionDate.startDate, toDate: drTransactionDate.endDate, GstServiceTypeId: hdnGstServiceTypeId.val() == '' ? 0 : hdnGstServiceTypeId.val(), VehicleId: hdnVehicleId.val() == '' ? 0 : hdnVehicleId.val(), TripsheetNo: txtTripsheetNo.val()};
+                AjaxRequestWithPostAndJson(customerBillGenerationUrl + '/GetMilkRunCustomerBillDetails', JSON.stringify(requestData),
+                    OnSuccess_GetMilkRunCustomerBillDetails, ErrorFunction, false);
+
+                $('#lblCustomer').text(txtCustomerCode.val() + " : " + lblCustomerName.text());
+                $('#lblInterState').text(ddlCustomerGstStateId.val() == ddlCompanyGstStateId.val() ? "Intra State" : "Inter State");
+                $('#lblSacName').text($("#ddlGstServiceTypeId option:selected").text());
+
+            } catch (e) { alert(e.message) }
+        }
+    }
+
+    function OnSuccess_GetMilkRunCustomerBillDetails(result) {
+
+        var TripsheetNo = "";
+
+        if (result.length > 0) {
+            $("#hdnIsMilkrunHrsPerDayEnabled").val(result[0].IsMilkrunHrsPerDayEnabled);
+            $("#hdnIsLaneIdEnabled").val(result[0].IsLaneIdEnabled);
+        }
+        else {
+            $("#hdnIsMilkrunHrsPerDayEnabled").val("false");
+            $("#hdnIsLaneIdEnabled").val("false");
+        }
+        var colList = GetTripsheetColumnList(result);
+        if (dtDocketList == null)
+            dtDocketList = LoadDataTable('dtDocketList', false, false, false, null, null, [], colList);
+
+        dtDocketList.fnClearTable();
+
+        if (result.length == 0) {
+            isStepValid = false;
+            ShowMessage('No Record Found');
+            return false;
+        }
+        else {
+
+
+            dvStep2.showHide(true);
+            dvStep1.pointerEvent(false);
+            $.each(result, function (i, item) {
+                TripsheetNo = item.TripSheetNo;
+                item.TripSheetNo = "<input type='hidden' value='" + item.TripsheetId + "' name='Details[" + i + "].TripsheetId' id='hdnTripsheetId" + i + "'/>" +
+                    "<input type='hidden' value='" + item.VehicleNo + "' name='Details[" + i + "].VehicleNo' id='hdnVehicleNo" + i + "'/>" + item.TripSheetNo;
+                    
+                item.FixedAmount = '<input type=\'text\' name="Details[' + i + '].FixedAmount" id="txtFixedAmount' + i + '" value=' + item.FixedAmount.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                item.FixedKm = '<input type=\'text\' name="Details[' + i + '].FixedKm" id="txtFixedKm' + i + '" value=' + item.FixedKm.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                item.VariableRate = '<input type=\'text\' name="Details[' + i + '].VariableRate" id="txtVariableRate' + i + '" value=' + item.VariableRate.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                item.KmRun = '<input type=\'text\' name="Details[' + i + '].KmRun" id="txtKmRun' + i + '" value=' + item.KmRun.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                item.ActualAmount = '<input type=\'text\' name="Details[' + i + '].ActualAmount" id="txtActualAmount' + i + '" value=' + item.ActualAmount.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                item.ExtraAmount = '<input type=\'text\' name="Details[' + i + '].ExtraAmount" id="txtExtraAmount' + i + '" value=' + item.ExtraAmount.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+
+                item.DetentionNightCharges = '<input type=\'text\' name="Details[' + i + '].DetentionNightCharges" id="txtDetentionNightCharges' + i + '" value=' + item.DetentionNightCharges.toFixed(2) + ' class="textlabel numeric2" />';
+                item.SundayHolidayCharges = '<input type=\'text\' name="Details[' + i + '].SundayHolidayCharges" id="txtSundayHolidayCharges' + i + '" value=' + item.SundayHolidayCharges.toFixed(2) + ' class="textlabel numeric2" />';
+                item.UnloadingCharges = '<input type=\'text\' name="Details[' + i + '].UnloadingCharges" id="txtUnloadingCharges' + i + '" value=' + item.UnloadingCharges.toFixed(2) + ' class="textlabel numeric2"/>';
+                item.MngmntFees = '<input type=\'text\' name="Details[' + i + '].MngmntFees" id="txtMngmntFees' + i + '" value=' + item.MngmntFees.toFixed(2) + ' class="form-control numeric2"/>';
+                item.TollTaxCharges = '<input type=\'text\' name="Details[' + i + '].TollTaxCharges" id="txtTollTaxCharges' + i + '" value=' + item.TollTaxCharges.toFixed(2) + ' class="textlabel numeric2"/>';
+                item.ParkingCharges = '<input type=\'text\' name="Details[' + i + '].ParkingCharges" id="txtParkingCharges' + i + '" value=' + item.ParkingCharges.toFixed(2) + ' class="textlabel numeric2" />';
+
+                item.NetAmount = '<input type=\'text\' name="Details[' + i + '].NetAmount" id="txtNetAmount' + i + '" value=' + item.NetAmount.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                item.GstRate = '<input type=\'text\' name="Details[' + i + '].GstRate" id="txtGstRate' + i + '" value=' + item.GstRate.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                item.GstTotal = '<input type=\'text\' name="Details[' + i + '].GstTotal" id="txtGstTotal' + i + '" value=' + item.GstTotal.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                item.TotalAmount = '<input type=\'text\' name="Details[' + i + '].TotalAmount" id="txtTotalAmount' + i + '" value=' + item.TotalAmount.toFixed(2) + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>' +
+                    "<input type='hidden' value='" + item.Igst + "' name='Details[" + i + "].Igst' id='hdnIgst" + i + "'/>" +
+                    "<input type='hidden' value='" + item.Cgst + "' name='Details[" + i + "].Cgst' id='hdnCgst" + i + "'/>" +
+                    "<input type='hidden' value='" + item.Sgst + "' name='Details[" + i + "].Sgst' id='hdnSgst" + i + "'/>";
+
+                item.TripSheetNo = item.TripSheetNo;// '<a onclick="return ViewTripsheetLogList(\'' + item.TripSheetNo + '\')" href="#" >' + item.TripSheetNo + '</a>';
+
+
+            });
+        }
+        dtDocketList.dtAddData(result);
+        AddEvent();
+        GetTripsheetLogDetail(TripsheetNo);
+        SelectDocket();
+        //if ($("#hdnIsMilkrunHrsPerDayEnabled").val() == "true")
+        //    SetTransactionDetailSummary();
+    }
+
+    function AddEvent()
+    {
+
+        $('[id*="hdnTripsheetId"]').each(function () {
+            var hdnTripsheetId = $(this);
+            var hdnTripsheetId = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnTripsheetId'));
+            var txtActualAmount = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtActualAmount'));
+            var txtExtraAmount = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtExtraAmount'));
+            var txtDetentionNightCharges = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtDetentionNightCharges'));
+            var txtSundayHolidayCharges = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtSundayHolidayCharges'));
+            var txtUnloadingCharges = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtUnloadingCharges'));
+            var txtMngmntFees = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtMngmntFees'));
+            var txtTollTaxCharges = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtTollTaxCharges'));
+            var txtParkingCharges = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtParkingCharges'));
+            var txtSubTotal = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtNetAmount'));
+            var hdnIgst = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnIgst'));
+            var hdnCgst = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnCgst'));
+            var hdnSgst = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnSgst'));
+            var txtTaxRate = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtGstRate'));
+            var txtTaxTotal = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtGstTotal'));
+            var txtDocketTotal = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtTotalAmount'));
+
+            //txtDetentionNightCharges.blur(function () {
+            //    CalculateAmount(txtActualAmount, txtExtraAmount, txtDetentionNightCharges, txtSundayHolidayCharges, txtUnloadingCharges,
+            //        txtMngmntFees, txtTollTaxCharges, txtParkingCharges, txtSubTotal, hdnIgst, hdnCgst, hdnSgst, txtTaxRate, txtTaxTotal, txtDocketTotal
+            //    );
+            //});
+            //txtSundayHolidayCharges.blur(function () {
+            //    CalculateAmount(txtActualAmount, txtExtraAmount, txtDetentionNightCharges, txtSundayHolidayCharges, txtUnloadingCharges,
+            //        txtMngmntFees, txtTollTaxCharges, txtParkingCharges, txtSubTotal, hdnIgst, hdnCgst, hdnSgst, txtTaxRate, txtTaxTotal, txtDocketTotal
+            //    );
+            //});
+
+            //txtUnloadingCharges.blur(function () {
+            //    CalculateAmount(txtActualAmount, txtExtraAmount, txtDetentionNightCharges, txtSundayHolidayCharges, txtUnloadingCharges,
+            //        txtMngmntFees, txtTollTaxCharges, txtParkingCharges, txtSubTotal, hdnIgst, hdnCgst, hdnSgst, txtTaxRate, txtTaxTotal, txtDocketTotal
+            //    );
+            //});
+
+            txtMngmntFees.blur(function () {
+                CalculateAmount(txtActualAmount, txtExtraAmount, txtDetentionNightCharges, txtSundayHolidayCharges, txtUnloadingCharges,
+                    txtMngmntFees, txtTollTaxCharges, txtParkingCharges, txtSubTotal, hdnIgst, hdnCgst, hdnSgst, txtTaxRate, txtTaxTotal, txtDocketTotal
+                );
+            });
+
+            //txtTollTaxCharges.blur(function () {
+            //    CalculateAmount(txtActualAmount, txtExtraAmount, txtDetentionNightCharges, txtSundayHolidayCharges, txtUnloadingCharges,
+            //        txtMngmntFees, txtTollTaxCharges, txtParkingCharges, txtSubTotal, hdnIgst, hdnCgst, hdnSgst, txtTaxRate, txtTaxTotal, txtDocketTotal
+            //    );
+            //});
+
+            //txtParkingCharges.blur(function () {
+            //    CalculateAmount(txtActualAmount, txtExtraAmount, txtDetentionNightCharges, txtSundayHolidayCharges, txtUnloadingCharges,
+            //        txtMngmntFees, txtTollTaxCharges, txtParkingCharges, txtSubTotal, hdnIgst, hdnCgst, hdnSgst, txtTaxRate, txtTaxTotal, txtDocketTotal
+            //    );
+            //});
+
+
+
+        });
+    }
+    function CalculateAmount(txtActualAmount, txtExtraAmount, txtDetentionNightCharges, txtSundayHolidayCharges, txtUnloadingCharges,
+        txtMngmntFees, txtTollTaxCharges, txtParkingCharges, txtSubTotal, hdnIgst, hdnCgst, hdnSgst, txtTaxRate, txtTaxTotal, txtDocketTotal
+    ) {
+        var SubTotal = parseFloat(txtActualAmount.val()) + parseFloat(txtExtraAmount.val()) + parseFloat(txtDetentionNightCharges.val()) + parseFloat(txtSundayHolidayCharges.val()) +
+            parseFloat(txtUnloadingCharges.val()) + parseFloat(txtMngmntFees.val()) + parseFloat(txtTollTaxCharges.val()) + parseFloat(txtParkingCharges.val());
+
+        txtSubTotal.val(SubTotal);
+
+        var TaxRate = txtTaxRate.val();
+        var TaxTotal = 0;
+        var Igst = 0;
+        var Cgst = 0;
+        var Sgst = 0;
+
+        if (parseFloat(TaxRate) > 0) {
+            TaxTotal = (parseFloat(TaxRate) * parseFloat(SubTotal)) / 100;
+            if (parseFloat(hdnIgst.val()) > 0) {
+                hdnIgst.val(TaxTotal);
+            }
+            else {
+
+                Cgst = TaxTotal/2;
+                Sgst = TaxTotal / 2;
+                hdnIgst.val(Cgst.toFixed(2));
+                hdnIgst.val(Sgst.toFixed(2));
+            }
+        }
+        SubTotal = SubTotal + TaxTotal;
+        txtTaxTotal.val(TaxTotal);
+        txtDocketTotal.val(SubTotal);
+        SelectDocket();
+    }
+
+
+    function GetTripsheetColumnList(result) {
+        var columnList = [];
+        columnList = [
+        { title: 'Tripsheet No', data: 'TripSheetNo' },
+        { title: 'Manual Tripsheet No', data: 'ManualTripsheetNo' },
+        { title: 'TripSheet Date', data: 'TripSheetDate' },
+        { title: 'Vehicle No', data: 'VehicleNo' },
+        { title: 'Fixed Amount', data: 'FixedAmount' },
+        { title: 'Fixed Km', data: 'FixedKm' },
+        { title: 'Extra Working Hour Rate', data: 'ExtraHoursRate' },
+        { title: 'Variable Rate', data: 'VariableRate' },
+        { title: 'Fixed Days', data: 'FixedDays' },
+            { title: 'Working Hours per Days', data: 'WorkingHours' },
+            { title: 'Actual Working Days', data: 'ActualDays' },
+        { title: 'Total Run Km ', data: 'KmRun' },
+
+        { title: 'Total Working Hours', data: 'TotalWorkingHoursStr' },
+        { title: 'Base Amount', data: 'ActualAmount' },
+
+            { title: 'Extra Working Hour', data: 'TotalExtraHours' },
+        { title: 'Extra Working Hour Amount', data: 'TotalWorkingHourAmount' },
+
+            { title: 'Extra Run Km Amount', data: 'ExtraKmAmount' },
+
+
+        { title: 'Extra Amount', data: 'ExtraAmount' },
+        { title: 'Management Fees', data: 'MngmntFees' },
+        { title: 'Sunday / Holiday', data: 'SundayHolidayCharges' },
+        { title: 'Detention / Night Charges', data: 'DetentionNightCharges' },
+        { title: 'Unloading Charges', data: 'UnloadingCharges' },
+        { title: 'Toll Exp. ', data: 'TollTaxCharges' },
+        { title: 'Parking Exp.', data: 'ParkingCharges' },
+
+        { title: 'Net Amount', data: 'NetAmount' },
+        { title: 'Gst Rate(%)', data: 'GstRate' },
+        { title: 'GstTotal', data: 'GstTotal' },
+        { title: 'Total Amount', data: 'TotalAmount' }
+        ];
+        return columnList;
+    }
+
+    function SetTransactionDetailSummary() {
+        try {
+            var columnList = [
+                { title: 'Vehicle No', data: 'VehicleNo' },
+                { title: 'Fixed Amount', data: 'FixedAmount' },
+                { title: 'Fixed Km', data: 'FixedKm' },
+                { title: 'Variable Rate', data: 'VariableRate' },
+                { title: 'Variable Amt.', data: 'ExtraAmount' },
+                { title: 'Km Run', data: 'KmRun' },
+
+                { title: 'Total Days', data: 'TotalHolidays' },
+                { title: 'Total Days Amount', data: 'TotalHolidayAmount' },
+                { title: 'Total Hours', data: 'TotalWorkingHours' },
+                { title: 'Total Hours Amount', data: 'TotalWorkingHourAmount' }
+
+            ];
+
+            var tData = '<div class="row">';
+
+            $.each(columnList, function (i, item) {
+                if (i == 5)
+                    tData = tData + '<div class="row">';
+                var cssClass = 'class ="form-control textlabel ' + (i == 0 ? "" : "numeric2") + '" style="width: ' + (i == 0 ? "150" : "100") + '; margin-left: 0px !important;" readonly="true" tabindex="-1"';
+                tData   += '<div class="col-sm-2"><div class="form-group">' + item.title + '<div class="input">'
+                        + '<input type=\'text\' name="TripsheetSummary[' + i + '].' + item.data + '" id="txtTripsheetSummary_' + item.data + '" value=""' + cssClass + ' />'
+                        + '</div></div></div>';
+                if (i == 4)
+                    tData = tData + '</div>';
+            });
+            tData = tData + "</div>";
+
+            $("#dvTransactionDetailsSum").html(tData);
+
+            $("#txtTripsheetSummary_VehicleNo").val($("#txtVehicleCode").val());
+            $("#txtTripsheetSummary_FixedAmount").val(0);
+            $("#txtTripsheetSummary_FixedKm").val(0);
+            $("#txtTripsheetSummary_VariableRate").val(0);
+            $("#txtTripsheetSummary_ExtraAmount").val(0);
+            $("#txtTripsheetSummary_KmRun").val(0);
+            $("#txtTripsheetSummary_TotalHolidays").val(0);
+            $("#txtTripsheetSummary_TotalHolidayAmount").val(0);
+            $("#txtTripsheetSummary_TotalWorkingHours").val(0);
+            $("#txtTripsheetSummary_TotalWorkingHourAmount").val(0);
+
+        }
+        catch (e) {
+            alert(e.message);
+        }
+    }
+
+    function CalculateDueDate() {
+        if (txtBillDate.val() != '') {
+            var days = parseInt(creditDays);
+            var dueDate = $.setDateTime(txtBillDate.val()).add(creditDays, 'd');
+            txtDueDate.val($.entryDate(dueDate));
+        }
+    }
+
+    function CheckValidDueDate() {
+        if ($.setDateTime(txtDueDate.val()) < $.setDateTime(txtBillDate.val())) {
+            ShowMessage('Please select Due Date greater than Or equal to Bill Date');
+            txtDueDate.val('');
+            return false;
+        }
+    }
+
+    function SelectDocket() {
+        selectedDocketList = [];
+        var subTotal = 0, gstTotal = 0, total = 0, totalIgst = 0, totalCgst = 0, totalSgst = 0, totalUgst = 0;
+        var TaxTotal = 0;
+
+        var totalFixedAmount = 0,
+            totalFixedKm = 0,
+            totalVariableRate = 0,
+            totalExtraAmount = 0,
+            totalKmRun = 0,
+            totalHolidays = 0,
+            totalHolidayAmount = 0,
+            totalWorkingHours = 0,
+            totalWorkingHourAmount = 0;
+
+        $('[id*="hdnTripsheetId"]').each(function () {
+            var hdnTripsheetId = $(this);
+            var txtTaxTotal = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtGstTotal'));
+            var txtSubTotal = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtNetAmount'));
+            var txtDocketTotal = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtTotalAmount'));
+            var hdnIgst = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnIgst'));
+            var hdnCgst = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnCgst'));
+            var hdnSgst = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnSgst'));
+            var hdnTripsheetId = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnTripsheetId'));
+            var txtTaxRate = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtGstRate'));
+            var txtSubTotal = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'txtNetAmount'));
+
+            var hdnVehicleNo = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnVehicleNo'));
+            var hdnFixedAmount = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnFixedAmount'));
+            var hdnFixedKm = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnFixedKm'));
+            var hdnVariableRate = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnVariableRate'));
+            var hdnExtraAmount = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnExtraAmount'));
+            var hdnKmRun = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnKmRun'));
+
+            var hdnTotalHolidays = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnTotalHolidays'));
+            var hdnTotalHolidayAmount = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnTotalHolidayAmount'));
+            var hdnTotalWorkingHours = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnTotalWorkingHours'));
+            var hdnTotalWorkingHourAmount = $('#' + hdnTripsheetId.Id.replace('hdnTripsheetId', 'hdnTotalWorkingHourAmount'));
+
+            TaxTotal = 0;
+
+            if ($('#chkIsExemptGst').is(":checked")) {
+                txtTaxTotal.val(0);
+                hdnIgst.val(0);
+                hdnCgst.val(0);
+                hdnSgst.val(0);
+                txtDocketTotal.val(txtSubTotal.val());
+            }
+            else
+            {
+                TaxTotal = parseFloat(txtTaxRate.val()) * parseFloat(txtSubTotal.val());
+                TaxTotal = TaxTotal / 100;
+                txtTaxTotal.val(TaxTotal);
+                txtDocketTotal.val(parseFloat(txtSubTotal.val()) + parseFloat(TaxTotal));
+
+                if ($('#ddlPrimaryBillingTypeId').val() == 1) {
+
+                    hdnIgst.val(TaxTotal);
+                    hdnCgst.val(0);
+                    hdnSgst.val(0);
+                }
+                else
+                {
+                    hdnIgst.val(0);
+                    hdnCgst.val(TaxTotal / 2);
+                    hdnSgst.val(TaxTotal / 2);
+                }
+            }
+
+            subTotal = subTotal + parseFloat(txtSubTotal.val());
+
+            if ($('#chkIsExemptGst').is(":checked")) {
+                totalIgst = 0;
+                totalCgst = 0;
+                totalSgst = 0;
+                gstTotal = 0;
+                total = total + parseFloat(txtSubTotal.val());
+            }
+            else {
+                total = total + parseFloat(txtDocketTotal.val());
+                gstTotal = gstTotal + parseFloat(txtTaxTotal.val());
+                totalIgst = totalIgst + parseFloat(hdnIgst.val());
+                totalCgst = totalCgst + parseFloat(hdnCgst.val());
+                totalSgst = totalSgst + parseFloat(hdnSgst.val());
+            }
+            /// Calculate Summary
+
+            if ($("#hdnIsMilkrunHrsPerDayEnabled").val() == "true") {
+                $("#txtTripsheetSummary_VehicleNo").val(hdnVehicleNo.val());
+                totalFixedAmount += parseFloat(hdnFixedAmount.val());
+                totalFixedKm += parseFloat(hdnFixedKm.val());
+                totalVariableRate += parseFloat(hdnVariableRate.val());
+                totalExtraAmount += parseFloat(hdnExtraAmount.val());
+                totalKmRun += parseFloat(hdnKmRun.val());
+                totalHolidays += parseFloat(hdnTotalHolidays.val());
+                totalHolidayAmount += parseFloat(hdnTotalHolidayAmount.val());
+                totalWorkingHours += parseFloat(hdnTotalWorkingHours.val());
+                totalWorkingHourAmount += parseFloat(hdnTotalWorkingHourAmount.val());
+            }
+        });
+
+        if ($("#hdnIsMilkrunHrsPerDayEnabled").val() == "true") {
+            $("#txtTripsheetSummary_FixedAmount").val(totalFixedAmount.toFixed(2));
+            $("#txtTripsheetSummary_FixedKm").val(totalFixedKm.toFixed(2));
+            $("#txtTripsheetSummary_VariableRate").val(totalVariableRate.toFixed(2));
+            $("#txtTripsheetSummary_ExtraAmount").val(totalExtraAmount.toFixed(2));
+            $("#txtTripsheetSummary_KmRun").val(totalKmRun.toFixed(2));
+            $("#txtTripsheetSummary_TotalHolidays").val(totalHolidays.toFixed(2));
+            $("#txtTripsheetSummary_TotalHolidayAmount").val(totalHolidayAmount.toFixed(2));
+            $("#txtTripsheetSummary_TotalWorkingHours").val(totalWorkingHours.toFixed(2));
+            $("#txtTripsheetSummary_TotalWorkingHourAmount").val(totalWorkingHourAmount.toFixed(2));
+        }
+        totalCgst = totalCgst.toFixed(2);
+        totalIgst = totalIgst.toFixed(2);
+        totalSgst = totalSgst.toFixed(2);
+        gstTotal = gstTotal.toFixed(2);
+        total = total.toFixed(2);
+
+        $('#lblGstTotal').text(gstTotal);
+        $('#hdnGstTotal').val(gstTotal);
+        $('#lblSubTotal').text(subTotal.toFixed(2));
+        $('#hdnSubTotal').val(subTotal);
+        $('#lblTotal').text(total);
+        $('#hdnTotal').val(total);
+
+        $('#lblSgst').text(totalSgst);
+        $('#hdnSgst').val(totalSgst);
+
+        $('#lblCgst').text(totalCgst);
+        $('#hdnCgst').val(totalCgst);
+
+        $('#lblIgst').text(totalIgst);
+        $('#hdnIgst').val(totalIgst);
+
+        //
+
+
+
+    }
+
+    function GetBillGenerationDetails() {
+        if (selectedDocketList.length == 0) {
+            isStepValid = false;
+            ShowMessage('Please select at least one ' + docketNomenclature);
+            return false;
+        }
+        else if (!ValidateModuleDateWithPreviousDocumentDate('dtDocketList', 'chkChieldDocket', 'hdnDocketDate', 'txtBillDate', 'Bill Date')) return false;
+    }
+
+    function GetCustomerGstDetailsByOwnerTypeAndOwnerAndStateAndCity() {
+        if (ddlCustomerGstStateId.val() != '' && hdnCustomerId.val() != 1) {
+            requestData = { ownerType: 3, ownerId: hdnCustomerId.val(), stateId: ddlCustomerGstStateId.val(), cityId: 0 };
+            AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstDetailsByOwnerTypeAndOwnerAndStateAndCity', JSON.stringify(requestData), function (result) {
+                $('#hdnCustomerGstId').val(result.GstId);
+                $('#txtCustomerGstStateGstTinNo').val(result.GstTinNo);
+                $('#txtBillingAddress').val(result.Address);
+                $('#txtCustomerGstStateGstTinNo').readOnly(true);
+                $('#txtBillingAddress').readOnly(true);
+            }, ErrorFunction, false);
+        }
+        OnGstStateChange();
+    }
+
+    function GetCompanyGstDetailsByOwnerTypeAndOwnerAndStateAndCity() {
+
+        if (ddlCompanyGstStateId.val() != '') {
+            requestData = { ownerType: 1, ownerId: loginCompanyId, stateId: ddlCompanyGstStateId.val(), cityId: 0 };
+            AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstDetailsByOwnerTypeAndOwnerAndStateAndCity', JSON.stringify(requestData), function (result) {
+                $('#hdnCompanyGstId').val(result.GstId);
+                $('#txtCompanyGstStateGstTinNo').val(result.GstTinNo);
+                $('#txtSubmissionBillingAddress').val(result.Address);
+                $('#txtCompanyGstStateGstTinNo').readOnly(true);
+                $('#txtSubmissionBillingAddress').readOnly(true);
+            }, ErrorFunction, false);
+        }
+        OnGstStateChange();
+    }
+
+    function ValidateOnSubmit() {
+        //if ($('[id*="chkChieldDocket"]:checked').length <= 0) {
+        //    alert("Please select atleast one Tripsheet for Billing.");
+        //    return false;
+        //}
+        //var isValid = true;
+        //$('[id*="chkChieldDocket"]').each(function () {
+        //    var chkChieldDocket = $(this);
+        //    var hdnTripsheetId = $('#' + chkChieldDocket.Id.replace('chkChieldDocket', 'hdnTripsheetId'));
+        //    if (chkChieldDocket.is(':checked')) {
+        //        $('[id*="chkChieldDocket"]').each(function () {
+        //            var chkChieldDocket1 = $(this);
+        //            var hdnTripsheetId1 = $('#' + chkChieldDocket1.Id.replace('chkChieldDocket', 'hdnTripsheetId'));
+        //            if (chkChieldDocket.Id != chkChieldDocket1.Id && hdnTripsheetId.val() == hdnTripsheetId1.val()) {
+        //                if (!chkChieldDocket1.is(':checked')) {
+        //                    isValid = false;
+        //                }
+        //            }
+        //        });
+        //    }
+        //});
+        //if (!isValid) {
+        //    alert("Please select all same tripsheet for Bill Generation.");
+        //    return false;
+        //}
+        return true;
+    }
+
+    function ViewTripsheetLogList(TripsheetNo) {
+
+        $.ajax({
+            type: "POST",
+            url: customerBillGenerationUrl + '/_TripsheetMilkRunLog',
+            data: '{TripsheetNo: "' + TripsheetNo + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                bootbox.dialog({
+                    title: "Tripsheet Log Detail",
+                    message: response
+                });
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+
+        return false;
+    }
+
+    function TableHeader() {
+        $("#tblList").html("");
+        var cols = '<thead><tr style="background-color:#fff;">';
+        cols = cols + '<th style="width:5%; text-align:center;"><b>S No.</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>From</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>To</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>Start Date & Time</b></th>';
+        cols = cols + '<th style="width:5%; text-align:center;"><b>Start Km</b></th>';
+        cols = cols + '<th style="width:5%; text-align:center;"><b>End Km</b></th>';
+        cols = cols + '<th style="width:5%; text-align:center;"><b>Km Run</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>End Date & Time</b></th>';
+        cols = cols + '<th style="width:5%; text-align:center;"><b>Transit Time (HH: MM) </b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Category</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Product</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Consignee Name</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>EWay bill No.</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Invoice No.</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Invoice Value</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>No. Of Packages</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Weight</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Delivered Pkgs</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Status</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Remarks</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Toll Tax Charges</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Upload Toll Tax Document</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Parking Charges</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Upload Parking Document</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Upload POD</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Detention Night Charges</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Unloading Charges</b></th>';
+        cols = cols + '<th style="width:10%; text-align:center;"><b>Sunday / Holiday Charges</b></th>';
+        cols = cols + '</tr></thead>';
+
+        $('#tblList').append(cols);
+    }
+
+    function DownloadReport(filename) {
+
+        location.href = tripsheetUrl + '/DownloadTripsheetLog?filename=' + filename;
+        return false;
+    }
+    function GetTripsheetLogDetail(TripsheetNo) {
+
+        if (TripsheetNo != "") {
+            try {
+                var requestData = { TripsheetNo: TripsheetNo };
+                AjaxRequestWithPostAndJson(tripsheetUrl + '/GetMilkRunTripsheetDetails', JSON.stringify(requestData),
+                    OnSuccess_GetMilkRunTripsheetDetails, ErrorFunction, false);
+            } catch (e) { alert(e.message) }
+        }
+    }
+    function OnSuccess_GetMilkRunTripsheetDetails(result) {
+        var KmRun = 0;
+        var TollTaxCharges = 0;
+        var ParkingCharges = 0;
+        var hours = 0;
+        var minutes = 0;
+        var totaltime = "";
+        var DetentionNightCharges = 0;
+        var UnloadingCharges = 0;
+        var SundayHolidayCharges = 0;
+
+        if (result == null) {
+            isStepValid = false;
+            ShowMessage('No Record Found');
+            return false;
+        }
+        else if (result.length == 0) {
+            isStepValid = false;
+            ShowMessage('No Record Found');
+            return false;
+        }
+        else {
+
+            TableHeader();
+            $.each(result.VehicleLogDetail, function (i, item) {
+                var row = $('<tr />');
+                var index = document.getElementById('tblList').rows.length;
+                KmRun = KmRun + parseFloat(item.KmRun);
+                TollTaxCharges = TollTaxCharges + parseFloat(item.TollTaxCharges);
+                ParkingCharges = ParkingCharges + parseFloat(item.ParkingCharges);
+
+                DetentionNightCharges = DetentionNightCharges + parseFloat(item.DetentionNightCharges);
+                UnloadingCharges = UnloadingCharges + parseFloat(item.UnloadingCharges);
+                SundayHolidayCharges = SundayHolidayCharges + parseFloat(item.SundayHolidayCharges);
+
+                var timeSplit = item.TransitTime.split(':');
+                hours = hours + parseInt(timeSplit[0]);
+                minutes = minutes + parseInt(timeSplit[1])
+
+
+                var rowIndex = index - 1;
+                row.append('<td>' + (index) + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].From" class="form-control textlabel" id="txtlstFrom' + rowIndex + '" value="' + item.From + '" />' + item.From + ' </td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].To" class="form-control textlabel" id="txtlstTo' + rowIndex + '" value="' + item.To + '" />' + item.To + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].StartDateTime" class="form-control textlabel" id="txtlstStartDateTime' + rowIndex + '" value="' + item.StartDateTimestr + '" />' + item.StartDateTimestr + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].StartKm" class="form-control textlabel" id="txtlstStartKm' + rowIndex + '" value="' + item.StartKm + '" />' + item.StartKm + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].EndKm" class="form-control textlabel" id="txtlstEndKm' + rowIndex + '" value="' + item.EndKm + '" />' + item.EndKm + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].KmRun" class="form-control textlabel" id="txtlstKmRun' + rowIndex + '" value="' + item.KmRun + '" />' + item.KmRun + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].EndDateTime" class="form-control textlabel" id="txtlstEndDateTime' + rowIndex + '" value="' + item.EndDateTimestr + '" />' + item.EndDateTimestr + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].TransitTime" class="form-control textlabel" id="txtlstTransitTime' + rowIndex + '" value="' + item.TransitTime + '" />' + item.TransitTime + '</td>');
+
+                row.append('<td style="text-align:center;">' + item.CategoryName + ' <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].Category" class="form-control" id="txtlstCategory' + rowIndex + '" value="' + item.Category + '" /> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].CategoryName" class="form-control" id="txtlstCategoryName' + rowIndex + '" value="' + item.CategoryName + '" /></td>');
+                row.append('<td style="text-align:center;">' + item.ProductName + '<input type="hidden" name="VehicleLogDetail[' + rowIndex + '].ProductId" class="form-control" id="txtlstProductId' + rowIndex + '" value="' + item.ProductId + '" /><input type="hidden" name="VehicleLogDetail[' + rowIndex + '].ProductName" class="form-control" id="txtlstProductName' + rowIndex + '" value="' + item.ProductName + '" /></td>');
+
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].ConsigneeName" class="form-control textlabel" id="txtlstConsigneeName' + rowIndex + '" value="' + item.ConsigneeName + '" />' + item.ConsigneeName + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].EWaybillNo" class="form-control textlabel" id="txtlstEWaybillNo' + rowIndex + '" value="' + item.EWaybillNo + '" />' + item.EWaybillNo + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].InvoiceNo" class="form-control textlabel" id="txtlstInvoiceNo' + rowIndex + '" value="' + item.InvoiceNo + '" />' + item.InvoiceNo + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].InvoiceValue" class="form-control textlabel" id="txtlstInvoiceValue' + rowIndex + '" value="' + item.InvoiceValue + '" />' + item.InvoiceValue + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].NoOfPackages" class="form-control textlabel" id="txtlstNoOfPackages' + rowIndex + '" value="' + item.NoOfPackages + '" />' + item.NoOfPackages + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].Weight" class="form-control textlabel" id="txtlstWeight' + rowIndex + '" value="' + item.Weight + '" />' + item.Weight + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].Deliveredpkgs" class="form-control textlabel" id="txtlstDeliveredpkgs' + rowIndex + '" value="' + item.Deliveredpkgs + '" />' + item.Deliveredpkgs + '</td>');
+                row.append('<td style="text-align:center;">' + item.StatusName + ' <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].Status" class="form-control" id="txtlstStatus' + rowIndex + '" value="' + item.Status + '" /> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].StatusName" class="form-control" id="txtlstStatusName' + rowIndex + '" value="' + item.StatusName + '" /></td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].Remarks" class="form-control textlabel" id="txtlstRemarks' + rowIndex + '" value="' + item.Remarks + '" />' + item.Remarks + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].TollTaxCharges" class="form-control textlabel" id="txtlstTollTaxCharges' + rowIndex + '" value="' + item.TollTaxCharges + '" />' + item.TollTaxCharges + '</td>');
+
+                if (item.TollTaxUpload != "")
+                    row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].TollTaxUpload" class="form-control textlabel" id="txtlstTollTaxUpload' + rowIndex + '" value="' + item.TollTaxUpload + '" />' + '<a onclick="return DownloadReport(\'' + item.TollTaxUpload + '\')" href="#" >Download</a>' + '</td>');
+                else
+                    row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].TollTaxUpload" class="form-control textlabel" id="txtlstTollTaxUpload' + rowIndex + '" value="' + item.TollTaxUpload + '" />' + item.TollTaxUpload + '</td>');
+
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].ParkingCharges" class="form-control textlabel" id="txtlstParkingCharges' + rowIndex + '" value="' + item.ParkingCharges + '" />' + item.ParkingCharges + '</td>');
+
+                if (item.ParkingChargesUpload != "")
+                    row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].ParkingChargesUpload" class="form-control textlabel" id="txtlstParkingChargesUpload' + rowIndex + '" value="' + item.ParkingChargesUpload + '" />' + '<a onclick="return DownloadReport(\'' + item.ParkingChargesUpload + '\')" href="#" >Download</a>' + '</td>');
+                else
+                    row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].ParkingChargesUpload" class="form-control textlabel" id="txtlstParkingChargesUpload' + rowIndex + '" value="' + item.ParkingChargesUpload + '" />' + item.ParkingChargesUpload + '</td>');
+
+                if (item.PODUpload != "")
+                    row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].PODUpload" class="form-control textlabel" id="txtlstPODUpload' + rowIndex + '" value="' + item.PODUpload + '" />' + '<a onclick="return DownloadReport(\'' + item.PODUpload + '\')" href="#" >Download</a>' + '</td>');
+                else
+                    row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].PODUpload" class="form-control textlabel" id="txtlstPODUpload' + rowIndex + '" value="' + item.PODUpload + '" />' + item.PODUpload + '</td>');
+
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].DetentionNightCharges" class="form-control textlabel" id="txtlstDetentionNightCharges' + rowIndex + '" value="' + item.DetentionNightCharges + '" />' + item.DetentionNightCharges + '</td>');
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].UnloadingCharges" class="form-control textlabel" id="txtlstUnloadingCharges' + rowIndex + '" value="' + item.UnloadingCharges + '" />' + item.UnloadingCharges + '</td>');
+
+                row.append('<td style="text-align:center;"> <input type="hidden" name="VehicleLogDetail[' + rowIndex + '].SundayHolidayCharges" class="form-control textlabel" id="txtlstSundayHolidayCharges' + rowIndex + '" value="' + item.SundayHolidayCharges + '" />' + item.SundayHolidayCharges + '</td>');
+
+                $('#tblList').append(row);
+
+            });
+
+            hours = hours + Math.floor(minutes / 60);
+            minutes = minutes % 60;
+            totaltime = ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+
+            var cols = '<tfoot><tr style="background-color:#fff;">';
+            cols = cols + '<th style="width:5%; text-align:center; color:black; font-weight:bold">Total</th>';
+            cols = cols + '<th style="width:15%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:15%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:15%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:5%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:5%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:5%; text-align:center; color:black; font-weight:bold">' + KmRun + '</th>';
+            cols = cols + '<th style="width:15%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:5%; text-align:center; color:black; font-weight:bold">' + totaltime + '</th>'; //
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;color:black; font-weight:bold">' + TollTaxCharges.toFixed(2) + '</th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;color:black; font-weight:bold">' + ParkingCharges.toFixed(2) + '</th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;"><b></b></th>';
+            cols = cols + '<th style="width:10%; text-align:center;color:black; font-weight:bold">' + DetentionNightCharges.toFixed(2) + '</th>';
+            cols = cols + '<th style="width:10%; text-align:center;color:black; font-weight:bold">' + UnloadingCharges.toFixed(2) + '</th>';
+            cols = cols + '<th style="width:10%; text-align:center;color:black; font-weight:bold">' + SundayHolidayCharges.toFixed(2) + '</th>';
+
+            cols = cols + '</tr></tfoot>';
+
+            $('#tblList').append(cols);
+
+        }
+    }
+</script>
+@using (Html.BeginForm("TripBillMilkRun", "CustomerBill", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.BillId)
+    @Html.Hidden("BillId", 0)
+
+
+    <div class="widget-wrap">
+        <div id="dvStep1">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label("Transaction Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drTransactionDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CustomerBusinessType, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.CustomerBusinessType,
+                           new List<SelectListItem>
+                           {
+                               new SelectListItem() {Text = "Select Business Type", Value=""},
+                               new SelectListItem() {Text = "Milk Run Billing", Value="1"}
+                           },
+                           new { @class = "form-control", @id = "ddlTransactionTypeId" })
+
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CustomerBusinessType)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ServiceType, new { @class = "label" })
+                        <div class="select">
+                            @Html.HiddenFor(model => model.ServiceType, new { @id = "hdnGstServiceTypeId" })
+                            @Html.DropDownList("ddlGstServiceTypeId", new SelectList(ViewBag.TransactionCategoryList, "Value", "Name"), new { @class = "form-control", @id = "ddlGstServiceTypeId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ServiceType)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+
+                            @Html.TextBoxFor(model => model.CustomerCode, null, new { @class = "form-control", @id = "txtCustomerCode" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CustomerCode)
+                        @Html.HiddenFor(model => model.IsMilkrunHrsPerDayEnabled, new { @id = "hdnIsMilkrunHrsPerDayEnabled" })
+                        @Html.HiddenFor(model => model.IsLaneIdEnabled, new { @id = "hdnIsLaneIdEnabled" })
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label" })
+                        <div class="clearfix">
+                        </div>
+                        @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VehicleCode, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+
+                            @Html.TextBoxFor(model => model.VehicleCode, null, new { @class = "form-control", @id = "txtVehicleCode" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.VehicleCode)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TripsheetNo, new { @class = "label" })
+                        <div class="input">
+
+                            @Html.TextBoxFor(model => model.TripsheetNo, null, new { @class = "form-control", @id = "txtTripsheetNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.TripsheetNo)
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VehicleName, " ", new { @class = "label" })
+                        <div class="clearfix">
+                        </div>
+                        @Html.LabelFor(model => model.VehicleName, " ", new { @class = "label-bold", @id = "lblVehicleName" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <button id="btnStep1" type="button" class="btn btn-primary primary-btn" tabindex="0">Step 1</button>
+            </div>
+        </div>
+        <div id="dvStep2" style="display:none">
+            <div class="page-separator">Trip & Invoice Details</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomer" })
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BillNo, new { @class = "label" })
+                        <div class="system-label">
+                            @Html.Label("<System Generated>")
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ManualBillNoForTripBill, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.ManualBillNoForTripBill, new { @class = "form-control", @id = "txtManualBillNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ManualBillNoForTripBill)
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "BillDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.BillDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "DueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DueDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = true })
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-separator">GST Details</div>
+
+            <div class="row">
+                <div class="col-sm-3" id="dvCustomerState">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CustomerGstStateId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.CustomerGstStateId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlCustomerGstStateId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CustomerGstStateId)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CustomerGstStateGstTinNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(m => m.CustomerGstId, new { @id = "hdnCustomerGstId" })
+                            @Html.TextBoxFor(model => model.CustomerGstStateGstTinNo, new { @class = "form-control", @id = "txtCustomerGstStateGstTinNo" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BillingAddress, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.BillingAddress, new { @class = "form-control", @id = "txtBillingAddress" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CompanyGstStateId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.CompanyGstStateId, Enumerable.Empty<SelectListItem>(), new { @id = "ddlCompanyGstStateId", @class = "form-control" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CompanyGstStateId)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CompanyGstStateGstTinNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(m => m.CompanyGstId, new { @id = "hdnCompanyGstId" })
+                            @Html.TextBoxFor(model => model.CompanyGstStateGstTinNo, new { @class = "form-control", @id = "txtCompanyGstStateGstTinNo" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Label("SubmissionBillingAddress", "Billing Address", new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBox("SubmissionBillingAddress", " ", new { @class = "form-control", @id = "txtSubmissionBillingAddress" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3" style="display:none">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.SubmissionLocationCode, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.HiddenFor(m => m.SubmissionLocationId, new { @id = "hdnBillSubmissionLocationId" })
+                            @Html.LabelFor(m => m.SubmissionLocationCode, " ", new { @id = "lblBillSubmissionLocationCode", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.InterState, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.DropDownListFor(model => model.PrimaryBillingTypeId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlPrimaryBillingTypeId" })
+                            <i></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.SacName, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.HiddenFor(m => m.SacId, new { @id = "hdnSacId" })
+                            @Html.LabelFor(m => m.SacName, " ", new { @id = "lblSacName", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Itc, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.LabelFor(m => m.Itc, " ", new { @id = "lblItc", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsExemptGst, new { @class = "label" })
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(model => model.IsExemptGst, new { @id = "chkIsExemptGst" })
+                            <i></i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-separator">Transaction Details</div>
+            <div class="row">
+                <div id="dvTransactionDetailsSum" class="col-sm-12">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="text-nowrap">
+                        <table id="dtDocketList" class="table table-bordered table-striped display nowrap"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="page-separator">Summary of Transactions</div>
+
+
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.SubTotal, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.HiddenFor(model => model.SubTotal, new { @id = "hdnSubTotal" })
+                            @Html.LabelFor(model => model.SubTotal, "0.00", new { @id = "lblSubTotal", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Sgst, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.HiddenFor(model => model.Sgst, new { @id = "hdnSgst" })
+                            @Html.LabelFor(model => model.Sgst, "0.00", new { @id = "lblSgst", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Cgst, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.HiddenFor(model => model.Cgst, new { @id = "hdnCgst" })
+                            @Html.LabelFor(model => model.Cgst, "0.00", new { @id = "lblCgst", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Igst, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.HiddenFor(model => model.Igst, new { @id = "hdnIgst" })
+                            @Html.LabelFor(model => model.Igst, "0.00", new { @id = "lblIgst", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Ugst, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.HiddenFor(model => model.Ugst, new { @id = "hdnUgst" })
+                            @Html.LabelFor(model => model.Ugst, "0.00", new { @id = "lblUgst", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.GstTotal, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.HiddenFor(model => model.GstTotal, new { @id = "hdnGstTotal" })
+                            @Html.LabelFor(model => model.GstTotal, "0.00", new { @id = "lblGstTotal", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.TotalAmount, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.HiddenFor(model => model.TotalAmount, new { @id = "hdnTotal" })
+                            @Html.LabelFor(model => model.TotalAmount, "0.00", new { @id = "lblTotal", @class = "label-bold" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-separator">List of Vehicle Log &nbsp;&nbsp;  <button type="button" class="btn btn-danger" id="btnExportExcel" style="background-color:orangered; border-color:#808080;">Export</button> </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="table-responsive text-nowrap"  id="dvExport">
+                        <table id="tblList" class="table table-bordered table-striped display nowrap" border="1">
+                        </table>
+                    </div>
+                    <br />
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn" onclick="return ValidateOnSubmit()">Create Bill</button>
+            </div>
+        </div>
+
+
+
+    </div>
+
+}

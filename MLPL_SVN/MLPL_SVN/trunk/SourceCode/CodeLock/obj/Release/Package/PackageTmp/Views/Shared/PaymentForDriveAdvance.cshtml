@@ -1,0 +1,404 @@
+﻿
+@using CodeLock.Models
+@model PaymentControl
+
+
+<script>
+    var ddlPaymentMode, txtPaymentAmountApplicable, txtPaymentCashAmount, ddlPaymentCashAccount, ddlPaymentBankAccount, ddlPaymentCashCard, txtPaymentDetailsChequeDate, txtPaymentChequeAmount, txtBaAccountCode, txtBaPaymentRemarks, hdnBaAccountID, lblName;
+	var partyTypeId = 0, partyId = 0;
+    $(document).ready(function () {
+
+        ddlPaymentMode = $('#ddlPaymentMode'); txtPaymentAmountApplicable = $('#txtPaymentAmountApplicable'); txtPaymentCashAmount = $('#txtPaymentCashAmount'); ddlPaymentCashCard = $('#ddlPaymentCashCard'); ddlPaymentCashAccount = $('#ddlPaymentCashAccount'); ddlPaymentBankAccount = $('#ddlPaymentBankAccount'); txtPaymentChequeNo = $('#txtPaymentChequeNo'); txtPaymentDetailsChequeDate = $('#txtPaymentDetailsChequeDate'); txtPaymentChequeAmount = $('#txtPaymentChequeAmount'); txtPaymentDetailsChequeDate.disable(); txtBaAccountCode = $('#txtBaAccountCode'); txtBaPaymentRemarks = $('#txtBaPaymentRemarks'); hdnBaAccountID = $('#hdnBaAccountID'); lblName = $('#lblName');
+        lblCashAccount = $('#lblCashAccount'); lblCashAmount = $('#lblCashAmount'); lblChequeAmount = $('#lblChequeAmount'); lblBankAccount = $('#lblBankAccount');
+        ddlPaymentMode.change(OnPaymentModeChange);
+
+        ddlPaymentCashCard.change(function () {
+
+            if ($('#ddlPaymentCashCard').val() != "")
+            {
+                var requestData = { cardId: $('#ddlPaymentCashCard').val() };
+                AjaxRequestWithPostAndJson('@Url.Action("CheckCardSufficientBalance", "Card", new { Area = "Master" })', JSON.stringify(requestData), function (result) {
+
+                    if( parseFloat(txtPaymentCashAmount.val()) > parseFloat(result))
+                    {
+                        ShowMessage('Card do not have sufficient balance');
+                        $('#ddlPaymentCashCard').val('');
+                    }
+
+                }, ErrorFunction, false);
+            }
+     });
+
+    
+        txtPaymentChequeNo.blur(function () { return CheckValidChequeDetail(txtPaymentChequeNo); });
+        txtPaymentDetailsChequeDate.blur(function () { return CheckValidChequeDetail(txtPaymentDetailsChequeDate); });
+        OnPaymentModeChange();
+    });
+
+    function SetPaymentAmount(amount) {
+        txtPaymentAmountApplicable.val(amount).enable(amount > 0);
+        //if (!allowCashCardPayment) {
+        ddlPaymentMode.enable(amount > 0);
+        ddlPaymentMode.val('');
+        //}
+        OnPaymentModeChange();
+    }
+
+    function OnPaymentModeChange() {
+        //if (allowCashCardPayment && ddlPaymentMode.val() != '4')
+        //    ddlPaymentMode.val(4);
+        //else if (!allowCashCardPayment && ddlPaymentMode.val() == "4")
+        //    ddlPaymentMode.val(1);
+        //else {
+        var FuelCard;
+
+        $('#dvCashAccount').hide();
+        $('#dvCashCard').hide();
+        ddlPaymentCashCard.disable();
+        FuelCard = "";
+
+        if (ddlPaymentMode.val() == "1" || ddlPaymentMode.val() == "4"
+            || ddlPaymentMode.val() == "5" || ddlPaymentMode.val() == "6"
+            || ddlPaymentMode.val() == "7") {
+
+            if (ddlPaymentMode.val() == "1") {
+                ddlPaymentCashAccount.enable().val('');
+                ddlPaymentCashCard.disable();
+                $('#dvCashAccount').show();  
+            }
+            else {
+
+                if (ddlPaymentMode.val() == "4"
+                    || ddlPaymentMode.val() == "5"
+                    || ddlPaymentMode.val() == "6"
+                    || ddlPaymentMode.val() == "7") {
+
+                    if (ddlPaymentMode.val() == "4") {
+                        FuelCard = "2";
+                    }
+                    if (ddlPaymentMode.val() == "5") {
+                        FuelCard = "1";
+                    }
+
+                    if (ddlPaymentMode.val() == "6") {
+                        FuelCard = "3";
+                    }
+
+                    if (ddlPaymentMode.val() == "7") {
+                        FuelCard = "4";
+                    }
+
+                    BindCashCardList($('#hdnVehicle').val(), $('#lblTripsheetDate').text(), FuelCard);
+                }
+
+
+                ddlPaymentCashCard.enable().val('');
+                ddlPaymentCashAccount.disable();
+                $('#dvCashCard').show();
+            }
+
+            ddlPaymentBankAccount.val('').disable();
+            txtPaymentChequeAmount.val('0.00').blur().readOnly();
+            txtPaymentChequeNo.val('').blur().readOnly();
+            txtPaymentDetailsChequeDate.disable().val('');
+            txtPaymentCashAmount.readOnly(false);
+            txtPaymentCashAmount.val(txtPaymentAmountApplicable.val());
+            txtBaAccountCode.val('').blur().readOnly();
+            txtBaPaymentRemarks.val('').blur().readOnly();
+            lblCashAccount.text('Cash Account');
+            lblCashAmount.text('Cash Amount');
+            BindAccountDropDown(ddlPaymentCashAccount, 5, 'Cash');
+        }
+        else if (ddlPaymentMode.val() == "2") {
+            $('#dvCashAccount').show();
+            txtPaymentCashAmount.val('0.00').blur().readOnly();
+            ddlPaymentCashAccount.val('').disable();
+            ddlPaymentCashCard.val('').disable();
+            ddlPaymentBankAccount.enable().val('');
+            txtPaymentChequeNo.val('').blur().readOnly(false);
+            txtPaymentDetailsChequeDate.enable().val('');
+            txtPaymentChequeAmount.readOnly(false);
+            txtPaymentChequeAmount.val(txtPaymentAmountApplicable.val());
+            txtBaAccountCode.val('').blur().readOnly();
+            txtBaPaymentRemarks.val('').blur().readOnly();
+        }
+        else if (ddlPaymentMode.val() == "3") {
+            ddlPaymentCashAccount.enable().val('');
+            ddlPaymentCashCard.disable();
+            $('#dvCashAccount').show();
+            txtPaymentCashAmount.readOnly(false);
+            txtPaymentCashAmount.val(txtPaymentAmountApplicable.val());
+            ddlPaymentBankAccount.enable().val('');
+            txtPaymentChequeNo.val('').blur().readOnly(false);
+            txtPaymentDetailsChequeDate.enable().val('');
+            txtPaymentChequeAmount.readOnly(false);
+            txtPaymentChequeAmount.val(txtPaymentAmountApplicable.val());
+            txtBaAccountCode.val('').blur().readOnly();
+            txtBaPaymentRemarks.val('').blur().readOnly();
+        }
+        else if (ddlPaymentMode.val() == "8") {
+            ddlPaymentCashAccount.val('').disable();
+            ddlPaymentCashCard.disable();
+            $('#dvCashAccount').show();
+            txtPaymentCashAmount.readOnly(false);
+            txtPaymentCashAmount.val(txtPaymentAmountApplicable.val());
+            ddlPaymentBankAccount.val('').disable();
+            txtPaymentChequeNo.val('').blur().readOnly();
+            txtPaymentDetailsChequeDate.disable().val('');
+            txtPaymentChequeAmount.readOnly();
+            txtBaAccountCode.val('').blur().readOnly(false);
+            txtBaPaymentRemarks.val('').blur().readOnly(false);
+            txtBaAccountCode.val('');
+            hdnBaAccountID.val('');
+            lblName.text('');
+
+            VendorAccountAutoComplete('txtBaAccountCode', 'hdnPartyId', null, ddlPaymentMode.val());
+
+            txtBaAccountCode.blur(function () { return CheckIsValidAccountExist(); });
+
+        }
+        else if (ddlPaymentMode.val() == "9") {
+            $('#dvCashAccount').show();
+            ddlPaymentCashAccount.enable().val('');
+            txtPaymentCashAmount.readOnly(false);
+            txtPaymentCashAmount.val(txtPaymentAmountApplicable.val());
+            ddlPaymentCashCard.val('').disable();
+            ddlPaymentBankAccount.val('').disable();
+            txtPaymentChequeNo.val('').blur().readOnly();
+            txtPaymentDetailsChequeDate.disable().val('');
+            txtPaymentChequeAmount.readOnly();
+            txtBaAccountCode.val('').blur().readOnly();
+            txtBaPaymentRemarks.val('').blur().readOnly();
+            lblCashAccount.text('Card Account');
+            lblCashAmount.text('Card Amount');
+            BindAccountDropDown(ddlPaymentCashAccount, 7, 'Card');
+        }
+        else {
+            $('#dvCashAccount').show();
+            txtPaymentCashAmount.val('0.00').blur().readOnly();
+            txtPaymentChequeAmount.val('0.00').blur().readOnly();
+            ddlPaymentCashAccount.val('').disable();
+            ddlPaymentBankAccount.val('').disable();
+            txtPaymentChequeNo.val('').blur().readOnly();
+            txtPaymentDetailsChequeDate.val('').blur().disable();
+            txtBaAccountCode.val('').blur().readOnly();
+            txtBaPaymentRemarks.val('').blur().readOnly();
+        }
+    }
+
+    function CheckIsValidAccountExist() {
+
+        lblName.text('');
+        if (ddlPaymentMode.val() == "8") {
+            IsAccountNameExist(txtBaAccountCode, hdnBaAccountID, lblName);
+            if (hdnBaAccountID.val() == 1) {
+                ShowMessage('');
+                txtBaAccountCode.val('');
+                hdnPartyId.val('');
+                txtBaAccountCode.focus();
+            }
+
+        }
+
+    }
+
+    function CheckValidChequeDetail(obj) {
+        if (txtPaymentChequeNo.val() != '' && txtPaymentDetailsChequeDate.val() != '') {
+			var requestData = { chequeNo: txtPaymentChequeNo.val(), chequeDate: txtPaymentDetailsChequeDate.val(), partyTypeId: partyTypeId, partyId: partyId };
+            AjaxRequestWithPostAndJson('@Url.Action("IsChequeExist", "Account", new { Area="Master"})', JSON.stringify(requestData), function (result) {
+                if (result) {
+                    ShowMessage('Cheque already used');
+                    obj.val('');
+                    return false;
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+	function SetPaymentPartyTypeAndParty(partyType, party) {
+		partyTypeId = partyType, partyId = party;
+	}
+</script>
+@{
+    <div class="controls">
+        <div class="row">
+            <div class="col-sm-6">
+                @Html.HiddenFor(m => m.PaymentDetails.CardTillDate, new { @id = "hdnCardTillDate" })
+                @Html.HiddenFor(m => m.PaymentDetails.CardVehicleId, new { @id = "hdnCardVehicleId" })
+
+
+
+                @Html.LabelFor(m => m.PaymentDetails.PaymentMode, new { @class = "label" })
+                <div class="select">
+                    @if (Model.PaymentDetails.AllowCashCard)
+                    {
+                        @Html.DropDownListFor(m => m.PaymentDetails.PaymentMode, new List<SelectListItem>
+                                                { new SelectListItem{Text="Cash", Value="1"},
+                                                    new SelectListItem{Text="Cash Card", Value="4"},
+                                                    new SelectListItem{ Text="Fuel Cum Cash Card", Value = "6" },
+                                                    new SelectListItem{ Text="ATM Card", Value = "7" },
+                                                    new SelectListItem{Text="Bank", Value="2"},
+                                                    new SelectListItem { Text = "BA", Value = "8" },
+                                                    new SelectListItem { Text = "Happy Card", Value = "9" }
+                   }, "Select Payment Mode", new { @class = "form-control", @id = "ddlPaymentMode" })
+
+                       
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(m => m.PaymentDetails.PaymentMode, new List<SelectListItem>
+                                                { new SelectListItem{Text="Cash", Value="1"},
+                                                  new SelectListItem{Text="Bank", Value="2"},
+                                                  new SelectListItem{Text="Both", Value="3"},
+                                                new SelectListItem { Text = "BA", Value = "8" }}, "Select Payment Mode", new { @class = "form-control", @id = "ddlPaymentMode" })
+                    }
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(m => m.PaymentDetails.PaymentMode)
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaymentDetails.AmountApplicable, new { @class = "label" })
+                    @Html.TextBoxFor(model => model.PaymentDetails.AmountApplicable, new { @class = "form-control textlabel  numeric2 label-bold", @id = "txtPaymentAmountApplicable" })
+                    @Html.ValidationMessageFor(model => model.PaymentDetails.AmountApplicable)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaymentDetails.CashAmount, new { @class = "label", @id= "lblCashAmount" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PaymentDetails.CashAmount, new { @class = "form-control numeric2 ", @id = "txtPaymentCashAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PaymentDetails.CashAmount)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                @Html.LabelFor(m => m.PaymentDetails.CashAccountId, new { @class = "label", @id = "lblCashAccount" })
+                <div class="select">
+                    @Html.DropDownListFor(m => m.PaymentDetails.CashAccountId, new List<SelectListItem> { new SelectListItem { Text = "CASH IN HAND", Value = "C" } }, "Select Cash Account", new { @class = "form-control", @id = "ddlPaymentCashAccount", })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(m => m.PaymentDetails.CashAccountId)
+            </div>
+            <div class="col-sm-6" id="dvCashCard">
+                @Html.LabelFor(m => m.PaymentDetails.CashCardId, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(m => m.PaymentDetails.CashCardId, Enumerable.Empty<SelectListItem>(), "Select Cash Card", new { @class = "form-control", @id = "ddlPaymentCashCard", })
+
+                    @*@Html.DropDownListFor(m => m.PaymentDetails.CashCardId, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text="Fuel Card", Value = "1" },
+                            new SelectListItem{ Text="Cash Card", Value = "2" },
+                            new SelectListItem{ Text="Fuel Cum Cash Card", Value = "3" },
+                            new SelectListItem{ Text="ATM Card", Value = "4" }
+                            }, new { @class = "form-control", @id = "ddlPaymentCashCard" })*@
+
+
+                    <i></i>
+
+                </div>
+                @Html.ValidationMessageFor(m => m.PaymentDetails.CashCardId)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaymentDetails.ChequeNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.PaymentDetails.ChequeType)
+                        @Html.TextBoxFor(model => model.PaymentDetails.ChequeNo, new { @class = "form-control", @id = "txtPaymentChequeNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PaymentDetails.ChequeNo)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="clearfix">
+                    @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldId = "PaymentDetailsChequeDate", FieldName = "PaymentDetails.ChequeDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.PaymentDetails.ChequeDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = true, SetBlank = true })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaymentDetails.ChequeAmount, new { @class = "label", @id = "lblChequeAmount" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PaymentDetails.ChequeAmount, new { @class = "form-control numeric2", @id = "txtPaymentChequeAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PaymentDetails.ChequeAmount)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.PaymentDetails.BankAccountId, new { @class = "label" ,@id = "lblBankAccount"})
+                    <div class="select">
+                        @Html.DropDownListFor(m => m.PaymentDetails.BankAccountId, new List<SelectListItem> { new SelectListItem { Text = "HDFC Bank", Value = "H" } }, "Select Bank", new { @class = "form-control", @id = "ddlPaymentBankAccount" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.PaymentDetails.BankAccountId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaymentDetails.BaAccountID, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.PaymentDetails.BaAccountID, new { @id = "hdnBaAccountID" })
+                        @Html.TextBoxFor(model => model.PaymentDetails.BaAccountCode, null, new { @class = "form-control", @id = "txtBaAccountCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PaymentDetails.BaAccountCode)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @class = "label-bold", @id = "lblName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.PaymentDetails.BaPaymentRemarks, new { @class = "label" })
+                    <div class="select">
+                        @Html.TextBoxFor(model => model.PaymentDetails.BaPaymentRemarks, null, new { @class = "form-control", @id = "txtBaPaymentRemarks" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.PaymentDetails.BaPaymentRemarks)
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        BindAccountDropDown(ddlPaymentCashAccount, 5, 'Cash');
+        BindAccountDropDown(ddlPaymentBankAccount, 6, 'Bank');
+
+        var showCashCard = '@Model.PaymentDetails.AllowCashCard' == 'True';
+        $('#ddlPaymentCashCard').enable(showCashCard);
+    });
+    function BindAccountDropDown(ddl, category, type) {
+        AjaxRequestWithPostAndJson('@Url.Action("GetListByCategory","Account",new{ Area="Master"})', JSON.stringify({ categoryId: category }), function (result) {
+            BindDropDownList(ddl.Id, result, 'Value', 'Description', '', type + ' Account');
+        }, ErrorFunction, false);
+    }
+    function BindCashCardList(vehicleId, date, isFuelCard) {
+        var requestData = { vehicleId: vehicleId, tripsheetDate: date, isFuelCard: isFuelCard };
+        AjaxRequestWithPostAndJson('@Url.Action("GetCardListByVehicleId", "Card", new { Area = "Master" })', JSON.stringify(requestData), function (result) {
+            BindDropDownList(ddlPaymentCashCard.Id, result, 'Value', 'Name', '', 'Select Cash Card');
+        }, ErrorFunction, false);
+    };
+    var allowCashCardPayment = false;
+    function SetCashCardPaymentMode(useCashCard) {
+        allowCashCardPayment = useCashCard;
+        OnPaymentModeChange();
+    }
+
+</script>

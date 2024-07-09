@@ -1,0 +1,213 @@
+﻿@using CodeLock.Helper
+@model CodeLock.Models.VehicleStatusDetail
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Vehicle Status Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+
+        vehicleMasterUrl = '@Url.Action("", "Vehicle", new { Area = "Master" })';
+        baseUrl = '@Url.Action("", "Tripsheet", new { Area = "FMS" })';
+        LoadDataTable('dtVehicle', true, true, true);
+
+    });
+</script>
+<script src="@Url.Content("~/Areas/FMS/Views/Tripsheet/VehicleStatus.js")"></script>
+
+
+
+@using (Html.BeginForm("VehicleStatus", "Tripsheet", FormMethod.Post, new { @class = "j-forms", @id = "j-forms", @enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                        @Html.TextBoxFor(model => model.VehicleNo, null, new { @class = "form-control", @maxlength = "15", @id = "txtVehicleNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleNo)
+                </div>
+            </div>
+
+           
+            <div class="col-sm-3" id="divStatus" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleStatus, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VehicleStatus, new List<SelectListItem> {
+                                            new SelectListItem() {Text = "Select",Value=""},
+                                            new SelectListItem() {Text = "On Road", Value="1"},
+                                            new SelectListItem() {Text = "Off Road", Value="2"},
+                                          
+                                    }, new { @class = "form-control", @id = "ddlVehicleStatus" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleStatus)
+                </div>
+            </div>
+
+            <div class="col-sm-3" id="divStatusReason" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StatusReason, new { @class = "label" })
+                    <div class="select">
+                       @Html.DropDownListFor(model => model.StatusReason, new SelectList(ViewBag.StatusReasonList, "Value", "Name"), "Select", new { @class = "form-control", @id = "ddlStatusReason" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StatusReason)
+                </div>
+            </div>
+
+            <div class="col-sm-3" id="divLocation" style="display:none">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehLocation, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.VehLocation, null, new { @class = "form-control", @id = "txtVehicleLocation" })
+                    </div>
+                    
+                </div>
+            </div>
+
+            
+        </div>
+
+        <div class="row" id="divRemandDate" style="display:none">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehRemarks, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.VehRemarks, null, new { @class = "form-control", @id = "txtVehRemarks" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "VehStatusDateTime", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.VehStatusDateTime), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, MinDate = DateTime.Now.Date.AddDays(-3), MaxDate = DateTime.Now.Date.AddDays(1), IsDateOnly = false })
+                </div>
+            </div>
+            
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DriverName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DriverName, null, new { @class = "form-control", @id = "txtDriverName" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DriverMobNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DriverMobNo, null, new { @class = "form-control", @id = "txtDriverMobNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DriverMobNo)
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="divSupervisor" style="display:none">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SupervisorName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SupervisorName, null, new { @class = "form-control", @id = "txtSupervisorName" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SupervisorMobNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.SupervisorMobNo, null, new { @class = "form-control", @id = "txtSupervisorMobNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SupervisorMobNo)
+                </div>
+            </div>
+        </div>
+
+
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Update Vehicle</button>
+            </div>
+
+        
+<div class="row">
+    <div class="col-sm-4">
+        <div class="page-separator">Vehicle Status </div>
+            <table id="exportable-tbl" class="table-bordered" width="100%" >
+                <thead>
+                    <tr>
+                        <th>
+                            Status
+                        </th>
+                        <th>
+                            No. of vehicles
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                   @for (int i = 0; i < Model.VehicleStatusList.Count; i++)
+                   {
+                        <tr>
+                            <td>
+                               @Model.VehicleStatusList[i].CodeDesc
+                            </td>
+                            <td>
+                                @Model.VehicleStatusList[i].CodeTypeVal
+                                @*@Html.Label("", Model.VehicleStatusList[i].CodeTypeVal == "0" ? Model.VehicleStatusList[i].CodeTypeVal : Model.VehicleStatusList[i].CodeTypeVal, new { @class = Model.VehicleStatusList[i].CodeTypeVal == "0" ? "label label-default" : "label label-success" })*@
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot class="hide-if-no-paging">
+                    <tr>
+                        <td colspan="6" class="footable-visible">
+                            <div class="pagination pagination-centered"></div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+    </div>
+    <div class="col-sm-8">
+        <div class="page-separator">Vehicle List</div>
+            <table id="dtVehicle" class="table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            Vehicle No.
+                        </th>
+                        <th>
+                            Vehicle Status
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.VehicleDetailList.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Model.VehicleDetailList[i].CodeDesc
+                            </td>
+                            <td>
+                                @Model.VehicleDetailList[i].CodeTypeVal
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+      
+
+    </div>
+    </div>
+        </div>
+
+}
+
+

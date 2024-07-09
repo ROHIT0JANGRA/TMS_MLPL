@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.Title = "ChartOfAccount";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/assets/css/jstree/style.min.css">
+<script src="~/assets/js/lib/jstree.min.js"></script>
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-12">
+            <div id="accountChartTree" class="treejs treejs-context" />
+        </div>
+    </div>
+</div>
+
+<script>
+	 $(document).ready(function () {
+        	SetPageLoad('Chart of Account', '', '', '', '');
+     });
+
+     $('.treejs-context').jstree({
+            "plugins": ["contextmenu"],
+            "core": {
+                "themes": {
+                    "responsive": true,
+                    "icons": false,
+                    "dots": true
+                },
+                "check_callback": true,
+                "data": FormatData(@Html.Raw(ViewBag.TreeData))
+            }
+     });
+
+    function FormatData(data) {
+            resultData = [];
+            $.each(data, function (i, item) {
+                   resultData.push({
+                    "id": item.Id,
+                    "parent": item.Parent,
+                    "text": item.Text
+                })
+            });
+            
+            return resultData;
+    }
+
+</script>
+

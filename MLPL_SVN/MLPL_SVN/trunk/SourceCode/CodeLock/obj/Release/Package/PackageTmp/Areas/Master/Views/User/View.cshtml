@@ -1,0 +1,239 @@
+﻿@model CodeLock.Models.MasterUser
+
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UserName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.LocationCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.LocationCode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MobileNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MobileNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EmailId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EmailId)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Gender)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Gender)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DoB)
+                </dt>
+                <dd>
+                    @Model.DoB.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DoJ)
+                </dt>
+                <dd>
+                    @Model.DoJ.ToDisplayDate()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Address)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Address)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsActive)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3" id="divImageLink">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.PhotoAttachment)
+                </dt>
+                <dd>
+                    @{ var fileNamelnkId = "lnkAttachment";}
+                    <a href="#" id=@fileNamelnkId onclick="return ViewAttachment(this);">View</a>
+                    @Html.HiddenFor(model => model.Photo, new { id = "hdnPhotoName", @Name = "Photo" })
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.RoleId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.RoleName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UserStatusId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UserStatus)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ManagerName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ManagerName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UserTypeId)
+                </dt>
+                <dd>
+                    @Html.HiddenFor(m => m.UserTypeId, new { @id = "hdnUserTypeId" })
+                    @Html.DisplayFor(model => model.UserType)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3" id="dvUserTypeMapCode">
+            <dl>
+                <dt>
+                    @Html.Label("UserTypeMapCode", " ", new { @class = "label-bold", @id = "lblUserTypeMapCode" })
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UserTypeMapCode)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3" id="dvUserTypeMapName">
+            <dl>
+                <dt>
+                    @Html.Label("UserTypeMapName", " ", new { @class = "label-bold", @id = "lblUserTypeMapName" })
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UserTypeMapName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryBy)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.EntryByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </dt>
+                <dd>
+                    @Model.EntryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+
+                    @Html.DisplayNameFor(model => model.UpdateBy)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.UpdateDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        //alert('Alert');
+        //SetPageLoad('User', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { id = Model.UserId })');
+
+        SetPageLoad('User', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { id = Model.UserId })');
+    });
+
+</script>

@@ -1,0 +1,192 @@
+﻿@model CodeLock.Models.PoGrn
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        baseUrl = '@Url.Action("", "PurchaseOrder", new { Area = "Finance" })';
+        purchaseOrderModuleId = '@ModuleHelper.PurchaseOrder';
+    });
+</script>
+<script src="@Url.Content("~/Areas/Finance/Views/PurchaseOrder/Grn.js")"></script>
+<div class="row" id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Grn", "PurchaseOrder", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.HiddenFor(model => model.LocationId, new { @id = "hdnLocationId", @Value = @SessionUtility.LoginLocationId })
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            @Html.Label("PO Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drPoDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.MaterialCategoryId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.MaterialCategoryId, new SelectList(ViewBag.MaterialCategoryList, "Value", "Name"), "Select", new { @class = "form-control", @id = "ddlMaterialCategoryId" })<i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.MaterialCategoryId)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.VendorId, new { @class = "label" })
+
+                                <div class="input-wrapper">
+                                    @Html.HiddenFor(m => m.VendorId, new { @id = "hdnVendorId" })
+                                    @Html.TextBoxFor(m => m.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.VendorCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label(" ", new { @class = "label-bold", @id = "lblName" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PoNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.PoNo, new { @class = "form-control", @id = "txtPoNo" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualPoNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.ManualPoNo, new { @class = "form-control", @id = "txtManualPoNo" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.ManualPoNo)
+                                </div>
+                            </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.Label("(seperated by comma if multiple)")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtPoList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PoNo, new { @class = "label" })
+                                <div class="system-label">
+                                    @Html.Label("<System Generated>")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "GrnDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.GrnDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.PoNo, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.PoNo, " ", new { @id = "lblPoNo", @class = "label-bold" })
+                                    @Html.HiddenFor(m => m.PoId, new { @id = "hdnPoId" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.PoDate, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.PoDate, " ", new { @id = "lblPoDate", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.VendorId, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.VendorCode, " ", new { @id = "lblVendor", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.MaterialCategoryId, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(m => m.MaterialCategory, " ", new { @id = "lblMaterialCategory", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualGrnNo, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.ManualGrnNo, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.ManualGrnNo)
+                                </div>
+                            </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                    @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                                    <div class="input">
+                                        @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.Remarks)
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                @Html.HiddenFor(m => m.Amount, new { @id = "hdnAmount" })
+                                <table id="dtGrnDetail"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

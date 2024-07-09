@@ -1,0 +1,238 @@
+﻿@using CodeLock.Helper
+@model CodeLock.Models.VehicleMaintananceUpdateData
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "VehicleMaintenance List Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    baseUrl = '@Url.Action("", "Tripsheet")';
+    currentDomain = '@Url.Content("~")';
+    function InitAutoComplete() { };
+</script>
+
+<script src="@Url.Content("~/Areas/FMS/Views/Tripsheet/GetVehicleMaintananceList.js")"></script>
+
+@using (Html.BeginForm("VehicleStatusListUpdate", "Tripsheet", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+    <div class="widget-wrap">
+        <div class="page-separator"><span class="page-separator" id="spnMassage">Vehicle Maintanance List  Update </span></div>
+
+        
+            @Html.ValidationMessageFor(m => m.VehicleMaintenanceUpdateList)
+            <table id="dtUpdateVehcile" style="min-height:5vh">
+                <thead>
+                    <tr>
+                        <th>Sr No.</th>
+                        <th>View</th>
+                        <th>Vehicle No.</th>
+                        <th>Supervisor Name</th>
+                        <th>Supervisor Mobno</th>
+                        <th>Location</th>
+                        <th>Status Remarks</th>
+                        <th>Status Date</th>
+                        <th>Driver Name</th>
+                        <th>Driver Mobno</th>
+                        <th>Vehicle Status</th>
+                        <th>Curr Date</th>
+                        <th>Maintanance Remarks</th>
+                        <th>Spare Parts</th>
+                        <th>Expense Amount</th>
+                        <th>Exptd Date</th>
+                        <th>Upload Document</th>
+                        @*<th id="thAction" width="90px">Action</th>*@
+                                                
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.VehicleMaintenanceUpdateList.Count; i++)
+                    {
+                        var item = Model.VehicleMaintenanceUpdateList[i];
+                        var j = i.ToString();
+                        var cnt = i + 1;
+                        <tr>
+                            
+                            <td>
+
+                                <div class="input">
+                                  @cnt
+                                </div>
+
+                            </td>
+
+                            <td>
+                                
+                                <div class="input">
+                                    @{ var DocumentNamelnkId = Model.VehicleMaintenanceUpdateList[i].VehicleId; }
+                                    <a href="#" id=@DocumentNamelnkId onclick="return GetVehicleMaintananceHistory('@item.VehicleNo');" class="btckn btn-default btn-sm">
+                                       <span class="fa fa-eye"></span>
+                                    </a>
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <div class="input">
+                                    
+                                    @Html.TextBoxFor(m => Model.VehicleMaintenanceUpdateList[i].VehicleNo, new { @class = "form-control",@readonly="readonly", @id = "txtVehicleNo" + j, @Name = "VehicleMaintenanceUpdateList[" + j + "].VehicleNo" })
+                                    @Html.HiddenFor(m => Model.VehicleMaintenanceUpdateList[i].VehicleId, new { @id = "hdnVehicleId" + j, @Name = "VehicleMaintenanceUpdateList[" + j + "].VehicleId" })
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.VehicleMaintenanceUpdateList[i].SupervisorName , new { @class = "form-control", @readonly = "readonly", @id = "txtSupervisorName" + j, @Name = "VehicleMaintenanceUpdateList[" + j + "].SupervisorName" })
+                                </div>
+
+                            </td>
+                            <td>
+
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.VehicleMaintenanceUpdateList[i].SupervisorMobNo , new { @class = "form-control", @readonly = "readonly", @id = "txtSupervisorMobNo" + j, @Name = "VehicleMaintenanceUpdateList[" + j + "].SupervisorMobNo" })
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.VehicleMaintenanceUpdateList[i].Location , new { @class = "form-control", @readonly = "readonly", @id = "txtLocation" + j, @Name = "VehicleMaintenanceUpdateList[" + j + "].Location" })
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.VehicleMaintenanceUpdateList[i].StatusRemarks , new { @class = "form-control", @readonly = "readonly", @id = "txtStatusRemarks" + j, @Name = "VehicleMaintenanceUpdateList[" + j + "].StatusRemarks" })
+                                </div>
+
+                            </td>
+
+                            <td>
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.VehicleMaintenanceUpdateList[i].VehStatusDate , new { @class = "form-control", @readonly = "readonly", @id = "lblVehStatusDate" + j, @Name = "VehicleMaintenanceUpdateList[" + j + "].VehStatusDate" })
+                                </div>
+                            </td>
+
+                            <td>
+
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.VehicleMaintenanceUpdateList[i].DriverName , new { @class = "form-control", @readonly = "readonly", @id = "txtDriverName" + j, @Name = "VehicleMaintenanceUpdateList[" + j + "].DriverName" })
+                                </div>
+
+                            </td>
+                            <td>
+
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.VehicleMaintenanceUpdateList[i].DriverMobNo , new { @class = "form-control", @readonly = "readonly", @id = "txtDriverMobNo" + j, @Name = "VehicleMaintenanceUpdateList[" + j + "].DriverMobNo" })
+                                </div>
+
+                            </td>
+                            <td style="max-width: 100px">
+
+                                <div class="select">
+                                    
+                                    @Html.DropDownListFor(m => Model.VehicleMaintenanceUpdateList[i].VehicleStatus, new List<SelectListItem> {
+                                            new SelectListItem() {Text = "Select",Value=""},
+                                            new SelectListItem() {Text = "Work in Progress", Value="1"},
+                                            new SelectListItem() {Text = "Ready on road", Value="2"},
+
+                                    }, new { @class = "form-control", @id = "ddlVehicleStatus" + j, @style = "width: 150px;" })
+                                    @*@Html.ValidationMessageFor(m => Model.VehicleMaintenanceUpdateList[i].VehicleStatus)*@
+                                  
+                                    @Html.HiddenFor(m => Model.VehicleMaintenanceUpdateList[i].VehicleStatus, new { id = "hdnVehicleStatus" + i.ToString(), @Name = "VehicleMaintenanceUpdateList[" + i.ToString() + "].VehicleStatus" })
+                                    <i></i>
+                                </div>
+                                
+                            </td>
+                            <td>
+
+                                <div class="input">
+                                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "VehicleMaintenanceUpdateList[" + j + "].CurrDate", FieldCaption = @Html.DisplayNameFor(m => Model.VehicleMaintenanceUpdateList[i].CurrDate).ToString(), UseFieldCaption = false, IsRequired = true, IsDateOnly = true, AllowFutureDate = false, AllowPastDate = true })
+                                </div>
+
+                            </td>
+                            <td>
+
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.VehicleMaintenanceUpdateList[i].VehMaintananceRemarks , new { @class = "form-control", @id = "txtRemarks" + j, @Name = "VehicleMaintenanceUpdateList[" + j + "].VehMaintananceRemarks" })
+                                </div>
+
+                            </td>
+                            <td>
+
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.VehicleMaintenanceUpdateList[i].SpareParts , new { @class = "form-control", @id = "txtSpareParts" + j, @Name = "VehicleMaintenanceUpdateList[" + j + "].SpareParts" })
+                                </div>
+
+                            </td>
+                            <td>
+
+                                <div class="input">
+                                    @Html.TextBoxFor(m => Model.VehicleMaintenanceUpdateList[i].ExpenseAmount, new { @class = "form-control", @id = "txtExpenseAmount" + j, @Name = "VehicleMaintenanceUpdateList[" + j + "].ExpenseAmount" })
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <div class="input">
+                                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "VehicleMaintenanceUpdateList[" + j + "].ExpectdDate", FieldCaption = @Html.DisplayNameFor(m => Model.VehicleMaintenanceUpdateList[i].ExpectdDate).ToString(), UseFieldCaption = false, IsRequired = true, IsDateOnly = true, AllowFutureDate = true, AllowPastDate = false })
+                                </div>
+
+                            </td>
+                            <td>
+
+                                <div class="form-group">
+                                    <div class="input prepend-big-btn">
+
+                                        <div class="file-button">
+                                            Browse
+
+                                            @{ var dDynamicid = "prepend-big-btn-" + @i.ToString();}
+                                            @Html.TextBoxFor(m => Model.VehicleMaintenanceUpdateList[i].BillDocument, null, new { @class = "form-control", @id = "fuAttachment" + i.ToString(), @type = "file", @onchange = "$('#" + dDynamicid + "').val($(this).val())" })
+                                        </div>
+                                        <input class="form-control" type="text" id="prepend-big-btn-@i.ToString()" readonly="" placeholder="no file selected">
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.VehicleMaintenanceUpdateList[i].BillDocument)
+                                </div>
+                                
+                            </td>
+                            
+                            @*<td id="@("tdAction" + i)" width="90px">
+                             <button type="button" id="btnRemove" onclick="return RemoveGridRow(this, 'dtUpdateVehcile', false, InitAutoComplete)" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        </td>*@
+                                                                                   
+                        </tr>
+
+                    }
+
+                </tbody>
+                
+
+            </table>
+            @*<span class="error alert alert-danger" style="display:none">Please select at-least one Item.</span>*@
+        
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Update</button>
+        </div>
+        <div class="page-separator"><span class="page-separator" id="spnMassage">View Maintanance Previous History</span></div>
+        <div class="row">
+            <div class="widget-wrap material-table-widget">
+                <table id="dtDetails1" class="table-bordered"></table>
+            </div>
+        </div>
+       
+    </div>
+
+}
+
+
+
+
+

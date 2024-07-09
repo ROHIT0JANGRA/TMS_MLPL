@@ -1,0 +1,105 @@
+﻿@model IEnumerable<CodeLock.Models.PickupRequest>
+@{
+    ViewBag.Title = "PickupRequestList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtCustomer">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.PickupRequestNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PickupTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NoofPkt)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Weight)
+                </th>
+                <th>
+                    Pickup City & Pin-code
+                </th>
+                <th>
+                    Contact No
+                </th>
+
+                <th>
+                    Delivery City & Pin-code
+                </th>
+                <th>
+                    Pickup location Address
+                </th>
+                <th>
+                    Consignor
+                </th>
+                <th>
+                    Customer
+                </th>
+
+
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PickupRequestNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PickupTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NoofPkt)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Weight)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.City)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MobileNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DeliveryCity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PickupAddress)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VendorName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CustomerCode)
+                    </td>
+
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                @*<a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.CustomerId })"><span class="zmdi zmdi-edit"></span></a>*@
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("PickupRequestView", new { id = item.PickupRequestId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Pickup Order', 'Pending List', 'filter', '', '');
+        LoadDataTable('dtCustomer', true, true, true);
+    });
+</script>
+

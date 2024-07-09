@@ -1,0 +1,170 @@
+﻿@model CodeLock.Models.MastersIndiaEway
+@{
+    ViewBag.Title = "eWay Bill Update Vehicle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("eWayBillUpdateVehicle", "Docket", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    eWay Bill No.
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.eway_bill_number, new { @class = "form-control textlabel", @id = "txteway_bill_number" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    eWay Bill Date
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.eway_bill_date, new { @class = "form-control textlabel", @id = "txteway_bill_date" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Valid Date
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.eway_bill_valid_date, new { @class = "form-control textlabel", @id = "txteway_bill_valid_date" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Bill Status
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.eway_bill_status, new { @class = "form-control textlabel", @id = "txteway_bill_status" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    User Gstin
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.userGstin, new { @class = "form-control textlabel", @id = "txtuserGstin" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                       Document Type
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.document_type, new { @class = "form-control textlabel", @id = "txtdocument_type" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Document No.
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.document_number, new { @class = "form-control textlabel", @id = "txtdocument_number" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Document Date
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.document_date, new { @class = "form-control textlabel", @id = "txtdocument_date" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Place of Consignor
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.place_of_consignor, new { @class = "form-control textlabel", @id = "txtplace_of_consignor" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    State of Consignor
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.state_of_consignor, new { @class = "form-control textlabel", @id = "txtstate_of_consignor" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Update Vehicle </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Reason Code
+
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.reason_code_for_vehicle_updation, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Due to Break Down", Value = "1" },
+                                                                            new SelectListItem{ Text="Due to Transhipment", Value = "2" },
+                                                                            new SelectListItem{ Text="Others", Value = "3" },
+                                                                            new SelectListItem{ Text="Accident", Value = "4" },
+                                                                            new SelectListItem{ Text="First Time", Value = "5" }
+
+                                                                         }, new { @class = "form-control", @id = "ddlreason_code_for_vehicle_updation" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.reason_code_for_vehicle_updation)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Vehicle Type
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.vehicle_type, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="regular", Value = "1" },
+                                                                            new SelectListItem{ Text="over dimensional cargo", Value = "2" }
+                                                                         }, new { @class = "form-control", @id = "ddlvehicle_type" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.vehicle_type)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Vehicle No.
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.vehicle_number, new { @class = "form-control", @id = "txtvehicle_number" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.vehicle_number)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    Reason
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.reason_for_vehicle_updation, new { @class = "form-control", @id = "txtreason_for_vehicle_updation" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.reason_for_vehicle_updation)
+                </div>
+            </div>
+
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Submit</button>
+        </div>
+        </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('eWay Bill', 'Update Vehicle', '', '', '');
+
+        if('@ViewBag.ErrorMessage' !="")
+        {
+            ShowMessage('@ViewBag.ErrorMessage');
+        }
+
+      });
+</script>

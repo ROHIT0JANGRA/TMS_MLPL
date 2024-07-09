@@ -1,0 +1,585 @@
+﻿@model IEnumerable<CodeLock.Models.MasterVehicleDetails>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Table Header */
+    #dtCustomer thead {
+        background-color: #139c9b;
+        color: #ffffff;
+    }
+
+    /* Table Body */
+    #dtCustomer tbody {
+        font-size: 14px;
+    }
+
+        /* Odd rows */
+        #dtCustomer tbody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
+        /* Even rows */
+        #dtCustomer tbody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        /* Hover effect on rows */
+        #dtCustomer tbody tr:hover {
+            background-color: #cceeff;
+        }
+
+    /* Table Borders */
+    #dtCustomer {
+        border-collapse: collapse;
+        border: 1px solid #dddddd;
+        width: 100%;
+    }
+
+        /* Table Header Cells */
+        #dtCustomer th {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 2px solid #ffffff;
+        }
+
+        /* Table Body Cells */
+        #dtCustomer td {
+            padding: 8px;
+            border-bottom: 1px solid #dddddd;
+        }
+
+
+    /* Search Box */
+    div.dataTables_wrapper input[type="search"] {
+        width: 300px; /* Adjust the width as needed */
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+
+    /* Pagination */
+    .dataTables_paginate {
+        text-align: center;
+    }
+</style>
+
+
+
+
+<div id="dvCustomers" class="widget-wrap material-table-widget table-responsive ">
+        <table id="dtCustomers" class="table table-bordered table-striped display nowrap" style="width:100%">
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            SetPageLoad('Vehicle', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+            GetCustomerData();
+        });
+
+        function GetCustomerData() {
+            var tblCustomersContent = '<table id="dtCustomer" class="table table-bordered table-striped display nowrap" style="width:100%"><thead style="color: #ffffff; background-color:#139c9b; "><tr>\
+                                          <th>VehicleId</th>\
+                                        <th> Vehicle No</th>\
+                                        <th>Vehicle Type</th>\
+                                        <th>VendorName</th>\
+                                         <th>ChasisNo</th>\
+                                         <th>FTL Type</th>\
+                                        <th>Is Active</th>\
+                                        <th>Is Walk-In</th>\
+                                        <th>Action</th>\
+                                        </tr></thead><tbody></tbody></table>';
+
+            $("#dvCustomers").html(tblCustomersContent);
+            table = $('#dtCustomer').dataTable({
+                clear: true,
+                destroy: true,
+                serverSide: true,
+                searchable: true,
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, 100, 100000], [10, 25, 50, 100, "All"]],
+                autoFill: false,
+                "initComplete": function (settings, json) {
+                    $(this.api().table().container()).find('input').attr('autocomplete', 'off');
+                },
+                "language": {
+                    "emptyTable": "No record found.",
+                    "processing": '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span>'
+                },
+                "ajax": {
+                    url: '@Url.Action("GetVehiclesByPaginations", "Vehicle")',
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    data: function (d) {
+                        var data = { data: d };
+                        return JSON.stringify(data);
+                    },
+                    AutoWidth: false,
+                    "dataSrc": function (json) {
+                        var data = json;
+                        json.draw = data.draw;
+                        json.recordsTotal = data.recordsTotal;
+                        json.recordsFiltered = data.recordsFiltered;
+                        json.data = JSON.parse(data.data);
+                        return json.data;
+                    }
+                },
+                "columns": [
+                    { "data": "VehicleId", "name": "VehicleId", "searchable": false },
+                    { "data": "VehicleNo", "name": "VehicleNo", "searchable": true },
+                    { "data": "VehicleTypeName", "name": "VehicleTypeName", "searchable": true },
+                    { "data": "VendorName", "name": "VendorName", "searchable": true },
+                    { "data": "ChasisNo", "name": "ChasisNo", "searchable": true },
+                    { "data": "CodeDescription", "name": "CodeDescription", "searchable": true },
+                    {
+                        "data": "IsActive", "width": "15px", "orderable": false, "name": "IsActive",
+                        "render": function (data, type, row, meta) {
+                            var isActive = row.IsActive ? 'Yes' : 'No';
+                            var activeClass = row.IsActive ? 'label label-success' : 'label label-default';
+                            return '<label class="' + activeClass + '">' + isActive + '</label>';
+                        }, "searchable": false
+                    },
+                    {
+                        "data": "IsWalkIn", "width": "15px", "orderable": false, "name": "IsWalkIn",
+                        "render": function (data, type, row, meta) {
+                            var isWalkIn = row.IsWalkIn ? 'Yes' : 'No';
+                            var activeClass = row.IsWalkIn ? 'label label-success' : 'label label-default';
+                            return '<label class="' + activeClass + '">' + isWalkIn + '</label>';
+                        }, "searchable": false
+                    },
+                    {
+                        "data": "VehicleId", "name": "VehicleId", "orderable": false, "name": "VehicleId",
+                        "render": function (data, type, row, meta) {
+                            var updateUrl = '@Url.Action("Update", "Vehicle", new { id = "__id__" })'.replace('__id__', row.VehicleId);
+                            var viewUrl = '@Url.Action("View", "Vehicle", new { id = "__id__" })'.replace('__id__', row.VehicleId);
+                            return '<div class="btn-toolbar" role="toolbar">\
+                                        <div class="btn-group" role="group">\
+                                            <a class="btn btn-default btn-sm m-user-edit" href="' + updateUrl + '"><span class="zmdi zmdi-edit"></span></a>\
+                                            <a class="btn btn-default btn-sm m-user-edit" href="' + viewUrl + '"><span class="fa fa-file"></span></a>\
+                                        </div>\
+                                    </div>';
+                        }, "searchable": false
+                    }
+                ]
+            });
+        }
+    </script>
+
+
+
+
+@*<div id="dvCustomers" class="widget-wrap material-table-widget table-responsive ">
+        <table id="dtCustomers" class="table table-bordered  table-striped display nowrap" style="width:100%">
+        </table>
+    </div>
+    <script>
+                var getAllCustomersUrl = '';
+                    $(document).ready(function () {
+                          SetPageLoad('Vehicle', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+                        //LoadDataTable('dtCustomer', true, true, true);
+                        GetCustomerData();
+                    });
+
+
+                    function GetCustomerData() {
+                        var tblCustomersContent = '<table id="dtCustomer" class="table table-bordered table-striped  display nowrap" style="width:100%"><thead style="color: #ffffff; background-color:#139c9b; "><tr>\
+                                            <th>Vehicle No</th>\
+                                            <th>Vehicle Type</th>\
+                                             <th>FTL Type</th>\
+                                            <th>Is Active</th>\
+                                            <th>Is Walk-In</th>\
+                                            <th>Action</th>\
+                                            </tr></thead><tbody></tbody></table>';
+
+                        $("#dvCustomers").html(tblCustomersContent);
+                        table = $('#dtCustomer').dataTable({
+                            clear: true,
+                            destroy: true,
+                            serverSide: true,
+                            searchable:true,
+                            pageLength: 10,
+                            lengthMenu: [[10, 25, 50, 100, 100000], [10, 25, 50, 100, "All"]],
+                            autoFill: false,
+                            "initComplete": function (settings, json) {
+                                $(this.api().table().container()).find('input').attr('autocomplete', 'off');
+                            },
+                            "language": {
+                                "emptyTable": "No record found.",
+                                "processing":
+                                    '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
+                            },
+                            "ajax": {
+
+                                url: '@Url.Action("GetVehiclesByPaginations", "Vehicle")',
+                                type: "POST",
+                                contentType: "application/json; charset=utf-8",
+                                data: function (d) {
+
+                                    var data = { data: d };
+                                    return JSON.stringify(data);
+
+
+                                },
+                                AutoWidth: false,
+                                "dataSrc": function (json) {
+                                    var data = json;
+                                    json.draw = data.draw;
+                                    json.recordsTotal = data.recordsTotal;
+                                    json.recordsFiltered = data.recordsFiltered;
+                                    json.data = JSON.parse(data.data);
+                                    return json.data;
+                                }
+                            },
+
+                            "columns": [
+
+                                {
+                                    "data": "VehicleNo", "name": "VehicleNo", "searchable": true
+                                },
+                                { "data": "VehicleTypeName", "name": "VehicleTypeName", "searchable": true },
+                                { "data": "CodeDescription", "name": "CodeDescription", "searchable": true },
+
+                                {
+                                    "data": "IsActive", "width": "15px", "orderable": false, "name": "IsActive",
+                                    "render": function (data, type, row, meta) {
+                                        var isActive = row.IsActive ? 'Yes' : 'No';
+                                        var activeClass = row.IsActive ? 'label label-success' : 'label label-default';
+                                        return '<label class="' + activeClass +'">' + isActive +'</label>';
+                                    },"searchable": false
+                                },
+                                {
+                                    "data": "IsWalkIn", "width": "15px", "orderable": false, "name": "IsWalkIn",
+                                    "render": function (data, type, row, meta) {
+                                        var isWalkIn = row.IsWalkIn ? 'Yes' : 'No';
+                                        var activeClass = row.IsWalkIn ? 'label label-success' : 'label label-default';
+                                        return '<label class="' + activeClass + '">' + isWalkIn + '</label>';
+                                    }, "searchable": false
+                                },
+                                {
+                                    "data": "VehicleId", "name": "VehicleId", "orderable": false, "name": "VehicleId",
+                                    "render": function (data, type, row, meta) {
+                                        var updateUrl = "@Url.Action("Update", new { id = "VehicleId" })";
+                                        var viewUrl = "@Url.Action("View", new { id = "VehicleId" })";
+                                        return '<div class="btn-toolbar" role="toolbar">\
+                                            <div class="btn-group" role="group">\
+                                                <a class="btn btn-default btn-sm m-user-edit" href="'+ updateUrl.replace('VehicleId', row.VehicleId) +'"><span class="zmdi zmdi-edit"></span></a>\
+                                                <a class="btn btn-default btn-sm m-user-edit" href="'+ viewUrl.replace('VehicleId', row.VehicleId) +'"><span class="fa fa-file"></span></a>\
+                                            </div>\
+                                        </div>';
+                                    }, "searchable": false
+                                }
+
+                            ]
+                        });
+                    }
+
+    </script>*@
+
+
+
+
+
+@*<div class="widget-wrap material-table-widget">
+        <table id="dtVehicle">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VehicleNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FtlTypeId)
+                    </th>
+                    <th data-hide="phone">
+                        @Html.DisplayNameFor(model => model.IsActive)
+                    </th>
+                    <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.VehicleTypeId)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.VendorTypeId)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.VendorId)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.LocationCode)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.NoOfDrivers)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.IsGpsEnabled)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.GpsDeviceId)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.VehicleBroker)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.NoOfTyres)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.RcBookNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.RegistrationNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.RegistrationDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.VehicleMileage)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.InsuranceNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.InsuranceIssueDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.InsuranceExpiryDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.FitnessCertificateNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.FitnessCertificateIssueDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.FitnessCertificateExpiryDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.NationalPermitNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.NationalPermitIssueDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.NationalPermitExpiryDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.PollutionCertificateNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.PollutionCertificateIssueDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.PollutionCertificateExpiryDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.RoadTaxNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.RoadTaxIssueDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.RoadTaxExpiryDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.AuthorisationNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.AuthorisationIssueDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.AuthorisationExpiryDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.AttachingDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.ChasisNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.EngineNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.RtoName)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.StartKm)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.LocalPermitNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.LocalPermitIssueDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.EntryBy)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.EntryDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.UpdateBy)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.UpdateDate)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VehicleNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FtlTypeName)
+                        </td>
+                        <td>
+                            @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                        </td>
+                        <td class="td-center">
+                            <div class="btn-toolbar" role="toolbar">
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.VehicleId })"><span class="zmdi zmdi-edit"></span></a>
+                                    <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.VehicleId })"><span class="fa fa-file"></span></a>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.VehicleTypeName)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.VendorTypeName)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.VendorName)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.LocationCode)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.NoOfDrivers)
+                        </td>
+                        <td style="display:none">
+                            @Html.Label("", item.IsGpsEnabled == true ? "Yes" : "No", new { @class = item.IsGpsEnabled == true ? "label label-success" : "label label-default" })
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.GpsDeviceId)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.VehicleBroker)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.NoOfTyres)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.RcBookNo)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.RegistrationNo)
+                        </td>
+                        <td style="display:none">
+                            @item.RegistrationDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.VehicleMileage)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.InsuranceNo)
+                        </td>
+                        <td style="display:none">
+                            @item.InsuranceIssueDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @item.InsuranceExpiryDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.FitnessCertificateNo)
+                        </td>
+                        <td style="display:none">
+                            @item.FitnessCertificateIssueDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @item.FitnessCertificateExpiryDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.NationalPermitNo)
+                        </td>
+                        <td style="display:none">
+                            @item.NationalPermitIssueDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @item.NationalPermitExpiryDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.PollutionCertificateNo)
+                        </td>
+                        <td style="display:none">
+                            @item.PollutionCertificateIssueDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @item.PollutionCertificateExpiryDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.RoadTaxNo)
+                        </td>
+                        <td style="display:none">
+                            @item.RoadTaxIssueDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @item.RoadTaxExpiryDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.AuthorisationNo)
+                        </td>
+                        <td style="display:none">
+                            @item.AuthorisationIssueDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @item.AuthorisationExpiryDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @item.AttachingDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.ChasisNo)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.EngineNo)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.RtoName)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.StartKm)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.LocalPermitNo)
+                        </td>
+                        <td style="display:none">
+                            @item.LocalPermitIssueDate.ToDisplayDate()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.EntryByName)
+                        </td>
+                        <td style="display:none">
+                            @item.EntryDate.ToDisplayDateTime()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(model => item.UpdateByName)
+                        </td>
+                        <td style="display:none">
+                            @item.UpdateDate.ToDisplayDateTime()
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            SetPageLoad('Vehicle', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+            LoadDataTable('dtVehicle', true, true, true);
+        });
+    </script>*@

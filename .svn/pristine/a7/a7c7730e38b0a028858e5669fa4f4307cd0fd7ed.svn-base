@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "VendorBillCancellationDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row example-buttons">
+    <div class="col-md-12">
+        <div class="note note-info note-right-striped">
+            <div class="page-separator">Bills are Cancelled Successfully</div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Cancellation', 'Done', '', 'Go To Bill Cancellation', '@Url.Action("VendorBillCancellation")');
+    });
+</script>
+
+
+
+

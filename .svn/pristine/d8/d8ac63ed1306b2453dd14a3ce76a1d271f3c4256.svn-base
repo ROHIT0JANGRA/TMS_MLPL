@@ -1,0 +1,113 @@
+﻿
+using CodeLock.Areas.WMS.Repository;
+using CodeLock.Models;
+using System;
+using System.Web.Mvc;
+
+namespace CodeLock.Areas.WMS.Controllers
+{
+  public class GatePassController : Controller
+  {
+    private readonly IGatePassRepository gatePassRepository;
+
+    public GatePassController()
+    {
+    }
+
+    public GatePassController(IGatePassRepository _gatePassRepository)
+    {
+      this.gatePassRepository = _gatePassRepository;
+    }
+
+    public ActionResult GatePassIn()
+    {
+      return (ActionResult) this.View((object) new GatePass());
+    }
+    public ActionResult GatePassOut()
+    {
+            GatePass obj = new GatePass();
+            obj.FromDate = DateTime.Now;
+
+            ((dynamic)base.ViewBag).GatePassNoList = this.gatePassRepository.GetGatePassNoList();
+            return (ActionResult)this.View((object)obj);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult GatePassOut(GatePass objGatePass)
+    {
+        if (this.ModelState.IsValid)
+        {
+        objGatePass.CompanyId = SessionUtility.CompanyId;
+        objGatePass.WarehouseId = SessionUtility.WarehouseId;
+        objGatePass.LocationId = SessionUtility.LoginLocationId;
+        objGatePass.EntryBy = SessionUtility.LoginUserId;
+        objGatePass.EntryDate = SessionUtility.FinStartDate;
+        objGatePass.UpdateBy = new short?(SessionUtility.LoginUserId);
+        objGatePass.UpdateDate = new DateTime?(SessionUtility.FinStartDate);
+        objGatePass.LoginUserId = SessionUtility.LoginUserId;
+        Response response = this.gatePassRepository.GatePassIn(objGatePass);
+        if (response.IsSuccessfull)
+            return (ActionResult)this.RedirectToAction("Done", "Asn", (object)new
+            {
+                documentType = "GatePass",
+                documentNo = response.DocumentNo,
+                documentId = response.DocumentId,
+                documentTypeId = ModuleHelper.GatePass
+            });
+            }
+            return (ActionResult)this.View((object)objGatePass);
+    }
+
+        [HttpPost]
+    [ValidateAntiForgeryToken]
+    public ActionResult GatePassIn(GatePass objGatePass)
+    {
+            if (this.ModelState.IsValid)
+            {
+                objGatePass.CompanyId = SessionUtility.CompanyId;
+        objGatePass.WarehouseId = SessionUtility.WarehouseId;
+        objGatePass.LocationId = SessionUtility.LoginLocationId;
+        objGatePass.EntryBy = SessionUtility.LoginUserId;
+        objGatePass.EntryDate = SessionUtility.FinStartDate;
+        objGatePass.UpdateBy = new short?(SessionUtility.LoginUserId);
+        objGatePass.UpdateDate = new DateTime?(SessionUtility.FinStartDate);
+        objGatePass.LoginUserId = SessionUtility.LoginUserId;
+        Response response = this.gatePassRepository.GatePassIn(objGatePass);
+        if (response.IsSuccessfull)
+          return (ActionResult) this.RedirectToAction("Done", "Asn", (object) new
+          {
+            documentType = "GatePass",
+            documentNo = response.DocumentNo,
+            documentId = response.DocumentId,
+            documentTypeId = ModuleHelper.GatePass
+          });
+            }
+            return (ActionResult) this.View((object) objGatePass);
+    }
+
+    [HttpPost]
+    public JsonResult GetGatePassInList(
+      byte SupplierType,
+      long SupplierId,
+      string PurchseOrderNo,
+      string InvoiceNo,
+      string AsnNo,
+      DateTime FromDate,
+      DateTime ToDate)
+    {
+      return this.Json((object) this.gatePassRepository.GetGatePassInList(SupplierType, SupplierId, PurchseOrderNo, InvoiceNo, AsnNo, FromDate, ToDate), JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult GetGatePassNoList()
+    {
+      return this.Json((object) this.gatePassRepository.GetGatePassNoList(), JsonRequestBehavior.AllowGet);
+    }
+
+    [HttpPost]
+    public JsonResult GetSkuDetails(long AsnId)
+    {
+      return this.Json((object) this.gatePassRepository.GetSkuDetails(AsnId), JsonRequestBehavior.AllowGet);
+    }
+  }
+}

@@ -1,0 +1,69 @@
+﻿@model IEnumerable<CodeLock.Models.MasterCustomerAddressMapping>
+
+@{
+    ViewBag.Title = "CustomerAddressMapping List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtCustomer">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CustomerName)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.CountryId)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.StateId)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.CityId)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.Address)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CustomerName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CountryName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StateName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CityName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CustomerName)
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Mapping", new { id = item.CustomerId, cityid = item.CityId })"><span class="zmdi zmdi-edit"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Customer to Address', 'Mapping List', 'filter', 'Add New', '@Url.Action("Mapping")');
+        LoadDataTable('dtCustomer', true, true, true);
+        $('[id=dtCustomer_filter]').find('input').focus();
+    });
+</script>
+

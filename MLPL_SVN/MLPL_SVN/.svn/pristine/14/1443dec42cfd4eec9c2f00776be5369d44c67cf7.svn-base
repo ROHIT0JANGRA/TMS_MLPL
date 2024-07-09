@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewBag.Title = "SubmissionDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+    <div id="dvDocumentNo">
+        <div class="col-sm-3">
+            <h4>Submission No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return ViewReport();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+    var documentId = 0;
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        lblDocumentNo = $('#lblDocumentNo');
+        lblDocumentNo.html(GetUrlValue()["DocumentNo"]);
+        documentId = GetUrlValue()["DocumentId"];
+        OnPageLoad();
+    });
+
+    function ViewReport() {
+        var status = GetUrlValue()["status"];
+        if (status == "Submission") {
+            var prmList = [{ Name: "SubmissionId", Value: documentId }];
+            var reportInfo = { PrmList: prmList, Name: 'CustomerBillSubmissionViewPrint', Description: 'Submission View' };
+            return ShowReport(reportInfo);
+        }
+    }
+
+    function OnPageLoad() {
+        var status = GetUrlValue()["status"];
+        if (status == "Submission") {
+            spnMassage.text("Bills are Submitted Successfully");
+            SetPageLoad('Submission', 'Done', '', 'Go To Bill Submission', '@Url.Action("Submission")');
+        }
+        else if (status == "UnSubmission") {
+            spnMassage.text("Bills are UnSubmitted Successfully");
+            SetPageLoad('UnSubmission', 'Done', '', 'Go To Bill UnSubmission', '@Url.Action("UnSubmission")');
+        }
+        else if (status == "DocketFinalization") {
+            spnMassage.text(docketNomenclature + "(s) are Finalized Successfully");
+            
+            SetPageLoad(docketNomenclature + ' Finalization', 'Done', '', 'Go To ' + docketNomenclature + ' Finalization', '@Url.Action("DocketFinalization")');
+        }
+        else if (status == "BillFinalization") {
+            spnMassage.text("Bills are Finalized Successfully");
+            $('#dvDocumentNo').hide();
+            SetPageLoad('Customer Bill Finalization', 'Done', '', 'Go To Bill Finalization', '@Url.Action("BillFinalization")');
+        }
+        else if (status == "Cancellation") {
+            spnMassage.text("Bills are Cancelled Successfully");
+            SetPageLoad('Cancellation', 'Done', '', 'Go To Bill Cancellation', '@Url.Action("Cancellation")');
+            $('#dvDocumentNo').hide();
+        }
+        else if (status == "MrCancellationDone") {
+            spnMassage.text("Bill MR are Cancelled Successfully");
+            SetPageLoad('Bill MR Cancellation', 'Done', '', 'Go To MR Bill Cancellation', '@Url.Action("MrCancellation")');
+        }
+        else if (status == "DeliveryMrCancellationDone") {
+            spnMassage.text("Delivery/Gatepass MR are Cancelled Successfully");
+            SetPageLoad('Delivery/Gatepass MR Cancellation', 'Done', '', 'Go To Delivery/Gatepass Mr Cancellation', '@Url.Action("DeliveryMrCancellation")');
+        }
+        else if (status == "CancellationCreditDebitNote") {
+            spnMassage.text("Credit Debit Note are Cancelled Successfully");
+            $('#dvDocumentNo').hide();
+            SetPageLoad('Credit Debit Note Cancellation', 'Done', '', 'Go To Credit Debit Note Cancellation', '@Url.Action("CancellationCreditDebitNote")');
+        }
+
+    }
+</script>
+
+
+

@@ -1,0 +1,411 @@
+﻿@model CodeLock.Models.MasterVehicle
+@using Secure_Coding.MvcSecurityExtensions;
+@using CodeLock.Models
+@{
+    ViewBag.Title = "Vehicle Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Update", "Vehicle", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(model => model.VehicleId)
+    @Html.HiddenFor(model => model.VehicleId)
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control textlabel", @id = "txtVehicleNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VehicleTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VehicleTypeId, new SelectList(ViewBag.VehicleTypeList, "Value", "Name"), "Select Vehicle Type", new { @class = "form-control", @id = "ddlVehicleType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleTypeId)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorTypeId, new SelectList(ViewBag.VendorTypeList, "Value", "Name"), "Select Vendor Type", new { @class = "form-control", @id = "ddlVendorType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorTypeId)
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorId, new SelectList(ViewBag.VendorNameList, "Value", "Name"), "Select Vendor", new { @class = "form-control", @id = "ddlVendor" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorId)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FtlTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.FtlTypeId, new SelectList(ViewBag.FtlTypeList, "Value", "Name"), "Select FtlType", new { @class = "form-control", @id = "ddlFtlType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FtlTypeId)
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control", @id = "ddlLocation" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationId)
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.NoOfDrivers, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.NoOfDrivers, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.NoOfDrivers)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.IsGpsEnabled, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.MasterVehicleDetail.IsGpsEnabled, new { @tabindex = "2", @id = "chkIsGpsEnabled" })
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.GpsDeviceId, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.GpsDeviceId, new { @class = "form-control", @id = "txtGpsDeviceId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.GpsDeviceId)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.VehicleBroker, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.VehicleBroker, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.VehicleBroker)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.NoOfTyres, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.NoOfTyres, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.NoOfTyres)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.RcBookNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.RcBookNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.RcBookNo)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.RegistrationNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.RegistrationNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.RegistrationNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.RegistrationDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.RegistrationDate), DefaultDate = Model.MasterVehicleDetail.RegistrationDate, IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.VehicleMileage, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.VehicleMileage, new { @class = "form-control numeric2" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.VehicleMileage)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.InsuranceNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.InsuranceNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.InsuranceNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.InsuranceIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.InsuranceIssueDate), DefaultDate = Model.MasterVehicleDetail.InsuranceIssueDate, IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.InsuranceExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.InsuranceExpiryDate), DefaultDate = Model.MasterVehicleDetail.InsuranceExpiryDate, IsRequired = true, AllowFutureDate = true, AllowPastDate = false, IsValidateFinYear = false })
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.FitnessCertificateNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.FitnessCertificateNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.FitnessCertificateNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.FitnessCertificateIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.FitnessCertificateIssueDate), DefaultDate = Model.MasterVehicleDetail.FitnessCertificateIssueDate, IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.FitnessCertificateExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.FitnessCertificateExpiryDate), DefaultDate = Model.MasterVehicleDetail.FitnessCertificateExpiryDate, IsRequired = true, AllowFutureDate = true, AllowPastDate = false, IsValidateFinYear = false })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.PollutionCertificateNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.PollutionCertificateNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.PollutionCertificateNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.PollutionCertificateIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.PollutionCertificateIssueDate), DefaultDate = Model.MasterVehicleDetail.PollutionCertificateIssueDate, IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.PollutionCertificateExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.PollutionCertificateExpiryDate), DefaultDate = Model.MasterVehicleDetail.PollutionCertificateExpiryDate, IsRequired = true, AllowFutureDate = true, AllowPastDate = false, IsValidateFinYear = false })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.NationalPermitNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.NationalPermitNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.NationalPermitNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.NationalPermitIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.NationalPermitIssueDate), DefaultDate = Model.MasterVehicleDetail.NationalPermitIssueDate, IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.NationalPermitExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.NationalPermitExpiryDate), DefaultDate = Model.MasterVehicleDetail.NationalPermitExpiryDate, IsRequired = true, AllowFutureDate = true, AllowPastDate = false, IsValidateFinYear = false })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.RoadTaxNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.RoadTaxNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.RoadTaxNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.RoadTaxIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.RoadTaxIssueDate), DefaultDate = Model.MasterVehicleDetail.RoadTaxIssueDate, IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.RoadTaxExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.RoadTaxExpiryDate), DefaultDate = Model.MasterVehicleDetail.RoadTaxExpiryDate, IsRequired = true, AllowFutureDate = true, AllowPastDate = false, IsValidateFinYear = false })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.AuthorisationNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.AuthorisationNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.AuthorisationNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.AuthorisationIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.AuthorisationIssueDate), DefaultDate = Model.MasterVehicleDetail.AuthorisationIssueDate, IsRequired = true, AllowFutureDate = false, AllowPastDate = true, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.AuthorisationExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.AuthorisationExpiryDate), DefaultDate = Model.MasterVehicleDetail.AuthorisationExpiryDate, IsRequired = true, AllowFutureDate = true, AllowPastDate = false, IsValidateFinYear = false })
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.AttachingDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.AttachingDate), DefaultDate = Model.MasterVehicleDetail.AttachingDate, IsRequired = true, AllowFutureDate = true, AllowPastDate = true, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.ChasisNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.ChasisNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.ChasisNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.EngineNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.EngineNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.EngineNo)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.RtoName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.RtoName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.RtoName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.StartKm, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.StartKm, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StartKm)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MasterVehicleDetail.LocalPermitNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.LocalPermitNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MasterVehicleDetail.LocalPermitNo)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.LocalPermitIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.LocalPermitIssueDate), DefaultDate = Model.MasterVehicleDetail.LocalPermitIssueDate, IsRequired = false, AllowFutureDate = false, AllowPastDate = true, SetBlank = Model.MasterVehicleDetail.LocalPermitExpiryDate == null ? true : false, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.LocalPermitExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.LocalPermitExpiryDate), DefaultDate = Model.MasterVehicleDetail.LocalPermitExpiryDate, IsRequired = false, AllowFutureDate = true, AllowPastDate = false, SetBlank = Model.MasterVehicleDetail.LocalPermitExpiryDate == null ? true : false, IsValidateFinYear = false })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive, new { @tabindex = "0" })
+                        <i></i>
+                        @Html.LabelFor(model => model.IsActive, " ", new { @class = "label" })
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vehicle', 'Update', 'VehicleNo', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.VehicleId })');
+        $('#ddlVendorType').change(OnVendorTypeChange);
+        chkIsGpsEnabled = $('#chkIsGpsEnabled');
+        txtGpsDeviceId = $('#txtGpsDeviceId');
+        chkIsGpsEnabled.change(OnIsGpsEnabledChange);
+        OnIsGpsEnabledChange();
+
+        if ('@SessionUtility.LoginUserRoleName' != "SITE ADMIN")
+        {
+            /*$('#txtVehicleNo').disable();*/
+        }
+    });
+
+    function OnVendorTypeChange() {
+        if ($('#ddlVendorType').val() != "") {
+            var requestData = { vendorTypeId: $('#ddlVendorType').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetVendorNameByVendorTypeId", "Vendor")', JSON.stringify(requestData), GetVendorNameListSuccess, ErrorFunction, false);
+        }
+    }
+
+    function GetVendorNameListSuccess(responseData) {
+        BindDropDownList('ddlVendor', responseData, 'Value', 'Name', '', 'Select Vendor Name');
+    }
+
+    function OnIsGpsEnabledChange() {
+        if (chkIsGpsEnabled.IsChecked) {
+            txtGpsDeviceId.enable();
+            AddRequired(txtGpsDeviceId, 'Please enter GPS Device');
+        }
+        else {
+            RemoveRequired(txtGpsDeviceId);
+            txtGpsDeviceId.enable(false);
+            txtGpsDeviceId.val('');
+        }
+    }
+</script>

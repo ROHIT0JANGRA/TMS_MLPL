@@ -1,0 +1,151 @@
+﻿@using CodeLock.Models
+@model LabourDCModule
+@{
+    ViewBag.Title = "LabourDCBillReAssign";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    baseUrl = '@Url.Action("", "LabourDCBillReAssign")';
+    docketNomenclature = '@SessionUtility.DocketNomenClature';
+</script>
+@using (Html.BeginForm("LabourDCBillReAssign", "VendorPayment", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="page-separator"><span class="page-separator" id="spnMassage">Re-Assign Bill</span></div>
+
+        <div id="dvStep1">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LabourDCNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.LabourDCNo, new { @class = "form-control", @id = "txtLabourDCNo" })
+                            @Html.HiddenFor(model => model.LabourDCId, new { @id = "hdnLabourDCId" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.LabourDCNo)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="dvStep2" style="display:none;">
+            <div class="page-separator"><span class="page-separator" id="spnMassage">LabourDC Detail</span></div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VendorName, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.VendorName, new { @class = "form-control textlabel", @id = "txVendorName" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LocationCode, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.LocationCode, new { @class = "form-control textlabel", @id = "txLocationCode" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ManualLabourDCNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.ManualLabourDCNo, new { @class = "form-control textlabel", @id = "txManualLabourDCNo" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LabourDCDate, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.LabourDCDate, new { @class = "form-control textlabel", @id = "txLabourDCDate" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BillLocationId, new { @class = "label" })
+                        <div class="input">
+                            @Html.DropDownListFor(model => model.BillLocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2", @id = "ddlBillLocationId", @placeholder = "Select Collection Location" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.BillLocationId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txRemarks" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Remarks)
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <div class="align-right">
+                        <div class="clearfix">
+                            <button type="submit" class="btn btn-primary m-" id="btnSubmit">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+
+    $(document).ready(function () {
+        InitObjects();
+        AttachEvents();
+    });
+
+    function AttachEvents() {
+        txtLabourDCNo.blur(function () { CheckValidDocketNo(); });
+    }
+    function InitObjects() {
+        txtLabourDCNo = $("#txtLabourDCNo");
+        hdnLabourDCId = $("#hdnLabourDCId");
+        txVendorName = $("#txVendorName");
+        txLocationCode = $("#txLocationCode");
+        txManualLabourDCNo = $("#txManualLabourDCNo");
+        txLabourDCDate = $("#txLabourDCDate");
+        ddlBillLocationId = $("#ddlBillLocationId");
+        txRemarks = $("#txRemarks");
+
+        docketUrl = '@Url.Action("", "VendorPayment", new { Area = "Finance" })';
+    }
+
+    function CheckValidDocketNo() {
+        if (txtLabourDCNo.val() != '') {
+            var requestData = { LabourDCNo: txtLabourDCNo.val() };
+            AjaxRequestWithPostAndJson(docketUrl + '/CheckValidBillNoForReAssign', JSON.stringify(requestData), function (result) {
+
+                if (result != null) {
+
+                    $('#dvStep1').pointerEvent(false);
+                    $('#dvStep2').show();
+                    hdnLabourDCId.val(result.LabourDCId);
+                    txVendorName.val(result.VendorName);
+                    txLocationCode.val(result.LocationCode);
+                    txManualLabourDCNo.val(result.ManualBillNo);
+                    txLabourDCDate.val($.displayDate(result.LabourDCDate));
+
+                    return true;
+                }
+                else {
+                    ShowMessage(txtLabourDCNo.val() + ' is not valid for Re-Assign');
+                    txtLabourDCNo.val('');
+                    hdnLabourDCId.val('');
+                    txtLabourDCNo.focus();
+                    return false;
+                }
+            }, ErrorFunction, false);
+        }
+    }
+</script>
+
+

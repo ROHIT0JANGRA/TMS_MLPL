@@ -1,0 +1,118 @@
+﻿@model CodeLock.Models.DocumentControlSeries
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CompanyId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.CompanyId, new SelectList(ViewBag.CompanyList, "Value", "Name"), new { @class = "form-control", @id = "ddlCompanyId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CompanyId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.Label("Select Document Date", new { @class = "label" })
+                <div class="clearfix">
+                    <div id="drDocumentDate"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationId", FieldCaption = "Location" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.DocumentTypeId, new SelectList(ViewBag.DocumentTypeList, "Value", "Name"), "Select Document Type", new { @class = "form-control", @id = "ddlDocumentTypeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocumentTypeId)
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                @Html.LabelFor(model => model.DcrStatus, new { @class = "label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.DcrStatus, new List<SelectListItem> {
+                        new SelectListItem() {Text = "All",Value="0"},
+                        new SelectListItem() {Text = "Used", Value="1"},
+                        new SelectListItem() {Text = "Unused", Value="2"},
+                        new SelectListItem() {Text = "Missing", Value="3"},}, new { @class = "form-control", @id = "ddlDcrStatus" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BookCode, new { @class = "label", @id = "lblBookCode" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.BookCode, new { @class = "form-control", @id = "txtBookCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BookCode)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocumentNo, new { @class = "label", @id = "lblDocumentNo" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocumentNo, new { @class = "form-control", @id = "txtDocumentNo" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocumentNo)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" id="btnSubmit">View Report</button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDate, ddlLocationId, ddlDocumentTypeId, ddlDcrStatus, btnSubmit, txtBookCode, txtDocumentNo;
+    $(document).ready(function () {
+        SetPageLoad('DCR Register', '', '', '', '');
+        drDate = InitDateRange('drDocumentDate', DateRange.LastWeek);
+        ddlCompanyId = $('#ddlCompanyId');
+        ddlLocationId = $('#ddlLocationId');
+        ddlDocumentTypeId = $('#ddlDocumentTypeId');
+        ddlDcrStatus = $('#ddlDcrStatus');
+        btnSubmit = $('#btnSubmit');
+        txtBookCode = $('#txtBookCode');
+        txtDocumentNo = $('#txtDocumentNo');
+        ddlDocumentTypeId.val(1);
+        btnSubmit.click(ViewReport);
+    });
+
+    function ViewReport() {
+        var prmList = [{ Name: "DocumentType", Value: ddlDocumentTypeId.val() }, { Name: "LocationId", Value: ddlLocationId.val() },
+        { Name: "FromDate", Value: $.displayDate(drDate.startDate) }, { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+        { Name: "DcrStatus", Value: ddlDcrStatus.val() }, { Name: "BookCode", Value: txtBookCode.val() == '' ? 'ALL' : txtBookCode.val() },
+        { Name: "DocumentNo", Value: txtDocumentNo.val() == '' ? 'ALL' : txtDocumentNo.val() }, { Name: "CompanyId", Value: ddlCompanyId.val() }
+        ];
+        //alert(prmList[0].Value)
+        //alert(prmList[1].Value)
+        //alert(prmList[2].Value)
+        //alert(prmList[3].Value)
+        //alert(prmList[4].Value)
+        //alert(prmList[5].Value)
+        //alert(prmList[6].Value)
+        //alert(prmList[7].Value)
+       
+        var reportInfo = { PrmList: prmList, Name: 'DcrRegister', Description: 'DCR Register' };
+        ShowReport(reportInfo);
+        return false;
+    }
+</script>

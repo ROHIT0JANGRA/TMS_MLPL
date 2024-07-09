@@ -1,0 +1,290 @@
+﻿@using CodeLock.Models
+@model SupplementryBill
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "SupplementryBill";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        loginLocationId = '@SessionUtility.LoginLocationId';
+        loginLocationCode = '@SessionUtility.LoginLocationCode';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        accountMasterUrl = '@Url.Action("", "Account", new { Area = "Master" })';
+        docketUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+        thcUrl = '@Url.Action("", "THC", new { Area = "Operation" })';
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+    });
+</script>
+<script src="~/areas/finance/views/customerbill/supplementrybill.js"></script>
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("SupplementryBill", "CustomerBill", FormMethod.Post, new { @class = "j-forms j-multistep", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.PaybasId, new SelectList(ViewBag.PaybasList, "Value", "Name"), "Select Paybas", new { @class = "form-control", @id = "ddlPaybas" })
+                                    <i></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                                    @Html.TextBoxFor(model => model.CustomerCode, null, new { @class = "form-control", @id = "txtCustomerCode" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CustomerCode)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerCode, " ", new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.CustomerCode, " ", new { @class = "label-bold", @id = "lblCustomerName" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CustomerCode, " ", new { @class = "label" })
+                                <div class="clearfix">
+                                </div>
+                                @Html.LabelFor(model => model.CustomerCode, " ", new { @class = "label-bold", @id = "lblCustomerResultName" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "BillDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.BillDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "DueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DueDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ManualBillNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.ManualBillNo, new { @class = "form-control", @id = "txtManualBillNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ManualBillNo)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.SubmissionLocationId, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(model => model.SubmissionLocationId, " ", new { @id = "lblSubmissionLocation", @class = "label-bold" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CollectionLocationId, new { @class = "label" })
+                                <div class="clearfix">
+                                    @Html.LabelFor(model => model.CollectionLocationId, " ", new { @class = "label-bold", @id = "lblCollectionLocation" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <div class="inline-group">
+                                        @Html.LabelFor(model => model.DocumentTypeId, new { @class = "label" })
+                                        <label class="radio">
+                                            @Html.RadioButtonFor(model => model.DocumentTypeId, "1", new { @id = "rdDocket", @tabindex = "0", @checked = "checked" })
+                                            <i></i>
+                                            @Html.LabelFor(model => model.DocumentTypeId, SessionUtility.DocketNomenClature, new { @for = "rdDocket", @class = "label-bold" })
+                                        </label>
+                                        <label class="radio">
+                                            @Html.RadioButtonFor(model => model.DocumentTypeId, "5", new { @id = "rdThc", @tabindex = "0" })
+                                            <i></i>
+                                            @Html.LabelFor(model => model.DocumentTypeId, "THC", new { @for = "rdThc", @class = "label-bold" })
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DocumentNo, new { @class = "label" })
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.DocumentId, new { @id = "hdnDocumentId" })
+                                    @Html.TextBoxFor(model => model.DocumentNo, new { @class = "form-control", @id = "txtDocumentNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.DocumentNo)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.MultipleCNoteNo, "Check here to Enter Mupltiple " + SessionUtility.DocketNomenClature + " OR THC No", new { @class = "label", @for = "chkMultipleCNoteNo" })
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(model => model.MultipleCNoteNo, new { @class = "form-control", @id = "chkMultipleCNoteNo" })
+                                    <i></i>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BillAmount, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.BillAmount, new { @class = "form-control textlabel numeric2", @id = "txtBillAmount" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.BillAmount)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table id="dtAccountDetailList">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.BillAccountDetails[0].ServiceTaxApplicable)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.BillAccountDetails[0].AccountCode)
+                                    </th>
+                                    <th></th>
+                                    <th id="thDocumentTypeIdHeader">
+                                        @Html.DisplayNameFor(model => model.BillAccountDetails[0].DocumentTypeId)
+                                        <div class="select">
+                                            @Html.DropDownListFor(model => model.DocumentTypeId, new SelectList(ViewBag.DocumentTypeList, "Value", "Name", Model.DocumentTypeId), new { @class = "form-control", id = "ddlDocumentTypeHeaderId" })
+                                            <i></i>
+                                        </div>
+                                    </th>
+                                    <th id="thDocumentIdHeader">
+                                        @Html.DisplayNameFor(model => model.BillAccountDetails[0].DocumentCode)
+                                        @Html.Hidden("hdnDocumentIdHeader")
+                                        <div class="input">
+                                            @Html.TextBox("DocumentCode", string.Empty, new { @class = "form-control", @id = "txtDocumentHeader", @style = "width: 200px", @placeholder = "Enter Document No" })
+                                        </div>
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.BillAccountDetails[0].Amount)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.BillAccountDetails[0].Narration)
+                                        <div class="input">
+                                            @Html.TextBox("NarrationHeader", string.Empty, new { @class = "form-control", id = "txtNarrationHeader", @style = "width: 200px;", @placeholder = "Enter Narration" })
+                                        </div>
+                                    </th>
+                                    <th style="min-width:85px">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.BillAccountDetails.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            <label class="checkbox">
+                                                @Html.CheckBoxFor(m => Model.BillAccountDetails[i].ServiceTaxApplicable, new { @tabindex = "0", @class = "selectrow", @id = "chkServiceTaxApplicable" + i, @Name = "BillAccountDetails[" + i.ToString() + "].ServiceTaxApplicable" })
+                                                <i></i>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            @Html.HiddenFor(m => Model.BillAccountDetails[i].AccountId, new { id = "hdnAccountId" + i, @Name = "BillAccountDetails[" + i + "].AccountId" })
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => Model.BillAccountDetails[i].AccountCode, new { @class = "form-control input-small", @id = "txtAccountCode" + i.ToString() })
+                                            </div>
+                                            @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].AccountCode)
+                                        </td>
+                                        <td>
+                                            @Html.Label("AccountDescription", " ", new { @class = "label-bold", @id = "lblAccountDescription" + i })
+                                        </td>
+                                        <td id="@("trDocumentTypeId" + i)">
+                                            <div class="select">
+                                                @Html.DropDownListFor(m => Model.BillAccountDetails[i].DocumentTypeId, new SelectList(ViewBag.DocumentTypeList, "Value", "Name", Model.BillAccountDetails[i].DocumentTypeId), new { @class = "form-control", @id = "ddlDocumentTypeDetailId" + i.ToString() })
+                                                <i></i>
+                                            </div>
+                                            @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].DocumentTypeId)
+                                        </td>
+                                        <td id="@("trDocumentId" + i)">
+                                            <div class="input">
+                                                @Html.HiddenFor(m => Model.BillAccountDetails[i].DocumentId, new { id = "hdnDetailDocumentId" + i })
+                                                @Html.TextBoxFor(m => Model.BillAccountDetails[i].DocumentCode, new { @class = "form-control", id = "txtDetailDocumentCode" + i.ToString(), @style = "width: 200px;" })
+                                            </div>
+                                            @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].DocumentCode)
+                                        </td>
+                                        <td>
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => Model.BillAccountDetails[i].Amount, new { @class = "form-control numeric2", id = "txtAmount" + i.ToString(), @style = "width: 200px;" })
+                                            </div>
+                                            @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].Amount)
+                                        </td>
+                                        <td>
+                                            <div class="input">
+                                                @Html.TextBoxFor(m => Model.BillAccountDetails[i].Narration, new { @class = "form-control", id = "txtNarration" + i.ToString(), @style = "width: 200px;" })
+                                            </div>
+                                            @Html.ValidationMessageFor(m => Model.BillAccountDetails[i].Narration)
+                                        </td>
+                                        <td style="min-width:85px"></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ServiceTaxApplicableAmount, new { @class = "label" })
+                                <div class="input">
+                                    @Html.Hidden("hdnServiceTaxApplicableAmount")
+                                    @Html.TextBoxFor(model => model.ServiceTaxApplicableAmount, null, new { @class = "form-control textlabel numeric2", @id = "txtServiceTaxApplicableAmount" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.EnableServiceTax, "Check here to Apply Service tax Deatils On Sub Total", new { @class = "label", @for = "chkEnableServiceTax" })
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(model => model.EnableServiceTax, new { @id = "chkEnableServiceTax" })
+                                    <i></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.RoundOffServiceTax, "Check here to apply Round Off Amount", new { @class = "label", @for = "chkRoundOffServiceTax" })
+                                <label class="checkbox">
+                                    @Html.HiddenFor(model => model.TaxTotal, new { @id = "hdnTotalTax", @value = "0" })
+                                    @Html.CheckBoxFor(model => model.RoundOffServiceTax, new { @id = "chkRoundOffServiceTax" })
+                                    <i></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12" id="dvCharges">
+                            <table id="dtTax"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

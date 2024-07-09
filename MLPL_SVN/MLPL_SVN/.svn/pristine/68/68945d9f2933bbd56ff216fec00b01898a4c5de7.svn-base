@@ -1,0 +1,203 @@
+﻿@model CodeLock.Models.CreditDebitNote
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @*<div class="inline-group">*@
+
+                            <div class="inline-group">
+                                @Html.LabelFor(model => model.NoteType, new { @class = "label" })
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.NoteType, "1", new { @id = "rdNoteTypeCreditNote", @tabindex = "0", @checked = "checked" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.NoteType, "Credit Note", new { @for = "rdNoteTypeCreditNote" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.NoteType, "2", new { @id = "rdNoteTypeDebitNote", @tabindex = "0" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.NoteType, "Debit Note", new { @for = "rdNoteTypeDebitNote" })
+                                </label>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    @Html.Label("Select Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-2" id="dvBillType">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BillTypeId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.BillTypeId, Enumerable.Empty<SelectListItem>(), "Select Bill Type", new { @class = "form-control", @id = "ddlBillTypeId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.BillTypeId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PartyCode, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.PartyId, new { @id = "hdnPartyId" })
+                            @Html.TextBoxFor(model => model.PartyCode, null, new { @class = "form-control", @id = "txtPartyCode" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PartyCode)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PartyName, new { @class = "label" })
+                        <div class="clearfix">
+                        </div>
+                        @Html.LabelFor(model => model.PartyName, " ", new { @class = "label-bold", @id = "lblPartyName" })
+                    </div>
+                </div>
+            </div>
+            <div class="page-separator">OR</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label id="txtCreditNoteLabel" class="label">Credit Note No</label>
+                        @*@Html.Label(" ", "Credit Note No", new { @class = "label" })*@
+                        <div class="input">
+                            @Html.TextBox("txtCreditNoteNo", null, new { @class = "form-control", @id = "txtCreditNoteNo" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-separator">OR</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BillNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.BillNo, new { @class = "form-control", @id = "txtBillNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.BillNo)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDate, ddlBillTypeId, txtPartyCode, lblPartyName, hdnPartyId, btnSubmit;
+    var customerBillType, generalMasterUrl;
+    var selectedNoteType = "1", selectedBillsIsGst = "0", rdNoteTypeDebitNote, rdNoteTypeCreditNote, totalSelectedBills = 0;
+    $(document).ready(function () {
+        SetPageLoad('Credit Note', 'Report', '', '', '');
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        generalMasterUrl = '@Url.Action("", "General", new { Area = "Master" })';
+        customerBillType = '@GeneralHelper.CustomerBillType';
+        vendorBllType = '@GeneralHelper.VendorBillType';
+        ddlBillTypeId = $('#ddlBillTypeId');
+        txtPartyCode = $('#txtPartyCode');
+        lblPartyName = $('#lblPartyName');
+        hdnPartyId = $('#hdnPartyId');
+        txtCreditNoteNo = $('#txtCreditNoteNo');
+        txtBillNo = $('#txtBillNo');
+        btnSubmit = $('#btnSubmit');
+        ddlBillTypeId.change(OnBillTypeChange);
+        txtPartyCode.blur(function () { return CheckIsValid(txtPartyCode, hdnPartyId, lblPartyName); });
+        rdNoteTypeDebitNote = $('#rdNoteTypeDebitNote');
+        rdNoteTypeCreditNote = $('#rdNoteTypeCreditNote');
+        btnSubmit.click(ViewReport);
+        OnPageLoad();
+        showCreditDebitNote();
+        AttachEvents();
+
+    });
+
+    function AttachEvents() {
+        $('[id*="rdNoteType"]').each(function () { $(this).click(function () { selectedNoteType = $(this).val(); OnNoteTypeChange(); }); });
+        OnNoteTypeChange();
+    }
+    function OnPageLoad() {
+        hdnPartyId.val('');
+        txtPartyCode.val('');
+        lblPartyName.text('');
+        CustomerAutoComplete('txtPartyCode', 'hdnPartyId');
+        var requestData = { codeTypeId:  customerBillType };
+        AjaxRequestWithPostAndJson(generalMasterUrl + '/GetByIdList', JSON.stringify(requestData), GetBillTypeListSuccess, ErrorFunction, false);
+    }
+
+    function OnBillTypeChange() {
+        txtPartyCode.val('');
+        hdnPartyId.val('');
+        lblPartyName.text('');
+    }
+    function OnNoteTypeChange() {
+        hdnPartyId.val('');
+        txtPartyCode.val('');
+        lblPartyName.text('');
+        switch (selectedNoteType) {
+            case "1":
+                CustomerAutoComplete('txtPartyCode', 'hdnPartyId');
+                break;
+            case "2":
+                VendorAutoComplete('txtPartyCode', 'hdnPartyId');
+                break;
+        }
+
+        var requestData = { codeTypeId: selectedNoteType == "1" ? customerBillType : vendorBllType };
+        AjaxRequestWithPostAndJson(generalMasterUrl + '/GetByIdList', JSON.stringify(requestData), GetBillTypeListSuccess, ErrorFunction, false);
+    }
+
+
+    function GetBillTypeListSuccess(responseData) {
+        BindDropDownList('ddlBillTypeId', responseData, 'Value', 'Name', '', 'Select Bill Type');
+    }
+
+    function CheckIsValid(objCode, objHdnId, objLbl) {
+        IsCustomerCodeExist(objCode, objHdnId, objLbl);
+    }
+    function showCreditDebitNote() {
+        $('#rdNoteTypeCreditNote, #rdNoteTypeDebitNote').change(function () {
+            if ($('#rdNoteTypeCreditNote').IsChecked) {
+                $('#txtCreditNoteLabel').text('Credit Note No');
+            } else {
+                $('#txtCreditNoteLabel').text('Debit Note No');
+            }
+        });
+    }
+    function ViewReport() {
+        try {
+            var prmList = [
+                { Name: "FromDate", Value: drDate.startDate },
+                { Name: "ToDate", Value: drDate.endDate },
+                { Name: "BillTypeId", Value: ddlBillTypeId.val() == '' ? 0 : ddlBillTypeId.val() },
+                { Name: "PartyId", Value: hdnPartyId.val() == '' ? 0 : hdnPartyId.val() },
+                { Name: "CreditNoteNo", Value: txtCreditNoteNo.val() == '' ? ' ' : txtCreditNoteNo.val() },
+                { Name: "BillNo", Value: txtBillNo.val() == '' ? ' ' : txtBillNo.val() }
+            ];
+
+            if ($('#rdNoteTypeCreditNote').IsChecked) {
+                var reportInfo = { PrmList: prmList, Name: 'CreditNoteReport', Description: 'Credit Note Report' };
+                return ShowReport(reportInfo);
+            }
+            else {
+                var reportInfo = { PrmList: prmList, Name: 'DebitNoteReport', Description: 'Debit Note Report' };
+                return ShowReport(reportInfo);
+            }
+
+        } catch (e) { ShowMessage(e.message) }
+        return false;
+    }
+
+</script>

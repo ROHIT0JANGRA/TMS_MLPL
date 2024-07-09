@@ -1,0 +1,245 @@
+﻿@model CodeLock.Models.DocketBookingChallan
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("DocketBookingChallan", "Docket", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.ChallanId)
+    @Html.HiddenFor(m => m.ChallanId, new { @id = "hdnChallanId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ManualChallanNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.ManualChallanNo, new { @class = "form-control text-uppercase" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ManualChallanNo)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "ChallanDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.ChallanDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = false })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                        @Html.TextBoxFor(model => model.VendorCode, null, new { @class = "form-control", @id = "txtVendorCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorCode)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.HiddenFor(model => model.VendorName, new { @id = "hdnVendorName" })
+                        @Html.Label("VendorName", " ", new { @class = "label-bold", @id = "lblVendorName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                @{var docketListHeader = SessionUtility.DocketNomenClature + " Details";}
+                @docketListHeader
+                <table id="dtDocketDetail">
+                    <thead>
+                        <tr>
+                            <th>
+                                @{var docketHeader = SessionUtility.DocketNomenClature + " No";}
+                                @docketHeader
+                            </th>
+                            <th>
+                                @{var docketDate = SessionUtility.DocketNomenClature + " Date";}
+                                @docketDate
+                            </th>
+                            <th>Paybas Mode</th>
+                            <th>From City</th>
+                            <th>To City</th>
+                            <th>ConSignor</th>
+                            <th>Consignee</th>
+                            <th>No of Pkgs</th>
+                            <th>Actual Wight</th>
+                            <th>Charge Wight</th>
+                            <th>
+                                @{var docketTotal = SessionUtility.DocketNomenClature + " Total";}
+                                @docketTotal
+                            </th>
+                            <th>Is Bulky</th>
+                            <th>Freight</th>
+                            <th>Other Chrges</th>
+                            <th>Grand Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Details.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].DocketNo, new { @class = "form-control", @id = "txtDocketNo" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].DocketNo)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.Partial("DateTimePicker", new DateTimePicker() { FieldId = "txtDocketDate" + i.ToString(), FieldName = "Details[" + i + "].DocketDate", FieldCaption = @Html.DisplayNameFor(m => Model.Details[i].DocketDate).ToString(), UseFieldCaption = false, IsRequired = true, IsDateOnly = true, AllowFutureDate = false, AllowPastDate = true })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].DocketDate)
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(m => m.Details[i].PaybasId, new SelectList(ViewBag.PaybasList, "Value", "Name"), "Select Paybas", new { @class = "form-control", @id = "ddlPaybasId" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].PaybasId)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.HiddenFor(model => Model.Details[i].FromCityId, new { @id = "hdnFromCityId" + i })
+                                        @Html.TextBoxFor(m => Model.Details[i].FromCity, new { @class = "form-control text-complete text-complete-html", id = "txtFromCity" + i })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].FromCity)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.HiddenFor(model => Model.Details[i].ToCityId, new { @id = "hdnToCityId" + i })
+                                        @Html.TextBoxFor(m => Model.Details[i].ToCity, new { @class = "form-control text-complete text-complete-html", id = "txtToCity" + i })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].ToCity)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].ConsignorName, new { @class = "form-control", @id = "txtConsignorName" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].ConsignorName)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].ConsigneeName, new { @class = "form-control", @id = "txtConsigneeName" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].ConsigneeName)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].Packages, new { @class = "form-control numeric", @id = "txtPackages" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].Packages)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].ActualWeight, new { @class = "form-control numeric3", @id = "txtActualWeight" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].ActualWeight)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].ChargeWeight, new { @class = "form-control numeric3", @id = "txtChargeWeight" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].ChargeWeight)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].DocketTotal, new { @class = "form-control numeric2", @id = "txtDocketTotal" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].DocketTotal)
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(model => Model.Details[i].ContractAmount, new { @id = "hdnContractAmount" + i })
+                                    @Html.HiddenFor(model => Model.Details[i].BulkyAmount, new { @id = "hdnBulkyAmount" + i })
+                                    @Html.LabelFor(m => Model.Details[i].IsBulky, " ", new { @For = "chkIsBulky" + i.ToString() })
+                                    <label class="checkbox">
+                                        @Html.CheckBoxFor(model => model.Details[i].IsBulky, new { @id = "chkIsBulky" + i.ToString() })
+                                        <i></i>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].Freight, new { @class = "form-control numeric2", @id = "txtFreight" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].Freight)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].OtherCharges, new { @class = "form-control numeric2", @id = "txtOtherCharges" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].OtherCharges)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.Details[i].GrandTotal, new { @class = "form-control textlabel numeric2", @id = "txtGrandTotal" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.Details[i].GrandTotal)
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="0">Create</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Docket Booking Challan', 'Update', 'ManualChallanNo', 'Go To List', '@Url.Action("Index")');
+        VendorAutoComplete('txtVendorCode', 'hdnVendorId', '', 4);
+        hdnVendorId = $('#hdnVendorId');
+        txtVendorCode = $('#txtVendorCode');
+        lblVendorName = $('#lblVendorName');
+        txtVendorCode.blur(function () { IsVendorCodeExist(txtVendorCode, hdnVendorId, lblVendorName, '', 4); });
+        InitGrid('dtDocketDetail', false, 15, InitAutoComplete);
+    });
+
+    function InitAutoComplete() {
+        $('[id*="hdnFromCityId"]').each(function () {
+            var hdnFromCityId = $(this);
+            var txtFromCity = $('#' + hdnFromCityId.Id.replace('hdnFromCityId', 'txtFromCity'));
+            var hdnToCityId = $('#' + hdnFromCityId.Id.replace('hdnFromCityId', 'hdnToCityId'));
+            var txtToCity = $('#' + hdnFromCityId.Id.replace('hdnFromCityId', 'txtToCity'));
+            var txtDocketTotal = $('#' + hdnFromCityId.Id.replace('hdnFromCityId', 'txtDocketTotal'));
+            var hdnContractAmount = $('#' + hdnFromCityId.Id.replace('hdnFromCityId', 'hdnContractAmount'));
+            var hdnBulkyAmount = $('#' + hdnFromCityId.Id.replace('hdnFromCityId', 'hdnBulkyAmount'));
+            var chkIsBulky = $('#' + hdnFromCityId.Id.replace('hdnFromCityId', 'chkIsBulky'));
+            var txtFreight = $('#' + hdnFromCityId.Id.replace('hdnFromCityId', 'txtFreight'));
+            var txtOtherCharges = $('#' + hdnFromCityId.Id.replace('hdnFromCityId', 'txtOtherCharges'));
+            var txtGrandTotal = $('#' + hdnFromCityId.Id.replace('hdnFromCityId', 'txtGrandTotal'));
+
+            CityAutoComplete(txtFromCity.Id, hdnFromCityId.Id);
+            CityAutoComplete(txtToCity.Id, hdnToCityId.Id);
+            txtFromCity.blur(function () { return IsCityNameExist(txtFromCity, hdnFromCityId); });
+            txtToCity.blur(function () { return IsCityNameExist(txtToCity, hdnToCityId); });
+            chkIsBulky.click(CalculateFreightAmount);
+            txtFreight.blur(CalculateFreightAmount);
+            txtOtherCharges.blur(CalculateChargeAmount);
+
+            function CalculateFreightAmount() {
+                if (chkIsBulky.IsChecked)
+                    txtFreight.val(parseFloat(txtFreight.val()) + (parseFloat(txtFreight.val()) / 2));
+                txtGrandTotal.val(parseFloat(txtFreight.val()) + parseFloat(txtOtherCharges.val()));
+            }
+
+            function CalculateChargeAmount() {
+                txtGrandTotal.val(parseFloat(txtFreight.val()) + parseFloat(txtOtherCharges.val()));
+            }
+        });
+    }
+</script>
+
+

@@ -1,0 +1,92 @@
+﻿@using CodeLock.Models
+@model List<DeliveryMrDone>
+@{
+    ViewBag.Title = "DeliveryMrDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:400px">
+    <div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
+    @*<div class="row">
+        <div class="col-sm-3">
+            <h4>MR No</h4>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+                @Html.Hidden("hdnDocumentId")
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button onclick="return ViewReport();" class="btn btn-info">
+                <i class="fa fa-eye"></i>
+            </button>
+            <button onclick="return PrintReport(this);" class="btn btn-primary">
+                    <i class="glyphicon glyphicon-print"></i>
+                </button>
+        </div>
+    </div>*@
+    <div class="page-separator">Mr List</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <table id="dtMrDocketList">
+                <thead>
+                    <tr>
+                        <th>
+                            Mr No
+                        </th>
+                        <th>
+                            @SessionUtility.DocketNomenClature
+                        </th>
+                        <th>
+                            View/Print
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                   @foreach (var item in Model)
+                   {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => item.MrNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.DocketNo)
+                            </td>
+                            <td>
+                                <button onclick='return PrintReport( @Html.DisplayFor(model => item.MrId), @Html.DisplayFor(model => item.DocketId));' class="btn btn-primary">
+                                    <i class="glyphicon glyphicon-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var mrId = 0;
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        lblDocumentNo = $('#lblDocumentNo');
+        lblDocumentNo.html(GetUrlValue()["documentNo"]);
+        mrId = GetUrlValue()["documentId"];
+        dtMrDocketList = $('#dtMrDocketList');
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        spnMassage.text("Delivery MR Generated Successfully");
+        SetPageLoad('Delivery MR', 'Done', '', 'Go To Delivery MR Generation', '@Url.Action("DeliveryMr")');
+        LoadDataTable('dtMrDocketList', false, false, false);
+    }
+
+    function PrintReport(mrId, docketId) {
+        var prmList = [{ Name: "MrId", Value: mrId }, { Name: "DocketId", Value: docketId }];
+        var reportInfo = { PrmList: prmList, Name: 'MRGatePassViewPrint', Description: 'Delivery Mr View Print' };
+                ShowReport(reportInfo);
+    }
+</script>
+
+

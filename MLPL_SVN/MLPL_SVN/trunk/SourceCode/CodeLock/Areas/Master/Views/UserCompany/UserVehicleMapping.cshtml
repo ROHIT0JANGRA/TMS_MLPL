@@ -1,0 +1,160 @@
+﻿@model CodeLock.Models.MasterUserVehicleMapping
+
+@{
+    ViewBag.Title = "UserVehicleMapping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("UserVehicleMapping", "UserCompany", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+     <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UserId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.UserId, new SelectList(ViewBag.UserList, "Value", "Name"), "Select User", new { @class = "form-control select2", @id = "ddlUser" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UserId)
+
+                </div>
+            </div>
+        </div>
+         <div class="page-separator">Vehicle Details</div>
+        @*<div class="row">
+            <div class="col-sm-6">
+                <table id="dtMapping" class="table-bordered"></table>
+            </div>
+        </div>*@
+         <div class="row">
+             <div class="col-sm-9">
+                 <table id="dtMapping" class="table-bordered" width="100%">
+                     <thead>
+                         <tr>
+                             <th></th>
+                             <th>@Html.DisplayNameFor(m => Model.VehicleList.FirstOrDefault().Vehicle)</th>
+                             <th>@Html.DisplayNameFor(m => Model.VehicleList.FirstOrDefault().UserName)</th>
+                             <th>@Html.DisplayNameFor(m => Model.VehicleList.FirstOrDefault().AssignDate)</th>
+                             <th>@Html.DisplayNameFor(m => Model.VehicleList.FirstOrDefault().AssignBy)</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                   @for (int i = 0; i < Model.VehicleList.Count; i++)
+                    {
+                             <tr>
+                                 <td>
+                                     @Html.HiddenFor(m => Model.VehicleList[i].VehicleId, new { @id = "hdnVehicleId" + (i + 1).ToString() })
+                                     @Html.LabelFor(m => Model.VehicleList[i].IsChecked, " ", new { @For = "chkIsChecked" + (i + 1).ToString() })
+                                     <label class="checkbox">
+                                         @Html.CheckBoxFor(model => model.VehicleList[i].IsChecked, new { @id = "chkIsChecked" + (i + 1).ToString(), @name = "chkIsChecked" + (i + 1).ToString() })
+                                         <i></i>
+                                     </label>
+                                 </td>
+                                 <td>
+                                     @Model.VehicleList[i].Vehicle
+                                 </td>
+                                 <td>
+                                     @Model.VehicleList[i].UserName
+                                 </td>
+                                 <td>
+                                     @Model.VehicleList[i].AssignDate
+                                 </td>
+                                 <td>
+                                     @Model.VehicleList[i].AssignBy
+                                 </td>
+                             </tr>
+                         }
+                     </tbody>
+
+                 </table>
+
+             </div>
+         </div>
+
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Update</button>
+        </div>
+    </div>
+}
+
+<script>
+    var dtMapping, ddlUser, hndCompany, btnSubmit;
+
+    function SelectGrn() {
+        selectedGrnList = []
+        $('[id*="chkVehicleId"]').each(function () {
+            var chkVehicleId = $(this);
+            if (chkVehicleId.IsChecked) {
+                selectedGrnList.push($('#' + chkGrnId.Id.replace('chkVehicleId', 'hdnVehicleId')).val());
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        @*dtMapping = LoadDataTable('dtMapping', false, false, false, null, null, [],
+            [
+                { title: SelectAll.GetChkAll('chkAllVehicle', SelectGrn), data: "VehicleId" },
+                { title: '@Html.DisplayNameFor(model => model.Vehicle)', data: "Vehicle" },
+                { title: '@Html.DisplayNameFor(model => model.UserName)', data: "UserName" },
+                { title: '@Html.DisplayNameFor(model => model.AssignDate)', data: "AssignDate" },
+                { title: '@Html.DisplayNameFor(model => model.AssignBy)', data: "AssignBy" }
+
+            ]);*@
+        ddlUser = $('#ddlUser');
+        //$('#dtMapping_wrapper').remove();
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+        SetPageLoad('Vehicle Mapping', 'Mapping', ddlUser.attr('id'), 'Go To List', '@Url.Action("UserVehicleIndex")');
+
+        selectedGrnList = [];
+
+        //OnUserChange();
+    });
+
+
+    function SetRadio(obj) {
+        $('input[type=radio]:checked').not(obj).prop('checked', false);
+        $(obj).val(true);
+        //return false;
+    }
+
+
+    function OnSubmit() {
+        var hndCompany = $('#hndCompany');
+        $('#dtMapping tr:not(:first)').each(function () {
+            var tr = $(this);
+            var rdbCompany = tr.find('[id*="DefaultCompanyId"]');
+            var hndCompanyId = tr.find('[id*="hndCompanyId"]');
+            if (rdbCompany.is(":checked")) {
+                hndCompany.val(hndCompanyId.val());
+                return false;
+            }
+        });
+    }
+
+    function OnUserChange() {
+        var requestData = { userId: "1" };
+        AjaxRequestWithPostAndJson('@Url.Action("GetVahicleMappingByUserId")', JSON.stringify(requestData), OnUserChangeSuccess, ErrorFunction, false);
+    }
+
+    function OnUserChangeSuccess(responseData) {
+        dtMapping.fnClearTable();
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.VehicleId = "<div class='checkboxer'>" +
+                    SelectAll.GetChk('chkAllVehicle', 'chkVehicleId' + i, 'VehicleList[' + i + '].IsChecked', SelectGrn) +
+                    "<input type='hidden' value='" + item.VehicleId + "' name='VehicleList[" + i + "].VehicleId' id='hdnVehicleId" + i + "'/>" +
+                    "<label class='control-label' for='chkVehicleId" + i + "' id='lblVehicleId" + i + "'></label>" +
+                    "</div>";
+           });
+            dtMapping.fnAddData(responseData);
+
+        }
+    }
+
+    function SetCheck(obj) {
+        obj.value = obj.checked;
+    }
+</script>

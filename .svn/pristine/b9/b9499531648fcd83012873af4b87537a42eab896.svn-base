@@ -1,0 +1,371 @@
+﻿@model CodeLock.Models.MasterVendor
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VendorCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VendorCode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VendorName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VendorName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VendorTypeId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VendorTypeName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.MobileNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVendorDetail.MobileNo)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.EmailId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVendorDetail.EmailId)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.Address)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVendorDetail.Address)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.CountryId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVendorDetail.CountryName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.StateId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVendorDetail.StateName)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VendorLocation)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VendorLocationName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VendorWarehouse)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VendorWarehouseName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.IsActive)
+                </dd>
+            </dl>
+        </div>
+
+
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.IsBlackListed)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.MasterVendorDetail.IsBlackListed)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.VendorService)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.VendorServiceName)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.PanNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVendorDetail.PanNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.GstTinNo)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVendorDetail.GstTinNo)
+                </dd>
+            </dl>
+        </div>
+
+
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.Remarks)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVendorDetail.Remarks)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.TdsCertificate)
+                </dt>
+                <dd>
+                    @{ var fileNamelnkId = "lnkAttachment";}
+                    <a href="#" id=@fileNamelnkId onclick="return ViewAttachment(this);">View</a>
+                    @Html.HiddenFor(model => model.MasterVendorDetail.TdsCertificate, new { @id = "hdnTdsCertificate", @Name = "TdsCertificate" })
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.IsTDSApplicable)
+                </dt>
+                <dd>
+                    @Html.YesNo(Model.MasterVendorDetail.IsTDSApplicable)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.TDSRate)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVendorDetail.TDSRate)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.TdsAccountId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVendorDetail.TdsAccount)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div id="dvGst" style="display:none">
+        <div class="row">
+            <div class="col-xs-3">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.MasterVendorDetail.IsGstApplicable)
+                    </dt>
+                    <dd>
+                        @Html.YesNo(Model.MasterVendorDetail.IsGstApplicable)
+                    </dd>
+                </dl>
+            </div>
+
+            <div class="col-xs-3">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.MasterVendorDetail.VendorGstStateName)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.MasterVendorDetail.VendorGstStateName)
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-xs-3">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.MasterVendorDetail.VendorGstTinNo)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.MasterVendorDetail.VendorGstTinNo)
+                    </dd>
+                </dl>
+            </div>
+
+
+            <div class="col-xs-3">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.MasterVendorDetail.CompanyGstStateName)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.MasterVendorDetail.CompanyGstStateName)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.MasterVendorDetail.CompanyGstTinNo)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.MasterVendorDetail.CompanyGstTinNo)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.EntryByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVendorDetail.EntryByName)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.EntryDate)
+                </dt>
+                <dd>
+                    @Model.MasterVendorDetail.EntryDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+
+
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.UpdateByName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterVendorDetail.UpdateByName)
+                </dd>
+            </dl>
+        </div>
+
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterVendorDetail.UpdateDate)
+                </dt>
+                <dd>
+                    @Model.MasterVendorDetail.UpdateDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ManualVendorCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ManualVendorCode)
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<script>
+    var ruleMasterUrl, useGstDetail = false;
+    $(document).ready(function () {
+        SetPageLoad('Vendor', 'View Detail', '', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'Update', '@Url.Action("Update", new { id = Model.VendorId })');
+        $('#lnkAttachment').showHide($('#hdnTdsCertificate').val() != '');
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        UseGstDetail();
+    });
+
+    function UseGstDetail() {
+        var requestData = { moduleId: 230, ruleId: 1 };
+        AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(requestData), function (result) {
+            useGstDetail = result == 'Y' ? true : false;
+        }, ErrorFunction, false);
+        if (useGstDetail) {
+            $('#dvGst').showHide(useGstDetail);
+        }
+    }
+
+    function ViewAttachment() {
+        var hdnTdsCertificate = $('#hdnTdsCertificate');
+        var filePath = '';
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = '@Href("~/storage/Vendor/")';
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+        window.open(filePath + hdnTdsCertificate.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+        return false;
+    }
+</script>
+

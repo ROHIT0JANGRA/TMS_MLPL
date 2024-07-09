@@ -1,0 +1,188 @@
+﻿@using CodeLock.Models
+@model DocketHold
+@{
+    ViewBag.Title = "DocketHold";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    baseUrl = '@Url.Action("", "DocketHold")';
+    docketNomenclature = '@SessionUtility.DocketNomenClature';
+</script>
+@using (Html.BeginForm("DocketHold", "Docket", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(m => m.HoldId)
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                        @Html.HiddenFor(model => model.DocketId, new { @id = "hdnDocketId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DocketNo)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "HoldDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.HoldDate), IsRequired = true, IsDateOnly = true, AllowFutureDate = false, AllowPastDate = true, IsValidateFinYear = false, SetBlank = true })
+            </div>
+            @*<div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EntryDate, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.EntryDate, " ", new { @class = "label-bold", @id = "lblEntryDate" })
+                    </div>
+                </div>
+            </div>*@
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketStatus, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.DocketStatus, " ", new { @class = "label-bold", @id = "lblDocketStatus" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromLocation, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.FromLocation, " ", new { @class = "label-bold", @id = "lblFromLocation" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToLocation, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.ToLocation, " ", new { @class = "label-bold", @id = "lblToLocation" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorName, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.ConsignorName, " ", new { @class = "label-bold", @id = "lblConsignorCode" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeName, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.ConsigneeName, " ", new { @class = "label-bold", @id = "lblConsigneeCode" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketDate, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.DocketDate, " ", new { @class = "label-bold", @id = "lblDocketDate" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.EnteredBy, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.LabelFor(model => model.EnteredBy, " ", new { @class = "label-bold", @id = "lblEntryBy" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.HoldReason, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextAreaFor(model => model.HoldReason, new { @class = "form-control js-auto-size" })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.HoldReason)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn">Submit</button>
+        </div>
+    </div>
+}
+<script>
+
+    $(document).ready(function () {
+        SetPageLoad('Docket', 'Hold', '', '', '');
+        InitObjects();
+        AttachEvents();
+    });
+
+    function AttachEvents() {
+        txtDocketNo.blur(function () { OnDocketChange(); });
+
+    }
+    function InitObjects() {
+        txtDocketNo = $("#txtDocketNo");
+        hdnDocketId = $("#hdnDocketId");
+
+        docketUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+    }
+
+    function OnDocketChange() {
+        CheckValidDocketNo();
+        if (txtDocketNo.val() != "") {
+            var requestData = { docketId: hdnDocketId.val() };
+            AjaxRequestWithPostAndJson(docketUrl + '/GetDocketHoldData', JSON.stringify(requestData), OnDocketSuccess, ErrorFunction, false);
+        }
+    }
+    
+    function CheckValidDocketNo() {
+        if (txtDocketNo.val() != '') {
+            var requestData = { docketNo: txtDocketNo.val() };
+            AjaxRequestWithPostAndJson(docketUrl + '/CheckValidDocketNo', JSON.stringify(requestData), function (result) {
+                if (!IsObjectNullOrEmpty(result)) {
+                    hdnDocketId.val(result.Value);
+                    txtDocketNo.val(result.Name);
+                    var requestData = { docketId: result.Value };
+                    AjaxRequestWithPostAndJson(docketUrl + '/CheckValidDocketForHold', JSON.stringify(requestData), function (result) {
+                        if (!IsObjectNullOrEmpty(result)) {
+                            hdnDocketId.val(result.Value);
+                            txtDocketNo.val(result.Name);
+                            return true;
+                        }
+                        else {
+                            ShowMessage(docketNomenclature + ' is already Hold');
+                            txtDocketNo.val('');
+                            hdnDocketId.val('');
+                            txtDocketNo.focus();
+                            return false;
+                        }
+                    }, ErrorFunction, false);
+                }
+                else {
+                    ShowMessage(docketNomenclature + ' is not exist');
+                    txtDocketNo.val('');
+                    hdnDocketId.val('');
+                    txtDocketNo.focus();
+                    return false;
+                }
+            }, ErrorFunction, false);
+        }
+    }
+
+    function OnDocketSuccess(responseData) {
+        $('#lblEntryDate').text($.entryDate(responseData.EntryDate));
+        $('#lblDocketStatus').text(responseData.DocketStatus);
+        $('#lblFromLocation').text(responseData.FromLocation);
+        $('#lblToLocation').text(responseData.ToLocation);
+        $('#lblConsignorCode').text(responseData.ConsignorName);
+        $('#lblConsigneeCode').text(responseData.ConsigneeName);
+        $('#lblDocketDate').text($.entryDate(responseData.DocketDate));
+        $('#lblEntryBy').text(responseData.EnteredBy);
+    }
+    
+</script>

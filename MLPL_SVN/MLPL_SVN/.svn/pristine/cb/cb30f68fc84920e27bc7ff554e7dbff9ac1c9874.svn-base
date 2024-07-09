@@ -1,0 +1,166 @@
+﻿@model CodeLock.Models.CardDeposit
+@using CodeLock.Models
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("Deposit", "Card", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+            {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.CardTypeId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.CardTypeId, new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Fuel Card", Value = "1" },
+                                                                            new SelectListItem{ Text="Cash Card", Value = "2" },
+                                                                            new SelectListItem{ Text="Fuel Cum Cash Card", Value = "3" },
+                                                                            new SelectListItem{ Text="ATM Card", Value = "4" }
+                                                                         }, new { @class = "form-control", @id = "ddlCardTypeId" })
+
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.CardTypeId)
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.AccountId, new { @class = "label" })
+                                <div class="select ">
+                                    @Html.DropDownListFor(model => model.AccountId, new SelectList(ViewBag.AccountList, "Value", "Name"), "Select", new { @class = "form-control", @id = "ddlAccountId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.AccountId)
+                            </div>
+                        </div>
+                        @*<div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.BankAccountId, new { @class = "label" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.BankAccountId, new SelectList(ViewBag.BankList, "Value", "Description"), "Select", new { @class = "form-control", @id = "ddlBankAccountId" })
+                                    <i></i>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.BankAccountId)
+                            </div>
+                        </div>*@
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <table id="dtCardDetail"></table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    var currentDate, dateTimeFormat;
+
+    $(document).ready(function () {
+        SetPageLoad('Card', 'Deposit', 'ddlCardId', 'Go To List', '@Url.Action("Index")');
+
+        currentDate = '@DateTime.Now';
+        dateTimeFormat = '@ConfigHelper.JsDateFormat';
+
+        InitWizard('dvWizard', [
+            { StepName: 'Card Criteria', StepFunction: GetCardListByAccountId},
+            { StepName: 'Card Detail'}
+        ], 'Card Deposit');
+        
+        //
+        ddlBankAccountId = $('#ddlBankAccountId');
+        dtCardDetail = $('#dtCardDetail');
+        //lblCardLimit = $('#lblCardLimit');
+        //lblBalanceAmount = $('#lblBalanceAmount');
+        //txtDepositAmount = $('#txtDepositAmount');
+        //$('#rdFuelCard,#rdCashCard').change(OnCardTypeChange);
+        //AddRequired(ddlCardId, 'Please select Card');
+        //OnCardTypeChange();
+        //ddlCardId.change(GetCardDetails);
+        //txtDepositAmount.blur(CheckValidDepositAmount);
+
+        dtCardDetail = LoadDataTable('dtCardDetail', false, false, false, null, null, [],
+            [
+                { title: 'Card No', data: "CardNo" },
+                { title: 'Vehicle No', data: "Vehicle" },
+                { title: 'Expiry Date', data: "ExpiryDate" },
+                { title: 'Card Limit', data: "CardLimit" },
+                { title: 'Balance Amount', data: "BalanceAmount" },
+                { title: 'Deposit Amount', data: "DepositAmount" },
+                { title: 'Deposit Date', data: "DepositDate" }
+            ]);
+    });
+
+    function OnCardTypeChange() {
+        var requestData = { isFuelCard: $('#ddlCardTypeId').val(), AccountId: $('#ddlAccountId').val() };
+        AjaxRequestWithPostAndJson(appUrl.replace('Controller', 'Card').replace('Action', 'GetCardListByCardType'), JSON.stringify(requestData), function (responseData) {
+            BindDropDownList('ddlCardId', responseData, 'Value', 'Name', '', 'Select');
+        }, ErrorFunction, false);
+    }
+
+    function GetCardListByAccountId() {
+        if (ddlBankAccountId.val() != '') {
+            var requestData = { isFuelCard: $('#ddlCardTypeId').val(), AccountId: $('#ddlAccountId').val() };
+            AjaxRequestWithPostAndJson(appUrl.replace('Controller', 'Card').replace('Action', 'GetCardListByCardType'), JSON.stringify(requestData), function (result) {
+                if (result.length == 0) {
+                    isStepValid = false;
+                    ShowMessage('No Record Found');
+                    return false;
+                }
+
+                dtCardDetail.fnClearTable();
+                if (result.length > 0) {
+                    $.each(result, function (i, item) {
+                        item.CardNo = "<input type='hidden' value='" + item.CardId + "' name='CardDetailList[" + i + "].CardId' id='hdnCardId" + i + "'/>" +
+                            "<label class='label'>" + item.CardNo  + "</label >" ;
+                        item.ExpiryDate = $.displayDate(item.ExpiryDate);
+                        item.CardLimit = '<input class="form-control textlabel numeric2" name="CardDetailList[' + i + '].CardLimit" id="txtCardLimit' + i + '" type="text" value=\'' + item.CardLimit + '\'/>';
+                        item.BalanceAmount = '<input class="form-control textlabel numeric2" name="CardDetailList[' + i + '].BalanceAmount" id="txtBalanceAmount' + i + '" type="text"  value=\'' + item.BalanceAmount + '\'/>' +
+                            '<input type=\'hidden\' value=\'' + item.ActualWeight + '\' name=\'CardDetailList[' + i + '].ActualWeight\' id=\'hdnActualWeight' + i + '\' />';
+                        item.DepositAmount = '<input class="form-control numeric2" name="CardDetailList[' + i + '].DepositAmount" id="txtDepositAmount' + i + '" type="text" onblur = "return CheckValidDepositAmount(this)"  value="0.00"/>';
+
+                        item.DepositDate = "<input type='text' name='CardDetailList[" + i + "].DepositDate' id='txtDepositDate" + i + "'class='form-control datepicker'/>" +
+                                   '<span data-valmsg-for="CardDetailList[' + i + '].DepositDate" data-valmsg-replace="true"></span>';
+
+                    });
+                    dtCardDetail.dtAddData(result);
+
+                    $('[id*="txtDepositDate"]').each(function () {
+                        var txtDepositDate = $(this);
+                        InitDateTimePicker(txtDepositDate.Id, false, true, false, currentDate, dateTimeFormat, '', '');
+                       // txtDepositDate.val(currentDate);
+
+                    });
+
+
+                }
+
+            }, ErrorFunction, false);
+        }
+    }
+
+    function CheckValidDepositAmount(objDepositAmount) {
+        var txtDepositAmount = $(objDepositAmount);
+        var txtCardLimit = $('#' + txtDepositAmount.Id.replace('txtDepositAmount', 'txtCardLimit'));
+        var txtBalanceAmount = $('#' + txtDepositAmount.Id.replace('txtDepositAmount', 'txtBalanceAmount'));
+        var amount = parseFloat(txtCardLimit.val()) - parseFloat(txtBalanceAmount.val());
+        if (amount < parseFloat(txtDepositAmount.val())) {
+            ShowMessage('Deposit Amount must be less than or equal to ' + amount + '.');
+            txtDepositAmount.val(0);
+            //txtDepositAmount.focus();
+            return false;
+        }
+    }
+</script>
+
+

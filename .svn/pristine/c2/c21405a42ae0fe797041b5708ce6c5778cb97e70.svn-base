@@ -1,0 +1,76 @@
+﻿@model CodeLock.Models.Pod
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "ScanDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap">
+    <div class="row">
+        <table  id="dtPod">
+            <thead>
+                <tr>
+                    <th>Document Type</th>
+                    <th>Document No</th>
+                    <th>Manual No</th>
+                    <th>View Document</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Details.Count; i++)
+                {
+                    var item = Model.Details.ToArray()[i];
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(model => item.DocumentType)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.DocumentNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.ManualNo)
+                        </td>
+                        <td>
+                            @Html.ActionLink("View", "DownloadPOD", new { filename = item.DocumentName }, new { target = "_blank" })
+
+                            @*@Html.HiddenFor(model => item.DocumentName, new { @id = "hdnDocumentName" + i.ToString() })
+                            @Html.HiddenFor(model => item.DocumentPath, new { @id = "hdnDocumentPath" + i.ToString() })
+                            @{ var aId = "aDocumentName" + @i.ToString(); }
+                            <a href="#" id="@aId" onclick="return ViewAttachment(this);">View</a>*@
+                            
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Scan POD', 'Done', '', 'Go To Scan', '@Url.Action("Scan")');
+        LoadDataTable('dtPod', false, false, false);
+    });
+
+    function ViewAttachment(obj) {
+        var hdnDocumentName = $('#' + obj.Id.replace('aDocumentName', 'hdnDocumentName'));
+        var hdnDocumentPath = $('#' + obj.Id.replace('aDocumentName', 'hdnDocumentPath'));
+
+        var filePath = '';
+        if ('@ConfigHelper.IsLocalStorage' == 'True')
+            filePath = hdnDocumentPath.val();
+        else
+            filePath = "@ConfigHelper.CloudStoragePath";
+       
+        filePath = filePath + hdnDocumentName.val();
+        alert(filePath);
+
+        window.open("#", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+
+        window.open(filePath, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
+
+
+        return false;
+    }
+</script>
+

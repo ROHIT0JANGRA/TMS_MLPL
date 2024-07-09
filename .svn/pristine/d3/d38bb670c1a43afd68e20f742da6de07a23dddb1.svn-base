@@ -1,0 +1,106 @@
+﻿@model IEnumerable<CodeLock.Models.MasterPackagingMeasurement>
+
+@{
+    ViewBag.Title = "PackagingMeasurement List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+    <table id="dtMasterPackagingMeasurement">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.PackagingType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MeasurementType)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.Length)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.Breadth)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.Height)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.EntryDate)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateByName)
+                </th>
+                <th style="display:none">
+                    @Html.DisplayNameFor(model => model.UpdateDate)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PackagingType)
+                    </td>
+                    <td>
+                        @switch (item.MeasurementType)
+                        {
+                            case "M":<span class="label">Meter</span>break;
+                            case "C":<span class="label">CM</span>break;
+                            case "I":<span class="label">Inch</span>break;
+                            case "F":<span class="label">Feet</span>break;
+                        }
+                        @Html.Display(item.MeasurementType)
+                    </td>
+                    <td>
+                        @Html.YesNo(item.IsActive)
+                    </td>
+                    <td class="td-center">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.PackagingTypeId })"><span class="zmdi zmdi-edit"></span></a>
+                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.PackagingTypeId })"><span class="fa fa-file"></span></a>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Length)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Breadth)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Height)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.EntryByName)
+                    </td>
+                    <td style="display:none">
+                        @item.EntryDate.ToDisplayDateTime()
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.UpdateByName)
+                    </td>
+                    <td style="display:none">
+                        @item.UpdateDate.ToDisplayDateTime()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Packaging Measurement', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+        LoadDataTable('dtMasterPackagingMeasurement', true, true, true);
+    });
+</script>
+

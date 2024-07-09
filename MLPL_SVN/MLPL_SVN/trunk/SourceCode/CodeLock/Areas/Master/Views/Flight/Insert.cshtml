@@ -1,0 +1,316 @@
+﻿@model CodeLock.Models.MasterFlight
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Insert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Insert", "Flight", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiModelInjectionFor(m => m.FlightId)
+    @Html.HiddenFor(m => m.FlightId, new { @id = "hdnFlightId" })
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AirlineId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.AirlineId, new SelectList(ViewBag.AirlineList, "Value", "Name"), "Select Airline", new { @class = "form-control", @id = "ddlAirlineId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AirlineId)
+
+                </div>
+            </div>
+            <div class="col-sm-4" id="divDisplayFlightNo">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FlightNo, new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.DisplayFor(model => model.FlightNo, new { @class = "label-bold" })
+                        @Html.HiddenFor(m => m.FlightNo, new { @id = "hdnFlightNo" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4" id="divFlightNo">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FlightNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBox("flightNo", "", new { @class = "form-control", @id = "txtFlightNo" })
+                    </div>
+                    @Html.ValidationMessage("flightNo")
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromAirportId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.FromAirportId, new { @id = "hdnFromAirportId" })
+                        @Html.TextBoxFor(model => model.FromAirport, null, new { @class = "form-control", @id = "txtFromAirport" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FromAirport)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToAirportId, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.ToAirportId, new { @id = "hdnToAirportId" })
+                        @Html.TextBoxFor(model => model.ToAirport, null, new { @class = "form-control", @id = "txtToAirport" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ToAirport)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsActive)
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsNRoute, new { @class = "label" })
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.IsNRoute)
+                        @Html.LabelFor(model => model.IsNRoute, " ", new { @class = "label" })
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <table id="dtFlightDetail">
+                <thead>
+                    <tr>
+                        <th width="250">Days</th>
+                        <th></th>
+                        <th>Departure time (From Location)	</th>
+                        <th>Arrival time (To Location)</th>
+                        <th>Transit days</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Details.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                <div class="input">
+                                    @Html.HiddenFor(model => model.Details[i].DayId, new { @id = "hdnDayId" + i.ToString() })
+                                    @Html.TextBoxFor(model => model.Details[i].Days, null, new { @class = "form-control", @id = "txtDays" + i.ToString() })
+                                </div>
+                                @Html.ValidationMessageFor(m => Model.Details[i].Days)
+                            </td>
+                            <td>
+                                <button id="@("btnPopUp" + i)" onclick="GetDays(this.id)" type="button" class="btn btn-primary">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </td>
+                            <td>
+                                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker()
+                           {
+                               FieldId = "DepartureTime",
+                               FieldName = "Details[" + i + "].DepartureTime",
+                               FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => Model.Details[i].DepartureTime),
+                               DefaultDate = Model.Details[i].DepartureTime.ConvertToDateTime(),
+                               IsRequired = true,
+                               SetBlank = false,
+                               IsTimeOnly = true,
+                               UseFieldCaption = false
+                           })
+                            </td>
+                            <td>
+                                @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker()
+                           {
+                               FieldId = "ArrivalTime",
+                               FieldName = "Details[" + i + "].ArrivalTime",
+                               FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => Model.Details[i].ArrivalTime),
+                               DefaultDate = Model.Details[i].ArrivalTime.ConvertToDateTime(),
+                               IsRequired = true,
+                               SetBlank = false,
+                               IsTimeOnly = true,
+                               UseFieldCaption = false
+
+                           })
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => Model.Details[i].TransitDays, new { @class = "form-control numeric", @id = "txtTransitDays" + i.ToString() })
+                                @Html.ValidationMessageFor(m => Model.Details[i].TransitDays)
+                            </td>
+                            <td></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3" id="btnSubmit"></button>
+        </div>
+    </div>
+}
+@using (Html.BeginForm("Insert", "Flight", FormMethod.Post, new { @class = "j-forms" }))
+{
+    <div class="modal scale fade" id="largeModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="widget-wrap">
+                            <div class="form-group">
+                                <div class="inline-group">
+                                    @Html.LabelFor(model => model.Day, new { @class = "label" })
+
+                                    @for (var i = 0; i < Model.Day.Count(); i++)
+                                    {
+                                        <label class="checkbox">
+                                            @Html.HiddenFor(m => m.Day[i].CodeId, new { @id = "hdnCodeId" + i.ToString() })
+                                            @Html.HiddenFor(m => m.Day[i].CodeDescription, new { @id = "hdnCodeDescription" + i.ToString() })
+                                            @Html.CheckBoxFor(m => m.Day[i].IsActive, new { @id = "chkIsActive" + i.ToString() })
+                                            @Html.Label("chkIsActive" + i.ToString(), Model.Day[i].CodeDescription, new { @class = "label" })
+                                            <i></i>
+                                        </label>
+                                    }
+
+                                    @Html.ValidationMessageFor(model => model.Day)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-footer">
+                        <button type="button" class="btn btn-success primary-btn" id="btnPopup" tabindex="3">Submit</button>
+                        <button type="reset" value="Reset" class="btn btn-warning primary-btn" data-dismiss="modal">Cancel</button>
+
+                    </div>
+                </div>
+            </div><!--.modal-content-->
+        </div><!--.modal-dialog-->
+    </div><!--.modal-->
+}
+
+<script>
+    var obj, isAdd = true;
+    $(document).ready(function () {
+
+        hdnFlightId = $('#hdnFlightId');
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(Onsubmit);
+
+        if (hdnFlightId.val() != 0)
+            isAdd = false;
+
+        if (isAdd == false) {
+            SetPageLoad('Flight', 'Update', 'ddlAirlineId', 'Go To List', '@Url.Action("Index")');
+            $('#divDisplayFlightNo').show();
+            $('#divFlightNo').hide();
+            RemoveRequired($('#txtFlightNo'));
+        }
+        else {
+            SetPageLoad('Flight', 'Create', 'flightNo', 'Go To List', '@Url.Action("Index")');
+            $('#divDisplayFlightNo').hide();
+            $('#divFlightNo').show(); txtFlightNo
+            AddRequired($('#txtFlightNo'), "Please enter Flight No");
+        }
+
+        btnSubmit.text((isAdd ? 'Create' : 'Update'));
+        $('[id*="chkIsActive"]').removeAttr('checked');
+        AutoComplete('txtFromAirport', '@Url.Action("GetAutoCompleteList", "Airport")', 'airportNo', 'l', 'l', 'l', '', '', 'hdnFromAirportId', '', '');
+        AutoComplete('txtToAirport', '@Url.Action("GetAutoCompleteList", "Airport")', 'airportNo', 'l', 'l', 'l', '', '', 'hdnToAirportId', '', '');
+        hdnFromAirportId = $('#hdnFromAirportId');
+        txtFromAirport = $('#txtFromAirport');
+        hdnToAirportId = $('#hdnToAirportId');
+        txtToAirport = $('#txtToAirport');
+        txtFromAirport.blur(function () { return CheckValidAirportNo(txtFromAirport, hdnFromAirportId); });
+        txtToAirport.blur(function () { return CheckValidAirportNo(txtToAirport, hdnToAirportId); });
+        InitGrid('dtFlightDetail', false, 5, InitTable);
+        btnPopup = $('#btnPopup');
+        btnPopup.click(OnPopupClick);
+    });
+
+    function CheckValidAirportNo(objAirportNo, objHdnAirportId) {
+        if (objAirportNo.val() != "") {
+            var requestData = { airportNo: objAirportNo.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("CheckValidAirportNo", "Airport")', JSON.stringify(requestData), function (result) {
+                if (IsObjectNullOrEmpty(result)) {
+                    ShowMessage('Airport is not exist');
+                    objAirportNo.val('');
+                    objHdnAirportId.val('');
+                    objAirportNo.focus();
+                }
+                else {
+                    objAirportNo.val(result.Name);
+                    objHdnAirportId.val(result.Value);
+                }
+            }, ErrorFunction, false);
+        }
+        return false;
+    }
+
+    function InitTable() {
+        $('[id*="txtDepartureTime"]').each(function () {
+            var txtDepartureTime = $(this);
+            var txtArrivalTime = $('#' + txtDepartureTime.Id.replace('txtDepartureTime', 'txtArrivalTime'));
+
+            if (txtDepartureTime.data("DateTimePicker") == null) {
+                InitDateTimePicker(txtDepartureTime.Id, true, true, true, systemDateTime.format(jsTimeFormat), jsTimeFormat, false, false);
+                InitDateTimePicker(txtArrivalTime.Id, true, true, true, systemDateTime.format(jsTimeFormat), jsTimeFormat, false, false);
+            }
+        });
+    }
+
+    function GetDays(objId) {
+        obj = objId;
+        var txtDays = $('#' + obj.replace('btnPopUp', 'txtDays'));
+        var hdnDayId = $('#' + obj.replace('btnPopUp', 'hdnDayId'));
+        var arrDays = txtDays.val().split(',');
+        var arrDayId = hdnDayId.val().split(',');
+
+        if (hdnDayId.val() != '') {
+            $('[id*="chkIsActive"]').removeAttr('checked');
+            $.each(arrDayId, function (index, value) {
+                $('[id*="hdnCodeId"]').each(function () {
+                    var hdnCodeId = $(this);
+                    var hdnCodeDescription = $('#' + this.id.replace('hdnCodeId', 'hdnCodeDescription'));
+                    var chkIsActive = $('#' + this.id.replace('hdnCodeId', 'chkIsActive'));
+                    if (hdnCodeId.val() == value)
+                        chkIsActive.prop('checked', true);
+                });
+            });
+        }
+        else {
+            $('[id*="chkIsActive"]').removeAttr('checked');
+        }
+        $('.modal').modal('show');
+        return false;
+    }
+
+    function OnPopupClick() {
+        var days = '', dayId = '';
+        var txtDays = $('#' + obj.replace('btnPopUp', 'txtDays'));
+        var hdnDayId = $('#' + obj.replace('btnPopUp', 'hdnDayId'));
+        $('[id*="hdnCodeId"]').each(function () {
+            var hdnCodeId = $(this);
+            var hdnCodeDescription = $('#' + this.id.replace('hdnCodeId', 'hdnCodeDescription'));
+            var chkIsActive = $('#' + this.id.replace('hdnCodeId', 'chkIsActive'));
+            if (chkIsActive.is(':checked')) {
+                days = days + "," + hdnCodeDescription.val();
+                dayId = dayId + "," + hdnCodeId.val();
+            }
+        });
+        txtDays.val(days.replace(',', ''));
+        hdnDayId.val(dayId.replace(',', ''));
+        $('.modal').modal('hide');
+        return false;
+    }
+
+    function Onsubmit() {
+        if (isAdd == true)
+            $('#hdnFlightNo').val($('#txtFlightNo').val());
+    }
+
+
+</script>

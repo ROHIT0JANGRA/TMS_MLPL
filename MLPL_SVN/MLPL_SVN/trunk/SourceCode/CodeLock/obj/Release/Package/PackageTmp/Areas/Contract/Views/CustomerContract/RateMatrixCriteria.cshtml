@@ -1,0 +1,108 @@
+﻿@model CodeLock.Models.CustomerContractChargeMatrixLTLHeader
+@{
+    ViewBag.Title = "Rate Matrix Criteria";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.ContractId, new { @id = "hdnContractId" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name"), "Select Transport Mode", new { @class = "form-control", @id = "ddlTransportModeId" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TransportModeId)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MatrixType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.MatrixType, new SelectList(ViewBag.MatrixTypeList, "Value", "Name"), "Select Matrix Type", new { @class = "form-control", @id = "ddlMatrixType" })
+                        <i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MatrixType)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromLocation, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.FromLocationId, new { @id = "hdnFromLocationId" })
+                        @Html.TextBoxFor(model => model.FromLocation, null, new { @class = "form-control", @id = "txtFromLocation" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FromLocation)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToLocation, new { @class = "label" })
+                    <div class="input">
+                        @Html.HiddenFor(model => model.ToLocationId, new { @id = "hdnToLocationId" })
+                        @Html.TextBoxFor(model => model.ToLocation, null, new { @class = "form-control", @id = "txtToLocation" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ToLocation)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+<script>
+    var btnSubmit, hdnContractId, ddlTransportModeId, ddlMatrixType, txtFromLocation, txtToLocation, hdnFromLocationId, hdnToLocationId;
+    $(document).ready(function () {
+        SetPageLoad('Customer Contract', 'Rate Matrix', '', 'Go To Step Selection', '@Url.Action("StepSelection")');
+        btnSubmit = $('#btnSubmit'); hdnContractId = $('#hdnContractId'); ddlTransportModeId = $('#ddlTransportModeId'); ddlMatrixType = $('#ddlMatrixType');
+        hdnFromLocationId = $('#hdnFromLocationId'); hdnToLocationId = $('#hdnToLocationId'), txtFromLocation = $('#txtFromLocation'); txtToLocation = $('#txtToLocation');
+
+        ddlMatrixType.change(OnMatrixTypeChange);
+        OnMatrixTypeChange();
+        btnSubmit.click(OnButtonClick);
+    });
+
+    function OnMatrixTypeChange() {
+        txtFromLocation.val(''); txtToLocation.val(''); hdnFromLocationId.val('0'); hdnToLocationId.val('0');
+        if (ddlMatrixType.val() == "") {
+            txtFromLocation.prop('disabled', true);
+            txtToLocation.prop('disabled', true);
+        }
+        else {
+            txtFromLocation.prop('disabled', false);
+            txtToLocation.prop('disabled', false);
+        }
+        if (ddlMatrixType.val() == "1") {
+            AutoComplete('txtFromLocation', '@Url.Action("GetAutoCompleteList", "City")', 'cityName', 'l', 'l', 'l', '', '', 'hdnFromLocationId', '', '');
+            AutoComplete('txtToLocation', '@Url.Action("GetAutoCompleteList", "City")', 'cityName', 'l', 'l', 'l', '', '', 'hdnToLocationId', '', '');
+        }
+        else if (ddlMatrixType.val() == "2") {
+            AutoComplete('txtFromLocation', '@Url.Action("GetAutoCompleteList", "Location")', 'locationCode', 'l', 'l', 'l', '', '', 'hdnFromLocationId', '', '');
+            AutoComplete('txtToLocation', '@Url.Action("GetAutoCompleteList", "Location")', 'locationCode', 'l', 'l', 'l', '', '', 'hdnToLocationId', '', '');
+        }
+    }
+
+    function OnButtonClick() {
+        if (hdnFromLocationId.val() == "") hdnFromLocationId.val(0);
+        if (hdnToLocationId.val() == "") hdnToLocationId.val(0);
+
+        if (hdnFromLocationId.val() == "0" && hdnToLocationId.val() == "0") {
+            ShowMessage("Please select either From or To Location");
+            $('#txtFromLocation').focus();
+            return false;
+        }
+
+        window.location.href = "@Url.Action("RateMatrix")/" + hdnContractId.val() + "?TransportModeId=" + ddlTransportModeId.val()
+            + "&MatrixType=" + ddlMatrixType.val() + "&FromLocationId=" + hdnFromLocationId.val() + "&ToLocationId=" + hdnToLocationId.val();
+        return false;
+
+    }
+</script>

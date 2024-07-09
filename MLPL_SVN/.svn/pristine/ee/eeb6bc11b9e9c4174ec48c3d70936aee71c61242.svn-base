@@ -1,0 +1,121 @@
+﻿
+@model CodeLock.Models.SalesRegister
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(model => model.BaseOn, new { @id = "hdnBaseOn" })
+
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label("Select Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "FromLocationId", FieldCaption = "Thc Location" })
+
+                    </div>
+                </div>
+            </div>
+            <div class="page-separator">OR</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VendorCode, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.VendorId, new { @id = "hdnVendorId" })
+                            @Html.TextBoxFor(model => model.VendorCode, new { @class = "form-control", @id = "txtVendorCode" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.VendorCode)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.VendorName, " ", new { @class = "label" })
+                        <div class="clearfix">
+                        </div>
+                        @Html.LabelFor(model => model.VendorName, " ", new { @class = "label-bold", @id = "lblVendorName" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-separator">OR</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ThcNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.ThcNo, new { @class = "form-control", @id = "txtThcNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ThcNo)
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-separator">OR</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ManifestNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.ManifestNo, new { @class = "form-control", @id = "txtManifestNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ManifestNo)
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var drDate, ddlFromLocationId, btnSubmit;
+
+    $(document).ready(function () {
+        SetPageLoad('Dispatch Delivery BA Report', 'Report', '', '', '');
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        ddlFromLocationId = $('#ddlFromLocationId');
+        hdnVendorId = $('#hdnVendorId');
+        txtVendorCode = $('#txtVendorCode');
+        lblVendorName = $('#lblVendorName');
+        txtThcNo = $('#txtThcNo');
+        txtManifestNo = $('#txtManifestNo');
+        btnSubmit = $('#btnSubmit');
+        VendorAutoComplete(txtVendorCode.Id, hdnVendorId.Id);
+        txtVendorCode.blur(function () { IsVendorCodeExist(txtVendorCode, hdnVendorId, lblVendorName) });
+        btnSubmit.click(ViewReport);
+
+    });
+
+    function ViewReport() {
+          try {
+            var prmList = [
+                { Name: "FromDate", Value: drDate.startDate },
+                { Name: "ToDate", Value: drDate.endDate },
+                { Name: "IsCumulative", Value: true },
+                { Name: "VendorId", Value: hdnVendorId.val() == '' ? 0 : hdnVendorId.val() },
+                { Name: "ThcNo", Value: txtThcNo.val() == '' ? " " : txtThcNo.val() },
+                { Name: "ManifestNo", Value: txtManifestNo.val() == '' ? " " : txtManifestNo.val() },
+                { Name: "LocationId", Value: ddlFromLocationId.val() }];
+
+            var reportInfo = { PrmList: prmList, Name: 'DispatchDeliveryReportBa', Description: 'Dispatch Delivery BA Report' };
+            ShowReport(reportInfo);
+        } catch (e) { ShowMessage(e.message) }
+        return false;
+    }
+</script>

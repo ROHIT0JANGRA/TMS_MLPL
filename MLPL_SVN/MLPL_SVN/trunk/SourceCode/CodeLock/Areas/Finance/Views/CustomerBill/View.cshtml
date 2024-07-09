@@ -1,0 +1,160 @@
+﻿@using CodeLock.Models
+@model CustomerBill
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.BillId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.BillNo)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.BillDate)
+                </dt>
+                <dd>
+                   @Model.BillDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DueDate)
+                </dt>
+                <dd>
+                   @Model.DueDate.ToDisplayDateTime()
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.GenerateLocationCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.GenerateLocationCode)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.CustomerCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CustomerCode)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.CustomerAddress)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CustomerAddress)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.CustomerPhone)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CustomerPhone)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.CustomerEmail)
+                </dt>
+                <dd>
+                   @Html.DisplayFor(model => model.CustomerEmail)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.BillAmount)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.BillAmount)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.GenerateEmployeeName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.GenerateEmployeeName)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="page-separator">@SessionUtility.DocketNomenClature Details</div>
+    <div class="row">
+        <div>
+            <table id="dtDocketDetails"></table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Bill', 'View Detail', '', '', '');
+        dtDocketDetails = $('#dtDocketDetails');
+        docketNomenclature = '@SessionUtility.DocketNomenClature';
+        OnPageLoad();
+    });
+
+    function OnPageLoad() {
+        var requestData = { BillId: $('#hdnBillId').val() };
+        AjaxRequestWithPostAndJson('@Url.Action("GetBillDetails")', JSON.stringify(requestData), OnBillDetailsSuccess, ErrorFunction, false);
+    }
+
+    function OnBillDetailsSuccess(responseData) {
+        dtDocketDetails = LoadDataTable('dtDocketDetails', false, false, false, null, null, [],
+            [
+                  { title: docketNomenclature + ' No', data: "DocketNo" },
+                  { title: docketNomenclature + ' Date', data: "DocketDate" },
+                  { title: 'Booking Branch', data: 'BookingLocation' },
+                  { title: 'Transport Mode', data: 'TransportMode' },
+                  { title: 'Freight', data: 'Freight' },
+                  { title: 'Freight Rate', data: 'FreightRate' },
+                  { title: 'Charge Weight', data: 'ChargeWeight' },
+                  { title: 'SubTotal', data: 'SubTotal' },
+                  { title: docketNomenclature + ' Total', data: 'DocketTotal' }
+            ]);
+        dtDocketDetails.fnClearTable()
+        if (responseData.length > 0) {
+            $.each(responseData, function (i, item) {
+                item.DocketDate = $.displayDate(item.DocketDate);
+                item.Freight = '<input type=\'text\' name="Details[' + i + '].Freight" id="txtFreight' + i + '" value=' + item.Freight + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                item.FreightRate = '<input type=\'text\' name="Details[' + i + '].FreightRate" id="txtFreightRate' + i + '" value=' + item.FreightRate + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                item.ChargeWeight = '<input type=\'text\' name="Details[' + i + '].ChargeWeight" id="txtChargeWeight' + i + '" value=' + item.ChargeWeight + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                item.SubTotal = '<input type=\'text\' name="Details[' + i + '].SubTotal" id="txtSubTotal' + i + '" value=' + item.SubTotal + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+                item.DocketTotal = '<input type=\'text\' name="Details[' + i + '].CNoteTotal" id="txtDocketTotal' + i + '" value=' + item.DocketTotal + ' class="textlabel numeric2" style="width: 100px;" readonly="true" tabindex="-1"/>';
+            });
+            dtDocketDetails.dtAddData(responseData);
+        }
+    }
+</script>

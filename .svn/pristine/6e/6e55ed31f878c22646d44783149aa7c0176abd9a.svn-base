@@ -1,0 +1,137 @@
+﻿@model IEnumerable<CodeLock.Models.BillFinalizationDetail>
+@{
+    ViewBag.Title = "GenerationDone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{ var i = 0;}
+
+
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-12">
+            @Html.Label(" ", new { @id = "lblDocumentNo", @for = "DocumentNo", @class = "label-bold" })
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="widget-wrap material-table-widget">
+                <table id="dtError">
+                    <thead>
+                        <tr>
+                            <th>
+                                S.No.
+                            </th>
+                            <th>
+                                e-Invoice
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.BillNo)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.BillDate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CustomerCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CustomerName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.BillAmount)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.AckNo)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ErrorMessage)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <th>
+
+                                    @{
+                                        var j = i;
+                                        var btnPost = "btnPost"+ j;
+                                        i++;}
+                                    @i.
+                                </th>
+                                <td class="td-center">
+                                    <div class="btn-toolbar" role="toolbar" id=@btnPost>
+                                        <div class="btn-group" role="group">
+                                            <a class="btn btn-default btn-sm m-user-edit" onclick="Invoice('@item.BillId', '@item.BillNo', '@j')" href="javascript:void(0)"> Generate </a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.BillNo)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.BillDate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CustomerCode)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CustomerName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.BillAmount)
+                                </td>
+                                <td style="word-wrap: break-word;">
+                                    @Html.TextBoxFor(modelItem => item.AckNo, new { @class = "form-control textlabel", @id = "txtAckNo" + j })
+                                </td>
+                                <td style="word-wrap: break-word;">
+                                    @Html.TextBoxFor(modelItem => item.ErrorMessage, new { @class = "form-control textlabel", @id = "txtErrorMessage" + j })
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script>
+    var lblDocumentNo;
+    $(document).ready(function () {
+        SetPageLoad('E-Invoice', 'Generate', '', '', '');
+        LoadDataTable('dtError', false, false, false);
+        baseUrl = '@Url.Action("", "CustomerBill", new { Area = "Finance" })';
+        lblDocumentNo = $('#lblDocumentNo');
+    });
+
+    function Invoice(BillId, BillNo, index) {
+        var requestData = { BillId: BillId };
+
+        let res = window.confirm("Do you re-generate e-Invoice ?");
+
+        if (res == false) {
+            return false;
+        }
+
+        AjaxRequestWithPostAndJson(baseUrl + '/GenerateEInvoice', JSON.stringify(requestData), function (result) {
+
+            var txtAckNo = 'txtAckNo' + index;
+            var txtErrorMessage = 'txtErrorMessage' + index;
+            var btnPost = 'btnPost' + index;
+            if (result.IsPosted) {
+                $('#' + txtAckNo).val(result.AckNo);
+                $('#' + txtErrorMessage).val("");
+                $('#' + btnPost).hide();
+            }
+            else {
+                $('#' + txtAckNo).val("");
+                $('#' + txtErrorMessage).val(result.ErrorMessage);
+            }
+        }, ErrorFunction, false);
+
+    }
+</script>

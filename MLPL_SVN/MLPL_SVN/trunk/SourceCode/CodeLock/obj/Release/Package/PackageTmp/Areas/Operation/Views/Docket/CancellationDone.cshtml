@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "Done";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row example-buttons">
+        <div class="col-md-12">
+            <div class="note note-info note-right-striped">
+                <div class="page-separator"><span class="page-separator" id="spnMassage"></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var status = '';
+    $(document).ready(function () {
+        spnMassage = $('#spnMassage');
+        status = GetUrlValue()["status"];
+        OnPageLoad();
+    });
+    docketNomenclature = '@SessionUtility.DocketNomenClature';
+
+    function OnPageLoad() {
+        if (status == "DocketCancel") {
+            spnMassage.text(docketNomenclature + "(s) are Cancelled Successfully");
+            SetPageLoad(docketNomenclature, 'Cancellation Done', '', 'Go To ' + docketNomenclature + ' Cancellation', '@Url.Action("Cancellation", "Docket")');
+        }
+        else if (status == "LoadingSheetCancel") {
+            spnMassage.text("Loading Sheet(s) are Cancelled Successfully");
+            SetPageLoad('Loading Sheet', 'Cancellation Done', '', 'Go To Loading Sheet Cancellation', '@Url.Action("Cancellation", "LoadingSheet")');
+        }
+        else if (status == "ManifestCancel") {
+            spnMassage.text("Manifest(s) are Cancelled Successfully");
+            SetPageLoad('Manifest', 'Cancellation Done', '', 'Go To Manifest Cancellation', '@Url.Action("Cancellation", "Manifest")');
+        }
+        else if (status == "ThcCancel") {
+            spnMassage.text("THC(s) are Cancelled Successfully");
+            SetPageLoad('THC', 'Cancellation Done', '', 'Go To THC Cancellation', '@Url.Action("Cancellation", "THC")');
+        }
+        else if (status == "DrsCancel") {
+            spnMassage.text("DRS(s) are Cancelled Successfully");
+            SetPageLoad('DRS', 'Cancellation Done', '', 'Go To DRS Cancellation', '@Url.Action("Cancellation", "DRS")');
+        }
+        else if (status == "PrsCancel") {
+            spnMassage.text("PRS(s) are Cancelled Successfully");
+            SetPageLoad('PRS', 'Cancellation Done', '', 'Go To PRS Cancellation', '@Url.Action("Cancellation", "PRS")');
+        }
+        else if (status == "DRSCloseCancellationDone") {
+            spnMassage.text("DRS Close is Cancelled Successfully");
+            SetPageLoad('DrsCloseCancellation', 'Cancellation Done', '', 'Go To Drs Close Cancellation', '@Url.Action("DrsCloseCancellation", "Drs")');
+        }
+        else if (status == "THCStockUpdateCancellationDone") {
+            spnMassage.text("THC StockUpdate Close is Cancelled Successfully");
+            SetPageLoad('ThcStockUpdateCancellation', 'Cancellation Done', '', 'Go To Thc stockUpdate Cancellation', '@Url.Action("ThcStockUpdateCancellation", "Thc")');
+        }
+    }
+</script>

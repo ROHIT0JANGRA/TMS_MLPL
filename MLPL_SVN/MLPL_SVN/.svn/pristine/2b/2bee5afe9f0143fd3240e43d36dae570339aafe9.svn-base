@@ -1,0 +1,13 @@
+﻿@{
+    ViewBag.Title = "Docket DACC Update Done";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:200px">
+    <div class="alert alert-success"><h5><span id="spnMassage">Docket DACC Update Successfully</span></h5></div>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Docket', 'DACC Update Done', '', 'Go To Docket DACC Update', '@Url.Action("DocketDacc")');
+    });
+</script>

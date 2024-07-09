@@ -1,0 +1,30 @@
+﻿@model CodeLock.Models.VendorContract
+@{
+    ViewBag.Title = "Result";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap" style="height:300px">
+    <div class="alert alert-success"><h5>The contract is saved successfully</h5></div>
+    <div class="col-sm-3">
+        <h4>Contract Id</h4>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.Label("lblDocumentNo", (string)Model.VendorContractBasicInfo.ManualContractId, new { @class = "label-bold" })
+        </div>
+    </div>
+    <div class="col-md-4">
+        <button onclick="@("window.location.href=''");" class="btn btn-primary btn-xs dt-edit">
+            <span class="glyphicon glyphicon-eye-open"></span>
+        </button>
+    </div>
+    <br />
+    <div class="col-sm-12">
+        <a href="@Url.Action("StepSelection", new { contractId = Request.QueryString.Get("ContractId"), vendorTypeId = Request.QueryString.Get("VendorTypeId"), vendorId = Request.QueryString.Get("VendorId") })">Edit the same contract</a>
+        <br />
+        <a href="@Url.Action("", new { vendorId = Request.QueryString.Get("VendorId"), vendorTypeId = Request.QueryString.Get("VendorTypeId") })">Edit the other contract</a>
+        <br />
+        <a href="@Url.Action("")">Edit other vendor's contract</a>
+    </div>
+</div>

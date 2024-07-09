@@ -1,0 +1,27 @@
+﻿//  
+// Type: CodeLock.Areas.WMS.Repository.IRepackingRepository
+//  
+//  
+//  
+
+using CodeLock.Models;
+using System;
+using System.Collections.Generic;
+
+namespace CodeLock.Areas.WMS.Repository
+{
+  public interface IRepackingRepository : IDisposable
+  {
+    IEnumerable<RepackingDetail> GetRepackingList(
+      byte warehouseId,
+      byte companyId,
+      DateTime fromDate,
+      DateTime toDate,
+      string repackingNos,
+      string grnNos,
+      DateTime finStartDate,
+      DateTime finEndDate);
+
+    Response Insert(Repacking objRepacking);
+  }
+}

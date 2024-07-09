@@ -1,0 +1,321 @@
+﻿@model CodeLock.Models.MasterAccountOpeningParty
+@using Secure_Coding.MvcSecurityExtensions;
+
+@{
+    ViewBag.Title = "AccountOpeningParty";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        accountMasterUrl = '@Url.Action("", "Account", new { Area = "Master" })';
+        baseUrl = '@Url.Action("", "AccountOpeningParty", new { Area = "Master" })';
+    });
+</script>
+@using (Html.BeginForm("AccountOpeningParty", "AccountOpeningParty", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PartyType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.PartyType, new List<SelectListItem> {
+                        new SelectListItem() {Text = "User", Value="1"},
+                        new SelectListItem() {Text = "Customer", Value="2"},
+                        new SelectListItem() {Text = "Vendor", Value="3" },
+                        new SelectListItem() {Text = "Driver", Value="5"}}, new { @class = "form-control", @id = "ddlPartyType" })<i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PartyType)
+                </div>
+            </div>
+            <div class="col-sm-3" id="dvVendorType">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.VendorTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.VendorTypeId, new SelectList(ViewBag.VendorTypeList, "Value", "Name"), "Select Vendor Type", new { @class = "form-control", @id = "ddlVendorTypeId" })<i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VendorTypeId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PartyId, new { @class = "label", @id = "lblParty" })
+                    <div class="input-wrapper">
+                        @Html.HiddenFor(model => model.PartyId, new { @id = "hdnPartyId" })
+                        @Html.TextBoxFor(model => model.PartyCode, null, new { @class = "form-control", @id = "txtParyCode" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.PartyCode)
+
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="clearfix">
+                        @Html.Label(" ", new { @class = "label-bold", @id = "lblName" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.LocationId, new SelectList(ViewBag.LocationList, "Value", "Name"), "Select Location", new { @class = "form-control", @id = "ddlLocationId" })<i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AccountId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.AccountId, new SelectList(ViewBag.AccountList, "Value", "Name"), "Select Account", new { @class = "form-control", @id = "ddlAccountId" })<i></i>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AccountId)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CreditAmount, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.CreditAmount, new { @class = "form-control numeric2", @id = "txtCreditAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CreditAmount)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DebitAmount, new { @class = "label" })
+                    <div class="input-wrapper">
+                        @Html.TextBoxFor(model => model.DebitAmount, new { @class = "form-control numeric2", @id = "txtDebitAmount" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DebitAmount)
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+
+<script>
+    var ddlPartyType, ddlVendorTypeId, hdnPartyId, txtParyCode, lblName, lblParty, ddlLocationId, ddlAccountId, txtCreditAmount, txtDebitAmount, btnSubmit;
+    var customerMasterUrl, vendorMasterUrl;
+    var customerAccountList, vendorAccountList;
+    $(document).ready(function () {
+        SetPageLoad('Set Opening Balance', 'Party Wise', '', '', '');
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        ddlVendorTypeId = $('#ddlVendorTypeId');
+        ddlPartyType = $('#ddlPartyType');
+        hdnPartyId = $('#hdnPartyId');
+        txtParyCode = $('#txtParyCode');
+        lblName = $('#lblName');
+        lblParty = $('#lblParty');
+        ddlLocationId = $('#ddlLocationId');
+        ddlAccountId = $('#ddlAccountId');
+        txtCreditAmount = $('#txtCreditAmount');
+        txtDebitAmount = $('#txtDebitAmount');
+        btnSubmit = $('#btnSubmit');
+        userMasterUrl = '@Url.Action("", "User", new { Area = "Master" })';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        driverMasterUrl = '@Url.Action("", "Driver", new { Area = "Master" })';
+        @*customerAccountList = JSON.parse('@Html.Raw(ViewBag.CustomerAccountList)');
+        vendorAccountList = JSON.parse('@Html.Raw(ViewBag.VendorAccountList)');*@
+    }
+
+    function AttachEvents() {
+        ddlPartyType.change(OnPartyTypeChange);
+        OnPartyTypeChange();
+        ddlVendorTypeId.change(OnVendorTypeChange);
+
+        ddlPartyType.change(OnAccountChange);
+        ddlVendorTypeId.change(OnAccountChange);
+        txtParyCode.blur(OnAccountChange);
+        ddlLocationId.change(OnAccountChange);
+        ddlAccountId.change(OnAccountChange);
+
+        txtParyCode.blur(function () { return CheckIsValid(); });
+        txtCreditAmount.blur(OnCreditAmountChange);
+        txtDebitAmount.blur(OnDebitAmountChange);
+        btnSubmit.click(OnSubmit);
+    }
+
+    function OnPartyTypeChange() {
+        txtParyCode.val('');
+        hdnPartyId.val('');
+        lblName.text('');
+        ddlLocationId.empty();
+        ddlLocationId.append('<option value="">Select Location</option>');
+        ddlLocationId.val('');
+        //ddlAccountId.empty();
+        //ddlAccountId.append('<option value="">Select Account</option>');
+        ddlAccountId.val('');
+        ddlVendorTypeId.val('');
+        lblParty.text(($("#ddlPartyType :selected").text()));
+        $('#dvVendorType').showHide(ddlPartyType.val() == 3);
+        $('#ddlVendorTypeId').enable(ddlPartyType.val() == 3);
+        if (ddlPartyType.val() == 1) {
+            UserAutoComplete('txtParyCode', 'hdnPartyId');
+            AddRequired(txtParyCode, 'Please enter User');
+            txtParyCode.blur(function () { return CheckIsValid(txtParyCode, hdnPartyId, lblName); });
+        }
+        else if (ddlPartyType.val() == 2) {
+            CustomerAutoComplete('txtParyCode', 'hdnPartyId');
+            AddRequired(txtParyCode, 'Please enter Customer');
+            txtParyCode.blur(function () { return CheckIsValid(txtParyCode, hdnPartyId, lblName); });
+        }
+        else if (ddlPartyType.val() == 3) {
+            VendorAutoComplete('txtParyCode', 'hdnPartyId', null, ddlVendorTypeId.val());
+            AddRequired(txtParyCode, 'Please enter Vendor');
+            txtParyCode.blur(function () { return CheckIsValid(txtParyCode, hdnPartyId, lblName); });
+        }
+        else if (ddlPartyType.val() == 5) {
+            DriverAutoComplete('txtParyCode', 'hdnPartyId');
+            AddRequired(txtParyCode, 'Please enter Driver');
+            txtParyCode.blur(function () { return CheckIsValid(txtParyCode, hdnPartyId, lblName); });
+        }
+    }
+
+    function GetUserLocation(txtUserCode, hdnUserId) {
+        if (txtUserCode.val() != '') {
+            var requestData = { userId: hdnUserId.val() };
+            AjaxRequestWithPostAndJson(userMasterUrl + '/GetLocationListByUserId', JSON.stringify(requestData), function (result) {
+                BindDropDownList('ddlLocationId', result, 'Value', 'Name', '', 'Select Location');
+            }, ErrorFunction, false);
+        }
+        else {
+            ddlLocationId.empty();
+            ddlLocationId.append('<option value="">Select Location</option>');
+            ddlLocationId.setVal('');
+        }
+    }
+
+    function GetCustomerLocation(txtCustomerCode, hdnCustomerId) {
+        if (txtCustomerCode.val() != '') {
+            var requestData = { customerId: hdnCustomerId.val() };
+            AjaxRequestWithPostAndJson(customerMasterUrl + '/GetLocationListByCustomerId', JSON.stringify(requestData), function (result) {
+                BindDropDownList('ddlLocationId', result, 'Value', 'Name', '', 'Select Location');
+            }, ErrorFunction, false);
+        }
+        else {
+            ddlLocationId.empty();
+            ddlLocationId.append('<option value="">Select Location</option>');
+            ddlLocationId.setVal('');
+        }
+    }
+
+    function GetVendorLocation(txtVendorCode, hdnVendorId) {
+        if (txtVendorCode.val() != '') {
+            var requestData = { vendorId: hdnVendorId.val() };
+            AjaxRequestWithPostAndJson(vendorMasterUrl + '/GetLocationListByVendorId', JSON.stringify(requestData), function (result) {
+                BindDropDownList('ddlLocationId', result, 'Value', 'Name', '', 'Select Location');
+            }, ErrorFunction, false);
+        }
+        else {
+            ddlLocationId.empty();
+            ddlLocationId.append('<option value="">Select Location</option>');
+            ddlLocationId.setVal('');
+        }
+    }
+
+    function GetDriverLocation(txtDriverCode, hdnDriverId) {
+        if (txtDriverCode.val() != '') {
+            var requestData = { driverId: hdnDriverId.val() };
+            AjaxRequestWithPostAndJson(driverMasterUrl + '/GetLocationListByDriverId', JSON.stringify(requestData), function (result) {
+                BindDropDownList('ddlLocationId', result, 'Value', 'Name', '', 'Select Location');
+            }, ErrorFunction, false);
+        }
+        else {
+            ddlLocationId.empty();
+            ddlLocationId.append('<option value="">Select Location</option>');
+            ddlLocationId.setVal('');
+        }
+    }
+
+    function OnVendorTypeChange() {
+        txtParyCode.val('');
+        hdnPartyId.val('');
+        lblName.text('');
+        VendorAutoComplete('txtParyCode', 'hdnPartyId', null, ddlVendorTypeId.val());
+        //BindDropDownList('ddlAccountId', vendorAccountList, 'Value', 'Name', '', 'Select Account');
+        AddRequired(txtParyCode, 'Please enter Vendor');
+        txtParyCode.blur(function () { return CheckIsValid(txtParyCode, hdnPartyId, lblName); });
+    }
+
+    function OnAccountChange() {
+        txtCreditAmount.val(0);
+        txtDebitAmount.val(0);
+        if (txtParyCode.val() != "" && ddlLocationId.val() != "" && ddlAccountId.val() != "") {
+            var requestData = { partyType: ddlPartyType.val(), partyId: hdnPartyId.val(), locationId: ddlLocationId.val(), accountId: ddlAccountId.val() };
+            AjaxRequestWithPostAndJson('@Url.Action("", "AccountOpeningParty")' + '/GetCreditDebit', JSON.stringify(requestData), function (result) {
+                txtCreditAmount.val(result.CreditAmount);
+                txtDebitAmount.val(result.DebitAmount);
+            }, ErrorFunction, false);
+        }
+    }
+
+    function CheckIsValid() {
+        if (ddlPartyType.val() == 1) {
+            IsUserNameExist(txtParyCode, hdnPartyId, lblName);
+            GetUserLocation(txtParyCode, hdnPartyId);
+        }
+        else if (ddlPartyType.val() == 2) {
+            IsCustomerCodeExist(txtParyCode, hdnPartyId, lblName);
+			GetCustomerLocation(txtParyCode, hdnPartyId);
+            //if (hdnPartyId.val() == 1) {
+            //    ShowMessage('Customer is not exist');
+            //    txtParyCode.val('');
+            //    hdnPartyId.val('');
+            //    txtParyCode.focus();
+            //}
+            //else {
+            //    GetCustomerLocation(txtParyCode, hdnPartyId);
+            //}
+
+        }
+        else if (ddlPartyType.val() == 3) {
+            IsVendorCodeExist(txtParyCode, hdnPartyId, lblName);
+			GetVendorLocation(txtParyCode, hdnPartyId);
+            //if (hdnPartyId.val() == 1) {
+            //    ShowMessage('Vendor is not exist');
+            //    txtParyCode.val('');
+            //    hdnPartyId.val('');
+            //    txtParyCode.focus();
+            //}
+            //else {
+            //    GetVendorLocation(txtParyCode, hdnPartyId);
+            //}
+        }
+        else if (ddlPartyType.val() == 5) {
+            IsDriverNameExist(txtParyCode, hdnPartyId, lblName);
+            GetDriverLocation(txtParyCode, hdnPartyId);
+        }
+    }
+
+    function OnDebitAmountChange() {
+        if (parseFloat(txtDebitAmount.val()) != 0)
+            txtCreditAmount.val(0);
+    }
+
+    function OnCreditAmountChange() {
+        if (parseFloat(txtCreditAmount.val()) != 0)
+            txtDebitAmount.val(0);
+    }
+
+    function OnSubmit() {
+        if (parseFloat(txtCreditAmount.val()) == 0 && parseFloat(txtDebitAmount.val()) == 0) {
+            txtCreditAmount.focus();
+            ShowMessage('Please enter Credit Amount or Debit Amount');
+            return false;
+        }
+    }
+</script>

@@ -1,0 +1,165 @@
+﻿
+using CodeLock.Areas.WMS.Repository;
+using CodeLock.Models;
+using System;
+using System.Web.Mvc;
+
+namespace CodeLock.Areas.WMS.Controllers
+{
+  public class PutAwayController : Controller
+  {
+    public readonly IPutAwayRepository putAwayRepository;
+
+    public PutAwayController()
+    {
+    }
+
+    public PutAwayController(IPutAwayRepository _putAwayRepository)
+    {
+      this.putAwayRepository = _putAwayRepository;
+    }
+
+    public ActionResult Insert()
+    {
+      return (ActionResult) this.View((object) new PutAway()
+      {
+        Details = {
+          new PutAwayDetail()
+        }
+      });
+    }
+
+    [ValidateAntiForgeryToken]
+    [HttpPost]
+    public ActionResult Insert(PutAway objPutAway)
+    {
+            if (!this.ModelState.IsValid)
+                return (ActionResult)this.View((object)objPutAway);
+            objPutAway.CompanyId = SessionUtility.CompanyId;
+      objPutAway.WarehouseId = SessionUtility.WarehouseId;
+      objPutAway.EntryBy = SessionUtility.LoginUserId;
+      PutAway putAway1 = objPutAway;
+      DateTime dateTime = objPutAway.PutAwayDateTime.Value;
+      DateTime date = dateTime.Date;
+      putAway1.PutAwayDate = date;
+      PutAway putAway2 = objPutAway;
+      dateTime = objPutAway.PutAwayDateTime.Value;
+      TimeSpan timeOfDay = dateTime.TimeOfDay;
+      putAway2.PutAwayTime = timeOfDay;
+      objPutAway.Details.RemoveAll((Predicate<PutAwayDetail>) (m => !m.IsChecked));
+      objPutAway.Details.ForEach((Action<PutAwayDetail>) (m =>
+      {
+        if (!m.IsChecked)
+          return;
+        m.PutAwayDate = objPutAway.PutAwayDate;
+        m.CompanyId = objPutAway.CompanyId;
+        m.WarehouseId = objPutAway.WarehouseId;
+      }));
+      Response response = this.putAwayRepository.Insert(objPutAway);
+      if (response.IsSuccessfull)
+        return (ActionResult) this.RedirectToAction("Done", "Asn", (object) new
+        {
+          documentType = "PutAway",
+          documentNo = response.DocumentNo,
+          documentId = response.DocumentId,
+          documentTypeId = ModuleHelper.PutAway
+        });
+      this.TempData["result"] = (object) response;
+      return (ActionResult) this.View((object) objPutAway);
+    }
+
+    public ActionResult Update()
+    {
+      return (ActionResult) this.View((object) new PutAway()
+      {
+        Details = {
+          new PutAwayDetail()
+        }
+      });
+    }
+
+    [ValidateAntiForgeryToken]
+    [HttpPost]
+    public ActionResult Update(PutAway objPutAway)
+    {
+      if (!this.ModelState.IsValid)
+        return (ActionResult) this.View((object) objPutAway);
+      objPutAway.CompanyId = SessionUtility.CompanyId;
+      objPutAway.WarehouseId = SessionUtility.WarehouseId;
+      objPutAway.EntryBy = SessionUtility.LoginUserId;
+      PutAway putAway1 = objPutAway;
+      DateTime dateTime = objPutAway.PutAwayDateTime.Value;
+      DateTime date = dateTime.Date;
+      putAway1.PutAwayDate = date;
+      PutAway putAway2 = objPutAway;
+      dateTime = objPutAway.PutAwayDateTime.Value;
+      TimeSpan timeOfDay = dateTime.TimeOfDay;
+      putAway2.PutAwayTime = timeOfDay;
+      objPutAway.Details.ForEach((Action<PutAwayDetail>) (x => x.BinDetails.ForEach((Action<PutAwayBinDetail>) (m => objPutAway.BinDetails.Add(new PutAwayBinDetail()
+      {
+        CompanyId = SessionUtility.CompanyId,
+        WarehouseId = SessionUtility.WarehouseId,
+        PutAwayId = objPutAway.PutAwayId,
+        GrnId = x.GrnId,
+        SkuId = x.SkuId,
+        BinId = m.BinId,
+        Quantity = m.Quantity
+      })))));
+      Response response = this.putAwayRepository.Update(objPutAway);
+      if (response.IsSuccessfull)
+        return (ActionResult) this.RedirectToAction("Done", "Asn", (object) new
+        {
+          documentType = "PutAwayUpdate",
+          documentNo = response.DocumentNo,
+          documentId = response.DocumentId,
+          documentTypeId = ModuleHelper.PutAway
+        });
+      this.TempData["result"] = (object) response;
+      return (ActionResult) this.View((object) objPutAway);
+    }
+
+    public JsonResult GetPutAwayListForUpdate(
+      byte companyId,
+      short warehouseId,
+      string putAwayNo,
+      string grnNo,
+      DateTime fromDate,
+      DateTime toDate)
+    {
+      return this.Json((object) this.putAwayRepository.GetPutAwayListForUpdate(companyId, warehouseId, putAwayNo.ConvertToString(), grnNo.ConvertToString(), fromDate, toDate, SessionUtility.FinStartDate, SessionUtility.FinEndDate));
+    }
+
+    public JsonResult GetPutAwayDetailsForUpdate(
+      byte companyId,
+      short warehouseId,
+      long putAwayId)
+    {
+      return this.Json((object) this.putAwayRepository.GetPutAwayDetailsForUpdate(companyId, warehouseId, putAwayId));
+    }
+
+    public ActionResult Register()
+    {
+      return (ActionResult) this.View((object) new PutAwayRegister());
+    }
+
+    [HttpPost]
+    public JsonResult GetRegisterPutAwayDetail(
+      string putAwayNo,
+      DateTime fromDate,
+      DateTime toDate)
+    {
+      return this.Json((object) this.putAwayRepository.GetRegisterPutAwayDetail(putAwayNo, fromDate, toDate, SessionUtility.FinStartDate, SessionUtility.FinEndDate), JsonRequestBehavior.AllowGet);
+    }
+
+    public ActionResult WarehouseStockReport()
+    {
+      return (ActionResult) this.View((object) new Stock());
+    }
+
+    [HttpPost]
+    public JsonResult GetStockDetail(string productCode, string location)
+    {
+      return this.Json((object) this.putAwayRepository.GetStockDetail(productCode, location), JsonRequestBehavior.AllowGet);
+    }
+  }
+}

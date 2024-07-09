@@ -1,0 +1,328 @@
+﻿@model List<CodeLock.Models.SerialNumberDetail>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/scripts/common-event.js"></script>
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("First Serial No", new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBox("FirstSerialNumber", "", new { @class = "form-control", @id = "txtFirstSerialNo" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Second Serial No", new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBox("SecondSerialNumber", "", new { @class = "form-control", @id = "txtSecondSerialNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="dtSerial">
+                    <thead>
+                        <tr>
+                            <th>
+                                First Serial No
+                            </th>
+                            <th id="thSerialNoTwo">
+                                Second Serial No
+                            </th>
+                            <th>Status</th>
+                            <th>
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model[i].SerialNumberOwn, new { @class = "form-control textlabel", @id = "txtFirstSerialNo" + i.ToString(), @Name = "SerialNumberDetail[" + i.ToString() + "].txtFirstSerialNo" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model[i].SerialNumberTwo, new { @class = "form-control textlabel", @id = "txtSecondSerialNo" + i.ToString(), @Name = "SerialNumberDetail[" + i.ToString() + "].txtSecondSerialNo" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model[i].Status, new { @class = "form-control textlabel", @id = "txtStatus" + i.ToString(), @Name = "PopUpDetail[" + i.ToString() + "].txtStatus" })
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var companyId = '@SessionUtility.CompanyId', warehouseId = '@SessionUtility.WarehouseId';
+    $(document).ready(function () {
+        SetPageLoad('PopUp', 'Serial Number', 'txtFirstSerialNo');
+
+        productId = GetUrlValue()["productId"];
+        isSingle = GetUrlValue()["isSingle"];
+        grnId = GetUrlValue()["grnId"];
+        dispatchId = GetUrlValue()["dispatchId"];
+        parentRowId = GetUrlValue()["rowId"];
+        firstSerialNoList = window.opener.document.getElementById(parentRowId.replace('btnPopUp', 'hdnFirstSerialNo'));
+        secondSerialNoList = window.opener.document.getElementById(parentRowId.replace('btnPopUp', 'hdnSecondSerialNo'));
+        txtFirstSerialNo = $('#txtFirstSerialNo');
+        if (isSingle == 'true')
+            txtFirstSerialNo.blur(function () { return CheckValidFirstSerialNo(txtFirstSerialNo); });
+        txtFirstSerialNo.blur(OnFirstSerialNoChange);
+        txtSecondSerialNo = $('#txtSecondSerialNo');
+        txtSecondSerialNo.blur(function () { return CheckValidSecondSerialNo(txtFirstSerialNo, txtSecondSerialNo); });
+        InitGrid('dtSerial', false, 3, Init);
+        OnPageLoad();
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+    });
+
+    function OnPageLoad() {
+        txtSecondSerialNo.disable();
+        if (isSingle == 'true') {
+            $('#divSerialNoTwo').hide();
+            $('#thSerialNoTwo').hide();
+            $('td:nth-child(2)').hide();
+        }
+
+        var arrFirstSerialNo = firstSerialNoList.value.split(',');
+        var arrSecondSerialNo = secondSerialNoList.value.split(',');
+        if (firstSerialNoList.value != '') {
+            $.each(arrFirstSerialNo, function (index, value) {
+                var rowId = ($('#dtSerial tbody tr').length - 1);
+                var txtSerialNo1 = $('#txtFirstSerialNo' + rowId);
+                var txtSerialNo2 = $('#txtSecondSerialNo' + rowId);
+                var txtStatus = $('#txtStatus' + rowId);
+                txtSerialNo1.val(value);
+                txtSerialNo2.val(arrSecondSerialNo[index]);
+                txtStatus.val('Successfully scan');
+                AddGridRow('dtSerial', false, Init);
+            });
+        }
+        $('#dtSerial tr:last').hide();
+    }
+
+    var status = '';
+    function CheckValidFirstSerialNo(objFirstSerialNumber) {
+        if (objFirstSerialNumber.val() != '') {
+            if (CheckDuplicate()) {
+                var requestData;
+                if (dispatchId == 0) {
+                    requestData = { companyId: companyId, warehouseId: warehouseId, productId: productId, firstSerialNumber: objFirstSerialNumber.val() };
+                    AjaxRequestWithPostAndJson('@Url.Action("IsFirstSerialNoExistForDispatch")', JSON.stringify(requestData), function (result) {
+                        if (result == false) {
+                            status = 'Successfully scan';
+                        }
+                        else
+                            status = 'Invalid';
+                    }, ErrorFunction, false);
+                }
+                else {
+                    requestData = { companyId: companyId, warehouseId: warehouseId, productId: productId, grnId: grnId };
+                    AjaxRequestWithPostAndJson('@Url.Action("IsGrnExist")', JSON.stringify(requestData), function (result) {
+                        if (result == false) {
+                            requestData = { companyId: companyId, warehouseId: warehouseId, productId: productId, firstSerialNumber: objFirstSerialNumber.val(), grnId: grnId };
+                            AjaxRequestWithPostAndJson('@Url.Action("IsFirstSerialNoExistByGrnId")', JSON.stringify(requestData), function (result) {
+                                if (result == false) {
+                                    status = 'Successfully scan';
+                                }
+                                else
+                                    status = 'Invalid';
+                            }, ErrorFunction, false);
+                        }
+                        else {
+                            requestData = { companyId: companyId, warehouseId: warehouseId, productId: productId, firstSerialNumber: objFirstSerialNumber.val() };
+                            AjaxRequestWithPostAndJson('@Url.Action("IsFirstSerialNoExist")', JSON.stringify(requestData), function (result) {
+                                if (result == false) {
+                                    status = 'Already exist';
+                                }
+                                else
+                                    status = 'Successfully scan';
+                            }, ErrorFunction, false);
+                        }
+                    }, ErrorFunction, false);
+                }
+            }
+            else {
+                status = 'Already exist';
+            }
+        }
+        return false;
+    }
+
+    function CheckValidSecondSerialNo(objFirstSerialNumber, objSecondSerialNumber) {
+        if (objFirstSerialNumber.val() != '' && objSecondSerialNumber.val() != '') {
+            if (CheckDuplicate()) {
+                var requestData;
+                if (dispatchId == 0) {
+                    requestData = { companyId: companyId, warehouseId: warehouseId, productId: productId, firstSerialNumber: objFirstSerialNumber.val(), secondSerialNumber: objSecondSerialNumber.val() };
+                    AjaxRequestWithPostAndJson('@Url.Action("IsSecondSerialNoExistForDispatch")', JSON.stringify(requestData), function (result) {
+                        if (result == false) {
+                            status = 'Successfully scan';
+                        }
+                        else
+                            status = 'Invalid';
+                    }, ErrorFunction, false);
+                }
+                else {
+                    requestData = { companyId: companyId, warehouseId: warehouseId, productId: productId, grnId: grnId };
+                    AjaxRequestWithPostAndJson('@Url.Action("IsGrnExist")', JSON.stringify(requestData), function (result) {
+                        if (result == false) {
+                            requestData = { companyId: companyId, warehouseId: warehouseId, productId: productId, firstSerialNumber: objFirstSerialNumber.val(), secondSerialNumber: objSecondSerialNumber.val(), grnId: grnId };
+                            AjaxRequestWithPostAndJson('@Url.Action("IsSecondSerialNoExistByGrnId")', JSON.stringify(requestData), function (result) {
+                                if (result == false) {
+                                    status = 'Successfully scan';
+                                }
+                                else
+                                    status = 'Invalid';
+                            }, ErrorFunction, false);
+                        }
+                        else {
+                            requestData = { companyId: companyId, warehouseId: warehouseId, productId: productId, firstSerialNumber: objFirstSerialNumber.val(), secondSerialNumber: objSecondSerialNumber.val() };
+                            AjaxRequestWithPostAndJson('@Url.Action("IsSecondSerialNoExist")', JSON.stringify(requestData), function (result) {
+                                if (result == false) {
+                                    status = 'Already exist';
+                                }
+                                else
+                                    status = 'Successfully scan';
+                            }, ErrorFunction, false);
+                        }
+                    }, ErrorFunction, false);
+                }
+            }
+            else {
+                status = 'Already exist';
+            }
+            FillGrid();
+            return false;
+        }
+    }
+
+    function OnFirstSerialNoChange() {
+        if (isSingle == 'true' && txtFirstSerialNo.val() != '')
+            FillGrid();
+        else if (txtFirstSerialNo.val() != '') {
+            txtSecondSerialNo.enable();
+            txtSecondSerialNo.focus();
+        }
+    }
+
+    function FillGrid() {
+        var rowId = ($('#dtSerial tbody tr').length - 1);
+        var txtSerialNo1 = $('#txtFirstSerialNo' + rowId);
+        var txtSerialNo2 = $('#txtSecondSerialNo' + rowId);
+        var txtStatus = $('#txtStatus' + rowId);
+        if (isSingle == 'true' || (isSingle == 'false' && txtSecondSerialNo.val() != '')) {
+            txtSerialNo1.val(txtFirstSerialNo.val());
+            txtSerialNo2.val(txtSecondSerialNo.val());
+            txtStatus.val(status);
+            $('#dtSerial tr:last').show();
+            AddGridRow('dtSerial', false, Init);
+            $('#dtSerial tr:last').hide();
+            txtFirstSerialNo.val('');
+            txtSecondSerialNo.val('');
+            txtSecondSerialNo.disable();
+            txtFirstSerialNo.focus();
+        }
+    }
+
+    function Init() {
+        return false;
+    }
+
+    function OnSubmit() {
+        if (window.opener != null && !window.opener.closed) {
+            GetSerialNumberList();
+            var hdnFirstSerialNo = window.opener.document.getElementById(parentRowId.replace('btnPopUp', 'hdnFirstSerialNo'));
+            var hdnSecondSerialNo = window.opener.document.getElementById(parentRowId.replace('btnPopUp', 'hdnSecondSerialNo'));
+            var txtQuantity = window.opener.document.getElementById(parentRowId.replace('btnPopUp', 'txtQuantity'));
+            hdnFirstSerialNo.value = serialNumberOne;
+            hdnSecondSerialNo.value = serialNumberTwo;
+            txtQuantity.value = count.toFixed(3);
+            txtQuantity.setAttribute('readOnly', true);
+            txtQuantity.blur(ValidateTotalQuantity(txtQuantity));
+            window.close();
+        }
+
+    }
+
+    var serialNumberOne = '', serialNumberTwo = '', count = 0;
+    function GetSerialNumberList() {
+        $('[id*="txtFirstSerialNo"]').each(function () {
+            var txtFirstSerialNo = $(this);
+            var txtSecondSerialNo = $('#' + txtFirstSerialNo.attr('id').replace('txtFirstSerialNo', 'txtSecondSerialNo'));
+            var txtStatus = $('#' + txtFirstSerialNo.attr('id').replace('txtFirstSerialNo', 'txtStatus'));
+            if (txtFirstSerialNo.val() != '' && txtStatus.val() == 'Successfully scan' && txtStatus.val() != '') {
+                serialNumberOne = serialNumberOne + ',' + txtFirstSerialNo.val();
+                count++;
+            }
+            if (isSingle == 'false' && txtSecondSerialNo.val() != '' && txtStatus.val() == 'Successfully scan' && txtStatus.val() != '')
+                serialNumberTwo = serialNumberTwo + ',' + txtSecondSerialNo.val();
+        });
+        serialNumberOne = serialNumberOne.replace(',', '');
+        if (isSingle == 'false')
+            serialNumberTwo = serialNumberTwo.replace(',', '');
+    }
+
+    function CheckDuplicate() {
+
+        var isExist = false;
+        $('#dtSerial tr:not(:first)').each(function () {
+            var innertr = $(this);
+            var innertxtFisrtSerialNo = innertr.find('[id*="txtFirstSerialNo"]');
+            var innertxtSecondSerialNo = innertr.find('[id*="txtSecondSerialNo"]');
+            var innertxtStatus = innertr.find('[id*="txtStatus"]');
+            if (innertxtStatus.val() == 'Successfully scan') {
+                if (isSingle == 'true') {
+                    if (innertxtFisrtSerialNo.val() == txtFirstSerialNo.val()) {
+                        isExist = true;
+                    }
+                }
+                else {
+                    if (innertxtFisrtSerialNo.val() == txtFirstSerialNo.val() || innertxtSecondSerialNo.val() == txtFirstSerialNo.val()
+                     || innertxtFisrtSerialNo.val() == txtSecondSerialNo.val() || innertxtSecondSerialNo.val() == txtSecondSerialNo.val()) {
+                        isExist = true;
+                    }
+                }
+            }
+        });
+
+        if (isExist)
+            return false;
+        else
+            return true;
+    }
+
+    function ValidateTotalQuantity(txtQuantity) {
+        var tbl = $(txtQuantity).closest('table');
+        var txtTotalQuantity = tbl.closest('tr').find('[id *= "txtTotalQuantity"]');
+        var totalQuantity = 0;
+        tbl.find('[id*="txtQuantity"]').each(function () {
+            totalQuantity += $(this).round(3);
+        });
+        txtTotalQuantity.val(totalQuantity.toFixed(3));
+    }
+</script>
+
+

@@ -1,0 +1,740 @@
+﻿@model CodeLock.Models.SalesRegister
+@using CodeLock.Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.HiddenFor(model => model.BaseOn, new { @id = "hdnBaseOn" })
+
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CompanyId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.CompanyId, new SelectList(ViewBag.CompanyList, "Value", "Name"), new { @class = "form-control", @id = "ddlCompanyId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CompanyId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.ReportTypeId, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.ReportTypeId, new List<SelectListItem> {
+                        new SelectListItem() {Text = SessionUtility.DocketNomenClature +  " Details",Value="1"},
+                        new SelectListItem() {Text = "Bill/MR Details",Value="2"},
+                        new SelectListItem() {Text = "LS/MF/THC Details",Value="3"},
+                        new SelectListItem() {Text = "PRS/DRS Details",Value="4"},
+                        new SelectListItem() {Text = "POD/PFM Details",Value="5"},}, new { @class = "form-control", @id = "ddlReportTypeId" })
+                        <i></i>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "FromLocationId", FieldCaption = "From Location" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "ToLocationId", FieldCaption = "To Location", AllowAll = true })
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    @Html.Label("Select Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PaybasId, new { @class = "label" })
+                        @Html.DropDownListFor(model => model.PaybasId, new SelectList(ViewBag.PaybasList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlPaybasId", @multiple = "multiple", @placeholder = "Select Payment Basis" })
+                        @Html.ValidationMessageFor(model => model.PaybasId)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TransportModeId, new { @class = "label" })
+                        @Html.DropDownListFor(model => model.TransportModeId, new SelectList(ViewBag.TransportModeList, "Value", "Name"), new { @class = "form-control select2-multiple", @id = "ddlTransportModeId", @multiple = "multiple", @placeholder = "Select Mode" })
+                        @Html.ValidationMessageFor(model => model.TransportModeId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ServiceTypeId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.ServiceTypeId, new SelectList(ViewBag.ServiceTypeList, "Value", "Name"), new { @class = "form-control", @id = "ddlServiceTypeId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ServiceTypeId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LoadTypeId, new { @class = "label" })
+                        @Html.DropDownListFor(model => model.LoadTypeId, new SelectList(ViewBag.LoadTypeList, "Value", "Name"), new { @class = "form-control", @id = "ddlLoadTypeId" })
+                        @Html.ValidationMessageFor(model => model.LoadTypeId)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.Status, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.Status, new List<SelectListItem> {
+                        new SelectListItem() {Text = "All",Value="0"},
+                        new SelectListItem() {Text = "Finalized",Value="1"},
+                        new SelectListItem() {Text = "Billed",Value="2"},
+                        new SelectListItem() {Text = "Unbilled",Value="3"},
+                        new SelectListItem() {Text = "Delivered",Value="4"},
+                        new SelectListItem() {Text = "Not Delivered",Value="5"},
+                        new SelectListItem() {Text = "Detained",Value="6"},
+                        new SelectListItem() {Text = "Cancelled",Value="7"},
+                        new SelectListItem() {Text = "Not Completed (Quick)",Value="8"},
+                        new SelectListItem() {Text = "Completed",Value="9"},}, new { @class = "form-control", @id = "ddlStatus" })<i></i>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BusinessTypeId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.BusinessTypeId, new SelectList(ViewBag.BusinessTypeList, "Value", "Name"), new { @class = "form-control", @id = "ddlBusinessTypeId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.BusinessTypeId)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PickupDeliveryTypeId, new { @class = "label" })
+
+                        @Html.DropDownListFor(model => model.PickupDeliveryTypeId, new SelectList(ViewBag.PickupDeliveryTypeList, "Value", "Name"), new { @class = "form-control", @id = "ddlPickupDeliveryTypeId" })
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IsBookedByBa, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.IsBookedByBa, new SelectList(ViewBag.BookedByList, "Value", "Name"), "All", new { @class = "form-control", @id = "ddlIsBookedByBa" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.IsBookedByBa)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BookedByCode, new { @class = "label", @id = "lblBookedByCode" })
+                        <div class="input">
+                            @Html.TextBoxFor(model => model.BookedByCode, new { @class = "form-control", @id = "txtBookedByCode" })
+                            @Html.HiddenFor(model => model.BookedById, new { @id = "hdnBookedById", @value = "0" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.BookedByCode)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("", " ", new { @class = "label" })
+                        <div class="input">
+                            @Html.Label("", " ", new { @class = "label-bold", @id = "lblVendorName" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                            @Html.TextBoxFor(model => model.CustomerCode, new { @class = "form-control", @id = "txtCustomerCode" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CustomerCode)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        @Html.LabelFor(model => model.CustomerName, " ", new { @class = "label-bold", @id = "lblCustomer" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Consignor", new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.ConsignorId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Consignor", new { @class = "form-control", @id = "ddlConsignorId" })
+                            <i></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Consignee", new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.ConsigneeId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Consignee", new { @class = "form-control", @id = "ddlConsigneeId" })
+                            <i></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-separator">OR</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(SessionUtility.DocketNomenClature, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(m => m.DocketNo, new { @class = "form-control", @id = "txtDocketNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CustomerCode)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label("Customer " + SessionUtility.DocketNomenClature, new { @class = "label" })
+                        <div class="input">
+                            @Html.TextBoxFor(m => m.CustomerDocketNo, new { @class = "form-control", @id = "txtCustomerDocketNo" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CustomerDocketNo)
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.SortByDocketNo, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.SortByDocketNo, new List<SelectListItem> {
+                        new SelectListItem() {Text = SessionUtility.DocketNomenClature ,Value="1"},
+                        new SelectListItem() {Text = SessionUtility.DocketNomenClature + " Date",Value="2"},
+                        new SelectListItem() {Text = "Vehicle No" ,Value="3"}}, new { @class = "form-control", @id = "ddlSortByDocketNo" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="clearfix">
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.AllDocketField, new { @class = "form-control", @id = "chkAllDocketField" })
+                                <i></i>
+                                @Html.LabelFor(model => model.AllDocketField, SessionUtility.DocketNomenClature + " Details", new { @class = "label", @for = "chkAllDocketField" })
+                            </label>
+                        </div>
+                    </div>
+                </div>              
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <div class="unit">
+                            <div class="inline-group">
+                                <div id="dvFieldCheckboxContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="dvDocketCharge" style="display:none">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="clearfix">
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.AllDocketCharges, new { @class = "form-control", @id = "chkAllDocketCharges" })
+                                <i></i>
+                                @Html.LabelFor(model => model.AllDocketCharges, SessionUtility.DocketNomenClature + " Charges", new { @class = "label", @for = "chkAllDocketCharges" })
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="unit">
+                        <div class="inline-group">
+                            <div id="dvDocketChargeCheckboxContainer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvReportField" style="display:none">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="clearfix">
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(model => model.AllReportField, new { @id = "chkAllReportField" })
+                            <i></i>
+                            @Html.Label(" ", new { @class = "label", @for = "chkAllReportField", @id = "lblReportDetail" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="unit">
+                        <div class="inline-group">
+                            <div id="dvReportFieldCheckboxContainer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dvDeliveryMrCharge" style="display:none">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="clearfix">
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(model => model.AllDeliveryMrCharge, new { @class = "form-control", @id = "chkAllDeliveryMrCharge" })
+                            <i></i>
+                            @Html.LabelFor(model => model.AllDeliveryMrCharge, "Delivery MR Charges", new { @class = "label", @for = "chkAllDeliveryMrCharge" })
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="unit">
+                        <div class="inline-group">
+                            <div id="dvDeliveryMrChargeCheckboxContainer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+    var hdnBaseOn, ddlBaseCode, ddlCompanyId, ddlReportTypeId, ddlPaybasId, ddlTransportModeId, ddlServiceTypeId, ddlServiceTypeId, ddlPickupDeliveryTypeId, hdnCustomerId, txtCustomerCode;
+    var lblCustomer, txtDocketNo, txtCustomerDocketNo, ddlSortByDocketNo, ddlLoadTypeId, ddlFromLocationId, ddlToLocationId, ddlBusinessTypeId, ddlStatus, drDate, docketUrl, dvFieldCheckboxContainer;
+    var dvDocketChargeCheckboxContainer, chkAllDocketCharges, dvDocketCharge, chkAllDocketField, baseUrl, dvReportFieldCheckboxContainer, dvReportField, lblReportDetail, dvDeliveryMrChargeCheckboxContainer, dvDeliveryMrCharge;
+    var chkAllReportField, chkAllDeliveryMrCharge;
+
+    $(document).ready(function () {
+        SetPageLoad('Sales', 'Register', '', '', '');
+
+        hdnBaseOn = $('#hdnBaseOn');
+        ddlBaseCode = $('#ddlBaseCode');
+        ddlCompanyId = $('#ddlCompanyId');
+        ddlReportTypeId = $('#ddlReportTypeId');
+        ddlPaybasId = $('#ddlPaybasId');
+        ddlTransportModeId = $('#ddlTransportModeId');
+        ddlServiceTypeId = $('#ddlServiceTypeId');
+        ddlPickupDeliveryTypeId = $('#ddlPickupDeliveryTypeId');
+        ddlIsBookedByBa = $("#ddlIsBookedByBa");
+        txtBookedByCode = $('#txtBookedByCode');
+        lblBookedByCode = $('#lblBookedByCode');
+        lblVendorName = $('#lblVendorName');
+        hdnBookedById = $('#hdnBookedById');
+        hdnCustomerId = $('#hdnCustomerId');
+        txtCustomerCode = $('#txtCustomerCode');
+        lblCustomer = $('#lblCustomer');
+        txtDocketNo = $('#txtDocketNo');
+        txtCustomerDocketNo = $('#txtCustomerDocketNo');
+        ddlSortByDocketNo = $('#ddlSortByDocketNo');
+        ddlLoadTypeId = $('#ddlLoadTypeId');
+        ddlFromLocationId = $('#ddlFromLocationId');
+        ddlToLocationId = $('#ddlToLocationId');
+        ddlBusinessTypeId = $('#ddlBusinessTypeId');
+        ddlStatus = $('#ddlStatus');
+        dvFieldCheckboxContainer = $('#dvFieldCheckboxContainer');
+        dvDocketChargeCheckboxContainer = $('#dvDocketChargeCheckboxContainer');
+        chkAllDocketCharges = $('#chkAllDocketCharges');
+        chkAllDocketField = $('#chkAllDocketField');
+        dvDocketCharge = $('#dvDocketCharge');
+        dvReportFieldCheckboxContainer = $('#dvReportFieldCheckboxContainer');
+        dvReportField = $('#dvReportField');
+        lblReportDetail = $('#lblReportDetail');
+        chkAllReportField = $('#chkAllReportField');
+        chkAllDeliveryMrCharge = $('#chkAllDeliveryMrCharge');
+        dvDeliveryMrChargeCheckboxContainer = $('#dvDeliveryMrChargeCheckboxContainer');
+        dvDeliveryMrCharge = $('#dvDeliveryMrCharge');
+        ddlConsignorId = $('#ddlConsignorId');
+        ddlConsigneeId = $('#ddlConsigneeId');
+
+        drDate = InitDateRange('drDate', DateRange.LastWeek);
+        docketUrl = '@Url.Action("", "Docket", new { Area = "Operation" })';
+        baseUrl = '@Url.Action("", "Operation", new { Area = "Reports" })';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+
+        InitMultiSelect(ddlPaybasId.Id, true, true);
+        InitMultiSelect(ddlTransportModeId.Id, true, true);
+        //InitMultiSelect(ddlPickupDeliveryTypeId.Id, true, true);
+        //InitMultiSelect(ddlLoadTypeId.Id, true, true);
+        //InitMultiSelect(ddlStatus.Id, true, true);
+        OnPageLoad();
+        GetDocketFieldList();
+        ddlIsBookedByBa.change(ManageBookedBy).change();
+        ddlReportTypeId.change(OnReportTypeChange);
+        ddlServiceTypeId.change(GetDocketCharge);
+        ddlBusinessTypeId.change(GetDocketCharge);
+        chkAllDocketCharges.click(OnAllChargesChange);
+        chkAllDocketField.click(OnAllDocketFieldChange);
+        CustomerAutoComplete('txtCustomerCode', 'hdnCustomerId');
+        txtCustomerCode.blur(function () { return IsCustomerCodeExist(txtCustomerCode, hdnCustomerId, lblCustomer); });
+        chkAllReportField.click(OnAllReportFieldChange);
+        chkAllDeliveryMrCharge.click(OnAllDeliveryMrChargesChange);
+        ddlCompanyId.val(1);
+    });
+
+    function OnPageLoad() {
+        if (hdnBaseOn.val() == 1) {
+            $('#ddlBusinessTypeId option').eq(0).before($('<option>', { value: '', text: 'Select Business Type' }));
+            ddlBusinessTypeId.val('');
+            $('#ddlServiceTypeId option').eq(0).before($('<option>', { value: 0, text: 'All' }));
+            ddlServiceTypeId.val(0);
+            $('#ddlLoadTypeId option').eq(0).before($('<option>', { value: 0, text: 'All' }));
+            ddlLoadTypeId.val(0);
+            $('#ddlPickupDeliveryTypeId option').eq(0).before($('<option>', { value: 0, text: 'All' }));
+            ddlPickupDeliveryTypeId.val(0);
+
+
+        }
+        else if (hdnBaseOn.val() == 2) {
+            $('#ddlServiceTypeId option').eq(0).before($('<option>', { value: '', text: 'Select Service Type' }));
+            ddlServiceTypeId.val('');
+            $('#ddlBusinessTypeId option').eq(0).before($('<option>', { value: 0, text: 'All' }));
+            ddlBusinessTypeId.val(0);
+            $('#ddlLoadTypeId option').eq(0).before($('<option>', { value: 0, text: 'All' }));
+            ddlLoadTypeId.val(0);
+            $('#ddlPickupDeliveryTypeId option').eq(0).before($('<option>', { value: 0, text: 'All' }));
+            ddlPickupDeliveryTypeId.val(0);
+        }
+        else {
+            $('#ddlBusinessTypeId option').eq(0).before($('<option>', { value: 0, text: 'All' }));
+            $('#ddlServiceTypeId option').eq(0).before($('<option>', { value: 0, text: 'All' }));
+            $('#ddlLoadTypeId option').eq(0).before($('<option>', { value: 0, text: 'All' }));
+            $('#ddlPickupDeliveryTypeId option').eq(0).before($('<option>', { value: 0, text: 'All' }));
+
+            ddlBusinessTypeId.val(0);
+            ddlServiceTypeId.val(0);
+            ddlLoadTypeId.val(0);
+            ddlPickupDeliveryTypeId.val(0);
+            GetDocketCharge();
+        }
+    }
+
+
+    function GetDocketFieldList() {
+        var requestData = { reportId: 1 };
+        AjaxRequestWithPostAndJson(baseUrl + '/GetColumnListByReportId', JSON.stringify(requestData), function (result) {
+            if (result.length == 0)
+                dvFieldCheckboxContainer.empty();
+            else {
+                dvFieldCheckboxContainer.empty();
+                var content = '';
+                $.each(result, function (index, value) {
+                    content += "<div class='col-sm-3'> <label class='checkbox'>" +
+                        '<label for = "chkDocketField' + index + '" class="label">' + value.FieldCaption + '</label>' +
+                        '<input type="checkbox"  id="chkDocketField' + index + '" onclick="OnDocketFieldChange()"/><i></i>' +
+                        '<input type="hidden" id="hdnFieldId' + index + '" value = ' + value.FieldId + ' />' +
+                       '</label></div>'
+                });
+                dvFieldCheckboxContainer.html(content);
+                $('#chkDocketField0').check();
+                $('#chkDocketField0').disable();
+            }
+        }, ErrorFunction, false);
+    }
+
+    function OnAllDocketFieldChange() {
+        $('[id*="chkDocketField"]').check(chkAllDocketField.IsChecked);
+        $('#chkDocketField0').check();
+    }
+
+    function OnDocketFieldChange() {
+        var docketFieldCount = 0;
+        $('[id*="chkDocketField"]').each(function () {
+            var chkDocketField = $(this);
+            if (!chkDocketField.IsChecked)
+                docketFieldCount = 1;
+        });
+        chkAllDocketField.check(docketFieldCount == 0);
+    }
+
+    function GetDocketCharge() {
+        var baseCode = hdnBaseOn.val() == 1 ? ddlBusinessTypeId.val() : hdnBaseOn.val() == 2 ? ddlServiceTypeId.val() : 0;
+
+        var requestData = { baseOn: hdnBaseOn.val(), baseCode: baseCode };
+        AjaxRequestWithPostAndJson(baseUrl + '/GetDocketCharges', JSON.stringify(requestData), function (result) {
+            if (result.length == 0) {
+                dvDocketChargeCheckboxContainer.empty();
+                dvDocketCharge.hide();
+            }
+            else {
+                dvDocketCharge.show();
+                dvDocketChargeCheckboxContainer.empty();
+                var content = "";
+                $.each(result, function (index, value) {
+                    content += "<div class='col-sm-3'><label class='checkbox'>" +
+                        '<label  name="DocketCharge[' + index + '].IsActive" for = "chkDocketCharge' + index + '" class="label">' + value.ChargeName + '</label>' +
+                        '<input type="checkbox" name="DocketCharge[' + index + '].IsActive" id="chkDocketCharge' + index + '" onclick="OnDocketChargeChange()"/><i></i>' +
+                        '<input type="hidden" name="DocketCharge[' + index + '].ChargeCode" id="hdnChargeCode' + index + '" value = ' + (parseInt(value.ChargeCode) + 900) + ' />' +
+                        '</label></div>';
+                });
+                dvDocketChargeCheckboxContainer.html(content);
+            }
+        }, ErrorFunction, false);
+    }
+
+    function GetDeliveryMrCharge() {
+        var baseCode = hdnBaseOn.val() == 1 ? ddlBusinessTypeId.val() : hdnBaseOn.val() == 2 ? ddlServiceTypeId.val() : 0;
+
+        var requestData = { baseOn: hdnBaseOn.val(), baseCode: baseCode };
+        AjaxRequestWithPostAndJson(baseUrl + '/GetDeliveryMrCharges', JSON.stringify(requestData), function (result) {
+            if (result.length == 0) {
+                dvDeliveryMrChargeCheckboxContainer.empty();
+                dvDeliveryMrCharge.hide();
+            }
+            else {
+                dvDeliveryMrCharge.show();
+                dvDeliveryMrChargeCheckboxContainer.empty();
+                var content = "";
+                $.each(result, function (index, value) {
+                    content += "<div class='col-sm-3'><label class='checkbox'>" +
+                        '<label  name="DeliveryMrCharge[' + index + '].IsActive" for = "chkDeliveryMrCharge' + index + '" class="label">' + value.ChargeName + '</label>' +
+                        '<input type="checkbox" name="DeliveryMrCharge[' + index + '].IsActive" id="chkDeliveryMrCharge' + index + '" onclick="OnDeliveryMrChargeChange()"/><i></i>' +
+                        '<input type="hidden" name="DeliveryMrCharge[' + index + '].ChargeCode" id="hdnDeliveryMrChargeCode' + index + '" value = ' + (parseInt(value.ChargeCode) + 1000) + ' />' +
+                        '</label></div>';
+                });
+                dvDeliveryMrChargeCheckboxContainer.html(content);
+            }
+        }, ErrorFunction, false);
+    }
+
+    function OnReportTypeChange() {
+        if (ddlReportTypeId.val() != 1) {
+            var requestData = { reportId: ddlReportTypeId.val() };
+            AjaxRequestWithPostAndJson(baseUrl + '/GetColumnListByReportId', JSON.stringify(requestData), function (result) {
+                if (result.length == 0) {
+                    dvReportField.hide();
+                    dvReportFieldCheckboxContainer.empty();
+                    dvDeliveryMrChargeCheckboxContainer.empty();
+                    dvDeliveryMrCharge.hide();
+                }
+                else {
+                    dvReportField.show();
+                    dvDeliveryMrChargeCheckboxContainer.empty();
+                    dvDeliveryMrCharge.hide();
+                    if (ddlReportTypeId.val() == 2) {
+                        lblReportDetail.text("BILL/MR Details");
+                        GetDeliveryMrCharge();
+                    }
+                    else if (ddlReportTypeId.val() == 3)
+                        lblReportDetail.text("LS/MF/THC Details");
+                    else if (ddlReportTypeId.val() == 4)
+                        lblReportDetail.text("PRS/DRS Details");
+                    else if (ddlReportTypeId.val() == 5)
+                        lblReportDetail.text("POD/PFM Details");
+                    else
+                        lblReportDetail.text("");
+                    dvReportFieldCheckboxContainer.empty();
+                    var content = "";
+                    $.each(result, function (index, value) {
+                        content += '<div class="col-sm-3"><label class="checkbox">' +
+                            '<label for="chkReportField' + index + '" class="label" >' + value.FieldCaption + '</label>' +
+                            '<input type="checkbox" id="chkReportField' + index + '"  onclick="OnReportFieldChange()"/><i></i>' +
+                            '<input type="hidden" id="hdnReportFieldId' + index + '" value = ' + value.FieldId + ' />' +
+                            '</label></div>';
+                    });
+                    dvReportFieldCheckboxContainer.html(content);
+                    $('#chkReportField0').check();
+                    $('#chkReportField0').disable();
+                }
+            }, ErrorFunction, false);
+        }
+        else {
+            dvReportFieldCheckboxContainer.empty();
+            dvReportField.hide();
+        }
+    }
+
+    function OnAllChargesChange() {
+        $('[id*="chkDocketCharge"]').check(chkAllDocketCharges.IsChecked);
+    }
+
+    function OnDocketChargeChange() {
+        var chargeCount = 0;
+        $('[id*="chkDocketCharge"]').each(function () {
+            var chkDocketCharge = $(this);
+            if (!chkDocketCharge.IsChecked) {
+                chargeCount = 1;
+            }
+        });
+        chkAllDocketCharges.check(chargeCount == 0);
+    }
+
+    function OnAllDeliveryMrChargesChange() {
+        $('[id*="chkDeliveryMrCharge"]').check(chkAllDeliveryMrCharge.IsChecked);
+    }
+
+    function OnDeliveryMrChargeChange() {
+        var chargeCount = 0;
+        $('[id*="chkDeliveryMrCharge"]').each(function () {
+            var chkDeliveryMrCharge = $(this);
+            if (!chkDeliveryMrCharge.IsChecked) {
+                chargeCount = 1;
+            }
+        });
+        chkAllDeliveryMrCharge.check(chargeCount == 0);
+    }
+
+    function OnAllReportFieldChange() {
+        $('[id*="chkReportField"]').check(chkAllReportField.IsChecked);
+        $('#chkReportField0').check();
+    }
+
+    function OnReportFieldChange() {
+        var reportFieldCount = 0;
+        $('[id*="chkReportField"]').each(function () {
+            var chkReportField = $(this);
+            if (!chkReportField.IsChecked)
+                reportFieldCount = 1;
+        });
+        chkAllReportField.check(reportFieldCount == 0);
+    }
+
+    function ManageBookedBy() {
+        txtBookedByCode.showHide(ddlIsBookedByBa.val() != '').val('');
+        lblBookedByCode.showHide(ddlIsBookedByBa.val() != '');
+        lblVendorName.text('');
+        hdnBookedById.val('0');
+
+        txtBookedByCode.off("blur");
+        if (ddlIsBookedByBa.val() == 0) {
+            UserAutoComplete('txtBookedByCode', 'hdnBookedById', 'Booked By Name');
+            txtBookedByCode.blur(function () { return IsUserNameExist($(this), hdnBookedById, 'Booked By Name'); });
+        }
+        else if (ddlIsBookedByBa.val() == 1) {
+            VendorAutoComplete('txtBookedByCode', 'hdnBookedById', 'Booked By Name', 4);
+            txtBookedByCode.blur(function () { return IsVendorCodeExist($(this), hdnBookedById, lblVendorName, 'Booked By Name', 4); });
+        }
+
+    }
+
+    function ViewReport() {
+
+        var docketField = '';
+        $('[id*="chkDocketField"]').each(function () {
+            var chkDocketField = $(this);
+            var hdnFieldId = $('#' + chkDocketField.attr('id').replace('chkDocketField', 'hdnFieldId'));
+            if (chkDocketField.IsChecked)
+                docketField = docketField + ',' + hdnFieldId.val();
+        });
+
+        $('[id*="chkDocketCharge"]').each(function () {
+            var chkDocketCharge = $(this);
+            var hdnChargeCode = $('#' + chkDocketCharge.attr('id').replace('chkDocketCharge', 'hdnChargeCode'));
+            if (chkDocketCharge.IsChecked)
+                docketField = docketField + ',' + hdnChargeCode.val();
+        });
+
+        if (ddlReportTypeId.val() != 1) {
+            $('[id*="chkReportField"]').each(function () {
+                var chkReportField = $(this);
+                var hdnReportFieldId = $('#' + chkReportField.attr('id').replace('chkReportField', 'hdnReportFieldId'));
+                if (chkReportField.IsChecked)
+                    docketField = docketField + ',' + hdnReportFieldId.val();
+            });
+        }
+
+        $('[id*="chkDeliveryMrCharge"]').each(function () {
+            var chkDeliveryMrCharge = $(this);
+            var hdnDeliveryMrChargeCode = $('#' + chkDeliveryMrCharge.attr('id').replace('chkDeliveryMrCharge', 'hdnDeliveryMrChargeCode'));
+            if (chkDeliveryMrCharge.IsChecked)
+                docketField = docketField + ',' + hdnDeliveryMrChargeCode.val();
+        });
+
+        docketField = docketField.substr(1);
+        try {
+            var prmList = [{ Name: "CompanyId", Value: ddlCompanyId.val() },
+                { Name: "FromLocationId", Value: ddlFromLocationId.val() },
+                { Name: "ToLocationId", Value: ddlToLocationId.val() },
+                { Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+                { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+                { Name: "Paybas", Value: ddlPaybasId.multiVal() },
+                { Name: "TransportMode", Value: ddlTransportModeId.multiVal() },
+                { Name: "ServiceType", Value: ddlServiceTypeId.val() },
+                { Name: "LoadType", Value: ddlLoadTypeId.val() },
+                { Name: "IsBookedByBa", Value: ddlIsBookedByBa.val() == '' ? 'All' : ddlIsBookedByBa.val() },
+                { Name: "BookedById", Value: hdnBookedById.val() },
+                { Name: "Status", Value: ddlStatus.val() },
+                { Name: "BusinessType", Value: ddlBusinessTypeId.val() == '' ? '0' : ddlBusinessTypeId.val() },
+                { Name: "PickupDeliveryType", Value: ddlPickupDeliveryTypeId.val() == '' ? '0' : ddlPickupDeliveryTypeId.val() },
+                { Name: "CustomerId", Value: hdnCustomerId.val() },
+                { Name: "ConsignorId", Value: ddlConsignorId.val() == '' ? 0 : ddlConsignorId.val() },
+                { Name: "ConsigneeId", Value: ddlConsigneeId.val() == '' ? 0 : ddlConsigneeId.val() },
+                { Name: "DocketNo", Value: txtDocketNo.val() == '' ? '0' : txtDocketNo.val() },
+                { Name: "SortByDocketNo", Value: ddlSortByDocketNo.val() },
+                { Name: "ColumnList", Value: docketField },
+                { Name: "CustomerDocketNo", Value: txtCustomerDocketNo.val() == '' ? '0' : txtCustomerDocketNo.val() },
+                { Name: "ReportType", Value: ddlReportTypeId.val() }];
+           // alert(prmList[0].Value);
+           // alert(prmList[1].Value);
+           // alert(prmList[2].Value);
+           // alert(prmList[3].Value);
+           // alert(prmList[4].Value);
+           // alert(prmList[5].Value);
+           // alert(prmList[6].Value);
+           // alert(prmList[7].Value);
+           // alert(prmList[8].Value);
+           // alert(prmList[9].Value);
+           // alert(prmList[10].Value);
+           // alert(prmList[11].Value);
+           // alert(prmList[12].Value);
+           //alert(prmList[13].Value);
+           // alert(prmList[14].Value);
+           // alert(prmList[15].Value);
+           // alert(prmList[16].Value);
+            //alert(prmList[17].Value);
+           // alert(prmList[18].Value);
+           // alert(prmList[19].Value);
+            //if (ddlReportTypeId.val() == 1) {
+            var reportInfo = { PrmList: prmList, Name: 'SalesRegister', Description: 'Sales Register' };
+            ShowReport(reportInfo);
+            //}
+            //else if (ddlReportTypeId.val() == 2) {
+            //    var reportInfo = { PrmList: prmList, Name: 'SalesRegisterBillMrReport', Description: 'Sales Register Bill/MR Details' };
+            //    ShowReport(reportInfo);
+            //}
+            //else if (ddlReportTypeId.val() == 3) {
+            //    var reportInfo = { PrmList: prmList, Name: 'SalesRegisterLsMfThcReport', Description: 'Sales Register LS/MF/THC Details' };
+            //    ShowReport(reportInfo);
+            //}
+            //else if (ddlReportTypeId.val() == 4) {
+            //    var reportInfo = { PrmList: prmList, Name: 'SalesRegisterPrsDrsReport', Description: 'Sales Register PRS/DRS Details' };
+            //    ShowReport(reportInfo);
+            //}
+            //else if (ddlReportTypeId.val() == 5) {
+            //    var reportInfo = { PrmList: prmList, Name: 'SalesRegisterPodPfmReport', Description: 'Sales Register POD/PFM Details' };
+            //    ShowReport(reportInfo);
+            //}
+        } catch (e) { ShowMessage(e.message) }
+        return false;
+    }
+</script>

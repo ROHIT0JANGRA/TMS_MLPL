@@ -1,0 +1,171 @@
+﻿@using CodeLock.Models
+@model VendorOutstanding
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div id="dvContainer">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CompanyId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.CompanyId, new SelectList(ViewBag.CompanyList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "multiple", @placeholder = "Select Company", @id = "ddlCompanyId" })
+                            <i></i>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CompanyId)
+                    </div>
+                </div>
+               
+                <div class="col-sm-4">
+                    @Html.LabelFor(model => model.BillType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.BillType, new SelectList(ViewBag.BillTypeList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "multiple", @placeholder = "Select Bill Type", @id = "ddlBillType" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="row" id="dvIsIndividual">
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            <div class="inline-group">
+                                @Html.Label(" ", new { @class = "label" })
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.IsIndividual, true, new { @id = "rdIndividual" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsIndividual, "Individual", new { @for = "rdIndividual" })
+                                </label>
+                                <label class="radio">
+                                    @Html.RadioButtonFor(model => model.IsIndividual, false, new { @id = "rdCumulative" })
+                                    <i></i>
+                                    @Html.LabelFor(model => model.IsIndividual, "Cumulative(Transaction includes all branches)", new { @for = "rdCumulative" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LocationId, new { @class = "label" })
+                        <div class="select">
+                            @Html.DropDownListFor(model => model.LocationId, Enumerable.Empty<SelectListItem>(), " ", new { @class = "form-control", @id = "ddlLocationId" })
+                            <i></i>
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LocationId)
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Label("Bill Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "AsOnDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.AsOnDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PartyCode, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.PartyId, new { @id = "hdnPartyId" })
+                            @Html.TextBoxFor(model => model.PartyCode, new { @class = "form-control", @id = "txtPartyCode" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PartyCode)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Label(" ", new { @class = "label" })
+                        @Html.LabelFor(model => model.PartyName, " ", new { @class = "label-bold", @id = "lblPartyName" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">View Report</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Finance Report', 'Vendor Outstanding', '', '', '');
+        locationId = '@SessionUtility.LoginLocationId';
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        ddlCompanyId = $('#ddlCompanyId');
+        txtAsOnDate = $('#txtAsOnDate');
+        ddlLocationId = $('#ddlLocationId');
+        ddlBillType = $("#ddlBillType");
+        txtPartyCode = $('#txtPartyCode');
+        hdnPartyId = $('#hdnPartyId');
+        lblPartyName = $('#lblPartyName');
+        rdIndividual = $('#rdIndividual');
+        rdCumulative = $('#rdCumulative');
+        drDate = InitDateRange('drDate', DateRange.LastWeek, false);
+        InitMultiSelect(ddlCompanyId.Id, true, true);
+        InitMultiSelect(ddlBillType.Id, true, true);
+        locationUrl = '@Url.Action("", "Location", new { Area = "Master" })';
+    }
+
+    function AttachEvents() {
+        VendorAutoComplete('txtPartyCode', 'hdnPartyId');
+        txtPartyCode.blur(function () { return IsVendorCodeExist(txtPartyCode, hdnPartyId, lblPartyName); });
+        OnIsIndividualChange();
+        rdIndividual.change(OnIsIndividualChange);
+        rdCumulative.change(OnIsIndividualChange);
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(ViewReport);
+    }
+
+    function OnIsIndividualChange() {
+        var requestData = { isRegion: rdIndividual.IsChecked }
+        AjaxRequestWithPostAndJson(locationUrl + '/GetLocationByHierarchyId', JSON.stringify(requestData), function (responseData) {
+            BindDropDownList('ddlLocationId', responseData, 'Value', 'Name', '', 'Select Location');
+        }, ErrorFunction, false);
+    }
+
+    function ViewReport() {
+        var prmList = [
+            { Name: "LocationId", Value: ddlLocationId.val() },
+            { Name: "IsCumulative", Value: rdCumulative.IsChecked },
+            { Name: "BillType", Value: ddlBillType.multiVal() },
+            { Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+            { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+            { Name: "AsOnDate", Value: $.displayDate($.setDate(txtAsOnDate.val())) },
+            { Name: "PartyId", Value: hdnPartyId.val() },
+            { Name: "Company", Value: ddlCompanyId.multiVal() },
+            { Name: "FinYear", Value: '@SessionUtility.FinYear' },
+            { Name: "CalYear", Value: '@SessionUtility.CalenderYear' }, ];
+       /*alert(prmList[0].Value);
+        alert(prmList[1].Value);
+        alert(prmList[2].Value);
+        alert(prmList[3].Value);
+        alert(prmList[4].Value);
+        alert(prmList[5].Value);
+        alert(prmList[6].Value);
+        alert(prmList[7].Value);
+        alert(prmList[8].Value);
+        alert(prmList[9].Value); */
+        var reportInfo = { PrmList: prmList, Name: 'VendorOutstanding', Description: 'Vendor Outstanding Report' };
+        return ShowReport(reportInfo);
+    }
+</script>

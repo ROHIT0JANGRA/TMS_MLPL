@@ -1,0 +1,398 @@
+﻿@model CodeLock.Models.MasterPart
+@using Secure_Coding.MvcSecurityExtensions;
+@{
+    ViewBag.Title = "Insert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@using (Html.BeginForm("Insert", "Part", FormMethod.Post, new { @class = "j-forms" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.AntiModelInjectionFor(m => m.PartId)
+    @Html.HiddenFor(m => m.PartId, new { @id = "hdnPartId" })
+
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PartNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PartNo, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PartNo)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PartName, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.PartName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PartName)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+
+                <table class="table-bordered" id="dtPart">
+                    <thead>
+                        <tr>
+                            <th>
+                                Packing Type
+                            </th>
+                            <th>
+                                Actual Weight Per Pkg
+                            </th>
+                            <th>
+                                Quantity Per Pkg
+                            </th>
+                            <th>
+                                Actual Weight Per Qty
+                            </th>
+                            <th>
+                                Pkg Dimentions UOM
+                            </th>
+                            <th>
+                                Length
+                            </th>
+                            <th>
+                                Breadth
+                            </th>
+                            <th>
+                                Height
+                            </th>
+                            <th>
+                                CFT Ratio
+                            </th>
+                            <th>
+                                Total Cubic
+                            </th>
+                            <th>
+                                Cubic Per Quantity
+                            </th>
+                            <th>
+                                Consignor
+                            </th>
+                            <th>
+                                Consignee
+                            </th>
+                            <th>
+                                IsReverse
+                            </th>
+                            <th width="85px">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.PartDetails.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => Model.PartDetails[i].PackingTypeId, new SelectList(ViewBag.PackingType, "Value", "Name"), "Select Packing Type", new { @class = "form-control", @id = "ddlPackingType" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].PackingTypeId)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].ActualWeight, new { @class = "form-control numeric4", id = "txtActualWeight" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].ActualWeight)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].Quantity, new { @class = "form-control numeric", @id = "txtQuantity" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].Quantity)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].ActualWeightPerQuantity, new { @class = "form-control numeric4", id = "txtActualWeightPerQuantity" + i.ToString(), @readonly = "true" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].ActualWeightPerQuantity)
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => Model.PartDetails[i].PackageDimensionsId, new SelectList(ViewBag.PackageDimensions, "Value", "Name"), "Select Package Dimension", new { @class = "form-control", @id = "ddlPackageDimensions" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].PackageDimensionsId)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].Length, new { @class = "form-control numeric2 size-sm-2", id = "txtLength" + i.ToString(), @Value = "0" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].Length)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].Breadth, new { @class = "form-control numeric2 size-sm-2", id = "txtBreadth" + i.ToString(), @Value = "0" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].Breadth)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].Height, new { @class = "form-control numeric2 size-sm-2", id = "txtHeight" + i.ToString(), @Value = "0" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].Height)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].CftRatio, new { @class = "form-control numeric2 size-sm-2", id = "txtCftRatio" + i.ToString(), @Value = "0" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].CftRatio)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].TotalCubic, new { @class = "form-control numeric2 size-sm-2", id = "txtTotalCubic" + i.ToString(), @Value = "0", @readonly = "true" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].TotalCubic)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].CubicPerQuantity, new { @class = "form-control numeric2 size-sm-2", id = "txtCubicPerQuantity" + i.ToString(), @Value = "0", @readonly = "true" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].CubicPerQuantity)
+                                </td>
+                                @*<td>
+            <div class="input">
+                @Html.HiddenFor(model => model.PartDetails[i].ConsignorId, new { @id = "hdnConsignorId" + i })
+                @Html.TextBoxFor(m => Model.PartDetails[i].ConsignorCode, new { @class = "form-control size-sm-2", id = "txtConsignor" + i.ToString() })
+            </div>
+            @Html.ValidationMessageFor(m => Model.PartDetails[i].ConsignorId)
+        </td>*@
+
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => Model.PartDetails[i].ConsignorId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Consignor", new { @class = "form-control", @id = "ddlConsignor" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].ConsignorId)
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => Model.PartDetails[i].ConsigneeId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select ConsigneeCode", new { @class = "form-control", @id = "ddlConsignee" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].ConsigneeId)
+                                </td>
+                                @*<td>
+            <div class="input">
+                @Html.HiddenFor(model => model.PartDetails[i].ConsigneeId, new { @id = "hdnConsigneeId" + i })
+                @Html.TextBoxFor(m => Model.PartDetails[i].ConsigneeCode, new { @class = "form-control size-sm-2", id = "txtConsignee" + i.ToString() })
+            </div>
+            @Html.ValidationMessageFor(m => Model.PartDetails[i].ConsigneeId)
+        </td>*@
+                            <td>
+                                @Html.LabelFor(m => Model.PartDetails[i].IsReverse, " ", new { @For = "chkIsReverse" + i.ToString() })
+                                <label class="checkbox">
+                                    @Html.CheckBoxFor(model => model.PartDetails[i].IsReverse, new { @id = "chkIsReverse" + i.ToString(), @name = "chkIsReverse" + i.ToString() })
+                                    <i></i>
+                                </label>
+                               
+                            </td>
+
+                                <td>
+                                    <button type="button" id="btnAdd" onclick="return AddRow(this.id)" class="btn btn-primary btn-xs dt-edit btn-ripple"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                                    <button type="button" id="btnRemove" onclick="return RemoveRow(this)" class="btn btn-danger btn-xs dt-delete btn-ripple"><span class="glyphicon glyphicon-trash"></span></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-success primary-btn" tabindex="3">Create</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $('#dtPart tr:last').attr('data-row-id', '0');
+        SetPageLoad('Part', 'Add', '', 'Go To List', '@Url.Action("Index")');
+
+        InitGrid('dtPart', false, 14, Init);
+
+    });
+
+     function ActualWeightPerQuantity(ActualWeight, Quantity) {
+        var ActualWeightPerQuantity = ActualWeight / Quantity ;
+        return ActualWeightPerQuantity;
+    }
+
+     function TotalCubic(Length, Breadth, Height, CftRatio)
+     {
+         var volume = Length * Breadth * Height * CftRatio;
+         return volume;
+     }
+
+     function CubicPerQuantity(TotalCubic, QtyPerPkg)
+     {
+          var CubicPerQuantity = TotalCubic / 1728 / QtyPerPkg;
+          return CubicPerQuantity;
+    }
+
+    function PackingTypeDuplicate(obj)
+    {
+        CheckDuplicateInTable('dtPart', 'ddlPackingType', 'Packing Type', obj);
+     }
+   
+    function Init() {
+
+
+            $('[id*="txtLength"]').each(function () {
+                var txtLength = $(this); //txtLength
+                var txtBreadth = $('#' + txtLength.attr('id').replace('txtLength', 'txtBreadth'));
+                var txtHeight = $('#' + txtLength.attr('id').replace('txtLength', 'txtHeight'));
+                var txtCftRatio = $('#' + txtLength.attr('id').replace('txtLength', 'txtCftRatio'));
+                var txtTotalCubic = $('#' + txtLength.attr('id').replace('txtLength', 'txtTotalCubic'));
+                var txtQuantity = $('#' + txtLength.attr('id').replace('txtLength', 'txtQuantity'));
+                var txtCubicPerQuantity = $('#' + txtLength.attr('id').replace('txtLength', 'txtCubicPerQuantity'));
+				var txtActualWeight = $('#' + txtLength.attr('id').replace('txtLength', 'txtActualWeight'));
+                var txtActualWeightPerQuantity = $('#' + txtLength.attr('id').replace('txtLength', 'txtActualWeightPerQuantity'));
+ 				var ddlPackingType = $('#' + txtLength.attr('id').replace('txtLength', 'ddlPackingType'));
+                var ddlConsignor = $('#' + txtLength.attr('id').replace('txtLength', 'ddlConsignor'));
+                var ddlConsignee = $('#' + txtLength.attr('id').replace('txtLength', 'ddlConsignee'));
+                var ddlPackageDimensions = $('#' + txtLength.attr('id').replace('txtLength', 'ddlPackageDimensions'));
+
+                AddRequired(ddlPackingType, "Please select the Packing Type ");
+                AddRequired(ddlPackageDimensions, "Please select the Package Dimensions");
+                AddRequired(txtActualWeight, "Please enter Actual Weight ");
+                AddRange(txtActualWeight, "Please enter a value between 0.001 to 9999999", 0.001, 9999999);
+                AddRequired(txtQuantity, "Please enter Quantity ");
+                AddRange(txtQuantity, "Please enter a value between 0.001 to 9999999", 0.001, 9999999);
+                AddRequired(txtActualWeightPerQuantity, "Please enter Actual Weight Per Quantity");
+                AddRange(txtActualWeightPerQuantity, "Please enter a value between 0.001 to 9999999", 0.001, 9999999);
+                AddRequired(txtLength, "Please enter Length");
+                //AddRange(txtLength, "Please enter a value between 0 to 9999999", 0, 9999999);
+                AddRequired(txtBreadth, "Please enter Breath");
+                //AddRange(txtBreadth, "Please enter a value between 0 to 9999999", 0, 9999999);
+                AddRequired(txtHeight, "Please enter Height");
+                //AddRange(txtHeight, "Please enter a value between 0 to 9999999", 0, 9999999);
+                AddRequired(txtCftRatio, "Please enter CftRatio");
+                //AddRange(txtCftRatio, "Please enter a value between 0 to 9999999", 0, 9999999);
+                AddRequired(txtTotalCubic, "Please enter Total Cubic");
+                //AddRange(txtTotalCubic, "Please enter a value between 0 to 9999999", 0, 9999999);
+                AddRequired(txtCubicPerQuantity, "Please enter Cubic Per Quantity");
+                //AddRange(txtCubicPerQuantity, "Please enter a value between 0 to 9999999", 0, 9999999);
+                AddRequired(ddlConsignor, "Please select the Consignor ");
+                AddRequired(ddlConsignee, "Please select the ConsigneeCode ");
+
+                ddlPackageDimensions.val(2);
+
+                txtLength.blur(function () {
+                    var Volume = TotalCubic(parseFloat(txtLength.val()), parseFloat(txtBreadth.val()), parseFloat(txtHeight.val()), parseFloat(txtCftRatio.val()));
+                    txtTotalCubic.val(Volume);
+
+                    var VolumeWeight = CubicPerQuantity(parseFloat(txtTotalCubic.val()), parseInt(txtQuantity.val()));
+                    txtCubicPerQuantity.val(VolumeWeight);
+                });
+
+                txtBreadth.blur(function () {
+                    var Volume = TotalCubic(parseFloat(txtLength.val()), parseFloat(txtBreadth.val()), parseFloat(txtHeight.val()), parseFloat(txtCftRatio.val()));
+                    txtTotalCubic.val(Volume);
+
+                    var VolumeWeight = CubicPerQuantity(parseFloat(txtTotalCubic.val()), parseInt(txtQuantity.val()));
+                    txtCubicPerQuantity.val(VolumeWeight);
+                });
+
+                txtHeight.blur(function () {
+                    var Volume = TotalCubic(parseFloat(txtLength.val()), parseFloat(txtBreadth.val()), parseFloat(txtHeight.val()), parseFloat(txtCftRatio.val()));
+                    txtTotalCubic.val(Volume);
+
+                    var VolumeWeight = CubicPerQuantity(parseFloat(txtTotalCubic.val()), parseInt(txtQuantity.val()));
+                    txtCubicPerQuantity.val(VolumeWeight);
+                });
+
+                txtCftRatio.blur(function () {
+                    var Volume = TotalCubic(parseFloat(txtLength.val()), parseFloat(txtBreadth.val()), parseFloat(txtHeight.val()), parseFloat(txtCftRatio.val()));
+                    txtTotalCubic.val(Volume);
+
+                    var VolumeWeight = CubicPerQuantity(parseFloat(txtTotalCubic.val()), parseInt(txtQuantity.val()));
+                    txtCubicPerQuantity.val(VolumeWeight);
+                });
+
+
+                txtQuantity.blur(function () {
+                    var VolumeWeight = CubicPerQuantity(parseFloat(txtTotalCubic.val()), parseInt(txtQuantity.val()));
+                    txtCubicPerQuantity.val(VolumeWeight);
+                });
+
+                txtActualWeight.blur(function () {
+                    var ActualWeightPerQty = ActualWeightPerQuantity(parseFloat(txtActualWeight.val()), parseFloat(txtQuantity.val()));
+                    txtActualWeightPerQuantity.val(ActualWeightPerQty);
+        		});
+
+                txtQuantity.blur(function () {
+                    var ActualWeightPerQty = ActualWeightPerQuantity(parseFloat(txtActualWeight.val()), parseFloat(txtQuantity.val()));
+                    txtActualWeightPerQuantity.val(ActualWeightPerQty);
+                });
+                ddlPackingType.change(function () {
+                    try {
+                        IsPackingTypeExist($(this));
+                    }
+                    catch (e) {
+                        $(this).val('');
+                        SetFormFieldFocus($(this).Id);
+                    }
+                });
+                ddlConsignor.change(function () {
+                    try {
+                        IsPackingTypeExist($(this));
+                    }
+                    catch (e) {
+                        $(this).val('');
+                        SetFormFieldFocus($(this).Id);
+                    }
+                });
+                ddlConsignee.change(function () {
+                    try {
+                        IsPackingTypeExist($(this));
+                    }
+                    catch (e) {
+                        $(this).val('');
+                        SetFormFieldFocus($(this).Id);
+                    }
+                });
+        });
+
+    }
+    
+    function IsPackingTypeExist(obj) {
+        if (obj.val() != '' && !obj.is('[readonly]')) {
+            var outertr = obj.closest('tr');
+            var outerddlPackingType = outertr.find('[id*="ddlPackingType"]');
+            var outerddlConsignor = outertr.find('[id*="ddlConsignor"]');
+            var outerddlConsignee = outertr.find('[id*="ddlConsignee"]');
+
+
+            $('#dtPart tr:not(:first)').each(function () {
+                var innertr = $(this);
+                var innerddlPackingType = innertr.find('[id*="ddlPackingType"]');
+                var innerddlConsignor = innertr.find('[id*="ddlConsignor"]');
+                var innerddlConsignee = innertr.find('[id*="ddlConsignee"]');
+
+
+                if (innerddlPackingType.attr('id') != outerddlPackingType.attr('id') &&
+                    innerddlConsignor.attr('id') != outerddlConsignor.attr('id') &&
+                    innerddlConsignee.attr('id') != outerddlConsignee.attr('id') &&
+                    innerddlPackingType.val() == outerddlPackingType.val() &&
+                    innerddlConsignor.val() == outerddlConsignor.val() &&
+                    innerddlConsignee.val() == outerddlConsignee.val() )
+                {
+                    ShowMessage("Packing type is already exist");
+                    throw(true);
+                }
+
+            });
+        }
+    }
+
+</script>

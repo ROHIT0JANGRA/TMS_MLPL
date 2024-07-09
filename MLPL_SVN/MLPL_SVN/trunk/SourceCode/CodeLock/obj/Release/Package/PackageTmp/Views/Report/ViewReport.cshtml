@@ -1,0 +1,15 @@
+﻿@model CodeLock.Models.ReportInfo
+@{
+    Layout = null;
+    string reportUrl = Url.Content("~/ReportView.aspx") + "?ReportName=" + Model.ReportName + "&Id=" + Model.ReportId;
+}
+
+<iframe id="frmReport" src="@reportUrl" frameborder="0" style="width:100%; height: 100%;" scrolling="yes"></iframe>
+
+<script>
+    document.title = '@Model.ReportDescription';
+    window.oncontextmenu = function () {
+        return false;
+    }
+</script>
+

@@ -1,0 +1,505 @@
+﻿@model CodeLock.Models.Docket
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("ChangeDocketCustomer", "Thc", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    @Html.HiddenFor(model => model.DocketId)
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.CustomerCode, new { @class = "label" })
+                <div class="input">
+                    @Html.HiddenFor(model => model.CustomerId, new { @id = "hdnCustomerId" })
+                    @Html.TextBoxFor(model => model.CustomerCode, null, new { @class = "form-control", @id = "txtCustomerCode" })
+                </div>
+                @Html.ValidationMessageFor(model => model.CustomerCode)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.CustomerName, new { @class = "label" })
+
+                <div class="input">
+                    @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control textlabel", @id = "txtCustomerName" })
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConsignorCode, new { @class = "label" })
+                <div class="input">
+                    @Html.HiddenFor(model => model.ConsignorId, new { @id = "hdnConsignorId" })
+                    @Html.TextBoxFor(model => model.ConsignorCode, null, new { @class = "form-control", @id = "txtConsignorCode" })
+
+                </div>
+                @Html.ValidationMessageFor(model => model.ConsignorCode)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConsignorName, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.ConsignorName, new { @class = "form-control textlabel", @id = "txtConsignorName" })
+                </div>
+                @Html.ValidationMessageFor(model => model.ConsignorName)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConsignorAddress1, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.ConsignorAddress1, new { @class = "form-control textlabel", @id = "txtConsignorAddress1" })
+
+                </div>
+                @Html.ValidationMessageFor(model => model.ConsignorAddress1)
+
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConsignorCity, new { @class = "label" })
+                <div class="input">
+                    @Html.HiddenFor(model => model.ConsignorCityId, new { @id = "hdnConsignorCityId" })
+                    @Html.TextBoxFor(model => model.ConsignorCity, null, new { @class = "form-control textlabel", @id = "txtConsignorCity" })
+
+                </div>
+                @Html.ValidationMessageFor(model => model.ConsignorCity)
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConsigneeCode, new { @class = "label" })
+                <div class="input">
+                    @Html.HiddenFor(model => model.ConsigneeId, new { @id = "hdnConsigneeId" })
+                    @Html.TextBoxFor(model => model.ConsigneeCode, null, new { @class = "form-control ", @id = "txtConsigneeCode" })
+
+                </div>
+                @Html.ValidationMessageFor(model => model.ConsigneeCode)
+
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConsigneeName, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.ConsigneeName, new { @class = "form-control textlabel", @id = "txtConsigneeName" })
+                </div>
+                @Html.ValidationMessageFor(model => model.ConsigneeName)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConsigneeAddress1, new { @class = "label" })
+                <div class="input">
+                    @Html.TextBoxFor(model => model.ConsigneeAddress1, new { @class = "form-control textlabel", @id = "txtConsigneeAddress1" })
+                </div>
+                @Html.ValidationMessageFor(model => model.ConsigneeAddress1)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ConsigneeCity, new { @class = "label" })
+                <div class="input">
+                    @Html.HiddenFor(model => model.ConsigneeCityId, new { @id = "hdnConsigneeCityId" })
+                    @Html.TextBoxFor(model => model.ConsigneeCity, null, new { @class = "form-control textlabel", @id = "txtConsigneeCity" })
+                </div>
+                @Html.ValidationMessageFor(model => model.ConsigneeCity)
+            </div>
+        </div>
+    </div>
+        <div class="form-footer">
+            <button type="submit" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+        <div class="page-separator">Docket Details</div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketNo, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.DocketNo, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DocketDate, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.DocketDate, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FromCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.FromCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ToCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ToCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.CustomerCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerName, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.CustomerName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorName, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorAddress1, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorAddress1, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsignorCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeCode, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeCode, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeName, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeName, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeAddress1, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsignorAddress1, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConsigneeCity, new { @class = "label-bold" }) <div class="clearfix">
+                        @Html.DisplayFor(model => model.ConsigneeCity, new { @class = "label" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-separator">Invoice Details</div>
+        <table id="dtInvoice">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].InvoiceNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].InvoiceDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].Length)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].Breadth)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].Height)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].VolumetricWeight)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => Model.InvoiceList[0].ChargedWeight)
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.InvoiceList)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InvoiceNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InvoiceDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Length)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Breadth)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Height)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VolumetricWeight)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ChargedWeight)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+                        @Html.DisplayFor(model => model.ChargedWeight)
+                    </th>
+
+                </tr>
+
+            </tfoot>
+        </table>
+
+    </div>
+    }
+
+    <script>
+        var docketId, docketFieldList, txtDocketNo, btnSubmit, isFinancialUpdate = false, showErrorMessage = true, allowWalkIn = true;
+
+    $(document).ready(function () {
+        docketFieldList = JSON.parse('@DisplayName.GetList("Docket")'.replace(/&quot;/g, '"'));
+        vendorMasterUrl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        SetPageLoad('Change Customer Detail', 'Update', '', '', '');
+        txtDocketNo = $('#txtDocketNo');
+        txtCustomerCode = $('#txtCustomerCode');
+        txtConsignorCode = $('#txtConsignorCode');
+        txtConsignorName = $('#txtConsignorName');
+
+        txtConsigneeCode = $('#txtConsigneeCode');
+        txtConsigneeName = $('#txtConsigneeName');
+
+        txtConsigneeAddress1 = $('#txtConsigneeAddress1');
+        hdnConsigneeCityId = $('#hdnConsigneeCityId');
+        txtConsigneeCity = $('#txtConsigneeCity');
+
+        txtConsignorAddress1 = $('#txtConsignorAddress1');
+        txtConsignorCity = $('#txtConsignorCity');
+        hdnConsignorCityId = $('#hdnConsignorCityId');
+
+
+        hdnCustomerId = $('#hdnCustomerId');
+        hdnConsignorId = $('#hdnConsignorId');
+        hdnConsigneeId = $('#hdnConsigneeId');
+        txtCustomerName = $('#txtCustomerName');    
+
+        btnSubmit = $('#btnSubmit');
+        btnSubmit.click(OnSubmit);
+        LoadDataTable('dtInvoice', false, false, false);
+
+        docketScript.CustomerAutoComplete('txtCustomerCode', 'txtCustomerName', 'hdnCustomerId', 'Contract Party', 'ContractParty', true);
+        txtCustomerCode.blur(function () { CheckValidCustomerCode(true, true, 'Contract Party'); });
+
+        docketScript.CustomerAutoComplete('txtConsignorCode', 'txtConsignorName', 'hdnConsignorId', 'Consignor', 'Consignor', true);
+        txtConsignorCode.blur(function () { CheckValidConsignorCode(true, true, 'Consignor'); });
+
+        docketScript.CustomerAutoComplete('txtConsigneeCode', 'txtConsigneeName', 'hdnConsigneeId', 'Consignee', 'Consignee', true);
+        txtConsigneeCode.blur(function () { CheckValidConsigneeCode(true, true, 'Consignee'); });
+
+
+    });
+    var docketScript = {
+        CustomerAutoComplete: function (txtCodeId, lbltxtNameId, hdnId, fieldName, entity, allowWalkin) {
+            if (IsObjectNullOrEmpty(fieldName)) fieldName = 'Customer';
+            AutoComplete(txtCodeId, ReplaceUrl('Customer', 'GetAutoCompleteCustomerListByLocationPaybas'), 'customerName', 'l', 'l', 'l', 'd', '', hdnId, lbltxtNameId, fieldName, true, function () {
+                if (entity == 'Consignor')
+                    return [{ Key: 'locationId', Value: 0 }, { Key: 'PaybasId', Value: 0 }, { Key: 'allowWalkin', Value: allowWalkin }];
+                else if (entity == 'Consignee')
+                    return [{ Key: 'locationId', Value: 0 }, { Key: 'PaybasId', Value: 0 }, { Key: 'allowWalkin', Value: allowWalkin }];
+                else
+                    return [{ Key: 'locationId', Value: 0 }, { Key: 'PaybasId', Value: 0 }, { Key: 'allowWalkin', Value: allowWalkin }];
+            });
+        },
+        CheckValidCustomerCode: function (txtCode, lbltxtName, hdnId, entity, fieldName, showErrorMessage, allowWalkIn) {
+
+   
+            if (!txtCode.prop('readOnly')) {
+                if (IsObjectNullOrEmpty(fieldName)) fieldName = 'Customer';
+
+
+
+                if (txtCode.val() != '' && txtCode.IsEnabled) {
+
+             
+                    var requestData = { locationId: entity == 'Consignor' ? 0 : entity == 'Consignee' ? 0 : 0, paybasId: ((entity == 'Consignor' || entity == 'Consignee') ? 0 : 0), customerCode: txtCode.val(), allowWalkIn: allowWalkIn };
+                    AjaxRequestWithPostAndJson(customerMasterUrl + '/IsCustomerExistByLocationPaybas', JSON.stringify(requestData), function (result) {
+
+
+
+                        if (result.CustomerId == '') {
+
+                            txtCode.val('').focus();
+                            hdnId.val('');
+
+                            if (lbltxtName.Id.substring(0, 3) == 'lbl')
+                                lbltxtName.text('');
+                            else
+                                lbltxtName.val('');
+                            if (showErrorMessage)
+                                AddRequired(txtCode, 'Invalid ' + fieldName);
+                        }
+                        else {
+
+                            if (entity == 'ContractParty') {
+
+                                $('#txtCustomerName').val(result.CustomerName);
+                            }
+                          else  if (entity == 'Consignor') {
+
+                                $('#hdnConsignorId').val(result.CustomerId);
+                                $('#txtConsignorCode').val(result.CustomerCode);
+                                $('#txtConsignorName').val(result.CustomerName);
+
+                                if (txtConsignorAddress1 != null && txtConsignorAddress1 != undefined)
+                                    txtConsignorAddress1.val(result.Address1);
+
+                                if (hdnConsignorCityId != null && hdnConsignorCityId != undefined)
+                                    hdnConsignorCityId.val(result.CityId);
+
+                                if (txtConsignorCity != null && txtConsignorCity != undefined)
+                                    txtConsignorCity.val(result.CityName);
+                            }
+                            else if (entity == 'Consignee') {
+
+                                $('#hdnConsigneeId').val(result.CustomerId);
+                                $('#txtConsigneeCode').val(result.CustomerCode);
+                                $('#txtConsigneeName').val(result.CustomerName);
+
+                                if (txtConsigneeAddress1 != null && txtConsigneeAddress1 != undefined)
+                                    txtConsigneeAddress1.val(result.Address1);
+
+                                if (hdnConsigneeCityId != null && hdnConsigneeCityId != undefined)
+                                    hdnConsigneeCityId.val(result.CityId);
+
+                                if (txtConsigneeCity != null && txtConsigneeCity != undefined)
+                                    txtConsigneeCity.val(result.CityName);
+                            }
+
+                        }
+                    }, ErrorFunction, false);
+                }
+            }
+            return false;
+        },
+
+    }
+
+        function CheckValidCustomerCode(showErrorMessage, allowWalkIn, fieldName) {
+            return docketScript.CheckValidCustomerCode(txtCustomerCode, txtCustomerName, hdnCustomerId, 'ContractParty', fieldName, showErrorMessage, allowWalkIn)
+        }
+
+        function CheckValidConsignorCode(showErrorMessage, allowWalkIn, fieldName) {
+
+           return docketScript.CheckValidCustomerCode(txtConsignorCode, txtConsignorName, hdnConsignorId, 'Consignor', fieldName, showErrorMessage, allowWalkIn)
+        }
+        function CheckValidConsigneeCode(showErrorMessage, allowWalkIn, fieldName) {
+            return docketScript.CheckValidCustomerCode(txtConsigneeCode, txtConsigneeName, hdnConsigneeId, 'Consignee', fieldName, showErrorMessage, allowWalkIn)
+        }
+    function OnSubmit() {
+
+        if ($('#txtCustomerCode').val() == "") {
+            ShowMessage('Customer Code  is not valid for Update');
+            $('#txtCustomerCode').focus();
+            return false;
+        }
+        if ($('#hdnCustomerId').val() == 0) {
+            ShowMessage('Customer Code  is not valid for Update');
+            $('#txtCustomerCode').focus();
+            return false;
+        }
+
+        if ($('#txtConsignorCode').val() == "") {
+            ShowMessage('Consignor Code  is not valid for Update');
+            $('#txtConsignorCode').focus();
+            return false;
+        }
+        if ($('#hdnConsignorId').val() == 0) {
+            ShowMessage('Consignor Code  is not valid for Update');
+            $('#txtConsignorCode').focus();
+            return false;
+        }
+
+        if ($('#txtConsigneeCode').val() == "") {
+            ShowMessage('Consignee Code  is not valid for Update');
+            $('#txtConsigneeCode').focus();
+            return false;
+        }
+        if ($('#hdnConsigneeId').val() == 0) {
+            ShowMessage('Consignee Code  is not valid for Update');
+            $('#txtConsigneeCode').focus();
+            return false;
+        }
+
+
+
+
+        return true;
+    }
+
+    </script>
+

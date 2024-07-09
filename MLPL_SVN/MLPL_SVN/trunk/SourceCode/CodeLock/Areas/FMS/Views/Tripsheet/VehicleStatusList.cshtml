@@ -1,0 +1,62 @@
+﻿
+@model IEnumerable<CodeLock.Models.GetVehicleStatusList>
+@{
+    ViewBag.Title = "VehicleStatusList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap material-table-widget">
+   
+    <table id="exportable-tbl" class="table foo-data-table-filterable" data-filter="#filter" data-filter-text-only="true" data-page-size="5" data-limit-navigation="3">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CodeDesc)
+                </th>
+                <th data-hide="phone">
+                    @Html.DisplayNameFor(model => model.CodeTypeVal)
+                </th>
+                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CodeDesc)
+                    </td>
+                    <td>
+                        @Html.Label("", item.CodeTypeVal == "0" ? item.CodeTypeVal : item.CodeTypeVal, new { @class = item.CodeTypeVal == "0" ? "label label-default" : "label label-success" })
+                    </td>
+                    <td class="td-center">
+                        @if (item.CodeTypeId == "5")
+                        {
+                            <div class="btn-toolbar" role="toolbar">
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("VehicleStatusListUpdate", new { id = item.CodeTypeId, codeId = item.CodeDesc })"><span class="zmdi zmdi-edit"></span></a>
+
+                                </div>
+                            </div>
+                        }
+
+                        
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot class="hide-if-no-paging">
+            <tr>
+                <td colspan="6" class="footable-visible">
+                    <div class="pagination pagination-centered"></div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        SetPageLoad('Vehicle Status', 'List');
+    });
+</script>
+

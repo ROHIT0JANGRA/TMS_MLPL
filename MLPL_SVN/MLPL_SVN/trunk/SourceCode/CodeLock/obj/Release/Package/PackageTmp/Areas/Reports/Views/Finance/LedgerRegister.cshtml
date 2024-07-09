@@ -1,0 +1,178 @@
+﻿@using CodeLock.Models
+@model Ledger
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+{
+    <div class="widget-wrap">
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LevelType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.Level, new List<SelectListItem> {
+                            new SelectListItem() {Text = "Company",Value="1"},
+                            new SelectListItem() {Text = "Controlling", Value="2"},
+                            new SelectListItem() {Text = "Branch", Value="3"}
+                   }, new { @class = "form-control", @id = "ddlLevelType" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.Level, Enumerable.Empty<SelectListItem>(), "-- Select --", new { @class = "form-control select2", @id = "ddlLevel" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.WiseType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.WiseType, new List<SelectListItem> {
+                            new SelectListItem() {Text = "Customer",Value="1"},
+                             new SelectListItem() {Text = "Vendor",Value="2"},
+                             new SelectListItem() {Text = "Account",Value="3"}
+                   }, new { @class = "form-control", @id = "ddlWiseType" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label(" ", new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.Wise, Enumerable.Empty<SelectListItem>(), "-- Select --", new { @class = "form-control select2", @id = "ddlWise" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Label("Voucher Date", new { @class = "label" })
+                    <div class="clearfix">
+                        <div id="drDate"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReportType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.ReportType, new List<SelectListItem> {
+                            new SelectListItem() {Text = "Monthly",Value="1"},
+                            new SelectListItem() {Text = "Voucher", Value="2"},
+                            new SelectListItem() {Text = "Branch", Value="3"},
+                            new SelectListItem() {Text = "Account", Value="4"},
+                            new SelectListItem() {Text = "Voucher Type", Value="5"}
+                   }, new { @class = "form-control", @id = "ddlReportType" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReportViewType, new { @class = "label" })
+                    <div class="select">
+                        @Html.DropDownListFor(model => model.ReportViewType, new List<SelectListItem> {
+                            new SelectListItem() {Text = "Single",Value="1"},
+                            new SelectListItem() {Text = "Single Account", Value="2"},
+                            new SelectListItem() {Text = "Multiple", Value="3"},}, new { @class = "form-control", @id = "ddlReportViewType" })
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="button" id="btnSubmit" class="btn btn-success primary-btn" tabindex="3">Submit</button>
+        </div>
+    </div>
+}
+
+<script>
+
+    $(document).ready(function () {
+        SetPageLoad('Finance Report', 'Ledger Report', '', '', '');
+        locationId = '@SessionUtility.LoginLocationId';
+        InitObjects();
+        AttachEvents();
+    });
+
+    function InitObjects() {
+        drDate = InitDateRange('drDate', DateRange.LastWeek,false);
+        ddlLevelType = $('#ddlLevelType');
+        ddlLevel = $('#ddlLevel');
+        ddlWiseType = $('#ddlWiseType');
+        ddlWise = $('#ddlWise');
+        ddlReportType = $('#ddlReportType');
+        ddlReportViewType = $('#ddlReportViewType');
+        btnSubmit = $('#btnSubmit');
+        customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
+        companyMasterUrl = '@Url.Action("", "Company", new { Area = "Master" })';
+        branchMasterUrl = '@Url.Action("", "Branch", new { Area = "Master" })';
+        companyList = JSON.parse('@Html.Raw(ViewBag.CompanyList)');
+        locationList = JSON.parse('@Html.Raw(ViewBag.LocationList)');
+        customerList = JSON.parse('@Html.Raw(ViewBag.CustomerList)');
+        vendorList = JSON.parse('@Html.Raw(ViewBag.VendorList)');
+        accountList = JSON.parse('@Html.Raw(ViewBag.AccountList)');
+    }
+
+    function AttachEvents() {
+        BindDropDownList('ddlLevel', companyList, 'Value', 'Name', '', '---Select---');
+        BindDropDownList('ddlWise', customerList, 'Value', 'Name', '', '---Select---');
+        ddlLevelType.change(OnLevelChange);
+        ddlWiseType.change(OnWiseTypeChange);
+        btnSubmit.click(ViewReport);
+    }
+
+    function OnLevelChange() {
+        if (ddlLevelType.val() == "1")
+            BindDropDownList('ddlLevel', companyList, 'Value', 'Name', '', '---Select---');
+        else
+            BindDropDownList('ddlLevel', locationList, 'Value', 'Name', '', '---Select---');
+    }
+
+    function OnWiseTypeChange() {
+        if (ddlWiseType.val() == "1")
+            BindDropDownList('ddlWise', customerList, 'Value', 'Name', '', '---Select---');
+        else if (ddlWiseType.val() == "2")
+            BindDropDownList('ddlWise', vendorList, 'Value', 'Name', '', '---Select---');
+        else
+            BindDropDownList('ddlWise', accountList, 'Value', 'Name', '', '---Select---');
+    }
+
+    function ViewReport() {
+        var prmList = [{ Name: "FromDate", Value: $.displayDate(drDate.startDate) },
+            { Name: "ToDate", Value: $.displayDate(drDate.endDate) },
+            { Name: "LevelType", Value: $('#ddlLevelType').val() },
+            { Name: "Level", Value: $('#ddlLevel').val() },
+            { Name: "WiseType", Value: $('#ddlWiseType').val() },
+            { Name: "Wise", Value: $('#ddlWise').val() },
+            { Name: "ReportType", Value: $('#ddlReportType').val() },
+            { Name: "ReportViewType", Value: $('#ddlReportViewType').val() },
+            { Name: "PrintedBy", Value: loginUserId }
+        ];
+
+        if ($('#ddlReportViewType').val() == 3) {
+            var reportInfo = { PrmList: prmList, Name: 'LedgerRegisterMultiple', Description: 'Ledger Register' };
+            return ShowReport(reportInfo);
+        }
+        else if ($('#ddlWiseType').val() == "1" || $('#ddlWiseType').val() == "2") {
+            var reportInfo = { PrmList: prmList, Name: 'LedgerRegister', Description: 'Ledger Register' };
+            return ShowReport(reportInfo);
+        }
+        else if ($('#ddlWiseType').val() == "3") {
+            var reportInfo = { PrmList: prmList, Name: 'LedgerCashBankRegister', Description: 'Ledger Register' };
+            return ShowReport(reportInfo);
+        }
+    }
+
+</script>
