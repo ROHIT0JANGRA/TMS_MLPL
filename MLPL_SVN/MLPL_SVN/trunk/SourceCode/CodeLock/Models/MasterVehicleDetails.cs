@@ -7,12 +7,11 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
+
 namespace CodeLock.Models
 {
   public class MasterVehicleDetails : BaseModel
   {
-        public short SrNo { get; set; }
-        public short Id { get; set; }
     public string FtlTypeName { get; set; }
 
     [Display(Name = " Vehicle Id")]
@@ -49,7 +48,7 @@ namespace CodeLock.Models
 
     public string LocationName { get; set; }
 
-    public virtual MasterVehicleDetail MasterVehicleDetail { get; set; }
+    //public virtual MasterVehicleDetail MasterVehicleDetail { get; set; }
 
     [Display(Name = "No of Drivers")]
     public Decimal NoOfDrivers { get; set; }
@@ -152,8 +151,12 @@ namespace CodeLock.Models
 
     [Display(Name = "Vehicle Mileage")]
     public Decimal VehicleMileage { get; set; }
-        public string CodeDescription { get; set; }
         public int TotalVehicle { get; set; }
         public int FilterVehcile { get; set; }
+        public int SrNo { get;set; }
+        public string VehicleType { get; set;}
+        public string FTLType { get; set; }
+        public string CodeDescription { get; set; }
+
     }
 }

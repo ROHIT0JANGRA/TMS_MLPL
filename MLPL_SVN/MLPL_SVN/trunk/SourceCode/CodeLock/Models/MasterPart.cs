@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.EnterpriseServices;
 using System.Net.Http;
 using System.Web.Mvc;
 using System.Xml.Linq;
@@ -17,8 +16,7 @@ namespace CodeLock.Models
 
         public long PartId { get; set; }
 
-        public int FilterParts {  get; set; }
-        public int TotalParts { get; set; }
+        
         public string PartCode { get; set; }
 
         [Required(ErrorMessage = "Please enter Part No")]
@@ -34,6 +32,8 @@ namespace CodeLock.Models
         public string PartName { get; set; }
         [Display(Name = "Entry By")]
         public string UserName { get; set; }
+        public int TotalParts { get; set; }
+        public int FilterParts { get; set; }
         public List<MasterPartDetail> PartDetails { get; set; }
        
     }

@@ -253,4 +253,51 @@ namespace CodeLock.Models
         [Required(ErrorMessage = "Please enter Tripsheet Company")]
         public byte TripsheetCompanyId { get; set; }
     }
+    public class ReportTripStartModel
+    {
+        public int SRNo { get; set; }
+        public string TripsheetNo { get; set; }
+        public string TripsheetDate { get; set; }
+        public string TripsheetTime { get; set; }
+        public string ManualTripsheetNo { get; set; }
+        public string StartLocation { get; set; }
+        public string EndLocation { get; set; }
+        public string VehicleNo { get; set; }
+        public int StartKm { get; set; }
+        public string FromCity { get; set; }
+        public string ToCity { get; set; }
+        public decimal DriverBalance { get; set; }
+        public string IsThcAttached { get; set; }
+        public string IsFuelSlipProvided { get; set; }
+        public string IsCancel { get; set; }
+        public string CancelDate { get; set; }
+        public string CancelReason { get; set; }
+        public string EntryBy { get; set; }
+        public string EntryDate { get; set; }
+        public string FirstDriverName { get; set; }
+        public string FirstDriverMobileNo { get; set; }
+        public string FirstDriverLicenseNo { get; set; }
+        public string FirstDriverLicenseIssueBy { get; set; }
+        public string FirstDriverLicenseValidityDate { get; set; }
+        public string SecondDriverName { get; set; }
+        public string SecondDriverMobileNo { get; set; }
+        public string SecondDriverLicenseNo { get; set; }
+        public string SecondDriverLicenseIssueBy { get; set; }
+        public string SecondDriverLicenseValidityDate { get; set; }
+        public int TransitTimeHour { get; set; }
+        public int TransitTimeMinute { get; set; }
+        public string CheckListCheckedBy { get; set; }
+        public string CheckListCheckedDate { get; set; }
+        public string CheckListApprovedBy { get; set; }
+        public string CheckListApprovedDate { get; set; }
+        public int EndKm { get; set; }
+        public string OpCloseStatus { get; set; }
+        public string Remarks { get; set; }
+        public bool AllDocketField { get; set; }
+
+        public bool AllDocketCharges { get; set; }
+
+        public bool AllReportField { get; set; }
+    }
+
 }

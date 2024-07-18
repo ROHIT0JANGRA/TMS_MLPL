@@ -107,5 +107,7 @@ namespace CodeLock.Models
     [Display(Name = "Labour Amount")]
     public Decimal LabourAmount { get; set; }
         public string Status { get; set; }
+        public string DeliveryPersonName { get; set; }
+
     }
 }

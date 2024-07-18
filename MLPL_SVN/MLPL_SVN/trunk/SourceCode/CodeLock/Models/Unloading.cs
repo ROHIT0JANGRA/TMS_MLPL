@@ -134,4 +134,61 @@ namespace CodeLock.Models
 
         public string VehicleNo { get; set; }
     }
+    public class UnloadingReportModel
+    {
+        public int SRNo { get; set; }
+        public string UnloadingNo { get; set; }
+        public string UnloadingDate { get; set; }
+        public string Location { get; set; }
+        public string IsMarketVehicle { get; set; }
+        public string VehicleNo { get; set; }
+        public string FromCity { get; set; }
+        public string ToCity { get; set; }
+        public int DriverId { get; set; }
+        public int WarehouseId { get; set; }
+        public int AccountId { get; set; }
+        public string Remark { get; set; }
+        public string UnloadingDocumentName { get; set; }
+        public string Company { get; set; }
+        public int TotalPackages { get; set; }
+        public decimal TotalFreight { get; set; }
+        public decimal LoadingCharges { get; set; }
+        public decimal UnLoadingCharges { get; set; }
+        public decimal TotalActualWeight { get; set; }
+        public decimal TotalChargedWeight { get; set; }
+        public decimal AdvanceFreight { get; set; }
+        public decimal BalanceFreight { get; set; }
+        public decimal DeliveryCommission { get; set; }
+        public decimal TotalPaidAmount { get; set; }
+        public decimal TotalTopayAmount { get; set; }
+        public decimal DoorDelivery { get; set; }
+        public decimal KartAmount { get; set; }
+        public string EntryBy { get; set; }
+        public string EntryDate { get; set; }
+        // New fields
+        public decimal ClaimCharges { get; set; }
+        public decimal DetentionCharges { get; set; }
+        public decimal IncentiveCharges { get; set; }
+        public decimal HandlingCharges { get; set; }
+        public decimal PenaltyCharges { get; set; }
+        public decimal GSTRate { get; set; }
+        public decimal TaxAmountTotal { get; set; }
+        public string TDSSection { get; set; }
+        public decimal TDSRate { get; set; }
+        public decimal TDSAmt { get; set; }
+        public decimal BalanceBillAmount { get; set; }
+        public string BalanceVoucherNo { get; set; }
+        public string BalanceVoucherDate { get; set; }
+        public string BalancePaymentMode { get; set; }
+        public string BalanceChequeNo { get; set; }
+        public string BalanceChequeDate { get; set; }
+        public string BalanceBankName { get; set; }
+        public string BalanceBillPaymentNo { get; set; }
+        public decimal BalanceBillPaymentAmount { get; set; }
+        public decimal PendingBillPayableAmt { get; set; }
+        public string DocumentStatus { get; set; }
+        public string TripOperationalStatus { get; set; }
+        public string TripFinancialStatus { get; set; }
+    }
+
 }

@@ -682,6 +682,7 @@
     <Compile Include="Areas\Operation\Repository\TrackingRepository.cs" />
     <Compile Include="Areas\Operation\Repository\VendorDocumentApprovalRepository.cs" />
     <Compile Include="Areas\Operation\Repository\WebtelSendingJsonData.cs" />
+    <Compile Include="Areas\Reports\Controllers\AnalysisController.cs" />
     <Compile Include="Areas\Reports\Controllers\FinanceController.cs" />
     <Compile Include="Areas\Reports\Controllers\FmsController.cs" />
     <Compile Include="Areas\Reports\Controllers\OperationController.cs" />
@@ -785,6 +786,7 @@
     <Compile Include="Models\ChequeRegister.cs" />
     <Compile Include="Models\CityPincodeMapping.cs" />
     <Compile Include="Models\CustomerVendorAdjustment.cs" />
+    <Compile Include="Models\Datetime.cs" />
     <Compile Include="Models\DBEInvoice.cs" />
     <Compile Include="Models\DeliveryBA.cs" />
     <Compile Include="Models\DownloadFinanceReport.cs" />
@@ -914,6 +916,7 @@
     <Compile Include="Models\DrsDeliveryReasonList.cs" />
     <Compile Include="Models\DrsDocket.cs" />
     <Compile Include="Models\DrsDone.cs" />
+    <Compile Include="Models\DRSReport.cs" />
     <Compile Include="Models\DrsUpdateDone.cs" />
     <Compile Include="Models\EinvoiceRequest.cs" />
     <Compile Include="Models\EnRouteExpenses.cs" />
@@ -1463,6 +1466,7 @@
     <Content Include="Areas\Operation\Views\Tracking\IndexPOD_old.js" />
     <Content Include="Areas\Operation\Views\Tracking\Index.js" />
     <Content Include="Areas\Operation\Views\VendorDocumentApproval\Insert.js" />
+    <Content Include="Areas\Reports\Views\Analysis\DrsReport.cshtml" />
     <Content Include="Areas\Reports\Views\Fms\DriverAdvance.js" />
     <Content Include="Areas\Reports\Views\Fms\FuelVendor.js" />
     <Content Include="Areas\Reports\Views\WMS\StockReports.js" />
@@ -3228,6 +3232,9 @@
     <Content Include="Areas\Reports\Views\Finance\GSTR3BMonthWiseReport.cshtml" />
     <Content Include="Areas\Operation\Views\Thc\VehicleArrivalCancellation.cshtml" />
     <Content Include="Areas\Finance\Views\VendorPayment\VendorBilllUploadFormat.xlsx" />
+    <Content Include="Areas\Reports\Views\Analysis\BookingReport.cshtml" />
+    <Content Include="Areas\Reports\Views\Analysis\PrsReport.cshtml" />
+    <Content Include="Areas\Reports\Views\Analysis\TripSheetReport.cshtml" />
     <None Include="Properties\PublishProfiles\TMS.pubxml" />
     <None Include="Scripts\_references.js" />
     <Content Include="Scripts\xlsx.full.min.js" />

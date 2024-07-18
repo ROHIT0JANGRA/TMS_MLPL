@@ -10,9 +10,7 @@ namespace CodeLock.Models
 {
   public class MasterVendorDetails : BaseModel
   {
-        public int TotalVendors { get; set; }
-        public int FilterVendors { get; set; }
-        [Display(Name = "Vender Type Name")]
+    [Display(Name = "Vender Type Name")]
     public string VendorTypeName { get; set; }
 
     [Display(Name = "Vendor Type")]
@@ -58,6 +56,9 @@ namespace CodeLock.Models
 
     [Display(Name = "Remarks")]
     public string Remarks { get; set; }
+     public int FilterVendors { get; set; }
+     public int TotalVendors { get; set; }
+     
   }
     public class VendorExcelData
     {

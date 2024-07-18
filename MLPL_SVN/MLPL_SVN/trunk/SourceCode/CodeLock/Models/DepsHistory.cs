@@ -19,5 +19,7 @@ namespace CodeLock.Models
     public string Remark { get; set; }
 
     public int Packages { get; set; }
-  }
+        public string UnloadingPersonName { get; set; }
+
+    }
 }

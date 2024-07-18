@@ -40,6 +40,9 @@ namespace CodeLock.Models
     public DateTime? DeliveryDateTime { get; set; }
 
     public string PersonName { get; set; }
+        public string UnloadingPersonName { get; set; }
+
+        
 
     public byte? LateDeliveryReasonId { get; set; }
 
