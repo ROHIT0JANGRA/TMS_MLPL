@@ -1,12 +1,37 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\manisha\\desktop\\test\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\models\\pagination.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\models\\pagination.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Pagination.cs",
+              "DocumentMoniker": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Models\\Pagination.cs",
+              "RelativeDocumentMoniker": "CodeLock\\Models\\Pagination.cs",
+              "ToolTip": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Models\\Pagination.cs",
+              "RelativeToolTip": "CodeLock\\Models\\Pagination.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-18T15:21:34.102Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }
