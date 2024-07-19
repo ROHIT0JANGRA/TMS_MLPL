@@ -1,0 +1,323 @@
+﻿@model CodeLock.Models.RgpChallanModal
+@{
+    ViewBag.Title = "RgpInsert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
+
+    table {
+        overflow: auto;
+        width: 100%;
+        max-width: 400px;
+        height: 200px;
+        max-height: 500px;
+        display: block;
+        margin: 0 auto;
+        border-spacing: 0;
+    }
+
+    tbody {
+        white-space: nowrap;
+    }
+
+    th,
+    td {
+        padding: 1px 3px;
+        border-top-width: 0;
+        border-left-width: 0;
+    }
+
+    th {
+        position: sticky;
+        top: 5px;
+        background-color: lightgray;
+        vertical-align: bottom;
+    }
+
+        th:last-child,
+        td:last-child {
+            border-right-width: 0;
+        }
+
+    tr:last-child td {
+        border-bottom-width: 0;
+    }
+
+    .head {
+        background-color: lightgray;
+        padding: 2px;
+    }
+</style>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="~/Areas/Operation/Views/Docket/InsertMLPL.js?version=@DateTime.Now.Ticks"></script>
+
+
+<script>
+    $(document).ready(function () {
+        $('#ddlWarehouse').select2();
+
+    });
+ 
+</script>
+<p>Create Rgp</p>
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="">
+                <div class="inline-group">
+                    <form class="form-group">
+                        <div class=" head">
+                            <button class="btn btn-success" type="submit">Submit</button>
+                            <span><a href="@Url.Action("RgpList","RGP")" class="btn btn-primary">List</a></span>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-lg-2">
+
+                                <label class="inline-group" for="BusinessPartnerCode">Business Partner Code</label>
+                                <input type="text" class="form-control" id="BusinessPartnerCode" placeholder="BusinessPartnerCode" />
+                            </div>
+                            <div class="col-lg-3">
+                                <label class="inline-group" for="BusinessPartner">Business Partner</label>
+                                <input type="text" class="form-control" id="BusinessPartner" placeholder="BusinessPartner" />
+                            </div>
+
+                            <div class="col-lg-2">
+                                <label class="inline-group" for="rgpDate">RGP Date</label>
+
+                                <input type="date" class="form-control" id="rgpDate" placeholder="RGP Date" />
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="inline-group" for="postingDate">Posting Date</label>
+                                <input type="date" class="form-control" id="postingDate" placeholder="Posting Date" />
+                            </div>
+                            <div class="col-lg-2 inline-group">
+                                <label class="inline-group" for="rgpNo">RGP Series</label>
+
+                                <select class="form-control" id="rgpSeries">
+                                    <option selected>Select Series</option>
+                                    <option value="RGP#MDP">RGP#MDP</option>
+                                    <option value="FBD#MDP">FBD#MDP</option>
+
+                                </select>
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="inline-group" for="rgpNo">RGP No</label>
+                                <input type="text" class="form-control" id="rgpNo" placeholder="RGP no" />
+                            </div>
+
+                            <div class="col-lg-3">
+                                <label class="inline-group" for="shipTo">Ship To</label>
+                                <input type="text" class="form-control" id="shipTo" placeholder="Ship To" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+
+                            <div class="col-lg-2">
+                                <label class="form-inline" for="fromBranch">From Branch</label>
+                                <select class="select form-control" id="fromBranch">
+                                    <option value="Packaging" selected>Packaging</option>
+                                    <option value="Manufacture">Manufacture</option>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-2">
+                                <label class="form-inline" for="fromWarehouse">From Warehouse</label>
+                                <label class="label">Warehouse</label>
+                                @Html.DropDownList("ddlWarehouse", new SelectList(ViewBag.WarehouseList, "Value", "Text", SessionUtility.WarehouseId), new { @class = "form-control select2", @id = "ddlWarehouse", @disabled = "disabled" })
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="form-inline" for="toWarehouse">To Warehouse</label>
+                                <input type="text" class="form-control" id="toWarehouse" placeholder="To Warehouse" />
+                            </div>
+
+                        </div>
+
+                        <div class="row-border">
+                            <div class="col-lg-12">
+                                <table class="table table-responsive table-bordered" id="myTable">
+                                    <thead>
+                                        <tr>
+                                            <th><label for="itemNo">Item No</label></th>
+                                            <th><label for="itemDescription">Item Description</label></th>
+                                            <th><label for="fromWH">From W/H</label></th>
+                                            <th><label for="toWH">To W/H</label></th>
+                                            <th><label for="location">Location</label></th>
+                                            <th><label for="qty">Qty</label></th>
+                                            <th><label for="infoPrice">Info Price</label></th>
+                                            <th><label for="taxCat">Tax Cat</label></th>
+                                            <th><label for="taxable">Taxable</label></th>
+                                            <th><label for="gstAmt">Gst Amt</label></th>
+                                            <th><label for="total">Total</label></th>
+                                            <th colspan="2">Add | Remove</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="text" class="form-control" id="itemNo" /></td>
+                                            <td><input type="text" class="form-control" id="itemDescription" /></td>
+                                            <td><input type="text" class="form-control" id="fromWH" /></td>
+                                            <td><input type="text" class="form-control" id="toWH" /></td>
+                                            <td><input type="text" class="form-control" id="location" /></td>
+                                            <td><input type="text" class="form-control" id="qty" /></td>
+                                            <td><input type="text" class="form-control" id="infoPrice" /></td>
+                                            <td><input type="text" class="form-control" id="taxCat" /></td>
+                                            <td><input type="text" class="form-control" id="taxable" /></td>
+                                            <td><input type="text" class="form-control" id="gstAmt" /></td>
+                                            <td><input type="text" class="form-control" id="total" /></td>
+                                            <td>
+                                                <button class="btn btn-primary" onclick="addRow()" type="button"><i class="fa fa-plus"></i></button>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-danger" onclick="deleteRow(this)" type="button"><i class="fa fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                            Add Transporter Details
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">RGP Transporter Details</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="ewayBillNo">EwayBill No</label>
+                                                <input type="text" class="form-control" id="ewayBillNo" placeholder="EwayBill no" disabled />
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="supplyType">Supply Type</label>
+                                                <select class="form-control" id="supplyType" name="supplytype">
+                                                    <option selected value="Inward">Inward</option>
+                                                    <option value="Outward">Outward</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="ewayBillStatus">EWayBill Status</label>
+                                                <input type="text" class="form-control" id="ewayBillStatus" placeholder="EWayBill Status" disabled />
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="vehicleNo">Vehicle No</label>
+                                                <input type="text" class="form-control" id="vehicleNo" placeholder="Vehicle No" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="transporterId">Transporter ID</label>
+                                                <input type="text" class="form-control" id="transporterId" placeholder="Transporter ID" disabled />
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="transporterName">Transporter Name</label>
+                                                <input type="text" class="form-control" id="transporterName" placeholder="Transporter Name" />
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="grNo">Gr No</label>
+                                                <input type="text" class="form-control" id="grNo" placeholder="Gr No" />
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="grDate">Gr Date</label>
+                                                <input type="date" class="form-control" id="grDate" placeholder="Gr Date" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="driverNo">Driver No</label>
+                                                <input type="text" class="form-control" id="driverNo" placeholder="Driver No" />
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="invoiceType">Invoice Type</label>
+                                                <input type="text" class="form-control" id="invoiceType" placeholder="Invoice Type" />
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="invoiceNo">Invoice No</label>
+                                                <input type="text" class="form-control" id="invoiceNo" placeholder="Invoice No" />
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="invoiceDate">Invoice Date</label>
+                                                <input type="date" class="form-control" id="invoiceDate" placeholder="Invoice Date" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="col-lg-2">
+                                                    <label class="inline-group" for="priceList">Price List</label>
+                                                    <input type="text" class="form-control" id="priceList" placeholder="Price List" />
+                                                </div>
+                                                <div class="col-lg-2">
+                                                    <label class="inline-group" for="customerPart">Part</label>
+                                                    <input type="text" class="form-control" id="customerPart" placeholder="Customer Part" />
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <label class="inline-group" for="remarks">Remarks</label>
+                                                    <input type="text" class="form-control" id="remarks" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addRow() {
+        var tableBody = document.getElementById("myTable").getElementsByTagName('tbody')[0];
+        var newRow = tableBody.insertRow();
+        for (var i = 0; i < 11; i++) {
+            var cell = newRow.insertCell(i);
+            cell.innerHTML = '<input type="text" class="form-control" name="input' + i + '" />';
+        }
+        var addCell = newRow.insertCell(11);
+        addCell.innerHTML = '<button class="btn btn-primary" onclick="addRow()" type="button"><i class="fa fa-plus"></i></button>';
+        var deleteCell = newRow.insertCell(12);
+        deleteCell.innerHTML = '<button class="btn btn-danger" onclick="deleteRow(this)" type="button"><i class="fa fa-trash"></i></button>';
+    }
+
+    function deleteRow(button) {
+        var row = button.closest('tr');
+        var tableBody = row.parentNode;
+        var rowIndex = Array.prototype.indexOf.call(tableBody.children, row);
+
+        // Do not remove the first row
+        if (rowIndex > 0) {
+            tableBody.removeChild(row);
+        }
+    }
+</script>
+

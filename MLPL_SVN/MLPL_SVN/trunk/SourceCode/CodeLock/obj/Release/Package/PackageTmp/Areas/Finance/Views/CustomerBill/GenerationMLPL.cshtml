@@ -26,7 +26,160 @@
         btnExportIssuesExcel = $('#btnExportIssuesExcel');
         btnExportIssuesExcel.click(ExportDocketIssues);
 
+        TableHeader();
+
+        $('#btnAdd').click(function () {
+            AddRow();
+        });
+        serviceTypes = JSON.parse('@Html.Raw(ViewBag.ServiceTypes)');
+        miscellaneousServiceServiceTypeList = JSON.parse('@Html.Raw(ViewBag.MiscellaneousServiceServiceTypeList)');
     });
+
+
+    function AddRow() {
+
+        var duplicate = 0;
+        if ($('#txtDocketNo').val() == "") {
+            alert("Docket No can't be blank");
+            $('#txtDocketNo').focus();
+            return false;
+        }
+
+        $('#tblList').find('[id*="txtlstDocketNo"]').each(function () {
+            var txtlstDocketNo = $('#' + this.id.replace('txtlstDocketNo', 'txtlstDocketNo'));
+            if (txtlstDocketNo.val() == $('#txtDocketNo').val()) {
+                duplicate = 1;
+                return false;
+            }
+        });
+
+        if (duplicate == 1) {
+            alert("Docket No already added in list");
+            return false;
+        }
+
+        var requestData = { DocketNo: $('#txtDocketNo').val(), CustomerId: $('#hdnCustomerId').val(), TransactionTypeId: ddlTransactionTypeId.val() };
+        AjaxRequestWithPostAndJson(customerBillGenerationUrl + '/AddDocketList', JSON.stringify(requestData), function (result) {
+            if (!IsObjectNullOrEmpty(result)) {
+
+                if (!result.IsSuccessfull) {
+                    alert(result.ErrorMessage);
+                    return false;
+                }
+
+                var row = $('<tr />');
+                var index = $('#tblList > tbody > tr').length;
+                var rowIndex = index;
+
+                row.append('<td>' + (index + 1) + '</td>');
+                row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstDocketNo' + rowIndex + '" value="' + result.DocketNo + '" />' + result.DocketNo + ' </td>');
+                row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstDocketDate' + rowIndex + '" value="' + $.displayDate(result.DocketDate) + '" />' + $.displayDate(result.DocketDate) + ' </td>');
+                row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstPaybas' + rowIndex + '" value="' + result.Paybas + '" />' + result.Paybas + ' </td>');
+                row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstPackages' + rowIndex + '" value="' + result.Packages + '" />' + result.Packages + ' </td>');
+                row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstFromCity' + rowIndex + '" value="' + result.FromCity + '" />' + result.FromCity + ' </td>');
+                row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstQuantity' + rowIndex + '" value="' + result.Quantity + '" />' + result.Quantity + ' </td>');
+                row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstToCity' + rowIndex + '" value="' + result.ToCity + '" />' + result.ToCity + ' </td>');
+                row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstActualWeight' + rowIndex + '" value="' + result.ActualWeight + '" />' + result.ActualWeight + ' </td>');
+                row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstCustomerCode' + rowIndex + '" value="' + result.CustomerCode + '"  />' + result.CustomerCode + ' </td>');
+                row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstCustomerName' + rowIndex + '" value="' + result.CustomerName + '" />' + result.CustomerName + ' </td>');
+
+                row.append('<td><a href="javascript:void(0)" onclick="javascript:removeTr(' + index + ');" class="btn btn-default btn-sm m-user-edit" title="Delete"><i class="zmdi zmdi-delete"></i></a></td>');
+                $('#tblList tbody').append(row);
+
+                $('#txtDocketNo').val('');
+                $('#txtDocketNo').focus();
+            }
+        }, ErrorFunction, false);
+
+    }
+    function removeTr(index) {
+
+        var con = confirm('Do you want to delete record ?');
+
+        if (!con) {
+            return false;
+        }
+
+        $('#tblList tbody tr').eq(index).remove();
+        var Logs = new Array();
+
+        //  alert(document.getElementById('tblList').rows.length);
+        var lastEndKm = 0;
+
+        $('#tblList').find('[id*="txtlstDocketNo"]').each(function () {
+            var txtlstDocketNo = $('#' + this.id.replace('txtlstDocketNo', 'txtlstDocketNo'));
+            var txtlstDocketDate = $('#' + this.id.replace('txtlstDocketNo', 'txtlstDocketDate'));
+            var txtlstPaybas = $('#' + this.id.replace('txtlstDocketNo', 'txtlstPaybas'));
+            var txtlstFromCity = $('#' + this.id.replace('txtlstDocketNo', 'txtlstFromCity'));
+            var txtlstToCity = $('#' + this.id.replace('txtlstDocketNo', 'txtlstToCity'));
+            var txtlstCustomerCode = $('#' + this.id.replace('txtlstDocketNo', 'txtlstCustomerCode'));
+            var txtlstPackages = $('#' + this.id.replace('txtlstDocketNo', 'txtlstPackages'));
+            var txtlstQuantity = $('#' + this.id.replace('txtlstDocketNo', 'txtlstQuantity'));
+            var txtlstActualWeight = $('#' + this.id.replace('txtlstDocketNo', 'txtlstActualWeight'));
+
+            var Log = {};
+            Log.DocketNo = txtlstDocketNo.val();
+            Log.DocketDate = txtlstDocketDate.val();
+            Log.Paybas = txtlstPaybas.val();
+            Log.FromCity = txtlstFromCity.val();
+            Log.ToCity = txtlstToCity.val();
+            Log.CustomerCode = txtlstCustomerCode.val();
+            Log.CustomerName = txtlstCustomerName.val();
+            Log.Packages = txtlstPackages.val();
+            Log.Quantity = txtlstQuantity.val();
+            Log.ActualWeight = txtlstActualWeight.val();
+
+            Logs.push(Log);
+        });
+
+        TableHeader();
+        var table = $('#tblList');
+
+        for (var i = 0; i < Logs.length; i++) {
+            var item = Logs[i];
+            var row = $('<tr />');
+            var index = $('#tblList > tbody > tr').length;// document.getElementById('tblList').rows.length;
+            //index = index - 1;
+            var rowIndex = index;
+            row.append('<td>' + (index + 1) + '</td>');
+
+            row.append('<td style="text-align:center;"><input type="hidden" class="form-control textlabel" id="txtlstDocketNo' + rowIndex + '" value="' + item.DocketNo + '" />' + item.DocketNo + ' </td>');
+
+            row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstDocketDate' + rowIndex + '" value="' + item.DocketDate + '" />' + item.DocketDate + ' </td>');
+            row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstPaybas' + rowIndex + '" value="' + item.Paybas + '" />' + item.Paybas + ' </td>');
+            row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstPackages' + rowIndex + '" value="' + item.Packages + '" />' + item.Packages + ' </td>');
+            row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstFromCity' + rowIndex + '" value="' + item.FromCity + '" />' + item.FromCity + ' </td>');
+            row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstQuantity' + rowIndex + '" value="' + item.Quantity + '" />' + item.Quantity + ' </td>');
+            row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstToCity' + rowIndex + '" value="' + item.ToCity + '" />' + item.ToCity + ' </td>');
+            row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstActualWeight' + rowIndex + '" value="' + item.ActualWeight + '" />' + item.ActualWeight + ' </td>');
+            row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstCustomerCode' + rowIndex + '" value="' + item.CustomerCode + '"  />' + item.CustomerCode + ' </td>');
+            row.append('<td style="text-align:center;"><input type="hidden"  class="form-control textlabel" id="txtlstCustomerName' + rowIndex + '" value="' + item.CustomerName + '" />' + item.CustomerName + ' </td>');
+            row.append('<td><a href="javascript:void(0)" onclick="javascript:removeTr(' + index + ');" class="btn btn-default btn-sm m-user-edit" title="Delete"><i class="zmdi zmdi-delete"></i></a></td>');
+
+            $('#tblList tbody').append(row);
+
+        }
+    }
+    function TableHeader() {
+        $("#tblList").html("");
+        var cols = '<thead><tr style="background-color:#fff;">';
+        cols = cols + '<th style="width:5%; text-align:center;"><b>S No.</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>Docket No</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>Docket Date</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>Paybas</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>Pkgs</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>From City</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>Qty</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>To City</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>Weight</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>Customer Code</b></th>';
+        cols = cols + '<th style="width:15%; text-align:center;"><b>Customer Name</b></th>';
+
+        cols = cols + '<th style="width:5%; text-align:center;"><b>Delete</b></th>';
+        cols = cols + '</tr></thead><tbody></tbody>';
+
+        $('#tblList').append(cols);
+    }
     function ExportDocketIssues() {
 
         $("#dtExportList").html("");
@@ -212,7 +365,8 @@
                                 <div class="select">
                                     @Html.DropDownListFor(model => model.TransactionTypeId, new List<SelectListItem> {
                                    new SelectListItem() {Text = "Transaction Billing", Value="1"},
-                                   new SelectListItem() {Text = "Miscellaneous Billing", Value="2"},}, new { @class = "form-control", @id = "ddlTransactionTypeId" })
+                                   new SelectListItem() {Text = "Miscellaneous Billing", Value="2"},
+                                   new SelectListItem() {Text = "Multiple Docket Billing", Value="3"},}, new { @class = "form-control", @id = "ddlTransactionTypeId" })
                                     <i></i>
                                 </div>
                                 @Html.ValidationMessageFor(model => model.TransactionTypeId)
@@ -452,20 +606,32 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
-                                <div class="input">
-                                    @Html.TextBoxFor(model => model.DocketNo, null, new { @class = "form-control", @id = "txtDocketNo" })
-                                </div>
-                                @Html.ValidationMessageFor(model => model.DocketNo)
+                    <div id="dvDocket">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <table border="0">
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.DocketNo, new { @class = "label" })
+                                                <div class="input">
+                                                    @Html.TextBoxFor(model => model.DocketNo, null, new { @class = "form-control", @id = "txtDocketNo" })
+                                                </div>
+
+                                            </div>
+                                        </td>
+                                        <td>
+                                            &nbsp; <button type="button" class="btn btn-danger" id="btnAdd">Add Docket</button>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                @Html.Label(" ", new { @class = "label" })
-                                @Html.Label("(seperated by comma if multiple)")
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive text-nowrap">
+                                    <table id="tblList" class="table table-bordered table-striped display nowrap"></table>
+                                </div>
                             </div>
                         </div>
                     </div>

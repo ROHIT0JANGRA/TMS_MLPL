@@ -189,13 +189,13 @@
     });
 </script>
 @*<script type="text/javascript" language="javascript">
-    var versionUpdate = (new Date()).getTime();
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = "../GenerationMLPLEdit.js?v=" + versionUpdate;
-    document.querySelector("body").appendChild(script);
-    //document.body.appendChild(script);
-</script>*@
+        var versionUpdate = (new Date()).getTime();
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "../GenerationMLPLEdit.js?v=" + versionUpdate;
+        document.querySelector("body").appendChild(script);
+        //document.body.appendChild(script);
+    </script>*@
 <script src="~/areas/finance/views/customerbill/GenerationMLPLEdit.js?version=@DateTime.Now.Ticks"></script>
 @*<script src="~/areas/finance/views/customerbill/GenerationMLPLEdit.js?" +(new Date()).getTime()></script>*@
 <div id="dvWizard">
@@ -361,6 +361,15 @@
                                 @Html.Partial("DateTimePicker", new CodeLock.Models.DateTimePicker() { FieldName = "PeriodToDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.PeriodToDate), IsRequired = false, AllowFutureDate = true, AllowPastDate = true })
                             </div>
                         </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txtRemarks" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Remarks)
+                            </div>
+                        </div>
                     </div>
                     <div class="page-separator">GST Details</div>
                     <div class="row">
@@ -389,6 +398,17 @@
                                 </div>
                             </div>
                         </div>
+                        @*<div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.SacName, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.HiddenFor(model => model.GstServiceTypeId, new { @id = "hdnSacId," })
+                                        @Html.DropDownList("GstServiceType", new SelectList(ViewBag.TransactionCategoryList, "Value", "Name"), new { @class = "form-control", @id = "lblSacName" })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.GstServiceTypeId)
+                                </div>
+                            </div>*@
                         <div class="col-sm-3">
                             <div class="form-group">
                                 @Html.LabelFor(model => model.GstRate, new { @class = "label" })

@@ -53,5 +53,9 @@
             spnMassage.text("THC StockUpdate Close is Cancelled Successfully");
             SetPageLoad('ThcStockUpdateCancellation', 'Cancellation Done', '', 'Go To Thc stockUpdate Cancellation', '@Url.Action("ThcStockUpdateCancellation", "Thc")');
         }
+        else if (status == "VehicleArrivalCancellation") {
+            spnMassage.text("THC Vehicle Arrival are Cancelled Successfully");
+            SetPageLoad('THC', 'Vehicle Arrival Cancellation Done', '', 'Go To Vehicle Arrival Cancellation', '@Url.Action("VehicleArrivalCancellation", "THC")');
+        }
     }
 </script>

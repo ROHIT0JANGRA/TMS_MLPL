@@ -1,0 +1,87 @@
+﻿@model CodeLock.Models.MasterCustomer
+@{
+    ViewBag.Title = "RgpList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="uk-grid">
+    <h2>RgpList</h2>            <p class="text-danger">@ViewBag.Error </p>
+
+</div>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div>
+                <button id="loadDetails" class="btn btn-purple">Load Details</button>
+                <a class="btn btn-info" href="@Url.Action("RgpInsert","RGP")">Insert</a>
+                <table class="table table-bordered table-responsive " id="orderDetailsTable">
+                    <thead style="background-color: rgb(17, 134, 132);color:white;">
+                        <tr>
+                            <th>CardCode</th>
+                            <th>CardName</th>
+                            <th>CardType</th>
+                       
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function () {
+    var table = $('#orderDetailsTable').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": '@Url.Action("GetRGPData", "RGP")',
+            "type": "GET",
+            "dataSrc": function (json) {
+                try {
+                    // Check if pako is defined
+                    if (typeof pako === 'undefined') {
+                        throw new Error('Pako library is not loaded.');
+                    }
+
+                    // Handle gzip decoding and extract data
+                    var gzipData = json.Content; // Assuming Content contains gzipped data
+
+                    // Decompress gzip data using pako
+                    var inflatedData = pako.inflate(gzipData, { to: 'string' });
+
+                    var jsonData = JSON.parse(inflatedData); // Parse JSON from decompressed string
+
+                    return jsonData.value; // Assuming 'value' contains the array of data
+                } catch (error) {
+                    console.error('Error in dataSrc function:', error);
+                    return [];
+                }
+            },
+            "error": function (xhr, error, thrown) {
+                alert('Error loading data: ' + error);
+            }
+        },
+        "columns": [
+            { "data": "CardCode" },
+            { "data": "CardName" },
+            { "data": "CardType" }
+
+        ],
+        "pageLength": 20 // Number of records per page
+    });
+
+    $('#loadDetails').click(function () {
+        table.ajax.reload();
+    });
+});
+
+
+</script>

@@ -9,7 +9,8 @@
     $(document).ready(function () {
         customerMasterUrl = '@Url.Action("", "Customer", new { Area = "Master" })';
         billGenerationUrl = '@Url.Action("", "CustomerBill", new { Area = "Finance" })';
-          ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        accountUrl = '@Url.Action("", "Accounts", new { Area = "Finance" })';
     });
 </script>
 <script src="~/areas/finance/views/customerbill/collection.js?version=@DateTime.Now.Ticks"></script>
@@ -171,6 +172,15 @@
                                         @Html.TextBoxFor(model => model.BillCollectionRemarks, new { @class = "form-control", @id = "txtBillCollectionRemarks" })
                                     </div>
 
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AdjustmentId, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.AdjustmentId, Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @id = "ddlAdjustmentId" })
+                                        <i></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>

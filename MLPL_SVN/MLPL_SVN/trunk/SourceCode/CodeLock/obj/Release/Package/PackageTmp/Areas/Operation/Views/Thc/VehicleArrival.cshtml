@@ -212,7 +212,7 @@
                             <div class="form-group">
                                 @Html.LabelFor(model => model.LateArrivalReasonId, new { @class = "label" })
                                 <div class="select">
-                                    @Html.DropDownListFor(model => model.LateArrivalReasonId, new SelectList(ViewBag.LateArrivalReasonList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlLateArrivalReason", @placeholder = "Select Reason" })
+                                    @Html.DropDownListFor(model => model.LateArrivalReasonId, new SelectList(ViewBag.LateArrivalReasonList, "Value", "Name"), new { @class = "form-control", @id = "ddlLateArrivalReason", @placeholder = "Select Reason" })
                                     <i></i>
                                 </div>
                                 @Html.ValidationMessageFor(model => model.LateArrivalReasonId)

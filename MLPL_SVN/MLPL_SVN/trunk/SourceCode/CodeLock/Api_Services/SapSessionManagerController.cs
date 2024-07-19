@@ -23,10 +23,19 @@ namespace CodeLock.Api_Services
         }
 
         private static string _sessionId;
+
         public static async Task<string> GenerateToken()
         {
-            _sessionId = await GenerateB1SessionAsync();
-            return _sessionId;
+            if (_sessionId == null)
+            {
+                _sessionId = await GenerateB1SessionAsync();
+                return _sessionId;
+            }
+            else
+            {
+                return _sessionId;
+            }
+           
         }
         public static string GetSessionId()
         {
@@ -38,7 +47,7 @@ namespace CodeLock.Api_Services
             {
                 var loginRequestBody = new
                 {
-                    CompanyDB = "MLPLTEST1312",
+                    CompanyDB = "MLPLTEST2",
                     Password = "9811",
                     UserName = "manager"
                 };

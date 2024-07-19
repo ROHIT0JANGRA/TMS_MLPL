@@ -26,7 +26,7 @@
         labourVendorList = JSON.parse('@Html.Raw(ViewBag.LabourVendorLists)');
     });
 </script>
-<script src="@Url.Content("~/Areas/Operation/Views/Thc/StockUpdateMLPL.js?v12")"></script>
+<script src="@Url.Content("~/Areas/Operation/Views/Thc/StockUpdateMLPL.js?version=@DateTime.Now.Ticks")"></script>
 
 <div id="dvWizard">
     <div class="panel-body">

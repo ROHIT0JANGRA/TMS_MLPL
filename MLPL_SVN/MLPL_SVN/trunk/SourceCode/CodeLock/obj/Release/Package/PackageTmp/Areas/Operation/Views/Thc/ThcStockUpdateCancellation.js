@@ -70,7 +70,7 @@ function SelectThc(rd) {
 function CheckValidStep2() {
     if (selectedThcStockUpdateList === 0) {
         isStepValid = false;
-        ShowMessage('Please select Thc StockUpdate');
+        ShowMessage('Please select Thc Stock Update');
         return false;
     }
 }

@@ -11,6 +11,11 @@ namespace CodeLock.Models
 {
   public class MasterAddress : BaseModel
   {
+        public MasterAddress() { 
+        
+
+        }
+
     [Display(Name = "City Name")]
     [Required(ErrorMessage = "Please select City Name")]
     public int CityId { get; set; }
@@ -21,7 +26,6 @@ namespace CodeLock.Models
     public short AddressId { get; set; }
 
     [Display(Name = "Address Code")]
-    [Remote("IsAddressCodeAvailable", "Address", AdditionalFields = "AddressId,_AddressIdToken", ErrorMessage = "Address Code already exists.", HttpMethod = "POST")]
     [Required(ErrorMessage = "Please enter Address Code")]
     [StringLength(20, ErrorMessage = "Address must be minimum 2 and maximum 20 character long", MinimumLength = 2)]
     public string AddressCode { get; set; }
@@ -38,7 +42,8 @@ namespace CodeLock.Models
 
     [Display(Name = "Pincode")]
     [Required(ErrorMessage = "Please enter Pincode")]
-    public string Pincode { get; set; }
+        [StringLength(10, ErrorMessage = "Pincode must be minimum 4 and maximum 10 character long", MinimumLength = 4)]
+        public string Pincode { get; set; }
 
     [Required(ErrorMessage = "Please enter Mobile No.")]
     [Display(Name = "Mobile No")]
@@ -61,5 +66,18 @@ namespace CodeLock.Models
     public short StateId { get; set; }
 
     public short CustomerId { get; set; }
-  }
+        [GstInNoAnnotation]
+        [Display(Name = "GSTIN No")]
+        [StringLength(15, ErrorMessage = "GSTIN No must be 15 character long", MinimumLength = 15)]
+        public string GstTinNo { get; set; }
+        [Display(Name = "Registration Type")]
+        [Required(ErrorMessage = "Please select registration type")]
+        public string RegistrationType { get; set; }
+        public string GstType { get; set; }
+        [StringLength(10, ErrorMessage = "Provisional ID/No must be 10 character long", MinimumLength = 10)]
+        [Required(ErrorMessage = "Please enter Provisional ID/No")]
+        [Display(Name = "Provisional Id/No")]
+        public string ProvisionalId { get; set; }
+
+    }
 }

@@ -7,9 +7,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using DocumentFormat.OpenXml.Drawing.Charts;
-
+using System.Collections.Generic;
 namespace CodeLock.Models
 {
+
     public class MasterCustomer : BaseModel
     {
 
@@ -17,6 +18,9 @@ namespace CodeLock.Models
         {
             this.MasterCustomerDetail = new MasterCustomerDetail();
             this.MasterCustomerAddressInfo = new Models.MasterCustomerAddressInfo();
+            this.BusinessPartnerDetails = new Models.BusinessPartnerDetails();
+         
+            this.MasterAddress = new List<MasterAddress>();
         }
 
         public short CustomerId { get; set; }
@@ -80,6 +84,15 @@ namespace CodeLock.Models
         public string PanNo { get; set; }
         public string PhoneNo { get; set; }
         public string PanNoMobileNo { get; set; }
+        public string BusinessType { get; set;}
+
+        // *************************** Adding InsertBp Models Required Fields ****************************************
+       
+
+        public List<MasterAddress> MasterAddress { get; set; }
+       // public List<MasterCustomerAddressMapping> MasterCustomerAddressMapping { get; set; }
+     //   public List<GstRegistration>GstRegistration { get; set; }
+        public Models.BusinessPartnerDetails  BusinessPartnerDetails { get; set; }
     }
     public class CustomerDetail
     {
@@ -101,6 +114,9 @@ namespace CodeLock.Models
         public string CustomerName { get; set; }
         public string CustomerCode { get; set; }
         public bool IsActive { get; set; }
+
+
+
     }
 
     public class CustomerExcelData 
@@ -123,4 +139,34 @@ namespace CodeLock.Models
         public string EntryByName { get; set; }
         public string EntryDate { get; set; }
     }
+    public class BusinessPartnerDetails
+    {
+        // Payment Terms
+        public string PaymentTerms { get; set; }
+        public decimal? InterestOnArrearsPercentage { get; set; }
+        public string PriceList { get; set; }
+        public decimal? TotalDiscountPercentage { get; set; }
+
+        // Credit Limit and Commitment Limit
+        public decimal? CreditLimit { get; set; }
+        public decimal? CommitmentLimit { get; set; }
+        public string DunningTerm { get; set; }
+        public string EffectiveDiscountsGroups { get; set; }
+
+        // Business Partner Bank
+        public string BankCountryRegion { get; set; }
+        public string BankName { get; set; }
+        public string BankCode { get; set; }
+        public string Account { get; set; }
+        public string BICSWIFTCode { get; set; }
+        public string BankAccountName { get; set; }
+        public string Branch { get; set; }
+        public string CtrlIntID { get; set; }
+
+        // Mandate Details
+        public string MandateID { get; set; }
+        public string DateOfSignature { get; set; }
+        public string AddressCode { get; set; }
+    }
+
 }

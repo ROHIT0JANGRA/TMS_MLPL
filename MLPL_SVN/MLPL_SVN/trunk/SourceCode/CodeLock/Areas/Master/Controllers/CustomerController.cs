@@ -20,6 +20,8 @@ using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
 using CodeLock.Api_Services;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Microsoft.Owin.BuilderProperties;
 
 namespace CodeLock.Areas.Master.Controllers
 {
@@ -130,23 +132,95 @@ namespace CodeLock.Areas.Master.Controllers
             }
         }
 
+        //public ActionResult Insert()
+        //{
+        //    ///MasterGeneral masterPayBas;
+
+        //    //   MasterCustomer objCustomer = new MasterCustomer();
+        //    // this.Init(0, 0);
+        //    MasterCustomer objCustomer = new MasterCustomer()
+        //    {
+        //        MasterAddress = new List<MasterAddress>()
+        //    };
+        //    List<MasterAddress> addressDetails = objCustomer.MasterAddress;
+        //    MasterAddress addressDocument = new MasterAddress()
+        //    {
+        //        CityId = 0,
+        //        CityName = "",
+        //        AddressId = 0,
+        //        AddressCode = "",
+        //        Address1 = "",
+        //        EmailId = "",
+        //        Address2 = "",
+        //        Pincode = "",
+        //        MobileNo = "",
+        //        StatisticalChargesCode = "",
+        //        IsMreNoApplicable = false,
+        //        GstTinNo = "",
+        //        ProvisionalId = "",
+        //        IsActive = false
+        //    };
+        //    addressDetails.Add(addressDocument);
+
+        //    this.Init(0, 0);
+
+
+
+        //    objCustomer.PayBas = this.generalRepository.GetByGeneralList(14).ToArray<MasterGeneral>();
+
+
+        //    for (int i = 0; i < objCustomer.PayBas.Length; i++)
+        //    {
+        //        objCustomer.PayBas[i].IsActive = false;
+        //    }
+
+        //     ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
+        //    ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
+
+        //    ((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
+
+        //    return base.View(objCustomer);
+        //}
         public ActionResult Insert()
         {
-            ///MasterGeneral masterPayBas;
+            MasterCustomer objCustomer = new MasterCustomer()
+            {
+                MasterAddress = new List<MasterAddress>
+        {
+            new MasterAddress
+            {
+                CityId = 0,
+                CityName = "",
+                AddressCode = "",
+                Address1 = "",
+                EmailId = "",
+                Address2 = "",
+                Pincode = "",
+                MobileNo = "",
+                StatisticalChargesCode = "",
+                IsMreNoApplicable = false,
+                GstTinNo = "",
+                ProvisionalId = "",
+                IsActive = false
+            }
+        }
+            };
 
-            MasterCustomer objCustomer = new MasterCustomer();
-            this.Init(0, 0);
+            Init(0, 0);
 
             objCustomer.PayBas = this.generalRepository.GetByGeneralList(14).ToArray<MasterGeneral>();
+
+
             for (int i = 0; i < objCustomer.PayBas.Length; i++)
             {
                 objCustomer.PayBas[i].IsActive = false;
             }
 
+           ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
+            ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
+            ((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
 
-            //((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
-
-            return base.View(objCustomer);
+            return View(objCustomer);
         }
 
         [HttpPost]
@@ -154,6 +228,17 @@ namespace CodeLock.Areas.Master.Controllers
         public ActionResult Insert(MasterCustomer objMasterCustomer)
         {
             ActionResult action;
+            List<MasterAddress> masterAddresses = new List<MasterAddress>();
+            Response response;
+
+
+
+
+            for (int i = 0; objMasterCustomer.MasterAddress.Count > i; i++)
+            {
+                base.ModelState.Remove(string.Concat("MasterAddress[", i, "].AddressId"));
+            }
+
             if (!base.ModelState.IsValid)
             {
                 action = base.View(objMasterCustomer);
@@ -163,12 +248,69 @@ namespace CodeLock.Areas.Master.Controllers
                 objMasterCustomer.EntryBy = SessionUtility.LoginUserId;
                 objMasterCustomer.WarehouseId = SessionUtility.WarehouseId;
                 objMasterCustomer.MasterCustomerDetail.EntryBy = SessionUtility.LoginUserId;
+
                 int num = this.customerRepository.Insert(objMasterCustomer);
                 action = base.RedirectToAction("View", new { id = num });
             }
             return action;
         }
 
+        // **********************  Changes Method according to  Sap and ULIP-Api Intigration **************************
+
+        //public ActionResult InsertBp()
+        //{
+        //    ///MasterGeneral masterPayBas;
+
+        //    MasterCustomer objCustomer = new MasterCustomer();
+        //    this.Init(0, 0);
+
+        //    objCustomer.PayBas = this.generalRepository.GetByGeneralList(14).ToArray<MasterGeneral>();
+        //    for (int i = 0; i < objCustomer.PayBas.Length; i++)
+        //    {
+        //        objCustomer.PayBas[i].IsActive = false;
+        //    }
+
+
+        //    //((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
+
+        //    return base.View(objCustomer);
+        //}
+
+        //[HttpPost]
+        //[ValidateAntiModelInjection("CustomerId")]
+        //public ActionResult InsertBp(MasterCustomer objMasterCustomer)
+        //{
+        //    ActionResult action;
+        //    try
+        //    {
+        //        if (!ModelState.IsValid)
+        //        {
+        //            return base.View(objMasterCustomer);
+        //        }
+
+        //        if (!base.ModelState.IsValid)
+        //        {
+        //            action = base.View(objMasterCustomer);
+        //        }
+        //        else
+        //        {
+        //            objMasterCustomer.EntryBy = SessionUtility.LoginUserId;
+        //            objMasterCustomer.WarehouseId = SessionUtility.WarehouseId;
+        //            objMasterCustomer.MasterCustomerDetail.EntryBy = SessionUtility.LoginUserId;
+
+        //            int num = this.customerRepository.Insert(objMasterCustomer);
+        //            action = base.RedirectToAction("View", new { id = num });
+        //        }
+        //        return action;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ViewBag.Error =ex.Message;
+        //    }
+        //    return base.View();
+        //}
+
+        //*******************************************************************************************************************
         public async Task<dynamic> FetchCustomerDetailsFromApi(string gstin)
         {
             string token = UlipTokenManagerController.GetTokenId();
@@ -182,10 +324,12 @@ namespace CodeLock.Areas.Master.Controllers
                 httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
                 var requestBody = new { gstin = gstin };
+
                 var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(requestBody);
                 var content = new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json");
                 var response = await httpClient.PostAsync("https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/GST/01", content);
                 var statusCode = response.StatusCode;
+
                 if (response.IsSuccessStatusCode)
                 {
                     var responseData = await response.Content.ReadAsStringAsync();

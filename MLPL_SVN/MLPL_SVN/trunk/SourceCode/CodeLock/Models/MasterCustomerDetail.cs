@@ -114,6 +114,7 @@ namespace CodeLock.Models
 
         [Display(Name = "Registration Date")]
         public string RegistrationDate { get; set; }
-
+        public int BusinessType { get; set; }
+        public string BusinessTypeLabel { get; set; }
     }
 }

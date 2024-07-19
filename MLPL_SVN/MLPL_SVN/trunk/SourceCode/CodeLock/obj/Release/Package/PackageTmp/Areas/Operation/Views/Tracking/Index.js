@@ -4,10 +4,10 @@ var ddlDocumentTypeId, drDocumentDate, ddlLocationId, txtDocumentNo, txtManualDo
     dtPrsDetails, dvPrsDetails, dvLoadingSheetDetails, dtLoadingSheetDetails, dvTripheetDetails, dtTripsheetDetails, dvManifestDetails, dtManifestDetails, dvPfmDetails, dtPfmDetails,
     dvVrDetails, dtVrDetails, dvDocketTalkDetails, dtDocketTalkDetails;
 var dvUnLoadingSheetDetails, unloadingModuleId, dtUnLoadingSheetDetails;
+
 $(document).ready(function () {
     SetPageLoad('Tracking', 'Document Tracking', '', '', '');
     InitObjects();
-
 
 });
 
@@ -105,8 +105,7 @@ function GetDocumentList() {
     dvDocketTalkDetails.hide();
     $('#dvUnLoadingSheetDetails').hide();
 
-    var requestData = { locationId: ddlLocationId.val(), fromDate:$.displayDate(drDocumentDate.startDate), toDate: $.displayDate(drDocumentDate.endDate), documentNo: txtDocumentNo.val(), manualDocumentNo: txtManualDocumentNo.val() };
-
+    var requestData = { locationId: ddlLocationId.val(), fromDate: $.displayDate(drDocumentDate.startDate), toDate: $.displayDate(drDocumentDate.endDate), documentNo: txtDocumentNo.val(), manualDocumentNo: txtManualDocumentNo.val() };
 
 
 
@@ -153,6 +152,7 @@ function GetDocumentList() {
                 contentType: "application/json; charset=utf-8",
                 data: function (d) {
                     var data = { data: d, locationId: ddlLocationId.val(), fromDate: $.displayDate(drDocumentDate.startDate), toDate: $.displayDate(drDocumentDate.endDate), documentNo: txtDocumentNo.val(), manualDocumentNo: txtManualDocumentNo.val() };
+                    console.log(data);
                     return JSON.stringify(data);
                 },
                 AutoWidth: false,
@@ -162,6 +162,8 @@ function GetDocumentList() {
                     json.recordsTotal = data.recordsTotal;
                     json.recordsFiltered = data.recordsFiltered;
                     json.data = JSON.parse(data.data);
+                    console.log(data.data);
+                    console.log(json.data);
                     return json.data;
                 }
             },
@@ -221,8 +223,6 @@ function GetDocumentList() {
                                     "<input type='hidden' value='" + row.DocumentName + "' id='hdnDocumentName" + row.DocketId + "'/>" +
                                     '</div></div>';
                             }
-
-
                         }
                         else {
                             if (row.DocketCopyFile != "") {
@@ -261,7 +261,7 @@ function GetDocumentList() {
                             '</button><button id = "btnOfficePODCopy' + row.DocketId + '" onclick="return OpenDocketOfficePrint(' + row.DocketId + ')" class="btn btn-primary btn-xs dt-edit" title="Office Copy">' +
                             '<span class="glyphicon glyphicon-print"></span>' +
                             '</button> &nbsp; ';
-                            /*'< a href = "#" onclick = "javascript:ViewHistory(' + row.DocketId + ');" > DEPS</a > ';*/
+                        /*'< a href = "#" onclick = "javascript:ViewHistory(' + row.DocketId + ');" > DEPS</a > ';*/
 
 
                     }, "searchable": false
@@ -702,6 +702,7 @@ function GetDocumentList() {
                         { title: 'Location Code', data: 'LocationCode' },
                         { title: 'MF No', data: 'ManifestNo' },
                         { title: 'Vehicle No.', data: 'VehicleNo' },
+                        { title: 'Status', data: 'Status' },
                         { title: 'View', data: 'View' }
                     ]);
 
