@@ -148,8 +148,17 @@ namespace CodeLock.Models
 
         [Display(Name = "Internal Location Code")]
         public string InternalLocationCode { get; set; }
-	}
-	public class LocationNameById
+        public string API_USER { get; set; }
+        public string API_PASSWORD { get; set; }
+        public string GstTinNo { get; set; }
+        public short LoginLocationId { get; set; }
+        public short locationId { get; set; }
+		public int OwnerId { get; set; }
+		public short StateIds { get; set; }
+        public DateTime EwbFetchDate { get; set; }
+
+    }
+    public class LocationNameById
 	{
         public short LocationId { get; set; }
         public string LocationName { get; set; }

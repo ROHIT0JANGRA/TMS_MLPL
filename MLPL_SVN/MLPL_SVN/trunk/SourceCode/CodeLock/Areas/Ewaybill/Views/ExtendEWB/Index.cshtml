@@ -1,0 +1,62 @@
+﻿
+@{
+    ViewBag.Title = "E-way Bill Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="widget-wrap"
+     <div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h3>E-way Bill</h3>
+        </div>
+        <div class="card-body">
+            <ul class="nav nav-tabs" id="ewayBillTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="my-eway-bill-tab" data-toggle="tab" href="#my-eway-bill" role="tab" aria-controls="my-eway-bill" aria-selected="true">My Eway Bill</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="other-eway-bill-tab" data-toggle="tab" href="#other-eway-bill" role="tab" aria-controls="other-eway-bill" aria-selected="false">Eway Bills by other parties</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="ewayBillTabContent">
+                <div class="tab-pane fade show active" id="my-eway-bill" role="tabpanel" aria-labelledby="my-eway-bill-tab">
+                    <div class="summary" style="display:flex; gap: 10rem;">
+                        <h4>Summary</h4>
+                        <p>Total: 107</p>
+                        <p>Active: 105</p>
+                        <p>Expiring Today: 2</p>
+                        <p>Expires Tomorrow: 0</p>
+                        <p>Expired: 0</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Eway Bill No.</th>
+                                    <th>Eway Bill Date</th>
+                                    <th>Vehicle Number</th>
+                                    <th>Valid till</th>
+                                    <th>Extended Times</th>
+                                    <th>Auto extend</th>
+                                    <th>Doc No.</th>
+                                    <th>Job Name</th>
+                                    <th>From GSTIN</th>
+                                    <th>To GSTIN</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @* Add your dynamic rows here *@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="other-eway-bill" role="tabpanel" aria-labelledby="other-eway-bill-tab">
+                    @* Content for other eway bills *@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

@@ -12,6 +12,7 @@ using Unity.Injection;
 using System.Web.Mvc;
 using System.ComponentModel;
 using System.Web.Http;
+using CodeLock.Areas.Ewaybill.Repository;
 
 namespace CodeLock
 {
@@ -139,7 +140,7 @@ namespace CodeLock
             container.RegisterType<ITyreManufacturerRepository, TyreManufacturerRepository>(new InjectionMember[0]);
             container.RegisterType<ITyreModelRepository, TyreModelRepository>(new InjectionMember[0]);
             container.RegisterType<IFinanceRepository, FinanceRepository>(new InjectionMember[0]);
-          //  container.RegisterType<IBusinousPatnerApi,BusinousPatnerApi>(new InjectionMember[0]);
+            container.RegisterType<IEwaybillRepository, EwaybillRepository>(new InjectionMember[0]);
 
         }
     }

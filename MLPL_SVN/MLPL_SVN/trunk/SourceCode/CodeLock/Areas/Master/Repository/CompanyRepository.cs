@@ -31,11 +31,11 @@ namespace CodeLock.Areas.Master.Repository
 
     public byte Insert(MasterCompany objMasterCompany)
     {
-      DynamicParameters dynamicParameters = new DynamicParameters();
-      dynamicParameters.Add("@XmlCompany", (object) XmlUtility.XmlSerializeToString((object) objMasterCompany), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-      dynamicParameters.Add("@CompanyId", (object) null, new DbType?(DbType.Byte), new ParameterDirection?(ParameterDirection.Output), new int?(), new byte?(), new byte?());
-      DataBaseFactory.QuerySP("Usp_MasterCompany_Insert", (object) dynamicParameters, "Company Master - Insert");
-      return dynamicParameters.Get<byte>("@CompanyId");
+        DynamicParameters dynamicParameters = new DynamicParameters();
+        dynamicParameters.Add("@XmlCompany", (object) XmlUtility.XmlSerializeToString((object) objMasterCompany), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+        dynamicParameters.Add("@CompanyId", (object) null, new DbType?(DbType.Byte), new ParameterDirection?(ParameterDirection.Output), new int?(), new byte?(), new byte?());
+        DataBaseFactory.QuerySP("Usp_MasterCompany_Insert", (object) dynamicParameters, "Company Master - Insert");
+        return dynamicParameters.Get<byte>("@CompanyId");
     }
 
     public byte Update(MasterCompany objMasterCompany)
