@@ -125,7 +125,7 @@ namespace CodeLock.Models
         public string GstType { get; set; }
         //public string SacName { get; set; }
         public bool IsSez { get; set; }
-        public string Remarks { get; set; }
+     
 
     }
 }

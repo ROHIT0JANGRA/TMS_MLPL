@@ -1317,4 +1317,41 @@ namespace CodeLock.Models
         public long DocketId { get; set; }
         public string PackagesNo { get; set; }
     }
+
+    public class BookingReport
+    {
+        public int SRNo { get; set; }
+        public string DocketNo { get; set; }
+        public string DocketDate { get; set; }
+        public string FromLocation { get; set; }
+        public string ToLocation { get; set; }
+        public string FromCity { get; set; }
+        public string ToCity { get; set; }
+        public string TransportMode { get; set; }
+        public string EDD { get; set; }
+        public int Packages { get; set; }
+        public decimal ActualWeight { get; set; }
+        public decimal ChargedWeight { get; set; }
+        public string BusinessType { get; set; }
+        public string ServiceType { get; set; }
+        public string CustomerReferenceNo { get; set; }
+        public string EntryBy { get; set; }
+        public string EntryDate { get; set; }
+        public string IsCancel { get; set; }
+        public string Company { get; set; }
+        public string CancelDate { get; set; }
+        public string CancelReason { get; set; }
+        public string CancelBy { get; set; }
+        public string IsTPL { get; set; }
+        public string CustomerDocketNo { get; set; }
+        public string IsOld { get; set; }
+        public string DocketType { get; set; }
+        public string IsBABilled { get; set; }
+        public string IsClosed { get; set; }
+        public string IsBADeliveryBilled { get; set; }
+        public string ConsignorName { get; set; }
+        public string ConsigneeName { get; set; }
+        public int CustomerId { get; set; }
+    }
+
 }

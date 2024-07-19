@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Rohit\\Desktop\\Development_Code\\MLPL_SVN\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\",
+  "WorkspaceRootPath": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\",
   "Documents": [
     {
       "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\rohit\\desktop\\development_code\\mlpl_svn\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
@@ -65,18 +65,6 @@
           "SelectedChildIndex": 15,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{9183c819-01e4-3cc8-b93b-edcdbb0ef36c}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{01321f1c-6c9e-3b5b-9c0f-66d2a373c254}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "Pagination.cs",
@@ -97,7 +85,7 @@
               "ToolTip": "C:\\Users\\Rohit\\Desktop\\Development_Code\\MLPL_SVN\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Controllers\\CustomerController.cs",
               "RelativeToolTip": "CodeLock\\Areas\\Master\\Controllers\\CustomerController.cs",
               "ViewState": "AQIAAG8CAAAAAAAAAAAmwHQCAAA9AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "ViewState": "AQIAAC4AAAAAAAAAAADwvzgAAAA8AAAA",
               "WhenOpened": "2024-07-18T15:06:23.471Z"
             },
             {
@@ -232,6 +220,8 @@
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
               "WhenOpened": "2024-07-09T09:19:10.723Z",
               "EditorCaption": ""
+              "WhenOpened": "2024-07-09T07:45:40.417Z"
+              "WhenOpened": "2024-07-09T07:45:40.417Z"
             }
           ]
         }

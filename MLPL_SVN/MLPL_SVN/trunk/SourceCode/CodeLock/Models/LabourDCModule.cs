@@ -104,6 +104,10 @@ namespace CodeLock.Models
         public string BILLNO { get; set; }
         public string LdcStatus { get; set; }
         public string DocumentDetail { get; set; }
+        
+                    public string FromLocation { get; set; }
+        public string ToLocation { get; set; }
+
 
     }
     public class LabourDCManifest
@@ -136,6 +140,8 @@ namespace CodeLock.Models
         //RateType
         [Display(Name = "RateType")]
         public string RateType { get; set; }
+        public string Vehicleno { get; set; }
+
 
         public Decimal Rate { get; set; }
 
@@ -149,7 +155,8 @@ namespace CodeLock.Models
         [Display(Name = "ChargesType")]
         public string ChargesType { get; set; }
 
-      
+        public string FromLocation { get; set; }
+        public string ToLocation { get; set; }
 
 
     }

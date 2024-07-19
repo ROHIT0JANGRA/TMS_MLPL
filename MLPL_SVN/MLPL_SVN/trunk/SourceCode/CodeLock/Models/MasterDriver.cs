@@ -18,8 +18,8 @@ namespace CodeLock.Models
       this.DocumentDetails = new List<DriverDocument>();
     }
         public int TotalDrivers { get; set; }
-        public int FilterDriver { get; set; }
-        public short DriverId { get; set; }
+        public int FilterDriver {  get; set; }    
+    public short DriverId { get; set; }
 
     public Decimal BalanceAmount { get; set; }
 

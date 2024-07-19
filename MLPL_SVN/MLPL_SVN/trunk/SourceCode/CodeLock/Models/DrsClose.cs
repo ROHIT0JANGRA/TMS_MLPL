@@ -31,10 +31,12 @@ namespace CodeLock.Models
         public int StartKm { get; set; }
         [Display(Name = "Vehicle No")]
         public string VehicleNo { get;set; }
-
+         
         [Display(Name = "End KM")]
         [AssertThat("StartKm < EndKm", ErrorMessage = "Please enter End KM greater than Start KM")]
         public int EndKm { get; set; }
+        [Display(Name ="Delivery Vender")]
+        public string VendorName { get; set; }
 
         public string DrsCloseRemarks { get; set; }
         public List<DrsDocket> DocketDetails { get; set; }

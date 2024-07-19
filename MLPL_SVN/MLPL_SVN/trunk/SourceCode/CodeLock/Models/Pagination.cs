@@ -23,7 +23,7 @@ namespace CodeLock.Models
         public DTSearch search { get; set; }
         public List<DTOrder> order { get; set; }
     }
-    
+
     public class DTColumn
     {
         public string data { get; set; }

@@ -167,6 +167,7 @@ namespace CodeLock.Models
         public string StockUpdateRemarks { get; set; }
 
         public long DepsDocketId { get; set; }
+        public string UnloadingPersonName { get; set; } 
 
         [Range(1.0, 999999999999.0, ErrorMessage = "Please enter EWAY Bill No")]
         [Display(Name = "EWAY Bill No")]

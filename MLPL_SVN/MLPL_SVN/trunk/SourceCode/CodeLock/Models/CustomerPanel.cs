@@ -36,7 +36,7 @@ namespace CodeLock.Models
 		[Display(Name = "Total Order Quantity")]
 		public decimal TotalOrderQuantity { get; set; }
 		[Display(Name = "Warehouse")]
-		public short WarehouseId { get; set; }
+		public short WarehouseIds { get; set; }
 		public string Warehouse { get; set; }
 		[Display(Name = "Picked Quantity")]
 		public decimal PickedQuantity { get; set; }

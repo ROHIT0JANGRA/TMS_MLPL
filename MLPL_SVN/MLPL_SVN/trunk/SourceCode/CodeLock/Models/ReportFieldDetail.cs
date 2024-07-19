@@ -13,5 +13,6 @@ namespace CodeLock.Models
     public string FieldCaption { get; set; }
 
     public bool IsActive { get; set; }
-  }
+    public string FieldName { get; set; }
+    }
 }

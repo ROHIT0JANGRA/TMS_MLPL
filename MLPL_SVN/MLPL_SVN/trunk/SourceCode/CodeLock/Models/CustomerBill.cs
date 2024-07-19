@@ -341,6 +341,92 @@ namespace CodeLock.Models
         public Byte CustomerTypeId { get; set; }
 
         public List<CustomerBillDetail> GSTDetails { get; set; }
+    
 
     }
+    public class BillReportModel
+    {
+        public int SRNo { get; set; }
+        public string BillNo { get; set; }
+        public string ManualBillNo { get; set; }
+        public string BillDate { get; set; }
+        public string BillTime { get; set; }
+        public string DueDate { get; set; }
+        public string DueTime { get; set; }
+        public string GenerateLocation { get; set; }
+        public string GenerateUser { get; set; }
+        public string SubmissionDate { get; set; }
+        public string SubmissionTime { get; set; }
+        public string SubmissionLocation { get; set; }
+        public string SubmissionUser { get; set; }
+        public string CollectionDate { get; set; }
+        public string CollectionTime { get; set; }
+        public DateTime CollectionDateTime { get; set; }
+        public string CollectionLocation { get; set; }
+        public string CollectionUser { get; set; }
+        public string SubmittedTo { get; set; }
+        public string SubmittedContactNo { get; set; }
+        public string Paybas { get; set; }
+        public string Customer { get; set; }
+        public decimal BillAmount { get; set; }
+        public string BillStatus { get; set; }
+        public string IsFinalized { get; set; }
+        public string IsCancelled { get; set; }
+        public string CancelledDate { get; set; }
+        public string CancelledReason { get; set; }
+        public string CancelBy { get; set; }
+        public string FinalizeDate { get; set; }
+        public string FinalizeBy { get; set; }
+        public decimal TaxPercentageTotal { get; set; }
+        public decimal SubTotal { get; set; }
+        public decimal TaxTotal { get; set; }
+        public decimal PendingAmount { get; set; }
+        public string Remarks { get; set; }
+        public string EntryBy { get; set; }
+        public string EntryDate { get; set; }
+        public string Company { get; set; }
+        public string TransportMode { get; set; }
+        public string ServiceTypeName { get; set; }
+        public string FtlType { get; set; }
+        public int SubmittedByUserId { get; set; }
+        public string SubmittedDocumentName { get; set; }
+        public string IsGSTBasedOnBillState { get; set; }
+        public string TripsheetBillNo { get; set; }
+        public int MilkRunsheetBillId { get; set; }
+        public string CustomerGstStateGstTinNo { get; set; }
+        public string ManifestNo { get; set; }
+        public string IsCreditDebitNote { get; set; }
+        public string Vendor { get; set; }
+        public string Address { get; set; }
+        public string BillSubmissionRemarks { get; set; }
+        public string BillFinalizationRemarks { get; set; }
+        public string BillCollectionRemarks { get; set; }
+        public string IsPosted { get; set; }
+        public string Irn { get; set; }
+        public string SignedQRCode { get; set; }
+        public string SignedInvoice { get; set; }
+        public string IrnStatus { get; set; }
+        public string IsSez { get; set; }
+        public string IsRCM { get; set; }
+        public string AckNo { get; set; }
+    }
+	
+public class ReportBillSubmissionModel
+    {
+        public int SRNo { get; set; }
+        public string SubmissionNo { get; set; }
+        public string SubmissionDateTime { get; set; }
+        public string SubmissionUser { get; set; }
+        public string SubmittedTo { get; set; }
+        public string Customer { get; set; }
+        public string BillNo { get; set; }
+        public string SubmissionLocation { get; set; }
+        public string Company { get; set; }
+        public string SubmissionRemarks { get; set; }
+        public string IsCancelled { get; set; }
+        public string CancelledDate { get; set; }
+        public string CancelBy { get; set; }
+    }
+
+
 }

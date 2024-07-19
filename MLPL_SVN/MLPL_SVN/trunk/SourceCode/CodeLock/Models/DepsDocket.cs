@@ -111,5 +111,7 @@ namespace CodeLock.Models
     public string Remark { get; set; }
 
     public DepsHistory History { get; set; }
-  }
+        public string UnloadingPersonName { get; set; }
+
+    }
 }

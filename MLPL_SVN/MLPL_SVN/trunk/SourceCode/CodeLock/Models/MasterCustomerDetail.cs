@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
-using Org.BouncyCastle.Asn1.Mozilla;
 
 namespace CodeLock.Models
 {
@@ -112,9 +111,5 @@ namespace CodeLock.Models
         //[Required(ErrorMessage = "Please enter Phone No.")]
         public string PhoneNo { get; set; }
 
-        [Display(Name = "Registration Date")]
-        public string RegistrationDate { get; set; }
-        public int BusinessType { get; set; }
-        public string BusinessTypeLabel { get; set; }
     }
 }

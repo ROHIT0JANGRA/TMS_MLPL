@@ -86,6 +86,5 @@ namespace CodeLock.Models
 
         [Display(Name = "Is NOC Declare")]
         public bool IsNocDeclare { get; set; }
-        public string Remarks { get; set; }
     }
 }

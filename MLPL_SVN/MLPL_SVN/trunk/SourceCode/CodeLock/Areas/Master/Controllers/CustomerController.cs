@@ -120,6 +120,8 @@ namespace CodeLock.Areas.Master.Controllers
             ((dynamic)base.ViewBag).GroupList = this.customerGroupRepository.GetCustomerGroupList();
             ((dynamic)base.ViewBag).LocationList = this.locationRepository.GetLocationList();
             ((dynamic)base.ViewBag).CountryList = this.countryRepository.GetCountryList();
+            ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
+
             if ((countryId != 0 ? true : stateId != 0))
             {
                 ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateListByCountryId(countryId);
@@ -206,8 +208,31 @@ namespace CodeLock.Areas.Master.Controllers
         }
             };
 
-            Init(0, 0);
-
+            MasterCustomer objCustomer = new MasterCustomer()
+            {
+                MasterAddressList = new List<MasterAddress>()
+            };
+            MasterAddress objAdd = new MasterAddress()
+            {
+                AddressId = 0,
+                AddressCode = "",
+                Address1 = "",
+                Address2 = "",
+                CityId = 0,
+                CityName = "",
+                Pincode = ""
+                ,
+                MobileNo = "",
+                EmailId = "",
+                StatisticalChargesCode = "",
+                IsActive = true,
+                IsMreNoApplicable = false
+                ,
+                CountryId = 0,
+                StateId = 0
+            };
+            objCustomer.MasterAddressList.Add(objAdd);
+            this.Init(0, 0);
             objCustomer.PayBas = this.generalRepository.GetByGeneralList(14).ToArray<MasterGeneral>();
 
 
@@ -215,10 +240,10 @@ namespace CodeLock.Areas.Master.Controllers
             {
                 objCustomer.PayBas[i].IsActive = false;
             }
-
-           ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
+            ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
             ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
-            ((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
+
+            //((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
 
             return View(objCustomer);
         }
@@ -227,31 +252,22 @@ namespace CodeLock.Areas.Master.Controllers
         [ValidateAntiModelInjection("CustomerId")]
         public ActionResult Insert(MasterCustomer objMasterCustomer)
         {
+
             ActionResult action;
-            List<MasterAddress> masterAddresses = new List<MasterAddress>();
-            Response response;
+            //if (!base.ModelState.IsValid)
+            //{
+            this.Init(0, 0);
+            //    action = base.View(objMasterCustomer);
+            //}
+            //else
+            //{
+            objMasterCustomer.EntryBy = SessionUtility.LoginUserId;
+            objMasterCustomer.WarehouseId = SessionUtility.WarehouseId;
+            objMasterCustomer.MasterCustomerDetail.EntryBy = SessionUtility.LoginUserId;
 
-
-
-
-            for (int i = 0; objMasterCustomer.MasterAddress.Count > i; i++)
-            {
-                base.ModelState.Remove(string.Concat("MasterAddress[", i, "].AddressId"));
-            }
-
-            if (!base.ModelState.IsValid)
-            {
-                action = base.View(objMasterCustomer);
-            }
-            else
-            {
-                objMasterCustomer.EntryBy = SessionUtility.LoginUserId;
-                objMasterCustomer.WarehouseId = SessionUtility.WarehouseId;
-                objMasterCustomer.MasterCustomerDetail.EntryBy = SessionUtility.LoginUserId;
-
-                int num = this.customerRepository.Insert(objMasterCustomer);
-                action = base.RedirectToAction("View", new { id = num });
-            }
+            int num = this.customerRepository.Insert(objMasterCustomer);
+            action = base.RedirectToAction("View", new { id = num });
+            //}
             return action;
         }
 
