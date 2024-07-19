@@ -3,7 +3,7 @@
   "WorkspaceRootPath": "C:\\Users\\Rohit\\Desktop\\Development_Code\\MLPL_SVN\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|C:\\Users\\Rohit\\Desktop\\Development_Code\\MLPL_SVN\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\codelock\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\rohit\\desktop\\development_code\\mlpl_svn\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
@@ -15,15 +15,15 @@
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\packaging\\views\\rgp\\rgpinsert.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\rohit\\desktop\\development_code\\mlpl_svn\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\models\\pagination.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|C:\\Users\\Rohit\\Desktop\\Development_Code\\MLPL_SVN\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\codelock\\models\\pagination.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\models\\pagination.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\rohit\\desktop\\development_code\\mlpl_svn\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\master\\views\\customer\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|C:\\Users\\Rohit\\Desktop\\Development_Code\\MLPL_SVN\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\codelock\\areas\\master\\views\\customer\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\master\\views\\customer\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\rohit\\desktop\\development_code\\mlpl_svn\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\master\\controllers\\customercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|C:\\Users\\Rohit\\Desktop\\Development_Code\\MLPL_SVN\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\codelock\\areas\\master\\controllers\\customercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\master\\controllers\\customercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -31,7 +31,7 @@
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\packaging\\controllers\\rgpcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\rohit\\desktop\\development_code\\mlpl_svn\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\packaging\\views\\rgp\\rgplist.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|C:\\Users\\Rohit\\Desktop\\Development_Code\\MLPL_SVN\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\codelock\\areas\\packaging\\views\\rgp\\rgplist.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\packaging\\views\\rgp\\rgplist.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
@@ -39,7 +39,7 @@
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\models\\mastercustomer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\rohit\\desktop\\development_code\\mlpl_svn\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\views\\home\\virtuallogin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|C:\\Users\\Rohit\\Desktop\\Development_Code\\MLPL_SVN\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\codelock\\views\\home\\virtuallogin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\views\\home\\virtuallogin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
@@ -86,8 +86,7 @@
               "RelativeToolTip": "CodeLock\\Models\\Pagination.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-18T15:07:12.502Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-18T15:07:12.502Z"
             },
             {
               "$type": "Document",
@@ -99,8 +98,7 @@
               "RelativeToolTip": "CodeLock\\Areas\\Master\\Controllers\\CustomerController.cs",
               "ViewState": "AQIAAG8CAAAAAAAAAAAmwHQCAAA9AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-18T15:06:23.471Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-18T15:06:23.471Z"
             },
             {
               "$type": "Document",
@@ -112,8 +110,7 @@
               "RelativeToolTip": "CodeLock\\Areas\\Master\\Views\\Customer\\Index.cshtml",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAACYAAABcAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-07-18T15:05:30.117Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-18T15:05:30.117Z"
             },
             {
               "$type": "Document",
@@ -125,8 +122,7 @@
               "RelativeToolTip": "CodeLock\\Views\\Home\\VirtualLogin.cshtml",
               "ViewState": "AQIAABUAAAAAAAAAAAAAACoAAAAqAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-07-18T09:31:14.428Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-18T09:31:14.428Z"
             },
             {
               "$type": "Document",
@@ -138,8 +134,7 @@
               "RelativeToolTip": "CodeLock\\Areas\\Packaging\\Views\\RGP\\RgpList.cshtml",
               "ViewState": "AQIAABEAAAAAAAAAAAAIwBwAAAAXAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-07-17T09:47:14.855Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-17T09:47:14.855Z"
             },
             {
               "$type": "Document",
@@ -151,8 +146,7 @@
               "RelativeToolTip": "CodeLock\\Models\\Packaging.cs",
               "ViewState": "AQIAAD4AAAAAAAAAAAAmwEoAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-17T09:36:54.562Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-17T09:36:54.562Z"
             },
             {
               "$type": "Document",
@@ -176,8 +170,7 @@
               "RelativeToolTip": "CodeLock\\Areas\\Packaging\\Views\\RGP\\RgpInsert.cshtml",
               "ViewState": "AQIAAHYAAAAAAAAAAAAawJAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-07-17T07:55:20.339Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-17T07:55:20.339Z"
             },
             {
               "$type": "Document",
@@ -189,8 +182,7 @@
               "RelativeToolTip": "CodeLock\\Areas\\Packaging\\Controllers\\RGPController.cs",
               "ViewState": "AQIAAAcAAAAAAAAAAAAowBcAAAAjAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-17T07:55:10.179Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-17T07:55:10.179Z"
             },
             {
               "$type": "Document",
@@ -226,8 +218,7 @@
               "RelativeToolTip": "CodeLock\\Models\\MasterCustomer.cs",
               "ViewState": "AQIAAKAAAAAAAAAAAAAqwKwAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-15T10:55:16.238Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-15T10:55:16.238Z"
             },
             {
               "$type": "Document",
