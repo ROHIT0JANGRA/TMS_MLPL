@@ -184,29 +184,7 @@ namespace CodeLock.Areas.Master.Controllers
         //}
         public ActionResult Insert()
         {
-            MasterCustomer objCustomer = new MasterCustomer()
-            {
-                MasterAddress = new List<MasterAddress>
-        {
-            new MasterAddress
-            {
-                CityId = 0,
-                CityName = "",
-                AddressCode = "",
-                Address1 = "",
-                EmailId = "",
-                Address2 = "",
-                Pincode = "",
-                MobileNo = "",
-                StatisticalChargesCode = "",
-                IsMreNoApplicable = false,
-                GstTinNo = "",
-                ProvisionalId = "",
-                IsActive = false
-            }
-        }
-            };
-
+            
             MasterCustomer objCustomer = new MasterCustomer()
             {
                 MasterAddressList = new List<MasterAddress>()
