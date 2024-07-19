@@ -3,8 +3,44 @@
   "WorkspaceRootPath": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\manisha\\desktop\\test\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\models\\pagination.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\manisha\\desktop\\test\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\master\\views\\customer\\insert.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\master\\views\\customer\\insert.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\manisha\\desktop\\test\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\master\\views\\vehicle\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\master\\views\\vehicle\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\manisha\\desktop\\test\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\master\\repository\\cityrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\master\\repository\\cityrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\codelock\\areas\\master\\controllers\\customercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\master\\controllers\\customercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\manisha\\desktop\\test\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\master\\views\\customer\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\master\\views\\customer\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\manisha\\desktop\\test\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\master\\repository\\vehiclerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\master\\repository\\vehiclerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\manisha\\desktop\\test\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\master\\controllers\\vehiclecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\master\\controllers\\vehiclecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\codelock\\models\\pagination.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\models\\pagination.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\manisha\\desktop\\test\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\master\\views\\address\\insert.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\master\\views\\address\\insert.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\manisha\\desktop\\test\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\master\\controllers\\addresscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\master\\controllers\\addresscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,19 +50,136 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CityRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Repository\\CityRepository.cs",
+              "RelativeDocumentMoniker": "CodeLock\\Areas\\Master\\Repository\\CityRepository.cs",
+              "ToolTip": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Repository\\CityRepository.cs",
+              "RelativeToolTip": "CodeLock\\Areas\\Master\\Repository\\CityRepository.cs",
+              "ViewState": "AQIAADsAAAAAAAAAAAAlwEkAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-19T07:18:43.551Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "VehicleRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Repository\\VehicleRepository.cs",
+              "RelativeDocumentMoniker": "CodeLock\\Areas\\Master\\Repository\\VehicleRepository.cs",
+              "ToolTip": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Repository\\VehicleRepository.cs",
+              "RelativeToolTip": "CodeLock\\Areas\\Master\\Repository\\VehicleRepository.cs",
+              "ViewState": "AQIAADoBAAAAAAAAAAAlwEcBAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-19T06:12:22.16Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Views\\Vehicle\\Index.cshtml",
+              "RelativeDocumentMoniker": "CodeLock\\Areas\\Master\\Views\\Vehicle\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Views\\Vehicle\\Index.cshtml",
+              "RelativeToolTip": "CodeLock\\Areas\\Master\\Views\\Vehicle\\Index.cshtml",
+              "ViewState": "AQIAAIAAAAAAmJmZmRkWwFgAAAA0AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-07-19T05:59:55.421Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "VehicleController.cs",
+              "DocumentMoniker": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Controllers\\VehicleController.cs",
+              "RelativeDocumentMoniker": "CodeLock\\Areas\\Master\\Controllers\\VehicleController.cs",
+              "ToolTip": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Controllers\\VehicleController.cs",
+              "RelativeToolTip": "CodeLock\\Areas\\Master\\Controllers\\VehicleController.cs",
+              "ViewState": "AQIAAGgBAAAAAAAAAAAlwHUBAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-19T05:48:44.548Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Insert.cshtml",
+              "DocumentMoniker": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Views\\Customer\\Insert.cshtml",
+              "RelativeDocumentMoniker": "CodeLock\\Areas\\Master\\Views\\Customer\\Insert.cshtml",
+              "ToolTip": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Views\\Customer\\Insert.cshtml",
+              "RelativeToolTip": "CodeLock\\Areas\\Master\\Views\\Customer\\Insert.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-07-19T04:45:11.52Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Views\\Customer\\Index.cshtml",
+              "RelativeDocumentMoniker": "CodeLock\\Areas\\Master\\Views\\Customer\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Views\\Customer\\Index.cshtml",
+              "RelativeToolTip": "CodeLock\\Areas\\Master\\Views\\Customer\\Index.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAADkAAAAlAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-07-18T18:03:05.523Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CustomerController.cs",
+              "DocumentMoniker": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Controllers\\CustomerController.cs",
+              "RelativeDocumentMoniker": "CodeLock\\Areas\\Master\\Controllers\\CustomerController.cs",
+              "ToolTip": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Controllers\\CustomerController.cs",
+              "RelativeToolTip": "CodeLock\\Areas\\Master\\Controllers\\CustomerController.cs",
+              "ViewState": "AQIAAG4AAACgmZmZmdklwH4AAABbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-18T17:50:42.323Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "Pagination.cs",
               "DocumentMoniker": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Models\\Pagination.cs",
               "RelativeDocumentMoniker": "CodeLock\\Models\\Pagination.cs",
               "ToolTip": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Models\\Pagination.cs",
               "RelativeToolTip": "CodeLock\\Models\\Pagination.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAFAAAA",
+              "ViewState": "AQIAACYAAAAAAAAAAIA8wDAAAAAiAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-18T15:21:34.102Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Insert.cshtml",
+              "DocumentMoniker": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Views\\Address\\Insert.cshtml",
+              "RelativeDocumentMoniker": "CodeLock\\Areas\\Master\\Views\\Address\\Insert.cshtml",
+              "ToolTip": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Views\\Address\\Insert.cshtml",
+              "RelativeToolTip": "CodeLock\\Areas\\Master\\Views\\Address\\Insert.cshtml",
+              "ViewState": "AQIAAGsAAAAAl5mZmRkWwHkAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-07-19T05:25:27.296Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "AddressController.cs",
+              "DocumentMoniker": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Controllers\\AddressController.cs",
+              "RelativeDocumentMoniker": "CodeLock\\Areas\\Master\\Controllers\\AddressController.cs",
+              "ToolTip": "C:\\Users\\Manisha\\Desktop\\Test\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Areas\\Master\\Controllers\\AddressController.cs",
+              "RelativeToolTip": "CodeLock\\Areas\\Master\\Controllers\\AddressController.cs",
+              "ViewState": "AQIAABAAAAAAAAAAAAAMwBsAAAAeAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-19T05:24:42.521Z",
               "EditorCaption": ""
             }
           ]
