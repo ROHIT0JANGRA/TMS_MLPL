@@ -8,7 +8,7 @@ var ruleMasterUrl, isPaymentDetailshow = true, useRoundActualWeight = true, useR
     , isCODApplicableFromContractExclude = false;
 var customerwithGST;
 var partMasterUrl;
-var isVolumetricApplicable, isVolumetricApplicable;
+var isVolumetricApplicable, isVolumetricApplicable, isTruckForwardNote = false;
 
 $(document).ready(function () {
     SetPageLoad(docketNomenclature, 'Entry');
@@ -59,7 +59,7 @@ function InitObjects() {
     /*step 4 object initialization*/rdCarrierRisk = $('#rdCarrierRisk'); rdOwnerRisk = $('#rdOwnerRisk'); txtPolicyNo = $('#txtPolicyNo'); txtPolicyDate = $('#txtPolicyDate'); txtModvatCovers = $('#txtModvatCovers'); txtInternalCovers = $('#txtInternalCovers'); txtCustomerReferenceNo = $('#txtCustomerReferenceNo'); txtCustomerReferenceDate = $('#txtCustomerReferenceDate'); txtCustomerGatepassNo = $('#txtCustomerGatepassNo'); txtCustomerDeliveryNo = $('#txtCustomerDeliveryNo'); txtPrivateMark = $('#txtPrivateMark'); txtTPNo = $('#txtTPNo'); txtEntrysheetNo = $('#txtEntrysheetNo'); txtObdNo = $('#txtObdNo'); txtEngineNo = $('#txtEngineNo'); txtModelNo = $('#txtModelNo'); txtGpsNo = $('#txtGpsNo'); txtChassisNo = $('#txtChassisNo'); hdnContractId = $('#hdnContractId'); hdnFreightContractId = $('#hdnFreightContractId'); dvDocument = $('#dvDocument'); dvPermit1 = $('#dvPermit1'); dvPermit2 = $('#dvPermit2'); txtPermitNo = $('#txtPermitNo'); txtPermitDate = $('#txtPermitDate'); txtPermitValidityDate = $('#txtPermitValidityDate'); txtPermitReceivedDate = $('#txtPermitReceivedDate'); ddlPermitReceivedAt = $('#ddlPermitReceivedAt'); dvStep4 = $('#dvStep4'); btnStep4 = $('#btnStep4');
     /*step 5 object initialization*/dvCft = $('#dvCft'); dvInvoice = $('#dvInvoice'); txtCftRatio = $('#txtCftRatio'); hdnCftRatio = $('#hdnCftRatio'); hdnTotalPackages = $('#hdnTotalPackages'); hdnTotalPartQuantity = $('#hdnTotalPartQuantity'); hdnTotalActualWeight = $('#hdnTotalActualWeight'); hdnTotalChargedWeight = $('#hdnTotalChargedWeight'); dvStep5 = $('#dvStep5'); btnStep5 = $('#btnStep5');
     /*step 6 object initialization*/dvFov = $('#dvFov'); divRiskType = $('#divRiskType'); ddlGstPayer = $('#ddlGstPayer'); txtFreight = $('#txtFreight'); txtFreightRate = $('#txtFreightRate'); ddlRateType = $('#ddlRateType'); lblMinimumFreightMessage = $('#lblMinimumFreightMessage'); dvKm = $('#dvKm'); txtKm = $('#txtKm'); txtBillLocation = $('#txtBillLocation'); hdnBillLocationId = $('#hdnBillLocationId'); hdnIsFreightEnaledDisabled = $('#hdnIsFreightEnaledDisabled'); txtEdd = $('#txtEdd'); txtFov = $('#txtFov'); txtFovRate = $('#txtFovRate'); lblSubTotal = $('#lblSubTotal'); hdnSubTotal = $('#hdnSubTotal'); lblTaxTotal = $('#lblTaxTotal'); hdnTaxTotal = $('#hdnTaxTotal'); hdnTaxPercentageTotal = $('#hdnTaxPercentageTotal'); lblGrandTotal = $('#lblGrandTotal'); hdnGrandTotal = $('#hdnGrandTotal'); dvStep6 = $('#dvStep6'); btnReinvokeContract = $('#btnReinvokeContract'); dvReinvokeContract = $('#dvReinvokeContract'); dvPaymentContractParty = $('#dvPaymentContractParty'); txtPaymentCustomerCode = $('#txtPaymentCustomerCode'); lblPaymentCustomerName = $('#lblPaymentCustomerName'); hdnPaymentCustomerId = $('#hdnPaymentCustomerId'); btnSubmit = $('#btnSubmit');
-    /*GST initialization*/  dvGstRegister = $('#dvGstRegister'); txtServiceTaxRegisterNo = $('#txtServiceTaxRegisterNo'); txtLocalServiceTaxRegisterNo = $('#txtLocalServiceTaxRegisterNo'); lblGstBillingParty = $('#lblGstBillingParty'); hdnWalkingGstTinNo = $('#hdnWalkingGstTinNo'); hdnWalkinCode = $('#hdnWalkinCode'); hdnIsGst = $('#hdnIsGst'); hdnIsRcm = $('#hdnIsRcm'); ddlGstState = $('#ddlGstState'); hdnGstStateId = $('#hdnGstStateId'); hdnGstTinNo = $('#hdnGstTinNo'); txtPartyGstTinNo = $('#txtPartyGstTinNo'); hdnPartyGstId = $('#hdnPartyGstId'); ddlCompanyGstState = $('#ddlCompanyGstState'); chkIsGst = $('#chkIsGst'); ddlGstServiceType = $('#ddlGstServiceType'); dvddlGstServiceType = $('#dvddlGstServiceType'); hdnGstServiceTypeId = $('#hdnGstServiceTypeId'); hdnGstExemptionDeclarationFileName = $('#hdnGstExemptionDeclarationFileName'); hdnIsGst = $('#hdnIsGst'); lblFromLocation = $('#lblFromLocation'); hdnFromLocationId = $('#hdnFromLocationId'); hdnWalkingGstTinNo = $('#hdnWalkingGstTinNo'); lblGstBillingParty = $('#lblGstBillingParty'); ddlCompanyGstState = $('#ddlCompanyGstState'); hdnCompanyGstStateId = $('#hdnCompanyGstStateId'); hdnCompanyGstTinNo = $('#hdnCompanyGstTinNo'); hdnGstStateId = $('#hdnGstStateId'); lblTransportMode = $('#lblTransportMode'); lblGstSacName = $('#lblGstSacName'); hdnGstSacId = $('#hdnGstSacId'); lblGstServiceType = $('#lblGstServiceType'); hdnGstServiceTypeId = $('#hdnGstServiceTypeId'); rdTransporter = $('#rdTransporter'); rdBillingParty = $('#rdBillingParty'); txtPartyGstTinNo = $('#txtPartyGstTinNo'); txtCompanyGstTinNo = $('#txtCompanyGstTinNo'); hdnPartyGstId = $('#hdnPartyGstId'); hdnCompanyGstId = $('#hdnCompanyGstId'); hdnDeclarationFileName = $('#hdnDeclarationFileName'); txtGstRate = $('#txtGstRate'); txtGstAmount = $('#txtGstAmount'); lblIsRcm = $('#lblIsRcm'); txtGstCharge = $('#txtGstCharge'); lblIsInterState = $('#lblIsInterState'); hdnIsInterState = $('#hdnIsInterState'); dvGstTinNoDetail = $('#dvGstTinNoDetail'); dvRegisterGstDetail = $('#dvRegisterGstDetail');
+    /*GST initialization*/  dvGstRegister = $('#dvGstRegister'); txtServiceTaxRegisterNo = $('#txtServiceTaxRegisterNo'); txtLocalServiceTaxRegisterNo = $('#txtLocalServiceTaxRegisterNo'); lblGstBillingParty = $('#lblGstBillingParty'); hdnWalkingGstTinNo = $('#hdnWalkingGstTinNo'); hdnWalkinCode = $('#hdnWalkinCode'); hdnIsGst = $('#hdnIsGst'); hdnIsRcm = $('#hdnIsRcm'); ddlGstState = $('#ddlGstState'); hdnGstStateId = $('#hdnGstStateId'); hdnGstTinNo = $('#hdnGstTinNo'); txtPartyGstTinNo = $('#txtPartyGstTinNo'); hdnPartyGstId = $('#hdnPartyGstId'); ddlCompanyGstState = $('#ddlCompanyGstState'); chkIsGst = $('#chkIsGst'); ddlGstServiceType = $('#ddlGstServiceType'); dvddlGstServiceType = $('#dvddlGstServiceType'); hdnGstServiceTypeId = $('#hdnGstServiceTypeId'); hdnGstExemptionDeclarationFileName = $('#hdnGstExemptionDeclarationFileName'); hdnIsGst = $('#hdnIsGst'); lblFromLocation = $('#lblFromLocation'); hdnFromLocationId = $('#hdnFromLocationId'); hdnWalkingGstTinNo = $('#hdnWalkingGstTinNo'); lblGstBillingParty = $('#lblGstBillingParty'); ddlCompanyGstState = $('#ddlCompanyGstState'); hdnCompanyGstStateId = $('#hdnCompanyGstStateId'); hdnCompanyGstTinNo = $('#hdnCompanyGstTinNo'); hdnGstStateId = $('#hdnGstStateId'); lblTransportMode = $('#lblTransportMode'); lblGstSacName = $('#lblGstSacName'); hdnGstSacId = $('#hdnGstSacId'); lblGstServiceType = $('#lblGstServiceType'); hdnGstServiceTypeId = $('#hdnGstServiceTypeId'); rdTransporter = $('#rdTransporter'); rdBillingParty = $('#rdBillingParty'); txtPartyGstTinNo = $('#txtPartyGstTinNo'); txtPartyPanNo = $('#txtPartyPanNo'); txtCompanyGstTinNo = $('#txtCompanyGstTinNo'); hdnPartyGstId = $('#hdnPartyGstId'); hdnCompanyGstId = $('#hdnCompanyGstId'); hdnDeclarationFileName = $('#hdnDeclarationFileName'); txtGstRate = $('#txtGstRate'); txtGstAmount = $('#txtGstAmount'); lblIsRcm = $('#lblIsRcm'); txtGstCharge = $('#txtGstCharge'); lblIsInterState = $('#lblIsInterState'); hdnIsInterState = $('#hdnIsInterState'); dvGstTinNoDetail = $('#dvGstTinNoDetail'); dvPartyPanNoDetail = $('#dvPartyPanNoDetail'); dvRegisterGstDetail = $('#dvRegisterGstDetail');
 }
 
 function AttachEvents() {
@@ -342,6 +342,16 @@ function LoadStep2() {
         else
             ManageDefaultSelection(responseData.ConsigneeDefaultSelection, rdConsigneeFromMaster, rdConsigneeWalkin);
     }, ErrorFunction, false);
+    if (hdnCustomerId.val() > 0) {
+        var requestData2 = { CustomerId: hdnCustomerId.val() };
+        AjaxRequestWithPostAndJson(customerMasterUrl + '/GetById', JSON.stringify(requestData2), function (result) {
+            isTruckForwardNote = result.MasterCustomerDetail.IsTruckForwardNote;
+            if (result.MasterCustomerDetail.IsTruckForwardNote && ddlPaybas.val() == 1) {
+                RemoveRequired(txtConsignorGstTinNo);
+                RemoveRequired(txtConsigneeGstTinNo);
+            }
+        }, ErrorFunction, false);
+    }
 
     if (hdnDocketId.val() != 0) GetStep2DetailById();
     if (isFinancialUpdate) LoadStep3();
@@ -655,6 +665,15 @@ function LoadStep5() {
             btnStep5.text('Step 5');
     }
 
+    if (isTruckForwardNote && ddlPaybas.val() == 1) {
+        $('[id*="ddlPartId"]').each(function () {
+            var ddlPartId = $(this)
+            var ddlPartPackingTypeId = $('#' + this.id.replace('ddlPartId', 'ddlPartPackingTypeId'));
+            RemoveRequired(ddlPartId);
+            RemoveRequired(ddlPartPackingTypeId);
+        });
+    }
+
     if (hdnDocketId.val() != 0) GetStep5DetailById();
     if (isFinancialUpdate) LoadStep6();
 }
@@ -798,6 +817,11 @@ function LoadStep6() {
     //ManageFreightRateValidation();
     ddlCompanyGstState.enable(gstDetails.IsGst);
     ddlGstState.enable(gstDetails.IsGst);
+
+    var requestData2 = { CustomerId: hdnCustomerId.val() };
+    AjaxRequestWithPostAndJson(customerMasterUrl + '/GetById', JSON.stringify(requestData2), function (result) {
+        isTruckForwardNote = result.MasterCustomerDetail.IsTruckForwardNote;
+    }, ErrorFunction, false);
 
     if (gstDetails.IsGst) {
         hdnIsGst.val(true);
@@ -1066,23 +1090,32 @@ function GetStep5DetailById() {
                     AddGridRow('dtInvoice', false, Init);
                 }
                 BindEventInvoice(false);
-               // InvoiceCalculation('txtInvoiceAmount');
+                // InvoiceCalculation('txtInvoiceAmount');
                 InitPartDataTable();
                 $.each(value.PartList, function (partIndex, partValue) {
                     var ddlPartId = $('#ddlPartId_' + index + '_' + partIndex);
                     var txtPartName = $('#txtPartName_' + index + '_' + partIndex);
                     var lblPartDescription = $('#lblPartDescription_' + index + '_' + partIndex);
-                    var txtPartQuantity = $('#txtPartQuantity_' + index + '_' + partIndex);
+                    var txtPartQuantity = $('#txtQuantity_' + index + '_' + partIndex);
                     var txtPackages = $('#txtPartPackages_' + index + '_' + partIndex);
                     var txtReferenceNo = $('#txtReferenceNo_' + index + '_' + partIndex);
+                    var ddlPartPackingTypeId = $('#ddlPartPackingTypeId_' + index + '_' + partIndex);
+                    var txtPartVolumetricWeight = $('#txtPartVolumetricWeight_' + index + '_' + partIndex);
+                    var txtPartActualWeight = $('#txtPartActualWeight_' + index + '_' + partIndex);
+                    var txtPartChargedWeight = $('#txtPartChargedWeight_' + index + '_' + partIndex);
 
-
-                    ddlPartId.val(partValue.PartId);
+                    ddlPartId.val(partValue.PartId).change();
+                    ddlPartPackingTypeId.val(partValue.PackingTypeId).change();
                     txtPartName.val(partValue.PartCode);
                     lblPartDescription.text(partValue.PartName);
                     txtPartQuantity.val(partValue.PartQuantity);
                     txtPackages.val(partValue.Packages);
                     txtReferenceNo.val(partValue.ReferenceNo);
+                    txtPartQuantity.blur();
+                    txtPackages.blur();
+                    txtPartVolumetricWeight.blur();
+                    txtPartActualWeight.blur();
+                    txtPartChargedWeight.blur();
 
                     if ((value.PartList.length - 1) > index) {
                         AddGridRow('dtPart' + index, false, Init);
@@ -1119,7 +1152,10 @@ function GetStep6DetailById() {
             $.each($("#" + ddlGstState.attr('id') + " > option"), function (i, item) {
                 var value = item.value.split('~');
                 if ((value[3]) == result.PartyGstId && (value[3]) != undefined) {
-                    SetStateGstTin(ddlGstState, hdnGstStateId, hdnGstTinNo, true, txtPartyGstTinNo, hdnPartyGstId);
+                    if (isTruckForwardNote)
+                        SetStateGstTin(ddlGstState, hdnGstStateId, hdnGstTinNo, true, txtPartyPanNo, hdnPartyGstId);
+                    else
+                        SetStateGstTin(ddlGstState, hdnGstStateId, hdnGstTinNo, true, txtPartyGstTinNo, hdnPartyGstId);
                     ddlGstState.val(item.value).change();
                 }
             });
@@ -1143,9 +1179,14 @@ function GetStep6DetailById() {
             hdnGstStateId.val(result.GstStateId);
         }
         else {
-            ddlGstState.val(result.GstStateId + '~' + result.GstTinNo + '~' + (result.IsPartyGstStateIsUnionTerritory == true ? 1 : 0) + '~' + result.PartyGstId);
+            if (isTruckForwardNote)
+                ddlGstState.val(result.GstStateId + '~' + result.PartyPanNo + '~' + (result.IsPartyGstStateIsUnionTerritory == true ? 1 : 0) + '~' + result.PartyGstId);
+            else
+                ddlGstState.val(result.GstStateId + '~' + result.GstTinNo + '~' + (result.IsPartyGstStateIsUnionTerritory == true ? 1 : 0) + '~' + result.PartyGstId);
             ////alert(result.GstStateId + '~' + result.GstTinNo + '~' + (result.IsPartyGstStateIsUnionTerritory == true ? 1 : 0) + '~' + result.PartyGstId);
         }
+        $('#dvGstTinNoDetail').showHide(!isTruckForwardNote);
+        $('#dvPartyPanNoDetail').showHide(isTruckForwardNote);
         //// alert(result.CompanyGstStateId + '~' + result.CompanyGstTinNo + '~' + (result.IsCompanyGstStateIsUnionTerritory == true ? 1 : 0) + '~' + result.CompanyGstId);
         ddlCompanyGstState.val(result.CompanyGstStateId + '~' + result.CompanyGstTinNo + '~' + (result.IsCompanyGstStateIsUnionTerritory == true ? 1 : 0) + '~' + result.CompanyGstId);
         hdnCompanyGstStateId.val(result.CompanyGstStateId);
@@ -1153,6 +1194,8 @@ function GetStep6DetailById() {
         txtGstAmount.val(result.GstAmount);
         txtGstCharge.val(result.GstCharged);
         txtPartyGstTinNo.val(result.GstTinNo);
+        txtPartyPanNo.val(result.PartyPanNo);
+        txtPartyPanNo.val(result.PartyPanNo);
         hdnGstTinNo.val(result.GstTinNo);
         txtFreightRate.val(result.FreightRate);
         ddlRateType.val(result.RateTypeId);
@@ -1445,13 +1488,13 @@ function ManageInvoiceGrid() {
     });
 
     $('[id*="ddlInvoicePartId"]').each(function () {
-        if (partNoList != undefined) {
+        if (partNoList != undefined && partNoList.length > 0) {
             BindDropDownList($(this).Id, partNoList, 'Value', 'Name', '', 'Select Part No');
         }
     });
 
     $('[id*="ddlPartId"]').each(function () {
-        if (partNoList != undefined) {
+        if (partNoList != undefined && partNoList.length > 0) {
             var ddlPartPackingTypeId = $('#' + this.id.replace('ddlPartId', 'ddlPartPackingTypeId'));
             BindDropDownList($(this).Id, partNoList, 'Value', 'Name', '', 'Select Part No');
             partScript.OnPartIdChange($(this), ddlPartPackingTypeId);
@@ -1578,7 +1621,7 @@ function InitPartTable() {
             if (!CheckDuplicateInTable(ddlPartId.closest('table').Id, 'ddlPartId', 'Part Name', ddlPartId)) return false;
             return partScript.OnPartIdChange(ddlPartId, ddlPartPackingTypeId);
         });
-        
+
         /*partScript.PartAutoComplete(txtPartName.attr('id'), ddlPartId.attr('id'), hdnConsignorId, hdnConsigneeId);*/
 
         txtPartQuantity.blur(function () {
@@ -2748,6 +2791,13 @@ function GetGstRate() {
                 dvddlGstServiceType.showHide(result.length > 1);
                 lblGstServiceType.showHide(result.length == 1);
                 ddlGstServiceType.change();
+                $('#dvGstTinNoDetail').showHide(!isTruckForwardNote);
+                $('#dvPartyPanNoDetail').showHide(isTruckForwardNote);
+                if (isTruckForwardNote) {
+                    SetStateGstTin(ddlGstState, hdnGstStateId, txtPartyPanNo, true, txtPartyPanNo, hdnPartyGstId);
+                    hdnGstTinNo.val('');
+                    txtPartyGstTinNo.val('');
+                }
             }
         }, ErrorFunction, false);
     }

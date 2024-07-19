@@ -26,6 +26,7 @@ function InitObjects() {
     lblExpectedArrivalDate = $('#lblExpectedArrivalDate');
     dvLateArrivalReason = $('#dvLateArrivalReason');
     txtActualArrivalDate.blur(ShowHideLateArrival);
+    ShowHideLateArrival();
 
     InitWizard('dvWizard',[
     { StepName: 'Criteria', StepFunction: GetThcList },

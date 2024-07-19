@@ -874,6 +874,7 @@
             }
         }, ErrorFunction, false);
 
+        InitGrid('AddMultiAddress', false, 2, Init);
 
         OnCustomerTypeChange();
         InitObjects();
@@ -888,6 +889,7 @@
         });
 
         InitMultiSelect(ddlCustomerDeliveryLocation.Id, true, false, true);
+
         DropDownChange('ddlCustomerDeliveryLocation', function () {
             $('#hdnCustomerDeliveryLocation').val($(this).val());
         });

@@ -43,16 +43,25 @@ namespace CodeLock.Areas.Master.Repository
             return masterCustomer;
         }
 
-        public int Insert(MasterCustomer objMasterCustomer)
+        //public int Insert(MasterCustomer objMasterCustomer)
+        //{
+        //    DynamicParameters dynamicParameters = new DynamicParameters();
+        //    dynamicParameters.Add("@XmlCustomer", (object)XmlUtility.XmlSerializeToString((object)objMasterCustomer), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+        //    dynamicParameters.Add("@CustomerId", (object)null, new DbType?(DbType.Int32), new ParameterDirection?(ParameterDirection.Output), new int?(), new byte?(), new byte?());
+        //    DataBaseFactory.QuerySP("Usp_MasterCustomer_Insert", (object)dynamicParameters, "Customer Master - Insert");
+        //    return dynamicParameters.Get<int>("@CustomerId");
+        //    // return DataBaseFactory.QuerySP<Response>("Usp_MasterCustomer_Insert", (object) dynamicParameters, "Customer Master - Insert").FirstOrDefault<Response>();
+        //}
+          public int Insert(MasterCustomer objMasterCustomer)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@XmlCustomer", (object)XmlUtility.XmlSerializeToString((object)objMasterCustomer), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());
             dynamicParameters.Add("@CustomerId", (object)null, new DbType?(DbType.Int32), new ParameterDirection?(ParameterDirection.Output), new int?(), new byte?(), new byte?());
-            DataBaseFactory.QuerySP("Usp_MasterCustomer_Insert", (object)dynamicParameters, "Customer Master - Insert");
+            DataBaseFactory.QuerySP("Usp_MasterCustomer_Insert_Test", (object)dynamicParameters, "Customer Master - Insert");
+
             return dynamicParameters.Get<int>("@CustomerId");
             // return DataBaseFactory.QuerySP<Response>("Usp_MasterCustomer_Insert", (object) dynamicParameters, "Customer Master - Insert").FirstOrDefault<Response>();
         }
-
         public int Update(MasterCustomer objMasterCustomer)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();

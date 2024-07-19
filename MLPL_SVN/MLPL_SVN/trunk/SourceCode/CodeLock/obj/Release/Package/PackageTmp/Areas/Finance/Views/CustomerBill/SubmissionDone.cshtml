@@ -65,6 +65,7 @@
         else if (status == "Cancellation") {
             spnMassage.text("Bills are Cancelled Successfully");
             SetPageLoad('Cancellation', 'Done', '', 'Go To Bill Cancellation', '@Url.Action("Cancellation")');
+            $('#dvDocumentNo').hide();
         }
         else if (status == "MrCancellationDone") {
             spnMassage.text("Bill MR are Cancelled Successfully");

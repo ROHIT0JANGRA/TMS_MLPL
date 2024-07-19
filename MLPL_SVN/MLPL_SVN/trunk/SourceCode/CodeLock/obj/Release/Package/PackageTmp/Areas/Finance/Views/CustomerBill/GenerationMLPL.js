@@ -107,9 +107,6 @@ function AttachEvents() {
         }
     });
 
-    //// CustomerAddressAutoComplete('txtAddressCode', 'hdnAddressId',loginLocationId, hdnCustomerId, true);
-    ////IsCustomerAddressAutoComplete(txtAddressCode, hdnAddressId, lblCustomerAddress, loginLocationId, hdnCustomerId, true);
-
 
     ddlCustomerGstStateId.change(OnGstStateChange);
     ddlCompanyGstStateId.change(OnGstStateChange);
@@ -149,6 +146,7 @@ function AttachEvents() {
     }, ErrorFunction, false);
 
     ddlPaybasId.val('2').change();
+    OnTransactionTypeChange();
 }
 
 function OnPaybasChange() {
@@ -173,14 +171,30 @@ function OnPaybasChange() {
 }
 
 function OnTransactionTypeChange() {
-    $('#dvTransactionBilling').showHide(ddlTransactionTypeId.val() == 1);
-    $('#ddlGstServiceTypeId').disable();
-    txtCustomerCode.enable(ddlTransactionTypeId.val() != 1);
-    if (ddlTransactionTypeId.val() == 2)
+    $('#dvTransactionBilling').showHide(ddlTransactionTypeId.val() == 1 || ddlTransactionTypeId.val() == 3);
+   /* $('#ddlGstServiceTypeId').disable();*/
+    txtCustomerCode.enable(ddlTransactionTypeId.val() != 1 || ddlTransactionTypeId.val() != 3);
+    if (ddlTransactionTypeId.val() == 1 || ddlTransactionTypeId.val() == 3) {
+        ddlServiceTypeId.empty();
+        BindDropDownList(ddlServiceTypeId.Id, serviceTypes, 'Value', 'Name', '', 'Select');
+        $('#tblList thead tr th:eq(4)').showHide(ddlTransactionTypeId.val() == 3);
+        $('#tblList tbody tr td:eq(4)').showHide(ddlTransactionTypeId.val() == 3);
+
+        $('#tblList thead tr th:eq(6)').showHide(ddlTransactionTypeId.val() == 3);
+        $('#tblList tbody tr td:eq(6)').showHide(ddlTransactionTypeId.val() == 3);
+
+        $('#tblList thead tr th:eq(8)').showHide(ddlTransactionTypeId.val() == 3);
+        $('#tblList tbody tr td:eq(8)').showHide(ddlTransactionTypeId.val() == 3);
+    }
+    else if (ddlTransactionTypeId.val() == 2) {
         ddlPaybasId.val(7);
+        ddlServiceTypeId.empty();
+        BindDropDownList(ddlServiceTypeId.Id, miscellaneousServiceServiceTypeList, 'Value', 'Name', '', 'Select');
+    }
+    $('#dvDocket').showHide(ddlTransactionTypeId.val() == 1 || ddlTransactionTypeId.val() == 3);
 }
 function OnServiceTypeChange() {
-    $('#dvFtlType').showHide(ddlServiceTypeId.val() == 2);
+    $('#dvFtlType').showHide(ddlServiceTypeId.val() == 2 && ddlTransactionTypeId.val() == 1);
     if (ddlServiceTypeId.val() != 2)
         ddlFtlTypeId.val('');
 }
@@ -203,7 +217,10 @@ function GetCustomerGstState() {
         ddlPrimaryBillingTypeId.enable();
         var requestData = { ownerType: 3, ownerId: hdnCustomerId.val(), locationId: 0 };
         AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstStateList', JSON.stringify(requestData), function (responseData) {
-            BindDropDownList(ddlCustomerGstStateId.Id, responseData, 'Description', 'Name', '', (responseData.length > 1 ? 'Select Party GST State' : ''));
+            if (!IsObjectNullOrEmpty(responseData)) {
+                BindDropDownList(ddlCustomerGstStateId.Id, responseData, 'Description', 'Name', '', (responseData.length > 1 ? 'Select Party GST State' : ''));
+            }
+
         }, ErrorFunction, false);
     }
 }
@@ -211,9 +228,13 @@ function GetCustomerGstState() {
 function GetCustomerAddress() {
     var requestData = { customerId: hdnCustomerId.val() };
     AjaxRequestWithPostAndJson(customerAddressMasterUrl + '/GetCustomerAddressList', JSON.stringify(requestData), function (responseData) {
-        BindDropDownList(ddlCustomerAddressId.Id, responseData, 'Value', 'Name', '', (responseData.length > 1 ? 'Select Customer Address' : ''));
-        $('#ddlCustomerAddressId').append($("<option></option>").val('').html('Select Customer Address')).val('');
-        OnAdressChange();
+
+        if (!IsObjectNullOrEmpty(responseData)) {
+            BindDropDownList(ddlCustomerAddressId.Id, responseData, 'Value', 'Name', '', (responseData.length > 1 ? 'Select Customer Address' : ''));
+            $('#ddlCustomerAddressId').append($("<option></option>").val('').html('Select Customer Address')).val('');
+            OnAdressChange();
+        }
+
     }, ErrorFunction, false);
 
 }
@@ -221,7 +242,10 @@ function GetCustomerAddress() {
 function GetCompanyGstState() {
     var requestData = { ownerType: 1, ownerId: loginCompanyId, locationId: 0 };
     AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstStateList', JSON.stringify(requestData), function (responseData) {
-        BindDropDownList(ddlCompanyGstStateId.Id, responseData, 'Description', 'Name', '', (responseData.length > 1 ? 'Select Company GST State' : ''));
+        if (!IsObjectNullOrEmpty(responseData)) {
+            BindDropDownList(ddlCompanyGstStateId.Id, responseData, 'Description', 'Name', '', (responseData.length > 1 ? 'Select Company GST State' : ''));
+        }
+
     }, ErrorFunction, false);
 
     ddlPrimaryBillingTypeId.append($("<option></option>").val(1).html('Inter-State'));
@@ -360,14 +384,28 @@ var creditDays = 0;
 function GetGstDetail() {
 
     if (ddlTransactionTypeId.val() == 2) {
-        var url = customerSupBillUrl + '?customerId=' + hdnCustomerId.val() + '&customerStateId=' + ddlCustomerGstStateId.val() + '&companyStateId=' + ddlCompanyGstStateId.val() + '&payBasId=' + ddlPaybasId.val() + '&submissionId=' + ddlPrimaryBillingTypeId.val();
+        var serviceTypeId = ddlServiceTypeId.val() == '' ? 0 : ddlServiceTypeId.val();
+        var url = customerSupBillUrl + '?customerId=' + hdnCustomerId.val() + '&customerStateId=' + ddlCustomerGstStateId.val() + '&companyStateId=' + ddlCompanyGstStateId.val() + '&payBasId=' + ddlPaybasId.val() + '&submissionId=' + ddlPrimaryBillingTypeId.val() + '&serviceTypeId=' + serviceTypeId;
         window.location.href = url;
         return false;
     }
     else {
         try {
+
+            var strDocketNo = "";
+            $('#tblList').find('[id*="txtlstDocketNo"]').each(function () {
+                var txtlstDocketNo = $('#' + this.id.replace('txtlstDocketNo', 'txtlstDocketNo'));
+
+                if (strDocketNo == "") {
+                    strDocketNo = txtlstDocketNo.val();
+                }
+                else {
+                    strDocketNo = strDocketNo +','+ txtlstDocketNo.val();
+                }
+            });
+
             //            var requestData = { customerId: hdnCustomerId.val(), fromDate: $.displayDate(drTransactionDate.startDate), toDate: $.displayDate(drTransactionDate.endDate), gstServiceTypeId: hdnGstServiceTypeId.val(), customerGstStateId: ddlCustomerGstStateId.val(), companyGstStateId: ddlCompanyGstStateId.val(), paybasId: ddlPaybasId.val(), serviceTypeId: ddlServiceTypeId.val() == '' ? 0 : ddlServiceTypeId.val(), ftlTypeId: ddlFtlTypeId.val() == '' ? 0 : ddlFtlTypeId.val(), ManifestId: ddlManifestId.val() == '' ? 0 : ddlManifestId.val(), VendorId: hdnVendorId.val(), isRcm: rdRcmYes.IsChecked, DocketNo: txtDocketNo.val(), isSez: ChkSez.IsChecked };
-            var requestData = { customerId: hdnCustomerId.val(), fromDate: $.displayDate(drTransactionDate.startDate), toDate: $.displayDate(drTransactionDate.endDate), gstServiceTypeId: hdnGstServiceTypeId.val(), customerGstStateId: ddlCustomerGstStateId.val(), companyGstStateId: ddlCompanyGstStateId.val(), paybasId: ddlPaybasId.val(), serviceTypeId: ddlServiceTypeId.val() == '' ? 0 : ddlServiceTypeId.val(), ftlTypeId: ddlFtlTypeId.val() == '' ? 0 : ddlFtlTypeId.val(), ManifestId: ddlManifestId.val() == '' ? 0 : ddlManifestId.val(), VendorId: hdnVendorId.val(), DocketNo: txtDocketNo.val() };
+            var requestData = { customerId: hdnCustomerId.val(), fromDate: $.displayDate(drTransactionDate.startDate), toDate: $.displayDate(drTransactionDate.endDate), gstServiceTypeId: hdnGstServiceTypeId.val(), customerGstStateId: ddlCustomerGstStateId.val(), companyGstStateId: ddlCompanyGstStateId.val(), paybasId: ddlPaybasId.val(), serviceTypeId: ddlServiceTypeId.val() == '' ? 0 : ddlServiceTypeId.val(), ftlTypeId: ddlFtlTypeId.val() == '' ? 0 : ddlFtlTypeId.val(), ManifestId: ddlManifestId.val() == '' ? 0 : ddlManifestId.val(), VendorId: hdnVendorId.val(), DocketNo: strDocketNo, TransactionTypeId : ddlTransactionTypeId.val() };
 
             AjaxRequestWithPostAndJson(customerBillGenerationUrl + '/GetDocketListGstForCustomerBillGenerationMLPL', JSON.stringify(requestData), function (result) {
                 selectedDocketList = [];
@@ -528,8 +566,13 @@ function GetGstDetail() {
                     //$('#lblBillSubmissionLocationCode').text(result.LocationCode);
                     requestData = { ownerType: 1, ownerId: loginCompanyId, stateId: ddlCompanyGstStateId.val() };
                     AjaxRequestWithPostAndJson(gstMasterUrl + '/GetCityListByOwnerAndState', JSON.stringify(requestData), function (result) {
-                        BindDropDownList('ddlSubmissionCityId', result, 'Value', 'Name', '', (result.length > 1 ? 'Select' : ''));
+
+                        if (!IsObjectNullOrEmpty(result)) {
+                            BindDropDownList('ddlSubmissionCityId', result, 'Value', 'Name', '', (result.length > 1 ? 'Select' : ''));
+                        }
                         GetCompanyGstDetailsByOwnerTypeAndOwnerAndStateAndCity();
+
+
                     }, ErrorFunction, false);
                 }
             }, ErrorFunction, false);
@@ -538,10 +581,14 @@ function GetGstDetail() {
                 $('#lblBillGenerationState').text($("#ddlCustomerGstStateId option:selected").text());
                 var requestData = { stateId: ddlCustomerGstStateId.val() };
                 AjaxRequestWithPostAndJson(cityMasterUrl + '/GetCityListByStateId', JSON.stringify(requestData), function (result) {
-                    BindDropDownList('ddlGenerationCityId', result, 'Value', 'Name', '', 'Select');
+
+                    if (!IsObjectNullOrEmpty(result)) {
+                        BindDropDownList('ddlGenerationCityId', result, 'Value', 'Name', '', 'Select');
+                    }
+
                 }, ErrorFunction, false);
             }
-            else {
+            else if (hdnCustomerId.val() > 0){
                 requestData = { ownerType: 3, ownerId: hdnCustomerId.val(), stateId: ddlCustomerGstStateId.val() };
                 AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstDetailByOwnerAndState', JSON.stringify(requestData), function (result) {
                     if (IsObjectNullOrEmpty(result)) {
@@ -591,9 +638,25 @@ function GetGstDetail() {
             }, ErrorFunction, false);
 
             txtBillDate.blur();
+            if (ddlTransactionTypeId.val() == 3) {
+                $('[id*="chkDocket"]').check(true);
+                SelectDocket();
+                $('#dtDocketList thead tr th:eq(0)').showHide(false);
+                $('#dtDocketList tbody tr').each(function () {
+                    $(this).find('td:eq(0)').hide();
+                });
+            }
+            else {
+                $('#dtDocketList thead tr th:eq(0)').showHide(true);
+                $('#dtDocketList tbody tr').each(function () {
+                    $(this).find('td:eq(0)').show();
+                });
+            }
+            
             return false;
         } catch (e) { alert(e.message) }
     }
+    
 }
 
 function CalculateDueDate() {
@@ -616,6 +679,8 @@ function SelectDocket() {
     selectedDocketList = [];
     var subTotal = 0, gstTotal = 0, total = 0, totalIgst = 0, totalCgst = 0, totalSgst = 0, totalUgst = 0, DocketCount = 0;
     var TotalChargedWeight = 0, TotalQty = 0;
+
+
     $('[id*="chkDocket"]').each(function () {
         var chkDocket = $(this);
         var txtTaxTotal = $('#' + chkDocket.Id.replace('chkDocket', 'txtTaxTotal'));
@@ -627,7 +692,7 @@ function SelectDocket() {
         //var hdnUgst = $('#' + chkDocket.Id.replace('chkDocket', 'hdnUgst'));
         var txtChargedWeight = $('#' + chkDocket.Id.replace('chkDocket', 'txtChargedWeight'));
         var txtQty = $('#' + chkDocket.Id.replace('chkDocket', 'txtQty'));
-
+ 
         if (chkDocket.IsChecked) {
             selectedDocketList.push($('#' + chkDocket.Id.replace('chkDocket', 'hdnDocketId')).val());
             /*            gstTotal = gstTotal + parseFloat(txtTaxTotal.val());*/
@@ -647,6 +712,7 @@ function SelectDocket() {
     //
     //
 
+
     var GstRate = parseFloat($('#txtGstRate').val());
     var SezRCMMsg = "";
     //
@@ -654,29 +720,26 @@ function SelectDocket() {
     totalIgst = 0;
     totalSgst = 0;
     totalUgst = 0;
+    total = 0;
 
 
     if ($('#hdnGstType').val() == "IGST") {
-        totalIgst = (subTotal * GstRate) / 100;
+        totalIgst = (parseFloat(subTotal) * parseFloat(GstRate)) / 100;
         totalIgst = totalIgst.toFixed(2);
         gstTotal = totalIgst;
     }
     else {
 
-        GstRate = GstRate / 2;
+        GstRate = parseFloat(GstRate) / 2;
         GstRate = GstRate.toFixed(2);
-
-        totalCgst = (subTotal * GstRate) / 100;
+        totalCgst = (parseFloat(subTotal) * parseFloat(GstRate)) / 100;
 
         totalCgst = totalCgst.toFixed(2);
         totalSgst = totalCgst;
-
-        gstTotal = totalCgst + totalSgst;
+        gstTotal = parseFloat(totalCgst) + parseFloat(totalSgst);
     }
 
-    gstTotal = gstTotal.toFixed(2);
-
-
+    //gstTotal = gstTotal.toFixed(2);
 
     if ($('#lblGstIsSez').text() == "Yes") {
         gstTotal = 0;
@@ -692,11 +755,12 @@ function SelectDocket() {
     }
 
     else {
-        total = subTotal + gstTotal;
-    }
+        total = parseFloat(subTotal) + parseFloat(gstTotal);
 
-    //
-    $('#lblSezRCM').html(gstTotal);
+    }
+    total = total.toFixed(2);
+
+    $('#lblSezRCM').html(SezRCMMsg);
 
     DocketCount = DocketCount.toFixed(0);
 
@@ -732,19 +796,23 @@ function GetBillGenerationDetails() {
         ShowMessage('Please select at least one ' + docketNomenclature);
         return false;
     }
-    else if (!ValidateModuleDateWithPreviousDocumentDate('dtDocketList', 'chkDocket', 'hdnDocketDate', 'txtBillDate', 'Bill Date')) return false;
-    ChkSez.enable();
+
 }
 
 function GetCustomerGstDetailsByOwnerTypeAndOwnerAndStateAndCity() {
     if (ddlGenerationCityId.val() != '' && hdnCustomerId.val() != 1) {
         requestData = { ownerType: 3, ownerId: hdnCustomerId.val(), stateId: ddlCustomerGstStateId.val(), cityId: ddlGenerationCityId.val() };
         AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstDetailsByOwnerTypeAndOwnerAndStateAndCity', JSON.stringify(requestData), function (result) {
-            $('#hdnCustomerGstId').val(result.GstId);
-            $('#txtCustomerGstStateGstTinNo').val(result.GstTinNo);
-            $('#txtBillingAddress').val(result.Address);
-            $('#txtCustomerGstStateGstTinNo').readOnly(true);
-            $('#txtBillingAddress').readOnly(true);
+
+            if (!IsObjectNullOrEmpty(result)) {
+                $('#hdnCustomerGstId').val(result.GstId);
+                $('#txtCustomerGstStateGstTinNo').val(result.GstTinNo);
+                $('#txtBillingAddress').val(result.Address);
+                $('#txtCustomerGstStateGstTinNo').readOnly(true);
+                $('#txtBillingAddress').readOnly(true);
+            }
+
+
         }, ErrorFunction, false);
     }
 }
@@ -753,11 +821,14 @@ function GetCompanyGstDetailsByOwnerTypeAndOwnerAndStateAndCity() {
     if (ddlSubmissionCityId.val() != '') {
         requestData = { ownerType: 1, ownerId: loginCompanyId, stateId: ddlCompanyGstStateId.val(), cityId: ddlSubmissionCityId.val() };
         AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstDetailsByOwnerTypeAndOwnerAndStateAndCity', JSON.stringify(requestData), function (result) {
-            $('#hdnCompanyGstId').val(result.GstId);
-            $('#txtCompanyGstStateGstTinNo').val(result.GstTinNo);
-            $('#txtSubmissionBillingAddress').val(result.Address);
-            $('#txtCompanyGstStateGstTinNo').readOnly(true);
-            $('#txtSubmissionBillingAddress').readOnly(true);
+
+            if (!IsObjectNullOrEmpty(result)) {
+                $('#hdnCompanyGstId').val(result.GstId);
+                $('#txtCompanyGstStateGstTinNo').val(result.GstTinNo);
+                $('#txtSubmissionBillingAddress').val(result.Address);
+                $('#txtCompanyGstStateGstTinNo').readOnly(true);
+                $('#txtSubmissionBillingAddress').readOnly(true);
+            }
         }, ErrorFunction, false);
     }
 }
@@ -765,13 +836,17 @@ function GetCompanyGstDetailsByOwnerTypeAndOwnerAndStateAndCity() {
 function GetCustomerAddressList() {
     var requestData = { ownerId: hdnCustomerId.val() };
     AjaxRequestWithPostAndJson(gstMasterUrl + '/GetCustomerAddressList', JSON.stringify(requestData), function (responseData) {
-        BindDropDownList(ddlCustomerAddressId.Id, responseData, 'Description', 'Name', '', (responseData.length > 1 ? 'Select Customer Address' : ''));
+
+        if (!IsObjectNullOrEmpty(responseData)) {
+            BindDropDownList(ddlCustomerAddressId.Id, responseData, 'Description', 'Name', '', (responseData.length > 1 ? 'Select Customer Address' : ''));
+        }
+
     }, ErrorFunction, false);
 
 }
 
 function GetGstDetailByOwnerAndState() {
-    if (!IsObjectNullOrEmpty(hdnCustomerId.val())) {
+    if (hdnCustomerId.val() > 0) {
         requestData = { ownerType: 3, ownerId: hdnCustomerId.val(), stateId: ddlCustomerGstStateId.val() };
         AjaxRequestWithPostAndJson(gstMasterUrl + '/GetGstDetailByOwnerAndState', JSON.stringify(requestData), function (result) {
             if (!IsObjectNullOrEmpty(result)) {

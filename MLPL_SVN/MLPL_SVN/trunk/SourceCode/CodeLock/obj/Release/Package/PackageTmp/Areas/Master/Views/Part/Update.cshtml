@@ -9,14 +9,14 @@
 {
     @Html.AntiForgeryToken()
     @Html.AntiModelInjectionFor(model => model.PartId)
-    @Html.HiddenFor(model => model.PartId)
+    @Html.HiddenFor(model => model.PartId, new { @id = "hdnPartId" })
     <div class="widget-wrap">
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
                     @Html.LabelFor(model => model.PartNo, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.PartNo, new { @class = "form-control", @id = "ddlPart" })
+                        @Html.TextBoxFor(model => model.PartNo, new { @class = "form-control", @id = "txtPartNo" })
                     </div>
                     @Html.ValidationMessageFor(model => model.PartNo)
                 </div>
@@ -25,7 +25,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.PartName, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.PartName, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.PartName, new { @class = "form-control", @id = "txtPartName" })
                     </div>
                     @Html.ValidationMessageFor(model => model.PartName)
                 </div>
@@ -87,102 +87,102 @@
                     <tbody>
                         @for (int i = 0; i < Model.PartDetails.Count; i++)
                         {
-                                <tr>
-                                    <td>
-                                        <div class="select">
-                                            @Html.DropDownListFor(model => Model.PartDetails[i].PackingTypeId, new SelectList(ViewBag.PackingType, "Value", "Name", Model.PartDetails[i].PackingTypeId), "Select Packing Type", new { @class = "form-control", @id = "ddlPackingType" + i.ToString() })
-                                            <i></i>
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].PackingTypeId)
-                                    </td>
-                                    <td>
-                                        <div class="input">
-                                            @Html.TextBoxFor(m => Model.PartDetails[i].ActualWeight, new { @class = "form-control numeric4", @id = "txtActualWeight" + i.ToString() })
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].ActualWeight)
-                                    </td>
-                                    <td>
-                                        <div class="input">
-                                            @Html.TextBoxFor(m => Model.PartDetails[i].Quantity, new { @class = "form-control numeric", @id = "txtQuantity" + i.ToString() })
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].Quantity)
-                                    </td>
-                                    <td>
-                                        <div class="input">
-                                            @Html.TextBoxFor(m => Model.PartDetails[i].ActualWeightPerQuantity, new { @class = "form-control numeric4", @id = "txtActualWeightPerQuantity" + i.ToString(), @readonly = "true" })
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].ActualWeightPerQuantity)
-                                    </td>
-                                    <td>
-                                        <div class="select">
-                                            @Html.DropDownListFor(model => Model.PartDetails[i].PackageDimensionsId, new SelectList(ViewBag.PackageDimensions, "Value", "Name", Model.PartDetails[i].PackageDimensionsId), "Select Package Dimension", new { @class = "form-control", @id = "ddlPackageDimensions" + i.ToString() })
-                                            <i></i>
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].PackageDimensionsId)
-                                    </td>
-                                    <td>
-                                        <div class="input">
-                                            @Html.TextBoxFor(m => Model.PartDetails[i].Length, new { @class = "form-control numeric2 size-sm-2", @id = "txtLength" + i.ToString() })
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].Length)
-                                    </td>
-                                    <td>
-                                        <div class="input">
-                                            @Html.TextBoxFor(m => Model.PartDetails[i].Breadth, new { @class = "form-control numeric2 size-sm-2", @id = "txtBreadth" + i.ToString() })
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].Breadth)
-                                    </td>
-                                    <td>
-                                        <div class="input">
-                                            @Html.TextBoxFor(m => Model.PartDetails[i].Height, new { @class = "form-control numeric2 size-sm-2", @id = "txtHeight" + i.ToString() })
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].Height)
-                                    </td>
-                                    <td>
-                                        <div class="input">
-                                            @Html.TextBoxFor(m => Model.PartDetails[i].CftRatio, new { @class = "form-control numeric2 size-sm-2", @id = "txtCftRatio" + i.ToString() })
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].CftRatio)
-                                    </td>
-                                    <td>
-                                        <div class="input">
-                                            @Html.TextBoxFor(m => Model.PartDetails[i].TotalCubic, new { @class = "form-control numeric2 size-sm-2", @id = "txtTotalCubic" + i.ToString(), @readonly = "true" })
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].TotalCubic)
-                                    </td>
-                                    <td>
-                                        <div class="input">
-                                            @Html.TextBoxFor(m => Model.PartDetails[i].CubicPerQuantity, new { @class = "form-control numeric2 size-sm-2", @id = "txtCubicPerQuantity" + i.ToString(), @readonly = "true" })
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].CubicPerQuantity)
-                                    </td>
-                                    <td>
-                                        <div class="select">
-                                            @Html.DropDownListFor(model => Model.PartDetails[i].ConsignorId, new SelectList(ViewBag.CustomerList, "Value", "Name", Model.PartDetails[i].ConsignorId), "Select Consignor", new { @class = "form-control", @id = "ddlConsignor" + i.ToString() })
-                                            <i></i>
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].ConsignorId)
-                                    </td>
-                                    <td>
-                                        <div class="select">
-                                            @Html.DropDownListFor(model => Model.PartDetails[i].ConsigneeId, new SelectList(ViewBag.CustomerList, "Value", "Name", Model.PartDetails[i].ConsigneeId), "Select ConsigneeCode", new { @class = "form-control", @id = "ddlConsignee" + i.ToString() })
-                                            <i></i>
-                                        </div>
-                                        @Html.ValidationMessageFor(m => Model.PartDetails[i].ConsigneeId)
-                                    </td>
-                                    <td>
-                                        @Html.LabelFor(m => Model.PartDetails[i].IsReverse, " ", new { @For = "chkIsReverse" + i.ToString() })
-                                        <label class="checkbox">
-                                            @Html.CheckBoxFor(model => model.PartDetails[i].IsReverse, new { @id = "chkIsReverse" + i.ToString(), @name = "chkIsReverse" + i.ToString() })
-                                            <i></i>
-                                        </label>
+                            <tr>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => Model.PartDetails[i].PackingTypeId, new SelectList(ViewBag.PackingType, "Value", "Name", Model.PartDetails[i].PackingTypeId), "Select Packing Type", new { @class = "form-control", @id = "ddlPackingType" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].PackingTypeId)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].ActualWeight, new { @class = "form-control numeric4", @id = "txtActualWeight" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].ActualWeight)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].Quantity, new { @class = "form-control numeric", @id = "txtQuantity" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].Quantity)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].ActualWeightPerQuantity, new { @class = "form-control numeric4", @id = "txtActualWeightPerQuantity" + i.ToString(), @readonly = "true" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].ActualWeightPerQuantity)
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => Model.PartDetails[i].PackageDimensionsId, new SelectList(ViewBag.PackageDimensions, "Value", "Name", Model.PartDetails[i].PackageDimensionsId), "Select Package Dimension", new { @class = "form-control", @id = "ddlPackageDimensions" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].PackageDimensionsId)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].Length, new { @class = "form-control numeric2 size-sm-2", @id = "txtLength" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].Length)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].Breadth, new { @class = "form-control numeric2 size-sm-2", @id = "txtBreadth" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].Breadth)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].Height, new { @class = "form-control numeric2 size-sm-2", @id = "txtHeight" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].Height)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].CftRatio, new { @class = "form-control numeric2 size-sm-2", @id = "txtCftRatio" + i.ToString() })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].CftRatio)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].TotalCubic, new { @class = "form-control numeric2 size-sm-2", @id = "txtTotalCubic" + i.ToString(), @readonly = "true" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].TotalCubic)
+                                </td>
+                                <td>
+                                    <div class="input">
+                                        @Html.TextBoxFor(m => Model.PartDetails[i].CubicPerQuantity, new { @class = "form-control numeric2 size-sm-2", @id = "txtCubicPerQuantity" + i.ToString(), @readonly = "true" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].CubicPerQuantity)
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => Model.PartDetails[i].ConsignorId, new SelectList(ViewBag.CustomerList, "Value", "Name", Model.PartDetails[i].ConsignorId), "Select Consignor", new { @class = "form-control", @id = "ddlConsignor" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].ConsignorId)
+                                </td>
+                                <td>
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => Model.PartDetails[i].ConsigneeId, new SelectList(ViewBag.CustomerList, "Value", "Name", Model.PartDetails[i].ConsigneeId), "Select ConsigneeCode", new { @class = "form-control", @id = "ddlConsignee" + i.ToString() })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => Model.PartDetails[i].ConsigneeId)
+                                </td>
+                                <td>
+                                    @Html.LabelFor(m => Model.PartDetails[i].IsReverse, " ", new { @For = "chkIsReverse" + i.ToString() })
+                                    <label class="checkbox">
+                                        @Html.CheckBoxFor(model => model.PartDetails[i].IsReverse, new { @id = "chkIsReverse" + i.ToString(), @name = "chkIsReverse" + i.ToString() })
+                                        <i></i>
+                                    </label>
 
-                                    </td>
-                                    <td>
-                                        <button type="button" id="btnAdd" onclick="return AddRow(this.id)" class="btn btn-primary btn-xs dt-edit btn-ripple"><span class="glyphicon glyphicon-plus-sign"></span></button>
-                                        <button type="button" id="btnRemove" onclick="return RemoveRow(this)" class="btn btn-danger btn-xs dt-delete btn-ripple"><span class="glyphicon glyphicon-trash"></span></button>
-                                    </td>
-                                </tr>
+                                </td>
+                                <td>
+                                    <button type="button" id="btnAdd" onclick="return AddRow(this.id)" class="btn btn-primary btn-xs dt-edit btn-ripple"><span class="glyphicon glyphicon-plus-sign"></span></button>
+                                    <button type="button" id="btnRemove" onclick="return RemoveRow(this)" class="btn btn-danger btn-xs dt-delete btn-ripple"><span class="glyphicon glyphicon-trash"></span></button>
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -196,10 +196,36 @@
 
 <script>
     $(document).ready(function () {
-        SetPageLoad('Part', 'Update', 'ddlPart', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.PartId })');
-
+        SetPageLoad('Part', 'Update', 'txtPartNo', 'Goto List', '@Url.Action("Index")', 'Add New', '@Url.Action("Insert")', 'View Detail', '@Url.Action("View", new { id = Model.PartId })');
+        $('#txtPartNo').blur(IsPartNoAvailable);
+        $('#txtPartName').blur(IsPartNameAvailable);
         InitGrid('dtPart', false, 14, Init);
     });
+
+    function IsPartNoAvailable() {
+        var request = { PartId: $('#hdnPartId').val(), PartNo: $('#txtPartNo').val() };
+        AjaxRequestWithPostAndJson('@Url.Action("IsPartNoAvailable", "Part")', JSON.stringify(request), function (result) {
+            if (result) {
+                $('#txtPartNo').val('');
+                $('#txtPartNo').focus();
+                ShowMessage("Part No already exists.");
+                return false;
+            }
+        }, ErrorFunction, false);
+    }
+
+    function IsPartNameAvailable() {
+        var request = { PartId: $('#hdnPartId').val(), PartName: $('#txtPartName').val() };
+        AjaxRequestWithPostAndJson('@Url.Action("IsPartNameAvailable", "Part")', JSON.stringify(request), function (result) {
+            if (result) {
+                $('#txtPartName').val('');
+                $('#txtPartName').focus();
+                ShowMessage("Part Name already exists.");
+                return false;
+            }
+        }, ErrorFunction, false);
+    }
+
     function ActualWeightPerQuantity(ActualWeight, Quantity) {
         var ActualWeightPerQuantity = ActualWeight / Quantity;
         return ActualWeightPerQuantity;

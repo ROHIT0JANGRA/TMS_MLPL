@@ -631,6 +631,7 @@ function GetManifestSuccess(result) {
                 "<input type='hidden' value='" + item.ManifestDate + "'  id='hdnManifestDate" + i + "'/>" +
                 "<input type='hidden' value='" + item.IsThc + "'  id='hdnIsThc" + i + "'/>" +
                 "<input type='hidden' value='" + item.IsArrived + "'  id='hdnIsArrived" + i + "'/>" +
+                "<input type='hidden' value='" + item.IsThcStockUpdateDone + "'  id='hdnIsThcStockUpdateDone" + i + "'/>" +
                 "<input type='hidden' value='" + item.IsHold + "'  id='hdnIsHold" + i + "'/>";
 
             item.ManifestDate = $.displayDateTime(item.ManifestDate);
@@ -646,10 +647,12 @@ function GetManifestSuccess(result) {
             var chkManifestId = $(this);
             var hdnIsThc = $('#' + chkManifestId.attr('id').replace('chkManifestId', 'hdnIsThc'));
             var hdnIsArrived = $('#' + chkManifestId.attr('id').replace('chkManifestId', 'hdnIsArrived'));
+            var hdnIsThcStockUpdateDone = $('#' + chkManifestId.attr('id').replace('chkManifestId', 'hdnIsThcStockUpdateDone'));
             var isThcArrive = hdnIsArrived.val() == 'true';
+            var isThcStockUpdateDone = hdnIsThcStockUpdateDone.val() == 'true';
 
-            chkManifestId.enable(!isThcArrive);
-            $('#chkAllManifest').enable(!isThcArrive);
+            chkManifestId.enable(!isThcStockUpdateDone);
+            $('#chkAllManifest').enable(!isThcStockUpdateDone);
             if (hdnIsThc.val() == 'true') {
                 chkManifestId.check();
                 ManageSelectAll('chkAllManifest', 'C', chkManifestId, SelectManifest);
@@ -797,19 +800,19 @@ function GetStep6DetailById() {
         chkIsFuelApply.prop("checked", result.IsFuelApply);
         chkIsMultiAdvApply.prop("checked", result.IsMultiAdvApply).change();
         $('#ddlFuelVendorId').val(result.FuelVendorId);
-        txtFuelSlipNo.val(result.FuelSlipNo);
+        $('#txtFuelSlipNo').val(result.FuelSlipNo);
         $('#txtFuelSlipDate').val($.entryDate(result.FuelSlipDate));
-        txtFuelRate.val(result.Rate);
-        txtFuelQty.val(result.Quantity);
-        txtFuelAmount.val(result.Amount);
-        ddlFuelType.val(result.FuelTypeId);
+        $('#txtFuelRate').val(result.Rate);
+        $('#txtFuelQty').val(result.Quantity);
+        $('#txtFuelAmount').val(result.Amount);
+        $('#ddlFuelType').val(result.FuelTypeId);
         OnAdvanceAmountChange();
         //OnAdvanceAmountChangeforfuel();
         $('#txtBalanceAmountLocationCode').val(result.BalanceLocationCode);
         $('#txtAdvanceAmountLocationCode').val(result.AdvanceLocationCode);
         $('#hdnAdvanceAmountLocationId').val(result.AdvanceLocationId);
         //  $('#hdnOtherAmount').val(result.OtherAmount);
-
+        $('#chkIsFuelApply').check(result.IsFuelApply);
         if (result.IsFuelApply) {
             $('#divfuel').show();
         } else {

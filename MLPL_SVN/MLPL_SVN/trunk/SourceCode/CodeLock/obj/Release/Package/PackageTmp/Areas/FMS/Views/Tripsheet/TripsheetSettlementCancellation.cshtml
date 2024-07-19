@@ -1,0 +1,79 @@
+﻿@using CodeLock.Models
+@model CodeLock.Models.TripsheetSettlementCancellation
+@{
+    ViewBag.Title = "TripsheetSettlementCancellation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        vendorMasterurl = '@Url.Action("", "Vendor", new { Area = "Master" })';
+        TripsheetUrl = '@Url.Action("", "Tripsheet", new { Area = "FMS" })';
+        currentDate = '@DateTime.Now';
+         dateTimeFormat = '@ConfigHelper.JsDateFormat' + ' ' + '@ConfigHelper.TimeFormat';
+    });
+</script>
+<script src="@Url.Content("~/Areas/FMS/Views/Tripsheet/TripsheetSettlementCancellation.js")"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("TripsheetSettlementCancellation", "Tripsheet", FormMethod.Post, new { @class = "j-forms", @id = "j-forms" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="tab-content">
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.LabelFor(model => model.TripsheetAction, new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.TripsheetAction, new List<SelectListItem> {
+                                new SelectListItem() {Text = "Driver Settlement", Value="1"},
+                                new SelectListItem() {Text = "Close - Operational", Value="2"},
+                                new SelectListItem() {Text = "Close - Financial", Value="3"}}, new { @class = "form-control", @id = "ddlTripsheetAction" })
+                                <i></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            @Html.Label("Search By", new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.searchBy, new List<SelectListItem> {
+                                new SelectListItem() {Text = "Enter Manual Tripsheet No", Value="1"},
+                                new SelectListItem() {Text = "Enter Tripsheet No", Value="2"},
+                                new SelectListItem() {Text = "Enter Vehicle No", Value="3"}}, new { @class = "form-control", @id = "ddlsearchBy" })
+                                <i></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Label("Tripsheet No", new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBox("txtTripsheetNo", "", new { @class = "form-control", @id = "txtTripsheetNo" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @Html.Hidden("hdnVehicleId", '0', new { @id = "hdnVehicleId" })
+                    <div class="page-separator">OR</div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @Html.Label("Select Trip Sheet Date", new { @class = "label" })
+                            <div class="clearfix">
+                                <div id="drTripsheetDate"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div>
+                                <table id="dtTripsheetDetailList"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

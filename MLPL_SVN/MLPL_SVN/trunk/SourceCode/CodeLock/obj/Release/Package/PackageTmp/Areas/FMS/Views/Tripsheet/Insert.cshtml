@@ -392,6 +392,17 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
+                                @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txtRemarks" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Remarks)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
                                 @Html.Label(" ", new { @class = "control-label" })
                                 <div class="clearfix">
                                     @Html.Label("Checklist")

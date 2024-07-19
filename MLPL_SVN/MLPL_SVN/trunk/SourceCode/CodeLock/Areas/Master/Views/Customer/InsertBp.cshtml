@@ -1,0 +1,1163 @@
+﻿@model CodeLock.Models.MasterCustomer
+@using Secure_Coding.MvcSecurityExtensions;
+@using CodeLock.Models;
+
+@{
+    ViewBag.Title = "InsertBp";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<div id="dvWizard">
+    <div class="panel-body">
+        @using (Html.BeginForm("InsertBp", "Customer", FormMethod.Post, new { @class = "j-forms" }))
+        {
+            @Html.AntiModelInjectionFor(m => m.CustomerId)
+            @Html.HiddenFor(m => m.CustomerId, new { @id = "hdnCustomerId" })
+
+            <div class="tab-pane">
+                <div class="row col-12 p-0 m-0 mb-4">
+                    <div class="m-0 col-12 col-sm-4 col-md-3" id="dvCustomerType">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MasterCustomerDetail.CustomerTypeId, new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.MasterCustomerDetail.CustomerTypeId, new SelectList(ViewBag.CustomerTypeList, "Value", "Name"), "Select Customer Type", new { @class = "form-control", @id = "ddlCustomerType" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.MasterCustomerDetail.CustomerTypeId)
+                        </div>
+                    </div>
+
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.MasterCustomerDetail.BusinessType, new { @class = "label" })
+                                @Html.HiddenFor(model => model.MasterCustomerDetail.BusinessType, new { @id = "hdnBusinessType" })
+                                @Html.DropDownListFor(model => model.MasterCustomerDetail.BusinessType, new SelectList(ViewBag.BusinessTypeList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlBusinessType", @placeholder = "Business type" })
+                                @Html.ValidationMessageFor(model => model.MasterCustomerDetail.BusinessType)
+                            </div>
+                        </div>
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        @Html.LabelFor(model => model.MasterCustomerDetail.BusinessType, new { @class = "label" })
+                        <div class="form-group">
+                            <select id="ddlBusinessType" class="form-control">
+                                <option hidden>--Select Business Type--</option>
+                                <option value="1">Transport</option>
+                                <option value="2">Packaging</option>
+                                <option value="3">Common</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.GroupCode, new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.GroupCode, new SelectList(ViewBag.GroupList, "Value", "Name"), "Select GroupCode", new { @class = "form-control", @id = "ddlGroupCode" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.GroupCode)
+                        </div>
+                    </div>
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CustomerName, new { @class = "label" })
+                            <div class="input-wrapper">
+                                @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control", @id = "Name" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.CustomerName)
+                        </div>
+                    </div>
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MasterCustomerDetail.Password, new { @class = "label" })
+                            <div class="input-wrapper">
+                                @Html.TextBoxFor(model => model.MasterCustomerDetail.Password, new { @class = "form-control", @type = "password" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.MasterCustomerDetail.Password)
+                        </div>
+                    </div>
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MasterCustomerDetail.IndustryId, new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.MasterCustomerDetail.IndustryId, new SelectList(ViewBag.IndustryList, "Value", "Name"), "Select Industry", new { @class = "form-control", @id = "ddlIndustry" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.MasterCustomerDetail.IndustryId)
+                        </div>
+                    </div>
+
+                    <div class="m-0 col-12 col-sm-4 col-md-3" id="dvGstTinNo">
+                        @Html.LabelFor(model => model.MasterCustomerDetail.GstTinNo, new { @class = "label" })
+                        <div class="row">
+                            <div class="col-8 col-sm-8 col-md-8 pr-0">
+                                @Html.TextBoxFor(model => model.MasterCustomerDetail.GstTinNo, new { @class = "form-control form-group-input", @Value = "06AAXCS8821M1ZF", @id = "txtGstTinNo" })
+                            </div>
+                            <div class="col-4 col-sm-4 col-md-4 pl-0">
+                                <button type="button" id="btnGetDetail" class="btn btn-primary">Autofill</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    @*<div class="m-0 col-12 col-sm-4 col-md-3" id="dvGstTinNo">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.MasterCustomerDetail.GstTinNo, new { @class = "label" })
+                                <div class="input-wrapper">
+                                    @Html.TextBoxFor(model => model.MasterCustomerDetail.GstTinNo, new { @class = "form-control", @Value = "06AAXCS8821M1ZF", @id = "txtGstTinNo" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.MasterCustomerDetail.GstTinNo)
+                                <input type="button" id="btnGetDetail" class="btn btn-primary btn-sm" value="Get Detail">
+                            </div>
+                        </div>*@
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MasterCustomerDetail.PanNo, new { @class = "label" })
+                            <div class="input-wrapper">
+                                @Html.TextBoxFor(model => model.MasterCustomerDetail.PanNo, new { @class = "form-control" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.MasterCustomerDetail.PanNo)
+                        </div>
+                    </div>
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.Partial("DateTimePicker", new DateTimePicker()
+                       {
+                           FieldName = "MasterCustomerDetail.RegistrationDate",
+                           FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterCustomerDetail.RegistrationDate),
+                           IsRequired = true,
+                           AllowFutureDate = false,
+                           AllowPastDate = true,
+                           SetBlank = true,
+                           IsValidateFinYear = false,
+                           FieldId = "dateOfRegistration"
+                       })
+                        </div>
+                    </div>
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MasterCustomerDetail.MobileNo, new { @class = "label" })
+                            <div class="input-wrapper">
+                                @Html.TextBoxFor(model => model.MasterCustomerDetail.MobileNo, new { @class = "form-control", @id = "txtMobileNo" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.MasterCustomerDetail.MobileNo)
+                        </div>
+                    </div>
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MasterCustomerDetail.EmailId, new { @class = "label" })
+                            <div class="input-wrapper">
+                                @Html.TextBoxFor(model => model.MasterCustomerDetail.EmailId, new { @class = "form-control" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.MasterCustomerDetail.EmailId)
+                        </div>
+                    </div>
+                    <div class="m-0 col-12 col-sm-4 col-md-3" id="dvCustomerPhoneNo">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PhoneNo, new { @class = "label" })
+                            <div class="input-wrapper">
+                                @Html.TextBoxFor(model => model.PhoneNo, new { @class = "form-control", @id = "txtPhoneNo" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.PhoneNo)
+                        </div>
+                    </div>
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MasterCustomerDetail.TypeOfOwnershipId, new { @class = "label" })
+                            <div class="select">
+                                @Html.DropDownListFor(model => model.MasterCustomerDetail.TypeOfOwnershipId, new SelectList(ViewBag.OwnerShipList, "Value", "Name"), "Select OwnerShip", new { @class = "form-control", @id = "ddlOwnership" })
+                                <i></i>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.MasterCustomerDetail.TypeOfOwnershipId)
+                        </div>
+                    </div>
+
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MasterCustomerDetail.CustomerLocation, new { @class = "label" })
+                            @Html.HiddenFor(model => model.MasterCustomerDetail.CustomerLocation, new { @id = "hdnCustomerLocation" })
+                            @Html.DropDownListFor(model => model.MasterCustomerDetail.CustomerLocation, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlCustomerLocation", @placeholder = "Select Location" })
+                            @Html.ValidationMessageFor(model => model.MasterCustomerDetail.CustomerLocation)
+                        </div>
+                    </div>
+
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation, new { @class = "label" })
+                            @Html.HiddenFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation, new { @id = "hdnCustomerDeliveryLocation" })
+                            @Html.DropDownListFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlCustomerDeliveryLocation", @placeholder = "Select Location" })
+                            @Html.ValidationMessageFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation)
+                        </div>
+                    </div>
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MasterCustomerDetail.IsTruckForwardNote, new { @class = "label" })
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.MasterCustomerDetail.IsTruckForwardNote)
+                                <i></i>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="unit">
+                            <div class="inline-group">
+                                @Html.LabelFor(model => model.PayBas, new { @class = "label-bold" })
+                                @for (var i = 0; i < Model.PayBas.Count(); i++)
+                                {
+                                    <label class="checkbox">
+                                        @Html.CheckBoxFor(m => m.PayBas[i].IsActive, new { @id = "chkPayBas" + i.ToString() })
+                                        <i></i>
+                                        @Html.LabelFor(m => m.PayBas[i].IsActive, Model.PayBas[i].CodeDescription, new { @class = "label", @For = "chkPayBas" + i.ToString() })
+                                    </label>
+                                    @Html.HiddenFor(m => m.PayBas[i].CodeTypeId)
+                                    @Html.HiddenFor(m => m.PayBas[i].CodeId)
+                                    @Html.HiddenFor(m => m.PayBas[i].CodeDescription)
+                                }
+                                @Html.ValidationMessageFor(model => model.PayBas)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MasterCustomerDetail.IsLaneID, new { @class = "label" })
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.MasterCustomerDetail.IsLaneID)
+                                <i></i>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.IsActive)
+                                <i></i>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="m-0 col-12 col-sm-4 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.MasterCustomerDetail.IsMilkrunHrsPerDayEnabled, new { @class = "label" })
+                            <label class="checkbox">
+                                @Html.CheckBoxFor(model => model.MasterCustomerDetail.IsMilkrunHrsPerDayEnabled)
+                                <i></i>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                @* ******************** This is page seprate according to Sap and Bng Format **************************** *@
+                <div>
+                    <div class="tablink" onclick="openCity('General', this)" id="defaultOpen">General</div>
+                    <div class="tablink" onclick="openCity('Contact', this)">Contact Person</div>
+                    @*<div class="tablink" onclick="openCity('Part', this)">Part Detail</div>*@
+                    <div class="tablink" onclick="openCity('Payment', this)">Payment Terms</div>
+                    <div class="tablink" onclick="openCity('Attachments', this)">Attachments</div>
+                </div>
+                <div>
+
+
+
+                    <div id="General" class="tabcontent">
+                        Genral
+                        <div class="table-responsive">
+                            <table class="table" border="1" id="CategoryTable">
+                                <thead>
+                                    <tr>
+                                        <th>Address Code</th>
+                                        <th>Place Of Business</th>
+                                        <th>Nature Of Business</th>
+                                        <th>Registration Type</th>
+                                        <th>GstIn</th>
+                                        <th>Address 1</th>
+                                        <th>Address 2</th>
+                                        <th>Country</th>
+                                        <th class="col-lg-2">State</th>
+                                        <th>City Name</th>
+                                        <th>PanNo</th>
+                                        <th>Pincode</th>
+
+                                        @*<th>Mobile No</th>
+                                            <th>Email ID</th>*@
+                                        <th>Is Active</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td> <input type="text" name="address_code[]">    </td>
+                                        <td>
+                                            <select name="place_of_business[]">
+                                                <option value="">Select</option>
+                                                <option selected value="1">Principal Place of Business</option>
+                                                <option value="2">Additional Place of Business</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" name="nature_of_business[]" id="nature_of_business"></td>
+
+                                        <td>
+                                            <select name="registration_type[]" id="">
+                                                <option selected value="">Select</option>
+                                                <option value="1">REGISTERED-REGULAR</option>
+                                                <option value="2">UNREGISTERED</option>
+                                                <option value="3">CONSUMER</option>
+                                                <option value="4">DEEMED EXPORT-EHTP</option>
+                                                <option value="5">DEEMED EXPORT-EOU</option>
+                                                <option value="6">DEEMED EXPORTS-STP</option>
+                                                <option value="7">OVERSEAS</option>
+                                                <option value="8">REGISTERED-COMPOSITION</option>
+                                                <option value="9">SEZ WITH PAYMENT</option>
+                                                <option value="10">SEZ WITHOUT PAYMENT</option>
+                                                <option value="11">UIN HOLDER</option>
+                                                <option value="12">NIL RATED</option>
+                                            </select>
+                                        </td>
+                                        <td>  <input type="text" name="gstNo[]" id="gstNo">  </td>
+                                        @*<td><input type="text" name="address1[]" id="address1"></td>*@
+                                        <td>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MasterCustomerAddressInfo.Address1, new { @class = "label" })
+                                                <div class="input-wrapper">
+                                                    @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Address1, new { @class = "form-control", @name = "address1[]" })
+                                                </div>
+                                                @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.Address1)
+                                            </div>
+                                        </td>
+                                        @*<td><input type="text" name="address2[]" id="address2"></td>*@
+                                        <td>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MasterCustomerAddressInfo.Address2, new { @class = "label" })
+                                                <div class="input-wrapper">
+                                                    @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Address2, new { @class = "form-control", @name = "address2[]" })
+                                                </div>
+                                                @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.Address2)
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MasterCustomerAddressInfo.CountryId, new { @class = "label" })
+                                                <div class="select">
+                                                    @Html.DropDownListFor(model => model.MasterCustomerAddressInfo.CountryId, new SelectList(ViewBag.CountryList, "Value", "Name"), "Select Country", new { @class = "form-control", @id = "ddlCountry" })
+                                                    <i></i>
+                                                </div>
+                                                @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.CountryId)
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MasterCustomerAddressInfo.StateId, new { @class = "label" })
+                                                <div class="select">
+                                                    @Html.DropDownListFor(model => model.MasterCustomerAddressInfo.StateId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlState", @name = "state_name[]" })
+                                                    <i></i>
+                                                </div>
+                                                @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.StateId)
+                                            </div>
+                                        </td>
+                                        @*<td><input type="text" name="city_name[]" id="city"></td>*@
+                                        <td>
+                                            <div class="form-group col-lg-2 margin-bottom-4 ">
+                                                @Html.LabelFor(model => model.MasterCustomerAddressInfo.CityId, new { @class = "label" })
+                                                <div class="select">
+                                                    @Html.DropDownListFor(model => model.MasterCustomerAddressInfo.CityId, model => model.MasterCustomerAddressInfo.CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control ", @id = "ddlCity", @name = "city_name[]" })
+                                                    <i></i>
+                                                </div>
+                                                @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.CityId)
+                                            </div>
+                                        </td>
+                                        @*<td><input type="text" name="state_name[]" id="state"></td>*@
+
+                                        @*<td><input type="text" name="pincode[]" id="pincode"></td>*@
+                                        <td>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MasterCustomerDetail.PanNo, new { @class = "label" })
+                                                <div class="input-wrapper">
+                                                    @Html.TextBoxFor(model => model.MasterCustomerDetail.PanNo, model => model.MasterCustomerAddressInfo.PanNo, new { @class = "form-control", @name = "PanNo[]" })
+                                                </div>
+                                                @Html.ValidationMessageFor(model => model.MasterCustomerDetail.PanNo)
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MasterCustomerAddressInfo.Pincode, new { @class = "label" })
+                                                <div class="input-wrapper">
+                                                    @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Pincode, new { @class = "form-control", @name = "pincode[]" })
+                                                </div>
+                                                @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.Pincode)
+                                            </div>
+                                        </td>
+                                        @*<td><input type="text" name="mobile_no[]" id="mobileno"></td>
+                                            <td><input type="text" name="email_id[]" id="email_id"></td>*@
+
+                                        <td>@Html.CheckBoxFor(model => model.IsActive)</td>
+                                        <td>
+                                            <button type="button" onclick="addRow()">Add</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    @* ************************---This is Contact Persion Tag  -Start----***************************************   *@
+                    <div id="Contact" class="tabcontent">
+
+                        <div class="page-separator">Sales Person(For Booking Deal)</div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerDetail.SalesPersonBookingDealName, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.SalesPersonBookingDealName, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerDetail.SalesPersonBookingDealName)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerDetail.SalesPersonBookingDealDesignation, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.SalesPersonBookingDealDesignation, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerDetail.SalesPersonBookingDealDesignation)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerDetail.SalesPersonBookingDealMobileNo, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.SalesPersonBookingDealMobileNo, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerDetail.SalesPersonBookingDealMobileNo)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerDetail.SalesPersonBookingDealEmailId, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.SalesPersonBookingDealEmailId, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerDetail.SalesPersonBookingDealEmailId)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="page-separator">Sales Person(For Closing Deal)</div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerDetail.SalesPersonClosingDealName, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.SalesPersonClosingDealName, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerDetail.SalesPersonClosingDealName)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerDetail.SalesPersonClosingDealDesignation, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.SalesPersonClosingDealDesignation, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerDetail.SalesPersonClosingDealDesignation)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerDetail.SalesPersonClosingDealMobileNo, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.SalesPersonClosingDealMobileNo, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerDetail.SalesPersonClosingDealMobileNo)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerDetail.SalesPersonClosingDealEmailId, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.SalesPersonClosingDealEmailId, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerDetail.SalesPersonClosingDealEmailId)
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="page-separator">Decision Maker</div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerDetail.DecisionMakerName, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.DecisionMakerName, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerDetail.DecisionMakerName)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerDetail.DecisionMakerDesignation, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.DecisionMakerDesignation, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerDetail.DecisionMakerDesignation)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerDetail.DecisionMakerMobileNo, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.DecisionMakerMobileNo, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerDetail.DecisionMakerMobileNo)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerDetail.DecisionMakerEmailId, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.DecisionMakerEmailId, new { @class = "form-control" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerDetail.DecisionMakerEmailId)
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+                    @* ************************---This is Contact Persion Tag End----***************************************   *@
+
+
+                    <div>
+                        <div id="Payment" class="tabcontent">
+                            <div class="page-separator">Payment-Terms</div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.PaymentTerms, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.PaymentTerms, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.PaymentTerms)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.InterestOnArrearsPercentage, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.InterestOnArrearsPercentage, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.InterestOnArrearsPercentage)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.PriceList, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.PriceList, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.PriceList)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.TotalDiscountPercentage, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.TotalDiscountPercentage, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.TotalDiscountPercentage)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.CreditLimit, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.CreditLimit, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.CreditLimit)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.CommitmentLimit, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.CommitmentLimit, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.CommitmentLimit)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.EffectiveDiscountsGroups, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.EffectiveDiscountsGroups, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.EffectiveDiscountsGroups)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.DunningTerm, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.DunningTerm, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.DunningTerm)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="page-separator">Business Partner Bank</div>
+                             <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.BankCountryRegion, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.BankCountryRegion, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.BankCountryRegion)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.BankName, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.BankName, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.BankName)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.BankCode, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.BankCode, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.BankCode)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.Account, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.Account, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.Account)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.BICSWIFTCode, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.BICSWIFTCode, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.BICSWIFTCode)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.BankAccountName, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.BankAccountName, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.BankAccountName)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.Branch, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.Branch, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.Branch)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.CtrlIntID, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.CtrlIntID, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.CtrlIntID)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.MandateID, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.MandateID, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.MandateID)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.DateOfSignature, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.DateOfSignature, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.DateOfSignature)
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BusinessPartnerDetails.AddressCode, new { @class = "label" })
+                                        <div class="input-wrapper">
+                                            @Html.TextBoxFor(model => model.BusinessPartnerDetails.AddressCode, new { @class = "form-control" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.AddressCode)
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- GST & Address -->
+                    @*<div id="Part" class="tabcontent">Part Detail</div>*@
+
+                    <div>
+                        <div id="Attachments" class="tabcontent">
+                            <h1>Attachments</h1>
+                            <p>Attach you party documents</p>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+            <div class="display text-right">
+                <button class="btn btn-success  " type="submit"><i class="fa fa-save fa-adjust"></i>Save</button>
+                <button class="btn btn-warning  " type="reset"><i class="fa fa-refresh fa-adjust"></i>Reset</button>
+
+            </div>
+            
+        }
+    </div>
+</div>
+<script>
+    var ruleMasterUrl;
+    $(document).ready(function () {
+        SetPageLoad('Customer', 'Create', 'ddlGroupCode', 'Go To List', '@Url.Action("Index")');
+        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        ddlCustomerLocation = $('#ddlCustomerLocation');
+        ddlCustomerDeliveryLocation = $('#ddlCustomerDeliveryLocation');
+
+        //InitWizard('dvWizard', [
+        //    { StepName: 'Basic Details', StepFunction: ValidateOnStep1 },
+        //    { StepName: 'Deal Person Details' },
+        //    { StepName: 'Billing Address Details' }
+        //], 'Add Customer');
+
+        AttachEvents();
+        $('#ddlCountry').val(1).change();
+        $('#ddlCustomerType').change(OnCustomerTypeChange);
+        var requestData = { moduleId: 15, ruleId: 11 };
+        AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(requestData), function (result) {
+            var useCustomerType = true;
+            useCustomerType = result == "Y" ? true : false;
+            $('#dvCustomerType').showHide(result == "Y" ? true : false);
+            if (!useCustomerType)
+                $('#ddlCustomerType').val(1);
+        }, ErrorFunction, false);
+
+        var allowPhoneNoMandatoryForCustomer = false;
+        var request = { moduleId: 15, ruleId: 12 };
+        AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(request), function (result) {
+            allowPhoneNoMandatoryForCustomer = (result == "Y" ? true : false);
+            if (!allowPhoneNoMandatoryForCustomer) {
+                RemoveRequired(txtPhoneNo);
+            }
+            else {
+                AddRequired(txtPhoneNo, 'Please enter Phone No. ');
+            }
+        }, ErrorFunction, false);
+
+
+        OnCustomerTypeChange();
+
+    });
+
+    function AttachEvents() {
+        $('#ddlCountry').change(OnCountryChange);
+        $('#ddlState').change(OnStateChange);
+        $('[id*="chkPayBas"]').prop("checked", false);
+        InitMultiSelect(ddlCustomerLocation.Id, true, false, true);
+        DropDownChange('ddlCustomerLocation', function () {
+            $('#hdnCustomerLocation').val($(this).val());
+        });
+
+        InitMultiSelect(ddlBusinessType.Id, true, false, true);
+        DropDownChange('ddlBusinessType', function () {
+            $('#hdnBusinessType').val($(this).val());
+        });
+
+        InitMultiSelect(ddlCustomerDeliveryLocation.Id, true, false, true);
+        DropDownChange('ddlCustomerDeliveryLocation', function () {
+            $('#hdnCustomerDeliveryLocation').val($(this).val());
+        });
+
+        $('#txtMobileNo').on('input', function () {
+            var numericValue = $(this).val().replace(/[^0-9]/g, '');
+            $(this).val(numericValue);
+        });
+
+        $('#txtPhoneNo').on('input', function () {
+            var numericValue = $(this).val().replace(/[^0-9]/g, '');
+            $(this).val(numericValue);
+        });
+    }
+
+    function OnCustomerTypeChange() {
+        $('#dvGstTinNo').showHide($('#ddlCustomerType').val() == 1);
+        if ($('#ddlCustomerType').val() == 1)
+            AddRequired($('#txtGstTinNo'), 'Please Enter Gst No');
+        else
+            RemoveRequired($('#txtGstTinNo'));
+    }
+
+    function ValidateOnStep1() {
+        if (!ValidateMultiCheckBox('chkPayBas', 'PayBas')) {
+            isStepValid = false;
+            return false;
+        }
+        else {
+            isStepValid = true;
+        }
+        return true;
+    }
+
+    function ValidateMultiCheckBox(partialId, entityName) {
+        var selected = false, firstCheckBox = null;
+        $('[id*="' + partialId + '"]').each(function () {
+            if (firstCheckBox == null)
+                firstCheckBox = $(this);
+            if ($(this).is(':checked'))
+                selected = true;
+        });
+        if (!selected) {
+            ShowMessage("Please select at-least one " + entityName);
+            firstCheckBox.focus();
+            return false;
+        }
+        return true;
+    }
+
+    function OnCountryChange() {
+        if ($('#ddlCountry').val() != "") {
+            var requestData = { countryId: $('#ddlCountry').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetStateListByCountryId", "State")', JSON.stringify(requestData), GetStateListSuccess, ErrorFunction, false);
+        }
+        else
+            GetStateListSuccess([]);
+    }
+
+    function GetStateListSuccess(responseData) {
+        BindDropDownList('ddlState', responseData, 'Value', 'Name', '', 'Select State');
+    }
+
+    function OnStateChange() {
+        if ($('#ddlState').val() != "") {
+            var requestData = { stateId: $('#ddlState').val() };
+            AjaxRequestWithPostAndJson('@Url.Action("GetCityListByStateId", "City")', JSON.stringify(requestData), GetCityListSuccess, ErrorFunction, false);
+        }
+        else
+            GetCityListSuccess([]);
+    }
+
+    function GetCityListSuccess(responseData) {
+        BindDropDownList('ddlCity', responseData, 'Value', 'Name', '', 'Select City');
+    }
+
+
+
+    $(document).ready(function () {
+        $('#btnGetDetail').click(function () {
+            var gstin = $('#txtGstTinNo').val();
+            if (gstin) {
+                $.ajax({
+                    url: '@Url.Action("FetchCustomerDetailsFromApi", "Customer")',
+                    type: 'POST',
+                    data: { gstin: gstin },
+                    success: function (data) {
+                        parseData = JSON.parse(data);
+                        console.log(parseData.code === "200");
+                        console.log("typeof : ", typeof parseData.code);
+                        responseStatus = parseData.response[0].responseStatus;
+                        console.log("responseStatus : ", responseStatus);
+                        if (parseData.code === "200") {
+                            apiResponse = parseData.response[0].response;
+                            console.log('API Response:', apiResponse);
+
+                            tradeName = apiResponse.tradeName;
+                            $('#Name').val(tradeName);
+
+                            dateOfRegistration = apiResponse.dateOfRegistration;
+                            $('#txtdateOfRegistration').val(dateOfRegistration);
+
+                            gstnStatus = apiResponse.gstnStatus;
+                            $('#gstnStatus').val(gstnStatus);
+                            lastUpdatedDate = apiResponse.lastUpdatedDate;
+                            $('#txtlastUpdatedDate').val(lastUpdatedDate);
+                            legalNameOfBusiness = apiResponse.legalNameOfBusiness;
+                            $('#legalNameOfBusiness').val(legalNameOfBusiness);
+                            centerJurisdiction = apiResponse.centerJurisdiction;
+                            $('#centerJurisdiction').val(centerJurisdiction);
+                            centerJurisdictionCode = apiResponse.centerJurisdictionCode;
+                            $('#centerJurisdictionCode').val(centerJurisdictionCode);
+                            constitutionOfBusiness = apiResponse.constitutionOfBusiness;
+                            $('#constitutionOfBusiness').val(constitutionOfBusiness);
+                            dateOfCancellation = apiResponse.dateOfCancellation;
+                            $('#dateOfCancellation').val(dateOfCancellation);
+                            eInvoiceStatus = apiResponse.eInvoiceStatus;
+                            $('#eInvoiceStatus').val(eInvoiceStatus);
+                            stateJurisdiction = apiResponse.stateJurisdiction;
+                            $('#stateJurisdiction').val(stateJurisdiction);
+                            stateJurisdictionCode = apiResponse.stateJurisdictionCode;
+                            $('#stateJurisdictionCode').val(stateJurisdictionCode);
+                            taxpayerType = apiResponse.taxpayerType;
+                            $('#taxpayerType').val(taxpayerType);
+
+                            principalPlaceOfBusinessFields = apiResponse.principalPlaceOfBusinessFields;
+                            natureOfPrincipalPlaceOfBusiness = principalPlaceOfBusinessFields.natureOfPrincipalPlaceOfBusiness;
+                            $('#nature_of_business').val(natureOfPrincipalPlaceOfBusiness);
+
+                            principalPlaceOfBusinessAddress = principalPlaceOfBusinessFields.principalPlaceOfBusinessAddress;
+                            $('#address1').val(principalPlaceOfBusinessAddress.buildingNumber);
+                            $('#address2').val(principalPlaceOfBusinessAddress.buildingName + " " + principalPlaceOfBusinessAddress.streetName);
+                            $('#city').val(principalPlaceOfBusinessAddress.districtName);
+                            $('#state').val(principalPlaceOfBusinessAddress.stateName);
+                            $('#pincode').val(principalPlaceOfBusinessAddress.pincode);
+
+                            additionalPlaceOfBusinessFields = apiResponse.additionalPlaceOfBusinessFields;
+                               var stateList = @Html.Raw(Json.Encode(ViewBag.StateList));
+                          var stateList = @Html.Raw(Json.Encode(ViewBag.StateList));
+
+    function addRow(additionalPlaceOfBusinessFields, i) {
+        var row = document.createElement('tr');
+
+        var stateOptions = '<option value="">Select State</option>';
+        for (var j = 0; j < stateList.length; j++) {
+            stateOptions += '<option value="' + stateList[j].Value + '">' + stateList[j].Name + '</option>';
+        }
+
+        var rowContent = `
+            <td><input type="text" name="address_code[]"></td>
+            <td>
+                <select name="place_of_business[]">
+                    <option value="">Select</option>
+                    <option value="1">Principal Place of Business</option>
+                    <option selected value="2">Additional Place of Business</option>
+                </select>
+            </td>
+            <td><input type="text" name="nature_of_business[]" value="` + additionalPlaceOfBusinessFields[i].natureOfAdditionalPlaceOfBusiness + `"></td>
+            <td>
+                <select name="registration_type[]">
+                    <option selected value="">Select</option>
+                    <option value="1">REGISTERED-REGULAR</option>
+                    <option value="2">UNREGISTERED</option>
+                    <option value="3">CONSUMER</option>
+                    <option value="4">DEEMED EXPORT-EHTP</option>
+                    <option value="5">DEEMED EXPORT-EOU</option>
+                    <option value="6">DEEMED EXPORTS-STP</option>
+                    <option value="7">OVERSEAS</option>
+                    <option value="8">REGISTERED-COMPOSITION</option>
+                    <option value="9">SEZ WITH PAYMENT</option>
+                    <option value="10">SEZ WITHOUT PAYMENT</option>
+                    <option value="11">UIN HOLDER</option>
+                    <option value="12">NIL RATED</option>
+                </select>
+            </td>
+            <td><input type="text" name="gstNo[]" value="` + additionalPlaceOfBusinessFields[i].additionalPlaceOfBusinessAddress.gstin + `"></td>
+            <td><input type="text" name="address1[]" value="` + additionalPlaceOfBusinessFields[i].additionalPlaceOfBusinessAddress.buildingNumber + `"></td>
+            <td><input type="text" name="address2[]" value="` + additionalPlaceOfBusinessFields[i].additionalPlaceOfBusinessAddress.buildingName + " " + additionalPlaceOfBusinessFields[i].additionalPlaceOfBusinessAddress.streetName + `"></td>
+            <td><input type="text" name="city_name[]" value="` + additionalPlaceOfBusinessFields[i].additionalPlaceOfBusinessAddress.districtName + `"></td>
+            <td class="col-lg-2">
+                <select name="state_name[]" class="form-control" id="ddlState">` + stateOptions + `</select>
+            </td>
+            <td><input type="text" name="pincode[]" value="` + additionalPlaceOfBusinessFields[i].additionalPlaceOfBusinessAddress.pincode + `"></td>
+            <td><input type="text" name="mobile_no[]"></td>
+            <td><input type="text" name="email_id[]"></td>
+            <td>@Html.CheckBoxFor(model => model.IsActive)</td>
+            <td>
+                <button type="button" onclick="deleteRow(this)">Delete</button>
+            </td>
+        `;
+        row.innerHTML = rowContent;
+                            }
+                        }
+                        else {
+                            console.log("responseStatus 200 mismatch from ulip portal"); alert("responseStatus 200 mismatch from ulip portal");
+                        }
+                    }
+                });
+            }
+            else { console.log("Please enter GSTIN"); alert("Please enter GSTIN"); }
+        });
+    });
+</script>
+<script>
+function addRow() {
+    var table = document.getElementById('CategoryTable');
+    var row = table.insertRow();
+    var rowContent = `
+
+                            <td> <input type="text" name="address_code[]">    </td>
+                            <td>
+                                <select name="place_of_business[]">
+                                    <option value="">Select</option>
+                                    <option selected value="1">Principal Place of Business</option>
+                                    <option value="2">Additional Place of Business</option>
+                                </select>
+                            </td>
+                            <td><input type="text" name="nature_of_business[]" id="nature_of_business"></td>
+
+                            <td>
+                                <select name="registration_type[]" id="">
+                                    <option selected value="">Select</option>
+                                    <option value="1">REGISTERED-REGULAR</option>
+                                    <option value="2">UNREGISTERED</option>
+                                    <option value="3">CONSUMER</option>
+                                    <option value="4">DEEMED EXPORT-EHTP</option>
+                                    <option value="5">DEEMED EXPORT-EOU</option>
+                                    <option value="6">DEEMED EXPORTS-STP</option>
+                                    <option value="7">OVERSEAS</option>
+                                    <option value="8">REGISTERED-COMPOSITION</option>
+                                    <option value="9">SEZ WITH PAYMENT</option>
+                                    <option value="10">SEZ WITHOUT PAYMENT</option>
+                                    <option value="11">UIN HOLDER</option>
+                                    <option value="12">NIL RATED</option>
+                                </select>
+                            </td>
+                            <td>  <input type="text" name="gstNo[]" id="gstNo">  </td>
+                            @*<td><input type="text" name="address1[]" id="address1"></td>*@
+                            <td>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerAddressInfo.Address1, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Address1, new { @class = "form-control", @name = "address1[]" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.Address1)
+                                </div>
+                            </td>
+                            @*<td><input type="text" name="address2[]" id="address2"></td>*@
+                            <td>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerAddressInfo.Address2, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Address2, new { @class = "form-control", @name = "address2[]" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.Address2)
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerAddressInfo.CountryId, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.MasterCustomerAddressInfo.CountryId, new SelectList(ViewBag.CountryList, "Value", "Name"), "Select Country", new { @class = "form-control", @id = "ddlCountry" })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.CountryId)
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerAddressInfo.StateId, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.MasterCustomerAddressInfo.StateId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlState", @name = "state_name[]" })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.StateId)
+                                </div>
+                            </td>
+                            @*<td><input type="text" name="city_name[]" id="city"></td>*@
+                            <td>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerAddressInfo.CityId, new { @class = "label" })
+                                    <div class="select">
+                                        @Html.DropDownListFor(model => model.MasterCustomerAddressInfo.CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control", @id = "ddlCity", @name = "city_name[]" })
+                                        <i></i>
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.CityId)
+                                </div>
+                            </td>
+                            @*<td><input type="text" name="state_name[]" id="state"></td>*@
+
+                            @*<td><input type="text" name="pincode[]" id="pincode"></td>*@
+                            <td>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MasterCustomerAddressInfo.Pincode, new { @class = "label" })
+                                    <div class="input-wrapper">
+                                        @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Pincode, new { @class = "form-control", @name = "pincode[]" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.Pincode)
+                                </div>
+                            </td>
+                            @*<td><input type="text" name="mobile_no[]" id="mobileno"></td>
+<td><input type="text" name="email_id[]" id="email_id"></td>*@
+        <td>
+        <div class="form-group">
+            @Html.LabelFor(model => model.MasterCustomerDetail.PanNo, new { @class = "label" })
+            <div class="input-wrapper">
+                @Html.TextBoxFor(model => model.MasterCustomerDetail.PanNo, new { @class = "form-control",@name= "PanNo[]" })
+            </div>
+            @Html.ValidationMessageFor(model => model.MasterCustomerDetail.PanNo)
+        </div>
+    </td>
+                            <td>@Html.CheckBoxFor(model => model.IsActive)</td>
+
+        <td>
+            <button type="button" onclick="deleteRow(this)">Delete</button>
+        </td>
+    `;
+    row.innerHTML = rowContent;
+}
+function deleteRow(button) {
+    var row = button.parentElement.parentElement;
+    row.remove();
+}
+</script>
+<script>
+    function openCity(cityName, elmnt, color) {
+        // Hide all elements with class="tabcontent" by default
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        // Remove the background color of all tablinks/buttons
+        tablinks = document.getElementsByClassName("tablink");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].style.backgroundColor = "";
+        }
+        // Show the specific tab content
+        document.getElementById(cityName).style.display = "block";
+        // Add the specific color to the button used to open the tab content
+        elmnt.style.backgroundColor = '#19cccc';
+    }
+    // Get the element with id="defaultOpen" and click on it
+    document.getElementById("defaultOpen").click();
+</script>
+<style>
+    .tablink {
+        background-color: #139C9B /* #555 */;
+        color: white;
+        float: left;
+        border: 1px solid white;
+        outline: none;
+        cursor: pointer;
+        padding: 6px 10px;
+        width: 25%;
+    }
+
+        .tablink:hover {
+            background-color: #19cccc;
+        }
+
+    .tabcontent {
+        display: none;
+    }
+</style>

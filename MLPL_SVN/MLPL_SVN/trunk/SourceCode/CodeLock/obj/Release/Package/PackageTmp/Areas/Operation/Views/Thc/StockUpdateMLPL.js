@@ -33,6 +33,7 @@ function InitObjects() {
     dtThcDetails = LoadDataTable('dtThcDetails', false, false, false, null, null, [],
         [
             { title: 'Thc No', data: 'ThcNo' },
+            { title: 'Vehicle No', data: 'VehicleNo' },
             { title: 'Thc Date', data: 'ThcDateTime' },
             { title: 'Previous Branch', data: 'FromLocationCode' },
             { title: 'Arrival Date & Time', data: 'ActualArrivalDate' },

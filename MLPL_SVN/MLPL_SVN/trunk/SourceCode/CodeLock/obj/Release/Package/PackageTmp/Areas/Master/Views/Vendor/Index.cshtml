@@ -5,137 +5,276 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="widget-wrap material-table-widget">
-    <table id="dtVendor">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.VendorCode)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.VendorName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.VendorTypeName)
-                </th>
-                <th data-hide="phone">
-                    @Html.DisplayNameFor(model => model.IsActive)
-                </th>
-                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.MobileNo)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.EmailId)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.Address)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.VendorLocation)
-                </th>
-                <th data-hide="phone" style="display:none">
-                    @Html.DisplayNameFor(model => model.IsBlackListed)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.VendorService)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.PanNo)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.GstTinNo)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.Remarks)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.EntryByName)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.EntryDate)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.UpdateByName)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.UpdateDate)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.VendorCode)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.VendorName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.VendorTypeName)
-                    </td>
-                    <td>
-                        @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
-                    </td>
-                    <td class="td-center">
-                        <div class="btn-toolbar" role="toolbar">
-                            <div class="btn-group" role="group">
-                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.VendorId })"><span class="zmdi zmdi-edit"></span></a>
-                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.VendorId })"><span class="fa fa-file"></span></a>
-                            </div>
-                        </div>
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.MobileNo)
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.EmailId)
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.Address)
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.VendorLocationName)
-                    </td>
-                    <td style="display:none">
-                        @Html.Label("", item.IsBlackListed == true ? "Yes" : "No", new { @class = item.IsBlackListed == true ? "label label-success" : "label label-default" })
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.VendorServiceName)
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.PanNo)
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.GstTinNo)
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.Remarks)
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.EntryByName)
-                    </td>
-                    <td style="display:none">
-                        @item.EntryDate.ToDisplayDateTime()
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.UpdateByName)
-                    </td>
-                    <td style="display:none">
-                        @item.UpdateDate.ToDisplayDateTime()
-                    </td>
-                </tr>
-            }
-        </tbody>
+
+<div id="dvCustomers" class="widget-wrap material-table-widget table-responsive">
+    <!-- This div remains unchanged -->
+    <table id="dtCustomers" class="table table-bordered table-striped display nowrap" style="width:100%">
+        <!-- Table headers and content are dynamically generated by DataTables -->
     </table>
 </div>
 
 <script>
-    $(document).ready(function () {
-        SetPageLoad('Vendor', 'List', 'filter', 'Add New', '@Url.Action("Insert")', '', '', '','','Download Excel','@Url.Action("DownloadExcel")');
-        LoadDataTable('dtVendor', true, true, true);
+        var getAllCustomersUrl = ''
+         @*$(document).ready(function () {
+             SetPageLoad('Customer', 'List', 'filter', 'Add New', '@Url.Action("Insert")', '', '', '','','Download Excel','@Url.Action("DownloadExcel")');
+            //LoadDataTable('dtCustomer', true, true, true);
+             GetCustomerData();
+        });*@
+
+            $(document).ready(function () {
+                SetPageLoad('Vendor', 'List', 'filter', 'Add New', '@Url.Action("Insert")', '', '', '', '', 'Download Excel', '@Url.Action("DownloadExcel")');
+                GetCustomerData();
     });
 
+
+    function GetCustomerData() {
+            var tblCustomersContent = '<table id="dtCustomer" class="table table-bordered table-striped  display nowrap" style="width:100%"><thead style="color: #ffffff; background-color:#139c9b; "><tr>\
+                                <th>Vendor Code</th>\
+                                <th>Vendor Name</th>\
+                                <th>Pan No</th>\
+                                 <th>Vendor Type</th>\
+                                <th>Is Active</th>\
+                                <th>Action</th>\
+                                </tr></thead><tbody></tbody></table>';
+
+            $("#dvCustomers").html(tblCustomersContent);
+            table = $('#dtCustomer').DataTable({
+                clear: true,
+                destroy: true,
+                serverSide: true,
+                searchable:true,
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, 100, 100000], [10, 25, 50, 100, "All"]],
+                autoFill: false,
+                "initComplete": function (settings, json) {
+                    $(this.api().table().container()).find('input').attr('autocomplete', 'off');
+                },
+                "language": {
+                    "emptyTable": "No record found.",
+                    "processing":
+                        '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
+                },
+                "ajax": {
+                    url: '@Url.Action("GetVendorsByPagination", "Vendor")',
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    data: function (d) {
+                        var data = { data: d };
+                        return JSON.stringify(data);
+                    },
+                    AutoWidth: false,
+                    "dataSrc": function (json) {
+                        var data = json;
+                        json.draw = data.draw;
+                        json.recordsTotal = data.recordsTotal;
+                        json.recordsFiltered = data.recordsFiltered;
+                        json.data = JSON.parse(data.data);
+                        return json.data;
+                    }
+                },
+
+                "columns": [
+                    {
+                        "data": "VendorCode", "width": "10px", "orderable": false, "name": "VendorCode"
+                    },
+                       { "data": "VendorName", "name": "VendorName", "searchable": true },
+   { "data": "PanNo", "name": "PanNo", "searchable": true },
+                    { "data": "VendorTypeName", "name": "VendorType", "searchable": true },
+   {
+       "data": "IsActive", "width": "15px", "orderable": false, "name": "IsActive",
+       "render": function (data, type, row, meta) {
+           var isActive = row.IsActive ? 'Yes' : 'No';
+           var activeClass = row.IsActive ? 'label label-success' : 'label label-default';
+           return '<label class="' + activeClass +'">' + isActive +'</label>';
+       },"searchable": false
+   },
+                    //{
+                    //    "data": "a", "width": "15px", "orderable": false, "name": "m.LicNo", "render": function (data, type, row, meta) {
+                    //        return '<div style="text-align:center;"><input type="checkbox" class="SelectedChk" id="' + row.LicNo + '" value="' + row.LicNo + '" class="filled-in chk-col-success" title="Select All"/></div>';
+                    //    },
+                    //    "searchable": false
+                    //},
+                    //{
+                    //    "data": "CustomerCode", "name": "CustomerCode", "searchable": true
+                    //},
+
+                    //{
+                    //    "data": "IsWalkIn", "width": "15px", "orderable": false, "name": "IsWalkIn",
+                    //    "render": function (data, type, row, meta) {
+                    //        var isWalkIn = row.IsWalkIn ? 'Yes' : 'No';
+                    //        var activeClass = row.IsWalkIn ? 'label label-success' : 'label label-default';
+                    //        return '<label class="' + activeClass + '">' + isWalkIn + '</label>';
+                    //    }, "searchable": false
+                    //},
+                    {
+                        "data": "VendorId", "name": "VendorId", "orderable": false, "name": "VendorId",
+                        "render": function (data, type, row, meta) {
+                            var updateUrl = '@Url.Action("Update", new { id = "VendorId" })';
+                            var viewUrl = '@Url.Action("View", new { id = "VendorId" })';
+                            return '<div class="btn-toolbar" role="toolbar">\
+                                <div class="btn-group" role="group">\
+                                    <a class="btn btn-default btn-sm m-user-edit" href="'+ updateUrl.replace('VendorId', row.VendorId) +'"><span class="zmdi zmdi-edit"></span></a>\
+                                    <a class="btn btn-default btn-sm m-user-edit" href="'+ viewUrl.replace('VendorId', row.VendorId) +'"><span class="fa fa-file"></span></a>\
+                                </div>\
+                            </div>';
+                        }, "searchable": false
+                    }
+
+                ]
+            });
+        }
+
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*<div class="widget-wrap material-table-widget">
+        <table id="dtVendor">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VendorCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VendorName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VendorTypeName)
+                    </th>
+                    <th data-hide="phone">
+                        @Html.DisplayNameFor(model => model.IsActive)
+                    </th>
+                    <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.MobileNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.EmailId)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.Address)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.VendorLocation)
+                    </th>
+                    <th data-hide="phone" style="display:none">
+                        @Html.DisplayNameFor(model => model.IsBlackListed)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.VendorService)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.PanNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.GstTinNo)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.Remarks)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.EntryByName)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.EntryDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.UpdateByName)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.UpdateDate)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VendorCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VendorName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VendorTypeName)
+                        </td>
+                        <td>
+                            @Html.Label("", item.IsActive == true ? "Yes" : "No", new { @class = item.IsActive == true ? "label label-success" : "label label-default" })
+                        </td>
+                        <td class="td-center">
+                            <div class="btn-toolbar" role="toolbar">
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.VendorId })"><span class="zmdi zmdi-edit"></span></a>
+                                    <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.VendorId })"><span class="fa fa-file"></span></a>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.MobileNo)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.EmailId)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.VendorLocationName)
+                        </td>
+                        <td style="display:none">
+                            @Html.Label("", item.IsBlackListed == true ? "Yes" : "No", new { @class = item.IsBlackListed == true ? "label label-success" : "label label-default" })
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.VendorServiceName)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.PanNo)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.GstTinNo)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.Remarks)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.EntryByName)
+                        </td>
+                        <td style="display:none">
+                            @item.EntryDate.ToDisplayDateTime()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.UpdateByName)
+                        </td>
+                        <td style="display:none">
+                            @item.UpdateDate.ToDisplayDateTime()
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            SetPageLoad('Vendor', 'List', 'filter', 'Add New', '@Url.Action("Insert")', '', '', '','','Download Excel','@Url.Action("DownloadExcel")');
+            LoadDataTable('dtVendor', true, true, true);
+        });
+
+    </script>*@

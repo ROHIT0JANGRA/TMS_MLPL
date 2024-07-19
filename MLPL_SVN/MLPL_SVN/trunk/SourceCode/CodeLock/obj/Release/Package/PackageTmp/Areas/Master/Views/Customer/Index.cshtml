@@ -110,4 +110,37 @@
         });
     }
 
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("GetData", "Customer")',
+            type: 'GET',
+            dataType: 'json', // Specify the expected data type
+            success: function (data) {
+                parseData = JSON.parse(data);
+                console.log(parseData); // Log the response data to console
+
+                var nextLink = parseData['odata.nextLink'];
+                console.log(nextLink);
+
+
+                value = parseData.value;
+                $('#dataTable').DataTable({
+                    data: value, // Assuming 'value' is the array of objects in your JSON
+                    lengthMenu: [
+                        [5, 10, 15, 20], [5, 10, 15, 20]
+                    ],
+                    pageLength:5,
+                    columns: [
+                        { data: 'CardCode', title: 'Party Code' },
+                        { data: 'CardType', title: 'Type' },
+                        { data: 'CardName', title: 'Name' },
+                        { data: 'CreateDate', title: 'Create Date' }
+                    ]
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error); // Log any errors to console
+            }
+        });
+    });
 </script>

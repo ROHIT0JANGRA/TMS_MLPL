@@ -92,6 +92,9 @@ namespace CodeLock.Models
         public string CustomerName { get; set; }
         public string CustomerCode { get; set; }
         public bool IsActive { get; set; }
+
+
+
     }
 
     public class CustomerExcelData
