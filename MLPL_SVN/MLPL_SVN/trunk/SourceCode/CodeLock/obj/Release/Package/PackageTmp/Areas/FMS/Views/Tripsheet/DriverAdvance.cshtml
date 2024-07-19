@@ -252,24 +252,32 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                @*@Html.LabelFor(model => model.AdvancePaidBy, new { @class = "label" })*@
-                                Remarks
+                                @Html.LabelFor(model => model.AdvancePaidBy, new { @class = "label" })
                                 <div class="input">
                                     @Html.TextBoxFor(model => model.AdvancePaidBy, new { @class = "form-control", @id = "txtAdvancePaidBy" })
                                 </div>
                                 @Html.ValidationMessageFor(model => model.AdvancePaidBy)
                             </div>
                         </div>
-                        @*<div class="col-sm-4">
+                        <div class="col-sm-4">
                             <div class="form-group">
-                                @Html.LabelFor(model => model.AdvanceCardId, new { @class = "control-label" })
-                                <div class="select">
-                                    @Html.DropDownListFor(model => model.AdvanceCardId, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "form-control", @id = "ddlAdvanceCardId" })
-                                    <i></i>
+                                @Html.LabelFor(model => model.Remarks, new { @class = "label" })
+                                <div class="input">
+                                    @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control", @id = "txtRemarks" })
                                 </div>
-                                @Html.ValidationMessageFor(model => model.AdvanceCardId)
+                                @Html.ValidationMessageFor(model => model.Remarks)
                             </div>
-                        </div>*@
+                        </div>
+                        @*<div class="col-sm-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.AdvanceCardId, new { @class = "control-label" })
+                <div class="select">
+                    @Html.DropDownListFor(model => model.AdvanceCardId, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "form-control", @id = "ddlAdvanceCardId" })
+                    <i></i>
+                </div>
+                @Html.ValidationMessageFor(model => model.AdvanceCardId)
+            </div>
+        </div>*@
                     </div>
                     <div class="page-separator">Payment Details</div>
                     <div class="row">

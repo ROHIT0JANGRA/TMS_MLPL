@@ -13,6 +13,7 @@ using System.Web.Mvc;
 using System.ComponentModel;
 using System.Web.Http;
 using CodeLock.Areas.Ewaybill.Repository;
+using CodeLock.Areas.Packaging.Repository;
 
 namespace CodeLock
 {
@@ -141,6 +142,9 @@ namespace CodeLock
             container.RegisterType<ITyreModelRepository, TyreModelRepository>(new InjectionMember[0]);
             container.RegisterType<IFinanceRepository, FinanceRepository>(new InjectionMember[0]);
             container.RegisterType<IEwaybillRepository, EwaybillRepository>(new InjectionMember[0]);
+            //  container.RegisterType<IBusinousPatnerApi,BusinousPatnerApi>(new InjectionMember[0]);
+            container.RegisterType<IRgpRepository, RgpRepository>(new InjectionMember[0]);
+
 
         }
     }

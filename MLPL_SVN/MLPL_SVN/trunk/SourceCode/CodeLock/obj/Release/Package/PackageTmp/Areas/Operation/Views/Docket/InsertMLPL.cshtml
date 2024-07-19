@@ -1635,6 +1635,15 @@
                             @Html.ValidationMessageFor(model => model.GstTinNo)
                         </div>
                     </div>
+                    <div class="col-sm-2" id="dvPartyPanNoDetail">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.PartyPanNo, new { @class = "label" })
+                            <div class="input">
+                                @Html.TextBoxFor(m => m.PartyPanNo, " ", new { @class = "form-control", @id = "txtPartyPanNo", @readonly = "readonly" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.PartyPanNo)
+                        </div>
+                    </div>
                     <div class="col-sm-2">
                         <div class="form-group">
                             @Html.LabelFor(m => m.CompanyGstState, new { @class = "label" })

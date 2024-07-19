@@ -4,92 +4,188 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="widget-wrap material-table-widget">
-    <table id="dtPart">
+
+
+<div class="widget-wrap material-table-widget table-responsive ">
+    <table id="dtParts" class="table table-responsive table-bordered display">
         <thead>
             <tr>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.PartId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.PartCode)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.PartNo)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.PartName)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.EntryBy)
-                </th>
-
-                <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.EntryDate)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.UpdateBy)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.UpdateDate)
-                </th>
-                <th style="display:none">
-                    @Html.DisplayNameFor(model => model.CompanyId)
-                </th>
-
+                <th>PartId</th>
+                <th>PartCode</th>
+                <th>PartNo</th>
+                <th>PartName</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.PartId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PartCode)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PartNo)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PartName)
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.EntryBy)
-                    </td>
-
-                    <td class="td-center">
-                        <div class="btn-toolbar" role="toolbar">
-                            <div class="btn-group" role="group">
-                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.PartId })"><span class="zmdi zmdi-edit"></span></a>
-                                <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.PartId })"><span class="fa fa-file"></span></a>
-                            </div>
-                        </div>
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.EntryByName)
-                    </td>
-                    <td style="display:none">
-                        @item.EntryDate.ToDisplayDateTime()
-                    </td>
-                    <td style="display:none">
-                        @Html.DisplayFor(modelItem => item.UpdateByName)
-                    </td>
-                    <td style="display:none">
-                        @item.UpdateDate.ToDisplayDateTime()
-                    </td>
-                </tr>
-            }
+            <!-- Add more rows as needed -->
         </tbody>
     </table>
 </div>
+
+
+
 <script>
-    $(document).ready(function () {
-        SetPageLoad('Part', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
-        LoadDataTable('dtPart', true, true, true);
+$(document).ready(function () {
+    SetPageLoad('Part', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+
+    // Destroy any existing DataTable instance to avoid reinitialization error
+    if ($.fn.DataTable.isDataTable('#dtParts')) {
+    $('#dtParts').DataTable().destroy();
+    }
+
+    // Initialize DataTable with the desired configuration
+    $('#dtParts').DataTable({
+        clear: true,
+        destroy: true,
+        serverSide: true,
+        searchable: true,
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, 100, 100000], [10, 25, 50, 100, "All"]],
+        autoFill: false,
+        "initComplete": function (settings, json) {
+            $(this.api().table().container()).find('input').attr('autocomplete', 'off');
+        },
+        "language": {
+            "emptyTable": "No record found.",
+            "processing":
+                '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
+        },
+    ajax: {
+    // Add your URL for fetching data via AJAX
+    url: '@Url.Action("GetPartByPagination", "Part")',
+    // Add any additional data parameters if needed
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            data: function (d) {
+                var data = { data: d };
+                return JSON.stringify(data);
+            },
+            AutoWidth: false,
+            "dataSrc": function (json) {
+                var data = json;
+                json.draw = data.draw;
+                json.recordsTotal = data.recordsTotal;
+                json.recordsFiltered = data.recordsFiltered;
+                json.data = JSON.parse(data.data);
+                return json.data;
+            }
+        },
+    // Define column configurations
+    columns: [
+    { "data": "PartId", name: "PartId", "autowidth": true },
+    { "data": "PartCode", name: "PartCode", "autowidth": true },
+    { "data": "PartNo", name: "PartNo", "autowidth": true },
+    { "data": "PartName", name: "PartName", "autowidth": true },
+    {
+    // Render action buttons
+    render: function (data, type, row, meta) {
+    // Modify the HTML to render the action buttons
+    return '<a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update")/' + row.PartId + '"><span class="zmdi zmdi-edit"></span></a>' +
+    '<a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View")/' + row.PartId + '"><span class="fa fa-file"></span></a>';
+    }
+    }
+    ],
+    // Define columnDefs for additional configuration
+    columnDefs: [
+    {
+    targets: [0],
+    searchable: false
+    }
+    ]
     });
+    });
+
+
+
 </script>
+
+@*<div class="widget-wrap material-table-widget">
+        <table id="dtPart">
+            <thead>
+                <tr>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.PartId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PartCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PartNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PartName)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.EntryBy)
+                    </th>
+
+                    <th class="td-center" data-sort-ignore="true" data-hide="phone">Action</th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.EntryDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.UpdateBy)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.UpdateDate)
+                    </th>
+                    <th style="display:none">
+                        @Html.DisplayNameFor(model => model.CompanyId)
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.PartId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PartCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PartNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PartName)
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.EntryBy)
+                        </td>
+
+                        <td class="td-center">
+                            <div class="btn-toolbar" role="toolbar">
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update", new { id = item.PartId })"><span class="zmdi zmdi-edit"></span></a>
+                                    <a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View", new { id = item.PartId })"><span class="fa fa-file"></span></a>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.EntryByName)
+                        </td>
+                        <td style="display:none">
+                            @item.EntryDate.ToDisplayDateTime()
+                        </td>
+                        <td style="display:none">
+                            @Html.DisplayFor(modelItem => item.UpdateByName)
+                        </td>
+                        <td style="display:none">
+                            @item.UpdateDate.ToDisplayDateTime()
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(document).ready(function () {
+            SetPageLoad('Part', 'List', 'filter', 'Add New', '@Url.Action("Insert")');
+            LoadDataTable('dtPart', true, true, true);
+        });
+    </script>*@
 
 

@@ -18,7 +18,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.PartNo, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.PartNo, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.PartNo, new { @class = "form-control", @id = "txtPartNo" })
                     </div>
                     @Html.ValidationMessageFor(model => model.PartNo)
                 </div>
@@ -27,7 +27,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.PartName, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.PartName, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.PartName, new { @class = "form-control", @id = "txtPartName" })
                     </div>
                     @Html.ValidationMessageFor(model => model.PartName)
                 </div>
@@ -216,11 +216,36 @@
 <script>
     $(document).ready(function () {
         $('#dtPart tr:last').attr('data-row-id', '0');
-        SetPageLoad('Part', 'Add', '', 'Go To List', '@Url.Action("Index")');
-
+        SetPageLoad('Part', 'Add', 'txtPartNo', 'Go To List', '@Url.Action("Index")');
+        $('#txtPartNo').blur(IsPartNoAvailable);
+        $('#txtPartName').blur(IsPartNameAvailable);
         InitGrid('dtPart', false, 14, Init);
 
     });
+
+    function IsPartNoAvailable() {
+        var request = { PartId: $('#hdnPartId').val(), PartNo: $('#txtPartNo').val() };
+        AjaxRequestWithPostAndJson('@Url.Action("IsPartNoAvailable", "Part")', JSON.stringify(request), function (result) {
+            if (result) {
+                $('#txtPartNo').val('');
+                $('#txtPartNo').focus();
+                ShowMessage("Part No already exists.");
+                return false;
+            }
+        }, ErrorFunction, false);
+    }
+
+    function IsPartNameAvailable() {
+        var request = { PartId: $('#hdnPartId').val(), PartName: $('#txtPartName').val() };
+        AjaxRequestWithPostAndJson('@Url.Action("IsPartNameAvailable", "Part")', JSON.stringify(request), function (result) {
+            if (result) {
+                $('#txtPartName').val('');
+                $('#txtPartName').focus();
+                ShowMessage("Part Name already exists.");
+                return false;
+            }
+        }, ErrorFunction, false);
+    }
 
      function ActualWeightPerQuantity(ActualWeight, Quantity) {
         var ActualWeightPerQuantity = ActualWeight / Quantity ;
@@ -243,7 +268,7 @@
     {
         CheckDuplicateInTable('dtPart', 'ddlPackingType', 'Packing Type', obj);
      }
-   
+
     function Init() {
 
 
@@ -364,7 +389,7 @@
         });
 
     }
-    
+
     function IsPackingTypeExist(obj) {
         if (obj.val() != '' && !obj.is('[readonly]')) {
             var outertr = obj.closest('tr');

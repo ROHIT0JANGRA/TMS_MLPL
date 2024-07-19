@@ -1,7 +1,7 @@
 ﻿var txtBillNo, txtManualBillNo, txtCustomerCode, hdnCustomerId, lblCustomerName, drBillDate, dtCustomerBillListForCollection, selectedBillList, customerMasterUrl, billGenerationUrl,
     lblCustomer, totalAmount, hdnTotalAmount, chargeCount, chargeListCount, chargeList, totalChargeAmount, hdnCustomer;
 var lblCustomerGroup, rdGroupWise, rdCustomerWise;
-var ruleMasterUrl;
+var ruleMasterUrl, accountUrl;
 $(document).ready(function () {
     InitObjects();
     AttachEvents();
@@ -68,6 +68,13 @@ function GetCustomerBillListForCollection() {
     else {
         if (hdnCustomerId.val() == '')
             hdnCustomerId.val(0);
+        var requestData1 = { };
+        AjaxRequestWithPostAndJson(accountUrl + '/GetAdjustmentList', JSON.stringify(requestData1), function (responseData) {
+            if (!IsObjectNullOrEmpty(responseData)) {
+                BindDropDownList('ddlAdjustmentId', responseData, 'Value', 'Name', '', (responseData.length > 1 ? 'Select' : ''));
+            }
+
+        }, ErrorFunction, false);
         var requestData = {
             billNos: txtBillNo.val(), manualBillNos: txtManualBillNo.val(), paybas: ddlPaybasId.val(),
             customerId: hdnCustomerId.val(), fromDate: drBillDate.startDate, toDate: drBillDate.endDate, customerGroup: $('#ddlCustomerGroup').val()

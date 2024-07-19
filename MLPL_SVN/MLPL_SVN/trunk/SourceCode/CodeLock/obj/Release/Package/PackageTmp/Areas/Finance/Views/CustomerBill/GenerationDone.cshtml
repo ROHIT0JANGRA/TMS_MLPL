@@ -5,7 +5,7 @@
 
 <div class="widget-wrap" style="height:200px">
 	<div class="alert alert-success"><h5><span id="spnMassage"></span></h5></div>
-	<div class="col-sm-3">
+	<div class="col-sm-3" id="dvBillNo">
 		<strong><label id="lblBillNo">Bill No</label></strong>
 	</div>
 	<div class="col-sm-4">
@@ -53,6 +53,7 @@
             spnMassage.text("Bill is Updated Successfully");
             SetPageLoad('Bill Edit', 'Done', '', 'Go To Bill Edit', '@Url.Action("GenerationMLPLEdit")');
             lblBillNo.text("Bill No.");
+            $('#dvBillNo').hide();
         }
         else {
             spnMassage.text("Bill is Generated Successfully");

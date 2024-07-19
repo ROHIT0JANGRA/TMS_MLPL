@@ -45,17 +45,6 @@
 
                 </div>
             </div>
-
-            @*<div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.StateName, new { @class = "label" })
-                        <div class="input-wrapper">
-                            @Html.HiddenFor(model => model.StateId, new { @id = "hdnStateId" })
-                            @Html.TextBoxFor(model => model.StateName, new { @class = "form-control", @id = "txtStateName" })
-                        </div>
-                        @Html.ValidationMessageFor(model => model.StateName)
-                    </div>
-                </div>*@
             <div class="col-sm-4">
                 <div class="form-group">
                     @Html.LabelFor(model => model.Address, new { @class = "label" })
@@ -173,7 +162,7 @@
 
 
     function AttachEvents() {
-       /* StateAutoComplete('txtStateName', 'hdnStateId');*/
+        StateAutoComplete('txtStateName', 'hdnStateId');
         ddlState.change(function () {
             txtCityName.val('');
             hdnCityId.val('');

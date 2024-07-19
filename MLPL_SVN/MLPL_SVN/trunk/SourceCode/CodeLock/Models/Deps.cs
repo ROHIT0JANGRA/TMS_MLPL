@@ -131,5 +131,7 @@ namespace CodeLock.Models
 
     [Display(Name = "Damage Document")]
     public string DamageDocumentName { get; set; }
-  }
+        public string UnloadingPersonName { get; set; }
+
+    }
 }

@@ -124,7 +124,6 @@ namespace CodeLock.Models
         [Required(ErrorMessage = "Please select At-least one thing")]
         public string UserCompany { get; set; }
         public string SavedUserCompany { get; set; }
-
     }
     public class MasterUserDetail
     {
@@ -176,5 +175,12 @@ namespace CodeLock.Models
         public short LoginLocationId { get; set; }
         public short locationId { get; set; }
 
+    }
+    public class User
+    {
+        public string API_USER { get; set; }
+        public string API_PASSWORD { get; set; }
+        public string GstTinNo { get; set; }
+        public short StateId { get; set; }
     }
 }

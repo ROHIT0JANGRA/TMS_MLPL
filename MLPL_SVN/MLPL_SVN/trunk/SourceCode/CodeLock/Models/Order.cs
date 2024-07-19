@@ -182,5 +182,7 @@ namespace CodeLock.Models
 
     [Required(ErrorMessage = "Please select atleast one record")]
     public List<OrderDetail> OrderDetails { get; set; }
-  }
+        public int column { get; internal set; }
+        public string dir { get; internal set; }
+    }
 }

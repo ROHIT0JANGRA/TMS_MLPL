@@ -1,6 +1,6 @@
 ﻿var txtCustomerCode, ddlPaybasId, hdnCustomerId, lblCustomerName, ddlServiceTypeId, ddlFtlTypeId, ddlPrimaryBillingTypeId, ddlTransactionTypeId, ddlGstServiceTypeId,
     txtBillDate, txtDueDate, drTransactionDate, dtDocketList, selectedDocketList, customerMasterUrl, customerBillGenerationUrl, ddlCustomerGstStateId,
-    lblLocationCode, loginLocationCode, docketTotal, docketNomenclature, gstMasterUrl, ddlCompanyGstStateId, customerContractMasterUrl, customerSupBillUrl,txtDocketNo;
+    lblLocationCode, loginLocationCode, docketTotal, docketNomenclature, gstMasterUrl, ddlCompanyGstStateId, customerContractMasterUrl, customerSupBillUrl, txtDocketNo;
 var allowMandatoryManualBillNo = false;
 var useCustomerAddressSelection = false;
 var rdRcmYes, dtDocketErrorList;
@@ -8,7 +8,7 @@ var txtBillNoSearch;
 
 $(document).ready(function () {
     InitObjects();
-  //  AttachEvents();
+    //  AttachEvents();
     SetPageLoad('Customer', 'Edit Billing', 'txtBillNoSearch', '', '');
 });
 
@@ -22,35 +22,35 @@ function InitObjects() {
     //ddlPaybasId = $('#ddlPaybasId');
     hdnCustomerId = $('#hdnCustomerId');
     //ddlCustomerGstStateId = $('#ddlCustomerGstStateId');
-   // ddlCustomerAddressId = $('#ddlCustomerAddressId');
-   // dvCustomerAddress = $('#dvCustomerAddress');
-   // ddlGstServiceTypeId = $('#ddlGstServiceTypeId');
+    // ddlCustomerAddressId = $('#ddlCustomerAddressId');
+    // dvCustomerAddress = $('#dvCustomerAddress');
+    // ddlGstServiceTypeId = $('#ddlGstServiceTypeId');
     //ddlTransactionTypeId = $('#ddlTransactionTypeId');
-  //  hdnTransportModeId = $('#hdnTransportModeId');
+    //  hdnTransportModeId = $('#hdnTransportModeId');
     //hdnGstServiceTypeId = $('#hdnGstServiceTypeId');
-   // ddlCompanyGstStateId = $('#ddlCompanyGstStateId');
+    // ddlCompanyGstStateId = $('#ddlCompanyGstStateId');
     txtDueDate = $('#txtDueDate');
     txtBillDate = $('#txtBillDate');
     ddlGenerationCityId = $('#ddlGenerationCityId');
     ddlSubmissionCityId = $('#ddlSubmissionCityId');
-   // drTransactionDate = InitDateRange('drTransactionDate', DateRange.LastWeek, false);
-   //ddlServiceTypeId = $('#ddlServiceTypeId');
-  ///  ddlFtlTypeId = $('#ddlFtlTypeId');
-   // dvManifestType = $('#dvManifestType');
-   // ddlManifestId = $('#ddlManifestId');
-   // txtTHCNo = $('#txtTHCNo');
-   // dvManifestVendor = $('#dvManifestVendor');
-   // hdnVendorId = $('#hdnVendorId');
-   // txtVendorCode = $('#txtVendorCode');
-   // lblVendorName = $('#lblVendorName');
-   // txtFirstDriverName = $('#txtFirstDriverName');
-   // txtVehicleNo = $('#txtVehicleNo');
-   // rdRcmYes = $('#rdRcmYes');
+    // drTransactionDate = InitDateRange('drTransactionDate', DateRange.LastWeek, false);
+    //ddlServiceTypeId = $('#ddlServiceTypeId');
+    ///  ddlFtlTypeId = $('#ddlFtlTypeId');
+    // dvManifestType = $('#dvManifestType');
+    // ddlManifestId = $('#ddlManifestId');
+    // txtTHCNo = $('#txtTHCNo');
+    // dvManifestVendor = $('#dvManifestVendor');
+    // hdnVendorId = $('#hdnVendorId');
+    // txtVendorCode = $('#txtVendorCode');
+    // lblVendorName = $('#lblVendorName');
+    // txtFirstDriverName = $('#txtFirstDriverName');
+    // txtVehicleNo = $('#txtVehicleNo');
+    // rdRcmYes = $('#rdRcmYes');
     txtDocketNo = $('#txtDocketNo');
     txtBillNoSearch = $('#txtBillNoSearch');
 
-  //  GetCompanyGstState();
- //   ddlGstServiceTypeId.change(OnGstServiceTypeChange).change();
+    //  GetCompanyGstState();
+    //   ddlGstServiceTypeId.change(OnGstServiceTypeChange).change();
     InitWizard('dvWizard', [
         { StepName: 'Criteria', StepFunction: GetGstDetail },
         { StepName: docketNomenclature + ' List For Bill Generation', StepFunction: GetBillGenerationDetails }
@@ -101,7 +101,7 @@ function AttachEvents() {
         }
         else {
             BindDropDownList('ddlCustomerGstStateId', [], null, null, '', 'Select State');
-            BindDropDownList('ddlCustomerAddressId', [], null, null, '', 'Select Address');            
+            BindDropDownList('ddlCustomerAddressId', [], null, null, '', 'Select Address');
             txtCustomerCode.focus();
         }
     });
@@ -349,15 +349,17 @@ function OnTHCNoFromManifest() {
 
 }
 
+/* this function is responsible for  working fo retrive the  */
 
 var creditDays = 0;
 function GetGstDetail() {
 
     try {
-        var requestData = { BillNo: txtBillNoSearch.val() , DocketNo: txtDocketNo.val() };
+        debugger;
+        var requestData = { BillNo: txtBillNoSearch.val(), DocketNo: txtDocketNo.val() };
         AjaxRequestWithPostAndJson(customerBillGenerationUrl + '/GetDocketListGstForCustomerBillEdit', JSON.stringify(requestData), function (result) {
             selectedDocketList = [];
-
+            debugger;
             if (dtDocketList == null)
                 dtDocketList = LoadDataTable('dtDocketList', false, false, false, null, null, [],
                     [
@@ -378,7 +380,7 @@ function GetGstDetail() {
                         { title: 'GST Amount', data: 'TaxTotal' },
                         { title: docketNomenclature + ' Total', data: 'DocketTotal' }
                     ]);
-
+            debugger;
             dtDocketList.fnClearTable();
 
             if (dtDocketErrorList == null)
@@ -391,13 +393,14 @@ function GetGstDetail() {
                         { title: 'To City', data: 'ToCity' },
                         { title: 'Status', data: 'PodStatus' }
                     ]);
-
+            debugger;
             dtDocketErrorList.fnClearTable();
             var sno = 0;
 
             if (result.length == 0) {
                 isStepValid = false;
                 ShowMessage('No Record Found');
+                debugger;
                 return false;
             }
             else {
@@ -407,7 +410,7 @@ function GetGstDetail() {
                     ShowMessage('No Record Found');
                     return false;
                 }
-       
+
                 $('#hdnBillId').val(result.BillId);
                 $('#lblCustomer').text(result.CustomerName);
                 $('#lblBillNo').text(result.BillNo);
@@ -430,14 +433,15 @@ function GetGstDetail() {
                 $('#txtGstRate').val(result.GstRate);
                 $('#lblCustomerGstInNo').text(result.CustomerGstStateGstTinNo);
                 $('#lblTransporterGstInNo').text(result.CompanyGstStateGstTinNo);
+                $('#txtRemarks').val(result.Remarks);
 
-                
-                
+                debugger;
+
                 $('#lblInterState').text(result.GenerationStateId == result.SubmissionStateId ? "Intra State" : "Inter State");
                 $.each(result.Details, function (i, item) {
 
                     sno = sno + 1;
-                    item.SNo = sno+'.';
+                    item.SNo = sno + '.';
                     item.DocketCharge = '<a onclick="return ViewDocketChargesList(' + item.DocketId + ')" href="#" >' + (parseFloat(item.SubTotal) - parseFloat(item.Freight)).toFixed(2) + '</a>';
 
                     item.DocketId = SelectAll.GetChk('chkAllDocket', 'chkDocket' + i, 'Details[' + i + '].IsChecked', SelectDocket) +
@@ -545,8 +549,8 @@ function SelectDocket() {
             totalCgst = totalCgst + parseFloat(hdnCgst.val());
             totalSgst = totalSgst + parseFloat(hdnSgst.val());
             totalUgst = totalUgst + parseFloat(hdnUgst.val());
-            TotalChargedWeight = parseFloat(TotalChargedWeight)  + parseFloat(txtChargedWeight.val());
-            TotalQty = parseFloat(TotalQty)  + parseFloat(txtQty.val());
+            TotalChargedWeight = parseFloat(TotalChargedWeight) + parseFloat(txtChargedWeight.val());
+            TotalQty = parseFloat(TotalQty) + parseFloat(txtQty.val());
 
             DocketCount = DocketCount + 1;
         }

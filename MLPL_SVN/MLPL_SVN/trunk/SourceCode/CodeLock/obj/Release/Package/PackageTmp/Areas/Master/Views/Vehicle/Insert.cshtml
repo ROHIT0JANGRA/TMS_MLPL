@@ -12,17 +12,28 @@
     @Html.AntiModelInjectionFor(m => m.VehicleId)
 
     <div class="widget-wrap">
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control" })
+        <div class="row col-12 p-0 m-0 mb-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
+                @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                <div class="row">
+                    <div class="col-8 col-sm-8 col-md-8 pr-0">
+                        @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @Value = "CG07BC9186", @id = "vehicle_no" })
                     </div>
                     @Html.ValidationMessageFor(model => model.VehicleNo)
+                    <div class="col-4 col-sm-4 col-md-4 pl-0">
+                        <input type="button" id="btnGetDetail" class="btn btn-primary" value="Autofill">
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-4">
+
+            @*<div class="m-0 col-12 col-sm-4 col-md-3">
+                    <div class="form-group">
+                        <div class="input">
+                        </div>
+                        @Html.ValidationMessageFor(model => model.VehicleNo)
+                    </div>
+                </div>*@
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.VehicleTypeId, new { @class = "label" })
                     <div class="select">
@@ -33,7 +44,7 @@
 
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.VendorTypeId, new { @class = "label" })
                     <div class="select">
@@ -44,9 +55,7 @@
 
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.VendorId, new { @class = "label" })
                     <div class="select">
@@ -57,7 +66,7 @@
 
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.FtlTypeId, new { @class = "label" })
                     <div class="select">
@@ -68,7 +77,7 @@
 
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.LocationId, new { @class = "label" })
                     <div class="select">
@@ -79,9 +88,7 @@
 
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.NoOfDrivers, new { @class = "label" })
                     <div class="input">
@@ -90,7 +97,7 @@
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.NoOfDrivers)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.IsGpsEnabled, new { @class = "label" })
                     <label class="checkbox">
@@ -99,7 +106,7 @@
                     </label>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.GpsDeviceId, new { @class = "label" })
                     <div class="input">
@@ -108,9 +115,7 @@
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.GpsDeviceId)
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.VehicleBroker, new { @class = "label" })
                     <div class="input">
@@ -119,7 +124,7 @@
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.VehicleBroker)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.NoOfTyres, new { @class = "label" })
                     <div class="input">
@@ -128,32 +133,40 @@
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.NoOfTyres)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.RcBookNo, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.MasterVehicleDetail.RcBookNo, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.RcBookNo, new { @class = "form-control", @id = "rcBookNo" })
                     </div>
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.RcBookNo)
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.RegistrationNo, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.MasterVehicleDetail.RegistrationNo, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.RegistrationNo, new { @class = "form-control", @id = "registrationNo" })
                     </div>
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.RegistrationNo)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
-                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.RegistrationDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.RegistrationDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
+                    @Html.Partial("DateTimePicker", new DateTimePicker()
+                    {
+                        FieldName = "MasterVehicleDetail.RegistrationDate",
+                        FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.RegistrationDate),
+                        IsRequired = true,
+                        AllowFutureDate = false,
+                        AllowPastDate = true,
+                        SetBlank = true,
+                        IsValidateFinYear = false,
+                        FieldId = "rc_regn_dt"
+                    })
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.VehicleMileage, new { @class = "label" })
                     <div class="input">
@@ -162,31 +175,36 @@
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.VehicleMileage)
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.InsuranceNo, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.MasterVehicleDetail.InsuranceNo, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.InsuranceNo, new { @class = "form-control", @id = "rc_insurance_policy_no" })
                     </div>
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.InsuranceNo)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.InsuranceIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.InsuranceIssueDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
-                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.InsuranceExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.InsuranceExpiryDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = false, SetBlank = true, IsValidateFinYear = false })
+                    @Html.Partial("DateTimePicker", new DateTimePicker()
+                    {
+                        FieldName = "MasterVehicleDetail.InsuranceExpiryDate",
+                        FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.InsuranceExpiryDate),
+                        IsRequired = true,
+                        AllowFutureDate = true,
+                        AllowPastDate = false,
+                        SetBlank = true,
+                        IsValidateFinYear = false,
+                        FieldId = "rc_insurance_upto"
+                    })
                 </div>
             </div>
-
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.FitnessCertificateNo, new { @class = "label" })
                     <div class="input">
@@ -195,63 +213,95 @@
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.FitnessCertificateNo)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.FitnessCertificateIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.FitnessCertificateIssueDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
-                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.FitnessCertificateExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.FitnessCertificateExpiryDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = false, SetBlank = true, IsValidateFinYear = false })
+                    @Html.Partial("DateTimePicker", new DateTimePicker()
+                    {
+                       FieldName = "MasterVehicleDetail.FitnessCertificateExpiryDate",
+                       FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.FitnessCertificateExpiryDate),
+                       IsRequired = true,
+                       AllowFutureDate = true,
+                       AllowPastDate = false,
+                       SetBlank = true,
+                       IsValidateFinYear = false,
+                       FieldId = "rc_fit_upto"
+                    })
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.PollutionCertificateNo, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.MasterVehicleDetail.PollutionCertificateNo, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.PollutionCertificateNo, new { @class = "form-control", @id = "rc_pucc_no" })
                     </div>
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.PollutionCertificateNo)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.PollutionCertificateIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.PollutionCertificateIssueDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
-                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.PollutionCertificateExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.PollutionCertificateExpiryDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = false, SetBlank = true, IsValidateFinYear = false })
+                    @Html.Partial("DateTimePicker", new DateTimePicker()
+                    {
+                       FieldName = "MasterVehicleDetail.PollutionCertificateExpiryDate",
+                       FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.PollutionCertificateExpiryDate),
+                       IsRequired = true,
+                       AllowFutureDate = true,
+                       AllowPastDate = false,
+                       SetBlank = true,
+                       IsValidateFinYear = false,
+                       FieldId = "rc_pucc_upto"
+                    })
                 </div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.NationalPermitNo, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.MasterVehicleDetail.NationalPermitNo, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.NationalPermitNo, new { @class = "form-control", @id = "rc_permit_no" })
                     </div>
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.NationalPermitNo)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
-                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.NationalPermitIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.NationalPermitIssueDate), IsRequired = false, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
+                    @Html.Partial("DateTimePicker", new DateTimePicker()
+                    {
+                       FieldName = "MasterVehicleDetail.NationalPermitIssueDate",
+                       FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.NationalPermitIssueDate),
+                       IsRequired = false,
+                       AllowFutureDate = false,
+                       AllowPastDate = true,
+                       SetBlank = true,
+                       IsValidateFinYear = false,
+                       FieldId = "rc_permit_issue_dt"
+                   })
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
-                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.NationalPermitExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.NationalPermitExpiryDate), IsRequired = false, AllowFutureDate = true, AllowPastDate = false, SetBlank = true, IsValidateFinYear = false })
+                    @Html.Partial("DateTimePicker", new DateTimePicker()
+                    {
+                        FieldName = "MasterVehicleDetail.NationalPermitExpiryDate",
+                        FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.NationalPermitExpiryDate),
+                        IsRequired = false,
+                        AllowFutureDate = true,
+                        AllowPastDate = false,
+                        SetBlank = true,
+                        IsValidateFinYear = false,
+                        FieldId = "rc_permit_valid_upto"
+                    })
                 </div>
             </div>
-
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.RoadTaxNo, new { @class = "label" })
                     <div class="input">
@@ -260,19 +310,27 @@
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.RoadTaxNo)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.RoadTaxIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.RoadTaxIssueDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
-                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.RoadTaxExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.RoadTaxExpiryDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = false, SetBlank = true, IsValidateFinYear = false })
+                    @Html.Partial("DateTimePicker", new DateTimePicker()
+                    {
+                       FieldName = "MasterVehicleDetail.RoadTaxExpiryDate",
+                       FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.RoadTaxExpiryDate),
+                       IsRequired = true,
+                       AllowFutureDate = true,
+                       AllowPastDate = false,
+                       SetBlank = true,
+                       IsValidateFinYear = false,
+                       FieldId = "rc_tax_upto"
+                   })
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.AuthorisationNo, new { @class = "label" })
                     <div class="input">
@@ -281,54 +339,59 @@
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.AuthorisationNo)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
-                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.AuthorisationIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.AuthorisationIssueDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
+                    @Html.Partial("DateTimePicker", new DateTimePicker()
+                    {
+                        FieldName = "MasterVehicleDetail.AuthorisationIssueDate",
+                        FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.AuthorisationIssueDate),
+                        IsRequired = true,
+                        AllowFutureDate = false,
+                        AllowPastDate = true,
+                        SetBlank = true,
+                        IsValidateFinYear = false,
+                        FieldId = "rc_approval_date"
+                    })
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.AuthorisationExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.AuthorisationExpiryDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = false, SetBlank = true, IsValidateFinYear = false })
                 </div>
             </div>
-
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.AttachingDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.AttachingDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.ChasisNo, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.MasterVehicleDetail.ChasisNo, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.ChasisNo, new { @class = "form-control", @id = "rc_chasi_no" })
                     </div>
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.ChasisNo)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.EngineNo, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.MasterVehicleDetail.EngineNo, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.EngineNo, new { @class = "form-control", @id = "rc_eng_no" })
                     </div>
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.EngineNo)
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.RtoName, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.MasterVehicleDetail.RtoName, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.MasterVehicleDetail.RtoName, new { @class = "form-control", @id = "rc_np_issued_by" })
                     </div>
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.RtoName)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.StartKm, new { @class = "label" })
                     <div class="input">
@@ -337,7 +400,7 @@
                     @Html.ValidationMessageFor(model => model.StartKm)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MasterVehicleDetail.LocalPermitNo, new { @class = "label" })
                     <div class="input">
@@ -346,19 +409,17 @@
                     @Html.ValidationMessageFor(model => model.MasterVehicleDetail.LocalPermitNo)
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.LocalPermitIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.LocalPermitIssueDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "MasterVehicleDetail.LocalPermitExpiryDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.MasterVehicleDetail.LocalPermitExpiryDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = false, SetBlank = true, IsValidateFinYear = false })
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.IsActive, new { @class = "label" })
                     <label class="checkbox">
@@ -406,5 +467,156 @@
             txtGpsDeviceId.val('');
         }
     }
+
+    $(document).ready(function () {
+        $('#btnGetDetail').click(function () {
+            var vehicleno = $('#vehicle_no').val();
+            if (vehicleno) {
+                $.ajax({
+                    url: '@Url.Action("FetchVehicleDetailsFromApi", "Vehicle")',
+                    type: 'POST',
+                    data: { vehicleno: vehicleno },
+                    success: function (data) {
+                        parseData = JSON.parse(data);
+                        if (parseData.code === "200") {
+                            var xmlDoc = $.parseXML(parseData.response[0].response);
+
+                            var rc_regn_no = $(xmlDoc).find('rc_regn_no').text();
+                            $('#rcBookNo').val(rc_regn_no);
+                            $('#registrationNo').val(rc_regn_no);
+
+                            if ($(xmlDoc).find('rc_regn_dt').text().trim() !== "") {
+                                var rc_regn_dt = moment($(xmlDoc).find('rc_regn_dt').text(), "DD-MMM-YYYY").format('DD/MM/YYYY');
+                                console.log('rc_regn_dt : ', rc_regn_dt);
+                                $('#txtrc_regn_dt').val(rc_regn_dt);
+                            }
+                            var rc_regn_upto = moment($(xmlDoc).find('rc_regn_upto').text(), "DD-MMM-YYYY").format('DD/MM/YYYY');
+                            var rc_purchase_dt = moment($(xmlDoc).find('rc_purchase_dt').text(), "DD-MMM-YYYY").format('DD/MM/YYYY');
+                            var rc_owner_sr = $(xmlDoc).find('rc_owner_sr').text();
+                            var rc_owner_name = $(xmlDoc).find('rc_owner_name').text();
+                            var rc_f_name = $(xmlDoc).find('rc_f_name').text();
+                            var state_cd = $(xmlDoc).find('state_cd').text();
+                            var rto_cd = $(xmlDoc).find('rto_cd').text();
+                            var rc_present_address = $(xmlDoc).find('rc_present_address').text();
+                            var rc_permanent_address = $(xmlDoc).find('rc_permanent_address').text();
+                            var rc_mobile_no = $(xmlDoc).find('rc_mobile_no').text();
+                            var rc_vch_catg = $(xmlDoc).find('rc_vch_catg').text();
+                            var rc_vh_class_desc = $(xmlDoc).find('rc_vh_class_desc').text();
+                            var rc_chasi_no = $(xmlDoc).find('rc_chasi_no').text();
+                            $('#rc_chasi_no').val(rc_chasi_no);
+                            var rc_eng_no = $(xmlDoc).find('rc_eng_no').text();
+                            $('#rc_eng_no').val(rc_eng_no);
+                            var rc_maker_desc = $(xmlDoc).find('rc_maker_desc').text();
+                            var rc_maker_model = $(xmlDoc).find('rc_maker_model').text();
+                            var rc_body_type_desc = $(xmlDoc).find('rc_body_type_desc').text();
+                            var rc_fuel_desc = $(xmlDoc).find('rc_fuel_desc').text();
+                            var rc_color = $(xmlDoc).find('rc_color').text();
+                            var rc_norms_desc = $(xmlDoc).find('rc_norms_desc').text();
+                            var rc_fit_upto = moment($(xmlDoc).find('rc_fit_upto').text(), "DD-MMM-YYYY").format('DD/MM/YYYY');
+                            $('#txtrc_fit_upto').val(rc_fit_upto);
+                            var rc_np_upto = moment($(xmlDoc).find('rc_np_upto').text(), "DD-MMM-YYYY").format('DD/MM/YYYY');
+                            var rc_np_issued_by = $(xmlDoc).find('rc_np_issued_by').text();
+                            $('#rc_np_issued_by').val(rc_np_issued_by);
+                            var rc_tax_upto = moment($(xmlDoc).find('rc_tax_upto').text(), "DD-MM-YYYY").format('DD/MM/YYYY');
+                            $('#txtrc_tax_upto').val(rc_tax_upto);
+                            var rc_financer = $(xmlDoc).find('rc_financer').text();
+                            var rc_insurance_comp = $(xmlDoc).find('rc_insurance_comp').text();
+                            var rc_insurance_policy_no = $(xmlDoc).find('rc_insurance_policy_no').text();
+                            $('#rc_insurance_policy_no').val(rc_insurance_policy_no);
+                            var rc_insurance_upto = moment($(xmlDoc).find('rc_insurance_upto').text(), "DD-MMM-YYYY").format('DD/MM/YYYY');
+                            $('#txtrc_insurance_upto').val(rc_insurance_upto);
+                            var rc_manu_month_yr = $(xmlDoc).find('rc_manu_month_yr').text();
+                            var rc_unld_wt = $(xmlDoc).find('rc_unld_wt').text();
+                            var rc_gvw = $(xmlDoc).find('rc_gvw').text();
+                            var rc_no_cyl = $(xmlDoc).find('rc_no_cyl').text();
+                            var rc_cubic_cap = $(xmlDoc).find('rc_cubic_cap').text();
+                            var rc_seat_cap = $(xmlDoc).find('rc_seat_cap').text();
+                            var rc_sleeper_cap = $(xmlDoc).find('rc_sleeper_cap').text();
+                            var rc_stand_cap = $(xmlDoc).find('rc_stand_cap').text();
+                            var rc_wheelbase = $(xmlDoc).find('rc_wheelbase').text();
+                            var rc_registered_at = $(xmlDoc).find('rc_registered_at').text();
+                            var rc_status_as_on = moment($(xmlDoc).find('rc_status_as_on').text(), "DD-MMM-YYYY").format('DD/MM/YYYY');
+                            var rc_pucc_upto = moment($(xmlDoc).find('rc_pucc_upto').text(), "DD-MMM-YYYY").format('DD/MM/YYYY');
+                            $('#txtrc_pucc_upto').val(rc_pucc_upto);
+                            var rc_pucc_no = $(xmlDoc).find('rc_pucc_no').text();
+                            $('#rc_pucc_no').val(rc_pucc_no);
+                            var rc_status = $(xmlDoc).find('rc_status').text();
+                            var rc_ncrb_status = $(xmlDoc).find('rc_ncrb_status').text();
+                            var rc_blacklist_status = $(xmlDoc).find('rc_blacklist_status').text();
+                            var rc_permit_no = $(xmlDoc).find('rc_permit_no').text();
+                            $('#rc_permit_no').val(rc_permit_no);
+                            var rc_permit_issue_dt = moment($(xmlDoc).find('rc_permit_issue_dt').text(), "DD-MMM-YYYY").format('DD/MM/YYYY');
+                            $('#txtrc_permit_issue_dt').val(rc_permit_issue_dt);
+                            var rc_permit_valid_from = moment($(xmlDoc).find('rc_permit_valid_from').text(), "DD-MMM-YYYY").format('DD/MM/YYYY');
+                            var rc_permit_valid_upto = moment($(xmlDoc).find('rc_permit_valid_upto').text(), "DD-MMM-YYYY").format('DD/MM/YYYY');
+                            $('#txtrc_permit_valid_upto').val(rc_permit_valid_upto);
+                            var rc_permit_type = $(xmlDoc).find('rc_permit_type').text();
+                            var rc_permit_code = $(xmlDoc).find('rc_permit_code').text();
+                            var rc_noc_details = $(xmlDoc).find('rc_noc_details').text();
+                            var rc_vh_class = $(xmlDoc).find('rc_vh_class').text();
+                            var rc_fuel_cd = $(xmlDoc).find('rc_fuel_cd').text();
+                            var rc_maker_cd = $(xmlDoc).find('rc_maker_cd').text();
+                            var rc_norms_cd = $(xmlDoc).find('rc_norms_cd').text();
+                            var rc_sale_amt = $(xmlDoc).find('rc_sale_amt').text();
+
+                            var auc_valid_upto = $(xmlDoc).find('rc_deemed_owner_details auc_valid_upto').text(); // require to convert the date format
+                            var authorization_certificate_number = $(xmlDoc).find('rc_deemed_owner_details authorization_certificate_number').text();
+                            var dealer_code = $(xmlDoc).find('rc_deemed_owner_details dealer_code').text();
+                            var dealer_mail = $(xmlDoc).find('rc_deemed_owner_details dealer_mail').text();
+                            var dealer_mobile = $(xmlDoc).find('rc_deemed_owner_details dealer_mobile').text();
+                            var dealer_name = $(xmlDoc).find('rc_deemed_owner_details dealer_name').text();
+
+                            var rc_vehicle_surrendered_to_dealer = $(xmlDoc).find('rc_vehicle_surrendered_to_dealer').text();
+
+                            var dealer_contact_no = $(xmlDoc).find('rc_dealer dealer_contact_no').text();
+                            var dealer_district = $(xmlDoc).find('rc_dealer dealer_district').text();
+                            var dealer_pincode = $(xmlDoc).find('rc_dealer dealer_pincode').text();
+                            var rc_currentadd_statename = $(xmlDoc).find('rc_currentadd_statename').text();
+                            var rc_currentadd_districtcode = $(xmlDoc).find('rc_currentadd_districtcode').text();
+                            var rc_currentadd_pincode = $(xmlDoc).find('rc_currentadd_pincode').text();
+                            var rc_passenger_tax = $(xmlDoc).find('rc_passenger_tax').text();
+                            var rc_goods_tax = $(xmlDoc).find('rc_goods_tax').text();
+
+                            var temp_rc_permit_code = $(xmlDoc).find('temp_permit rc_permit_code').text();
+                            var temp_rc_permit_issue_dt = $(xmlDoc).find('temp_permit rc_permit_issue_dt').text(); // require to convert the date format
+                            var temp_rc_permit_no = $(xmlDoc).find('temp_permit rc_permit_no').text();
+                            var temp_rc_permit_type = $(xmlDoc).find('temp_permit rc_permit_type').text();
+                            var temp_rc_permit_valid_from = $(xmlDoc).find('temp_permit rc_permit_valid_from').text(); // require to convert the date format
+                            var temp_rc_permit_valid_upto = $(xmlDoc).find('temp_permit rc_permit_valid_upto').text(); // require to convert the date format
+
+                            var rc_qr_url = $(xmlDoc).find('rc_qr_url').text();
+                            var rc_auth_name = $(xmlDoc).find('rc_auth_name').text();
+                            var rc_auth_sign = $(xmlDoc).find('rc_auth_sign').text();
+
+                            if ($(xmlDoc).find('rc_approval_date').text().trim() !== "") {
+                                var rc_approval_date = moment($(xmlDoc).find('rc_approval_date').text(), "DD-MMM-YYYY").format('DD/MM/YYYY');
+                                $('#txtrc_approval_date').val(rc_approval_date);
+                            }
+
+                            var rc_hp = $(xmlDoc).find('rc_hp').text();
+                            var rc_mandal_desc = $(xmlDoc).find('rc_mandal_desc').text();
+                            var rc_taluk_cd = $(xmlDoc).find('rc_taluk_cd').text();
+
+
+                            var rc_dealer_contact = $(xmlDoc).find('rc_dealer dealer_contact_no').text();
+                            console.log(rc_dealer_contact);
+                        }
+                        else {
+                            console.log(parseData.code);
+                            alert(parseData.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching details:', status, error);
+                        console.error('Response:', xhr.responseText);
+                        alert('Error fetching details');
+                    }
+                });
+            } else {
+                alert('Please enter vehicle number');
+            }
+        });
+    });
+
 </script>
 

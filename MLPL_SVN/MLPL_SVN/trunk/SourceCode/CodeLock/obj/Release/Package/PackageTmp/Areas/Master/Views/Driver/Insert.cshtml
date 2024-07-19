@@ -12,8 +12,61 @@
     @Html.Hidden("DriverId", 0)
 
     <div class="widget-wrap">
-        <div class="row">
-            <div class="col-sm-4">
+        <div class="row col-12 p-0 m-0 mb-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LicenseNo, new { @class = "label" })
+                    <div class="input">
+                        @Html.TextBoxFor(model => model.LicenseNo, new { @class = "form-control", @id = "dlNo", @Value = "GJ04 20120005008" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LicenseNo)
+                </div>
+            </div>
+            @*
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Partial("DateTimePicker", new DateTimePicker()
+                   {
+                       FieldName = "DoB",
+                       FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DoB),
+                       IsRequired = true,
+                       AllowFutureDate = false,
+                       AllowPastDate = true,
+                       MinDate = new DateTime(1950, 1, 1),
+                       MaxDate = DateTime.Now.AddDays(-18 * 365),
+                       // SetBlank = true,
+                       IsValidateFinYear = false,
+                       DefaultDate = new DateTime(1987, 5, 26)
+
+                   })
+                    </div>
+                </div>
+            *@
+            <div class="m-0 col-12 col-sm-4 col-md-3">
+                <div class="row">
+                    <div class="col-8 col-sm-8 col-md-8 pr-0">
+                        @Html.Partial("DateTimePicker", new DateTimePicker()
+                   {
+                       FieldName = "DoB",
+                       FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DoB),
+                       IsRequired = true,
+                       AllowFutureDate = false,
+                       AllowPastDate = true,
+                       MinDate = new DateTime(1950, 1, 1),
+                       MaxDate = DateTime.Now.AddDays(-18 * 365),
+                       // SetBlank = true,
+                       IsValidateFinYear = false,
+                       DefaultDate = new DateTime(1987, 5, 26)
+
+                   })
+                    </div>
+                    <div class="col-4 col-sm-4 col-md-4 pl-0">
+                        <input type="button" id="btnGetDetail" class="btn btn-primary" value="Autofill">
+                    </div>
+                </div>
+            </div>
+
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.DriverName, new { @class = "label" })
                     <div class="input">
@@ -22,7 +75,7 @@
                     @Html.ValidationMessageFor(model => model.DriverName)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.ManualDriverCode, new { @class = "label" })
                     <div class="input">
@@ -31,7 +84,7 @@
                     @Html.ValidationMessageFor(model => model.ManualDriverCode)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.DriverFatherName, new { @class = "label" })
                     <div class="input">
@@ -40,9 +93,7 @@
                     @Html.ValidationMessageFor(model => model.DriverFatherName)
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
                     @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
@@ -52,7 +103,7 @@
                     @Html.ValidationMessageFor(model => model.VehicleNo)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.HiddenFor(model => model.DriverLocationId, new { @id = "hdnDriverLocationId" })
                     @Html.LabelFor(model => model.DriverLocationCode, new { @class = "label" })
@@ -62,18 +113,16 @@
                     @Html.ValidationMessageFor(model => model.DriverLocationCode)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.MobileNo, new { @class = "label" })
                     <div class="input">
-                        @Html.TextBoxFor(model => model.MobileNo, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.MobileNo, new { @class = "form-control", @id = "mobileNo" })
                     </div>
                     @Html.ValidationMessageFor(model => model.MobileNo)
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.PermanentAddress, new { @class = "label" })
                     <div class="input">
@@ -82,7 +131,7 @@
                     @Html.ValidationMessageFor(model => model.PermanentAddress)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.HiddenFor(model => model.PermanentCityId, new { @id = "hdnPermanentCityId" })
                     @Html.LabelFor(model => model.PermanentCityName, new { @class = "label" })
@@ -92,7 +141,7 @@
                     @Html.ValidationMessageFor(model => model.PermanentCityName)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.PermanentPincode, new { @class = "label" })
                     <div class="input">
@@ -101,9 +150,7 @@
                     @Html.ValidationMessageFor(model => model.PermanentPincode)
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.UsePermanentAddressAsCurrentAddress, new { @class = "label", @for = "chkCopyAddress" })
                     <label class="checkbox">
@@ -112,9 +159,7 @@
                     </label>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.CurrentAddress, new { @class = "label" })
                     <div class="input">
@@ -123,7 +168,7 @@
                     @Html.ValidationMessageFor(model => model.CurrentAddress)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.HiddenFor(model => model.CurrentCityId, new { @id = "hdnCurrentCityId" })
                     @Html.LabelFor(model => model.CurrentCityName, new { @class = "label" })
@@ -133,7 +178,7 @@
                     @Html.ValidationMessageFor(model => model.CurrentCityName)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.CurrentPincode, new { @class = "label" })
                     <div class="input">
@@ -142,24 +187,13 @@
                     @Html.ValidationMessageFor(model => model.CurrentPincode)
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.LicenseNo, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.LicenseNo, new { @class = "form-control" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.LicenseNo)
-                </div>
-            </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "LicenseValidityDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.LicenseValidityDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = false, SetBlank = true, IsValidateFinYear = false })
                 </div>
             </div>
 
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.LicenseIssueBy, new { @class = "label" })
                     <div class="input">
@@ -168,9 +202,7 @@
                     @Html.ValidationMessageFor(model => model.LicenseIssueBy)
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.GuarantorName, new { @class = "label" })
                     <div class="input">
@@ -179,7 +211,7 @@
                     @Html.ValidationMessageFor(model => model.GuarantorName)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.IsActive, new { @class = "label" })
                     <label class="checkbox">
@@ -188,7 +220,7 @@
                     </label>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.CategoryId, new { @class = "label" })
                     <div class="select">
@@ -203,14 +235,7 @@
                     @Html.ValidationMessageFor(model => model.CategoryId)
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="form-group">
-                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "DoB", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DoB), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, MinDate = new DateTime(1950, 1, 1), MaxDate = DateTime.Now.AddDays(-18 * 365), SetBlank = true, IsValidateFinYear = false })
-                </div>
-            </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.Ethnicity, new { @class = "label" })
                     <div class="select">
@@ -221,19 +246,17 @@
 
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "LicenseInitialIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.LicenseInitialIssueDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "LicenseCurrentIssueDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.LicenseCurrentIssueDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.IsLicenseVerified, new { @class = "label" })
                     <label class="checkbox">
@@ -243,7 +266,7 @@
                     </label>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.IsAddressVerified, new { @class = "label" })
                     <label class="checkbox">
@@ -252,9 +275,7 @@
                     </label>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
+            <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "LicenseVerifiedDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.LicenseVerifiedDate), IsRequired = true, AllowFutureDate = false, AllowPastDate = true, SetBlank = true, IsValidateFinYear = false })
                 </div>
@@ -309,6 +330,8 @@
         </div>
     </div>
 }
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script>
     $(document).ready(function () {
         SetPageLoad('Driver', 'Add', 'DriverName', 'Go To List', '@Url.Action("Index")');
@@ -419,4 +442,78 @@
                 RemoveRequired(fuDocumentAttachment);
         });
     }
+
+    $(document).ready(function () {
+    $('#btnGetDetail').click(function () {
+        var dlNo = $('#dlNo').val();
+        var dlDobDate = moment($('#txtDoB').val(), "DD/MM/YYYY", true).format("YYYY-MM-DD");
+
+        console.log('typeof dlDobDate : ', typeof dlDobDate);
+        console.log('dlNo : ', dlNo, 'dlDobDate : ', dlDobDate);
+        if (dlNo && dlDobDate) {
+            $.ajax({
+                url: '@Url.Action("FetchDriverDetailsFromApi", "Driver")',
+                type: 'POST',
+                data:
+                {
+                    dlNo: dlNo,
+                    dlDobDate: dlDobDate
+                },
+                success: function (data) {
+                    parseData = JSON.parse(data);
+                    if (parseData.code === "200") {
+                        console.log('parseData : ', parseData);
+                        bioObj = parseData.response[0].response.dldetobj[0].bioObj;
+                        bioFullName = bioObj.bioFullName;
+                        $('#txtDriverName').val(bioFullName);
+                        bioSwdFullName = bioObj.bioSwdFullName;
+                        $('#txtDriverFatherName').val(bioSwdFullName);
+                        bioMobileNo = bioObj.bioMobileNo;
+                        $('#mobileNo').val(bioMobileNo);
+                        bioApplno = bioObj.bioApplno;
+                        $('#txtManualDriverCode').val(bioApplno);
+                        bioPermAdd1 = bioObj.bioPermAdd1;
+                        bioPermAdd2 = bioObj.bioPermAdd2;
+                        bioPermAdd3 = bioObj.bioPermAdd3;
+                        $('#txtPermanentAddress').val(bioPermAdd1 + " " + bioPermAdd2 + " " + bioPermAdd3);
+                        bioPermPin = bioObj.bioPermPin;
+                        $('#txtPermanentPincode').val(bioPermPin);
+                        bioPermSdName = bioObj.bioPermSdName;
+                        $('#txtPermanentCityName').val(bioPermSdName);
+                        bioTempAdd1 = bioObj.bioTempAdd1;
+                        bioTempAdd2 = bioObj.bioTempAdd2;
+                        bioTempAdd3 = bioObj.bioTempAdd3;
+                        $('#txtCurrentAddress').val(bioTempAdd1 + " " + bioTempAdd2 + " " + bioTempAdd3);
+                        bioTempPin = bioObj.bioTempPin;
+                        $('#txtCurrentPincode').val(bioTempPin);
+                        bioTempSdName = bioObj.bioTempSdName;
+                        $('#txtCurrentCityName').val(bioTempSdName);
+
+                        dlobj = parseData.response[0].response.dldetobj[0].dlobj;
+                        olaName = dlobj.olaName;
+                        $('#LicenseIssueBy').val(olaName);
+                        dlNtValdtoDt = moment(dlobj.dlNtValdtoDt, "YYYY-MM-DD").format("DD/MM/YYYY");
+                        $('#txtLicenseValidityDate').val(dlNtValdtoDt);
+                        dlIssuedt = moment(dlobj.dlIssuedt, "YYYY-MM-DD").format("DD/MM/YYYY");
+                        $('#txtLicenseInitialIssueDate').val(dlIssuedt);
+                        $('#txtLicenseCurrentIssueDate').val(dlIssuedt);
+
+
+                    }
+                    else {
+                        console.log(parseData.code);
+                        alert(parseData.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching details:', status, error);
+                    console.error('Response:', xhr.responseText);
+                    alert('Error fetching details');
+                }
+            });
+        } else {
+            alert('Driving License No and DOB are both mandatory');
+        }
+    });
+});
 </script>

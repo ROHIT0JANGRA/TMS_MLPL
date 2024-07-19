@@ -3,7 +3,7 @@
   "WorkspaceRootPath": "C:\\Users\\Rahul.HPSERVER\\Desktop\\My Asp project\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|C:\\Users\\Rahul.HPSERVER\\Desktop\\My Asp project\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\codelock\\models\\ewaybill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\rahul.hpserver\\desktop\\my asp project\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\models\\ewaybill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\models\\ewaybill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -23,11 +23,11 @@
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\ewaybill\\views\\fetch\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\rahul.hpserver\\desktop\\my asp project\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\ewaybill\\views\\extendewb\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|C:\\Users\\Rahul.HPSERVER\\Desktop\\My Asp project\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\codelock\\areas\\ewaybill\\views\\extendewb\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\ewaybill\\views\\extendewb\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|c:\\users\\rahul.hpserver\\desktop\\my asp project\\tms_mlpl\\mlpl_svn\\mlpl_svn\\trunk\\sourcecode\\codelock\\areas\\ewaybill\\controllers\\extendewbcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|C:\\Users\\Rahul.HPSERVER\\Desktop\\My Asp project\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\codelock\\areas\\ewaybill\\controllers\\extendewbcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1A65BFD1-6C37-4607-A54E-AC585C61E918}|CodeLock\\CodeLock.csproj|solutionrelative:codelock\\areas\\ewaybill\\controllers\\extendewbcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -82,8 +82,7 @@
               "RelativeToolTip": "CodeLock\\Areas\\Ewaybill\\Views\\ExtendEWB\\Index.cshtml",
               "ViewState": "AQIAAAAAAACANDMzM7MpwA4AAAAjAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-07-19T09:53:13.824Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-19T09:53:13.824Z"
             },
             {
               "$type": "Document",
@@ -95,8 +94,7 @@
               "RelativeToolTip": "CodeLock\\Areas\\Ewaybill\\Controllers\\ExtendEWBController.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-19T09:51:10.996Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-19T09:51:10.996Z"
             },
             {
               "$type": "Document",
@@ -108,8 +106,7 @@
               "RelativeToolTip": "CodeLock\\Areas\\Ewaybill\\Views\\Fetch\\Index.cshtml",
               "ViewState": "AQIAAAEAAAAALjMzMzP7vwgAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-07-18T17:55:22.287Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-18T17:55:22.287Z"
             },
             {
               "$type": "Document",
@@ -169,8 +166,7 @@
               "RelativeToolTip": "CodeLock\\Areas\\Master\\Repository\\PartRepository.cs",
               "ViewState": "AQIAAAwAAACglZmZmZkWwBYAAACuAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-18T12:17:22.91Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-18T12:17:22.91Z"
             },
             {
               "$type": "Document",
@@ -192,7 +188,7 @@
               "RelativeDocumentMoniker": "CodeLock\\Models\\Ewaybill.cs",
               "ToolTip": "C:\\Users\\Rahul.HPSERVER\\Desktop\\My Asp project\\TMS_MLPL\\MLPL_SVN\\MLPL_SVN\\trunk\\SourceCode\\CodeLock\\Models\\Ewaybill.cs",
               "RelativeToolTip": "CodeLock\\Models\\Ewaybill.cs",
-              "ViewState": "AQIAACEAAAAAAAAAAAA3wCoAAAAeAAAA",
+              "ViewState": "AQIAACIAAAAAAAAAAAA1wCoAAAAeAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-17T15:27:36.937Z",
               "EditorCaption": ""
@@ -207,8 +203,7 @@
               "RelativeToolTip": "CodeLock\\Areas\\Ewaybill\\Repository\\EwaybillRepository.cs",
               "ViewState": "AQIAACcAAAAAAAAAAAAYwDkAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-10T13:54:00.653Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-10T13:54:00.653Z"
             },
             {
               "$type": "Document",
@@ -232,8 +227,7 @@
               "RelativeToolTip": "CodeLock\\Areas\\Ewaybill\\Controllers\\FetchByTransporterController.cs",
               "ViewState": "AQIAAJAAAAAAAAAAAAAgwKYAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-17T15:31:37.81Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-17T15:31:37.81Z"
             }
           ]
         }

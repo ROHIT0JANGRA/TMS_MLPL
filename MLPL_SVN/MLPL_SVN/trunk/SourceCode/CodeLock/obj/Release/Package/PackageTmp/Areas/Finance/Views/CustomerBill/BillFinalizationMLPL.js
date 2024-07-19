@@ -93,7 +93,7 @@ function GetBillListForFinalization() {
                         "<input type='hidden' value='" + item.BillId + "' name='Details[" + i + "].BillId' id='hdnBillId" + i + "'/>" +
                         "<label class='label' for='chkBillId" + i + "' id='lblBillId" + i + "'></label>" +
                         "<input type='hidden' value='" + item.BillNo + "' name='Details[" + i + "].BillNo' id='hdnBillNo" + i + "'/>" +
-                        "<input type='hidden' value='" + item.BillDate + "'  id='hdnBillDate" + i + "'/>" +
+                        "<input type='hidden' value='" + $.displayDate(item.BillDate) + "' name='Details[" + i + "].BillDate'  id='hdnBillDate" + i + "'/>" +
                         "<input type='hidden' value='" + item.PaybasId + "' name='Details[" + i + "].PaybasId' id='hdnPaybasId" + i + "'/>";
                     item.BillDate = $.displayDate(item.BillDate);
                     item.DueDate = $.displayDate(item.DueDate);
