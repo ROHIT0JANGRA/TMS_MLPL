@@ -629,12 +629,23 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-2">
+
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.MasterAddressList[i].CityName, new { @class = "label" })
 
-                                            @Html.HiddenFor(model => model.MasterAddressList[i].CityId, new { @id = "hdnMasterAddressList[" + i + "].CityId" + i.ToString(), @Name = "MasterAddressList[" + i + "].CityId" })
-                                            @Html.TextBoxFor(model => model.MasterAddressList[i].CityName, new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].CityName" + i.ToString(), @Name = "MasterAddressList[" + i + "].CityName" })
+                                            @Html.HiddenFor(model => model.MasterAddressList[i].CityId, new { @id = "hdnCityId[" + i + "].CityId" + i.ToString(), @Name = "MasterAddressList[" + i + "].CityId" })
+                                            @Html.DropDownListFor(model => model.MasterAddressList[i].CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control", @id = "ddlMasterAddressList[" + i + "].City" })
+
                                         </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.MasterCustomerAddressInfo.CityId, new { @class = "label" })
+                                            <div class="select">
+                                                @Html.DropDownListFor(model => model.MasterCustomerAddressInfo.CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control", @id = "ddlCity" })
+                                                <i></i>
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.CityId)
+                                        </div>
+
                                     </div>
                                     <div class="col-sm-2">
                                         <div class="form-group">
@@ -768,6 +779,7 @@
         $('#ddlCountry').change(function () {
             OnCountryChange();
             return false;
+
         });
         $(document).on('click', '.btnAddRow', function () {
             var index = $('.address-row').length; // Get current number of rows
@@ -895,8 +907,8 @@
 
 
         ddlState.change(function () {
-            //txtCityName.val('');
-            //hdnCityId.val('');
+            txtCityName.val('');
+            hdnCityId.val('');
             if (ddlState.val() != '') {
                 var requestData = { GstId: 0, StateId: ddlState.val() };
                 AjaxRequestWithPostAndJson(baseUrl + '/ValidateGSTState', JSON.stringify(requestData), function (result) {
@@ -920,7 +932,7 @@
             AutoComplete('txtCityName', cityMasterUrl + '/GetAutoCompleteCityNameListByStateId', 'cityName', 'l', 'l', 'l', 'd', '', 'hdnCityId', '', '', true, function () {
                 return [{ Key: 'stateId', Value: ddlState.val() }];
             });
-            //txtCityName.blur(function () { return IsCityNameExist(txtCityName, hdnCityId); });
+            txtCityName.blur(function () { return IsCityNameExist(txtCityName, hdnCityId); });
             $("#ddlRegistrationType").change(RegistrationTypeChange);
             RegistrationTypeChange();
         });
@@ -1098,6 +1110,6 @@
             }
 
     }
-
+ 
 
 </script>

@@ -682,6 +682,10 @@
     <Compile Include="Areas\Operation\Repository\TrackingRepository.cs" />
     <Compile Include="Areas\Operation\Repository\VendorDocumentApprovalRepository.cs" />
     <Compile Include="Areas\Operation\Repository\WebtelSendingJsonData.cs" />
+    <Compile Include="Areas\Packaging\Controllers\RGPController.cs" />
+    <Compile Include="Areas\Packaging\PackagingAreaRegistration.cs" />
+    <Compile Include="Areas\Packaging\Repository\IRgpRepository.cs" />
+    <Compile Include="Areas\Packaging\Repository\RgpRepository.cs" />
     <Compile Include="Areas\Reports\Controllers\AnalysisController.cs" />
     <Compile Include="Areas\Reports\Controllers\FinanceController.cs" />
     <Compile Include="Areas\Reports\Controllers\FmsController.cs" />
@@ -3954,6 +3958,10 @@
     <Content Include="Areas\Reports\Views\Analysis\BookingReport.cshtml" />
     <Content Include="Areas\Reports\Views\Analysis\PrsReport.cshtml" />
     <Content Include="Areas\Reports\Views\Analysis\TripSheetReport.cshtml" />
+    <Content Include="Areas\Packaging\Views\RGP\RgpInsert.cshtml" />
+    <Content Include="Areas\Packaging\Views\RGP\RgpList.cshtml" />
+    <Content Include="Areas\Packaging\Views\Shared\View.cshtml" />
+    <Content Include="Areas\Packaging\Views\web.config" />
     <None Include="Properties\PublishProfiles\TMS.pubxml" />
     <None Include="Scripts\_references.js" />
     <Content Include="Scripts\xlsx.full.min.js" />
@@ -3985,7 +3993,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Views\WebServices\" />
   </ItemGroup>
   <ItemGroup>
@@ -4131,7 +4138,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties _UserPromptedForCS6Upgrade="true" content_4bootstrap_1min_1css_1map__JsonSchema="https://json.schemastore.org/stale.json" />
+      <UserProperties content_4bootstrap_1min_1css_1map__JsonSchema="https://json.schemastore.org/stale.json" _UserPromptedForCS6Upgrade="true" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

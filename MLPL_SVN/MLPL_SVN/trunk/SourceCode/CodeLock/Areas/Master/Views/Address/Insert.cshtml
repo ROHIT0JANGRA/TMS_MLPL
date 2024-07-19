@@ -117,6 +117,7 @@
     </div>
     }
     <script>
+
     $(document).ready(function () {
         SetPageLoad('Address', 'Insert', 'AddressCode', 'Go To List', '@Url.Action("Index")');
         hdnCityId = $('#hdnCityId');
@@ -124,4 +125,5 @@
         CityAutoComplete('txtCityName', 'hdnCityId');
         txtCityName.blur(function () { return IsCityNameExist(txtCityName, hdnCityId, 'City') });
     });
+
     </script>

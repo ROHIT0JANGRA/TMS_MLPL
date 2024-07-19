@@ -183,30 +183,10 @@ namespace CodeLock.Areas.Master.Controllers
 
         //    return base.View(objCustomer);
         //}
+
         public ActionResult Insert()
         {
-            MasterCustomer objCustomer = new MasterCustomer()
-            {
-                MasterAddress = new List<MasterAddress>
-        {
-            new MasterAddress
-            {
-                CityId = 0,
-                CityName = "",
-                AddressCode = "",
-                Address1 = "",
-                EmailId = "",
-                Address2 = "",
-                Pincode = "",
-                MobileNo = "",
-                StatisticalChargesCode = "",
-                IsMreNoApplicable = false,
-                GstTinNo = "",
-                ProvisionalId = "",
-                IsActive = false
-            }
-        }
-            };
+            ///MasterGeneral masterPayBas;
 
             MasterCustomer objCustomer = new MasterCustomer()
             {
@@ -220,8 +200,7 @@ namespace CodeLock.Areas.Master.Controllers
                 Address2 = "",
                 CityId = 0,
                 CityName = "",
-                Pincode = ""
-                ,
+                Pincode = "",
                 MobileNo = "",
                 EmailId = "",
                 StatisticalChargesCode = "",
@@ -234,18 +213,16 @@ namespace CodeLock.Areas.Master.Controllers
             objCustomer.MasterAddressList.Add(objAdd);
             this.Init(0, 0);
             objCustomer.PayBas = this.generalRepository.GetByGeneralList(14).ToArray<MasterGeneral>();
-
-
             for (int i = 0; i < objCustomer.PayBas.Length; i++)
             {
                 objCustomer.PayBas[i].IsActive = false;
             }
-            ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
+      ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
             ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
 
             //((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
 
-            return View(objCustomer);
+            return base.View(objCustomer);
         }
 
         [HttpPost]

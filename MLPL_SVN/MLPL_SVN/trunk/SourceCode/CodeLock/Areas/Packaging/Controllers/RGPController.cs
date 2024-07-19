@@ -136,12 +136,6 @@ namespace CodeLock.Areas.Packaging.Controllers
         //}
 
 
-
-
-
-
-
-
         //private static List<BusinessPartnerDetails> _allBusinessPartners = new List<BusinessPartnerDetails>();
 
         public async Task<ActionResult> GetRGPData(int start, int length, int draw)
