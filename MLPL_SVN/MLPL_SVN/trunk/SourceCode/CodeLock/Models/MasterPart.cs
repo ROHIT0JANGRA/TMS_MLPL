@@ -57,7 +57,6 @@ namespace CodeLock.Models
         public string ConsignorCode { get; set; }
         public short ConsigneeId { get; set; }
         public string ConsigneeCode { get; set; }
-
         public bool IsReverse { get; set; }
     }
 }

@@ -17,14 +17,13 @@ namespace CodeLock.Areas.Master.Repository
             return DataBaseFactory.QuerySP<MasterPart>("Usp_MasterPart_GetAll", (object)null, (string)null);
         }
        public long Insert(MasterPart objMasterPart)
-        {
+       {
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@XmlPart", (object)XmlUtility.XmlSerializeToString((object)objMasterPart), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());
             dynamicParameters.Add("@PartId", (object)null, new DbType?(DbType.Int64), new ParameterDirection?(ParameterDirection.Output), new int?(), new byte?(), new byte?());
             DataBaseFactory.QuerySP("Usp_MasterPart_Insert", (object)dynamicParameters, "Part Master - Insert");
-            return dynamicParameters.Get<long>("@PartId");
-            
-        }
+            return dynamicParameters.Get<long>("@PartId"); 
+       }
         public bool IsPartNameAvailable(string partName, long partId)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();

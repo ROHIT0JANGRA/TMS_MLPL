@@ -164,6 +164,18 @@ namespace CodeLock.Models
         public string CompanyName { get; set; }
         public string UserRole { get; set; }
     }
+
+    //MasterUser
+    public class User
+    {
+        public string API_USER { get; set; }
+        public string API_PASSWORD { get; set; }
+        public string GstTinNo { get; set; }
+        public short StateId { get; set; }
+        public short LoginLocationId { get; set; }
+        public short locationId { get; set; }
+
+    }
     public class User
     {
         public string API_USER { get; set; }

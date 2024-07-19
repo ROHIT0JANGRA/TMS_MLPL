@@ -367,6 +367,12 @@
     <Compile Include="Areas\Contract\Repository\IExpenseContractRepository.cs" />
     <Compile Include="Areas\Contract\Repository\IVendorContractRepository.cs" />
     <Compile Include="Areas\Contract\Repository\VendorContractRepository.cs" />
+    <Compile Include="Areas\Ewaybill\Controllers\ExtendEWBController.cs" />
+    <Compile Include="Areas\Ewaybill\Controllers\FetchByTransporterController.cs" />
+    <Compile Include="Areas\Ewaybill\Controllers\FetchController.cs" />
+    <Compile Include="Areas\Ewaybill\EwaybillAreaRegistration.cs" />
+    <Compile Include="Areas\Ewaybill\Repository\EwaybillRepository.cs" />
+    <Compile Include="Areas\Ewaybill\Repository\IEwaybillRepository.cs" />
     <Compile Include="Areas\Finance\Controllers\AccountsController.cs" />
     <Compile Include="Areas\Finance\Controllers\BankingController.cs" />
     <Compile Include="Areas\Finance\Controllers\CustomerBillController.cs" />
@@ -925,6 +931,7 @@
     <Compile Include="Models\EinvoiceRequest.cs" />
     <Compile Include="Models\EnRouteExpenses.cs" />
     <Compile Include="Models\ErrorLog.cs" />
+    <Compile Include="Models\Ewaybill.cs" />
     <Compile Include="Models\EwbDetail.cs" />
     <Compile Include="Models\EWBDetails.cs" />
     <Compile Include="Models\ExpectedDriverAdvance.cs" />
@@ -3962,6 +3969,11 @@
     <Content Include="Areas\Packaging\Views\RGP\RgpList.cshtml" />
     <Content Include="Areas\Packaging\Views\Shared\View.cshtml" />
     <Content Include="Areas\Packaging\Views\web.config" />
+    <Content Include="Areas\Ewaybill\Views\web.config" />
+    <Content Include="Areas\Ewaybill\Views\Fetch\Index.cshtml" />
+    <Content Include="Areas\Ewaybill\Views\Fetch\ConsolidateEwb.cshtml" />
+    <Content Include="Areas\Ewaybill\Views\FetchByTransporter\Index.cshtml" />
+    <Content Include="Areas\Ewaybill\Views\ExtendEWB\Index.cshtml" />
     <None Include="Properties\PublishProfiles\TMS.pubxml" />
     <None Include="Scripts\_references.js" />
     <Content Include="Scripts\xlsx.full.min.js" />
@@ -3993,6 +4005,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="Areas\Ewaybill\Views\EwayBillPanel\" />
+    <Folder Include="Areas\Ewaybill\Views\Shared\" />
+    <Folder Include="Views\Ewaybill\" />
     <Folder Include="Views\WebServices\" />
   </ItemGroup>
   <ItemGroup>
@@ -4131,6 +4147,7 @@
           <DevelopmentServerPort>12132</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:12133/</IISUrl>
+          <IISUrl>http://localhost:12131/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
