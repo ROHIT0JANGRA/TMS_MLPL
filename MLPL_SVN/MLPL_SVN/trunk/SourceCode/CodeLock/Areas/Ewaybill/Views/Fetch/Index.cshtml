@@ -1,0 +1,110 @@
+﻿@model CodeLock.Models.MasterLocation
+@using Secure_Coding.MvcSecurityExtensions;
+@using CodeLock.Models;
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="widget-wrap">
+    <div class="row col-12 p-0 m-0 mb-4">
+        <div class="m-0 col-12 col-sm-4 col-md-3">
+            <div class="row>
+                <div class="col-8 col-sm-8 col-md-8 pr-0">
+                    @Html.Partial("DateTimePicker", new DateTimePicker()
+                    {
+                   FieldName = "EwbFetchDate",
+                   FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.EwbFetchDate),
+                   IsRequired = true,
+                   AllowFutureDate = false,
+                   AllowPastDate = true,
+                   SetBlank = true,
+                   // IsValidateFinYear = false
+                    })
+                </div>
+                <div class="col-4 col-sm-4 col-md-4 pl-0">
+                    <input type="button" id="btnGetDetail" class="btn btn-primary" value="Get Data">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="widget-wrap">
+        <table id="ewbDataTable" class="table-responsive display table-bordered table" style="width:100%">
+            <thead class="bg-primary">
+                <tr>
+                    <th>Party GSTIN</th>
+                    <th>EwayBill No</th>
+                    <th>Date</th>
+                    <th>Document No</th>
+                    <th>Valid Upto</th>
+                    <th>Delivery Place</th>
+                    <th>Del Pin</th>
+                    <th>Del State Code</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script>
+    $(document).ready(function () {
+        $('#btnGetDetail').click(function () {
+            var txtEwbFetchDate = moment($('#txtEwbFetchDate').val(), "DD/MM/YYYY", true).format("YYYYMMDD");
+            console.log('txtEwbFetchDate : ', txtEwbFetchDate);
+            if (txtEwbFetchDate && txtEwbFetchDate != 'Invalid date') {
+                $.ajax({
+                    url: '@Url.Action("GetData", "Fetch")',
+                    type: 'POST',
+                    dataType: 'json', // Specify the expected data type
+                    data: { txtEwbFetchDate: txtEwbFetchDate },
+                    success: function (data) {
+                        parseData = JSON.parse(data);
+                        console.log(parseData);
+                        if (parseData.Error) {
+                            alert(parseData.Error);
+                            console.log(parseData.Error)
+                        }
+                        else if (parseData[0].EWBDetails) {
+                            parseEWBDetails = JSON.parse(parseData[0].EWBDetails);
+                            console.log('parseEWBDetails : ', parseEWBDetails);
+
+                            value = parseEWBDetails;
+                            $('#ewbDataTable').dataTable({
+                                data: value, // Assuming 'value' is the array of objects in your JSON
+                                lengthMenu: [
+                                    [5, 10, 20, 30], [5, 10, 20, 30]
+                                ],
+                                pageLength: 5,
+                                columns: [
+                                    { data: 'genGstin' },
+                                    { data: 'ewbNo' },
+                                    { data: 'ewbDate' },
+                                    { data: 'docNo' },
+                                    { data: 'validUpto' },
+                                    { data: 'delPlace' },
+                                    { data: 'delPinCode' },
+                                    { data: 'delStateCode' },
+                                    { data: 'status' }
+                                ]
+                            });
+                        }
+                        else if (parseData[0].ErrorMessage) {
+                            alert(parseData[0].ErrorMessage);
+                        }
+                        // Log the response data to console
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error); // Log any errors to console
+                    }
+                });
+            }
+            else {
+                alert("Choose Ewaybill Date");
+            }
+        });
+    });
+    </script>

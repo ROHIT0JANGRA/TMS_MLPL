@@ -628,24 +628,34 @@
                                             @Html.TextBoxFor(model => model.MasterAddressList[i].Address2, new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].Address2" + i.ToString(), @Name = "MasterAddressList[" + i + "].Address2" })
                                         </div>
                                     </div>
+                                    @*<div class="col-sm-2">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MasterAddressList[i].CityName, new { @class = "label" })
+
+                                                @Html.HiddenFor(model => model.MasterAddressList[i].CityId, new { @id = "hdnMasterAddressList[" + i + "].CityId" + i.ToString(), @Name = "MasterAddressList[" + i + "].CityId" })
+                                                @Html.TextBoxFor(model => model.MasterAddressList[i].CityName, new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].CityName" + i.ToString(), @Name = "MasterAddressList[" + i + "].CityName" })
+                                            </div>
+                                        </div>*@
                                     <div class="col-sm-2">
-
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].CityName, new { @class = "label" })
-
-                                            @Html.HiddenFor(model => model.MasterAddressList[i].CityId, new { @id = "hdnCityId[" + i + "].CityId" + i.ToString(), @Name = "MasterAddressList[" + i + "].CityId" })
-                                            @Html.DropDownListFor(model => model.MasterAddressList[i].CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control", @id = "ddlMasterAddressList[" + i + "].City" })
-
-                                        </div>
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterCustomerAddressInfo.CityId, new { @class = "label" })
+                                            @Html.LabelFor(model => model.MasterAddressList[i].StateName, new { @class = "label" })
                                             <div class="select">
-                                                @Html.DropDownListFor(model => model.MasterCustomerAddressInfo.CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control", @id = "ddlCity" })
+                                                @Html.DropDownListFor(model => model.MasterAddressList[i].StateId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlMasterAddressList[" + i + "].State", @onchange = "OnChangeStateWiseCity(this)" })
                                                 <i></i>
                                             </div>
-                                            @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.CityId)
-                                        </div>
+                                            @Html.ValidationMessageFor(model => model.MasterAddressList[i].StateId)
 
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.MasterAddressList[i].CityId, new { @class = "label" })
+                                            <div class="select">
+                                                @Html.DropDownListFor(model => model.MasterAddressList[i].CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control", @id = "ddlMasterAddressList[" + i + "].CityId", @Name = "MasterAddressList[" + i + "].CityId" })
+                                                <i></i>
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.MasterAddressList[i].CityId)
+                                        </div>
                                     </div>
                                     <div class="col-sm-2">
                                         <div class="form-group">
@@ -685,17 +695,7 @@
                                             @Html.ValidationMessageFor(model => model.MasterAddressList[i].GstTinNo)
                                         </div>
                                     </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].StateName, new { @class = "label" })
-                                            <div class="select">
-                                                @Html.DropDownListFor(model => model.MasterAddressList[i].StateId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlMasterAddressList[" + i + "].State" })
-                                                <i></i>
-                                            </div>
-                                            @Html.ValidationMessageFor(model => model.MasterAddressList[i].StateId)
 
-                                        </div>
-                                    </div>
                                     <div class="col-sm-2">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.MasterAddressList[i].ProvisionalId, new { @class = "label" })
@@ -727,7 +727,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.MasterAddressList[i].IsActive, new { @class = "label" })
                                             <label class="checkbox">
-                                                @Html.CheckBoxFor(model => model.MasterAddressList[i].IsActive, new { @id = "txtMasterAddressList[" + i + "].IsActive" + i.ToString(), @Name = "MasterAddressList[" + i + "].IsActive" })
+                                                @Html.CheckBoxFor(model => model.MasterAddressList[i].IsActive, new { @id = "txtMasterAddressList[" + i + "].IsActive", @Name = "MasterAddressList[" + i + "].IsActive" })
                                                 <i></i>
                                             </label>
                                         </div>
@@ -736,7 +736,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.MasterAddressList[i].IsMreNoApplicable, new { @class = "label" })
                                             <label class="checkbox">
-                                                @Html.CheckBoxFor(model => model.MasterAddressList[i].IsMreNoApplicable, new { @id = "txtMasterAddressList[" + i + "].IsMreNoApplicable" + i.ToString(), @Name = "MasterAddressList[" + i + "].IsMreNoApplicable" })
+                                                @Html.CheckBoxFor(model => model.MasterAddressList[i].IsMreNoApplicable, new { @id = "txtMasterAddressList[" + i + "].IsMreNoApplicable", @Name = "MasterAddressList[" + i + "].IsMreNoApplicable" })
                                                 <i></i>
                                             </label>
                                         </div>
@@ -1110,6 +1110,41 @@
             }
 
     }
- 
+    
+    function OnChangeStateWiseCity(selectElement) {
+        var stateId = $(selectElement).val(); // Get selected state ID
+        var index = $(selectElement).attr('id').match(/\[(.*?)\]/)[1]; // Extract index from ID
+        console.log("Selected State ID:", stateId);
+        console.log("Index:", index);
+
+        // AJAX request to fetch cities based on selected state ID
+        $.ajax({
+            url: '@Url.Action("GetCityListByStateId", "City")', // Replace with your actual endpoint
+            type: 'POST',
+            dataType: 'json',
+            data: { stateId: stateId }, // Data to send to the server
+            success: function(response) {
+                console.log("Received response:", response);
+
+                // Clear existing options and populate new ones
+                var cityDropdown = $('#ddlMasterAddressList\\[' + index + '\\]\\.CityId'); // Escape special characters in ID
+                console.log("City Dropdown ID:", cityDropdown.attr('id'));
+                cityDropdown.empty(); // Clear previous options
+
+                // Populate dropdown with new options
+                $.each(response, function(index, city) {
+                    console.log("Adding city:", city.Value, city.Name);
+                    cityDropdown.append($('<option>', {
+                        value: city.Value,
+                        text: city.Name
+                    }));
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching cities:', error);
+                // Handle error scenario
+            }
+        });
+    }
 
 </script>

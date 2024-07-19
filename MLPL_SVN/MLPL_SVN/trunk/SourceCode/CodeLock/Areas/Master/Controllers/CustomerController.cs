@@ -21,7 +21,6 @@ using System.Text;
 using System.Threading.Tasks;
 using CodeLock.Api_Services;
 using DocumentFormat.OpenXml.Wordprocessing;
-using Microsoft.Owin.BuilderProperties;
 
 namespace CodeLock.Areas.Master.Controllers
 {
@@ -186,8 +185,7 @@ namespace CodeLock.Areas.Master.Controllers
 
         public ActionResult Insert()
         {
-            ///MasterGeneral masterPayBas;
-
+            
             MasterCustomer objCustomer = new MasterCustomer()
             {
                 MasterAddressList = new List<MasterAddress>()

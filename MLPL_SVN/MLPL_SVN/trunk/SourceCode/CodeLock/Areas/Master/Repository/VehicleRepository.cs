@@ -327,7 +327,7 @@ namespace CodeLock.Areas.Master.Repository
         public IEnumerable<MasterVehicleDetails> GetVehiclesByPagination(int pageNo, int pageSize, string sorting, string search)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
-            dynamicParameters.Add("@PageNo", 1, new DbType?(DbType.Int32), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+            dynamicParameters.Add("@PageNo", (object)pageNo, new DbType?(DbType.Int32), new ParameterDirection?(), new int?(), new byte?(), new byte?());
 
           //  dynamicParameters.Add("@PageNo", (object)pageNo, new DbType?(DbType.Int32), new ParameterDirection?(), new int?(), new byte?(), new byte?());
             dynamicParameters.Add("@PageSize", (object)pageSize, new DbType?(DbType.Int32), new ParameterDirection?(), new int?(), new byte?(), new byte?());

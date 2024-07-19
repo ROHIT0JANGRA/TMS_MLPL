@@ -1,0 +1,172 @@
+﻿
+@{
+    ViewBag.Title = "ConsolidateEwb";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>ConsolidateEwb</h2>
+
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+</style>
+<div class="widget-wrap material-table-widget">
+    <h2>Enter Details</h2>
+    <form id="inputForm">
+        <label for="ewb">Ewb:</label>
+        <input type="text" id="ewb" name="ewb" tabindex="1">
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" tabindex="2">
+
+        <label for="gstin">GSTIN:</label>
+        <input type="text" id="gstin" name="gstin" tabindex="3">
+
+        <label for="vehicleNo">Vehicle No:</label>
+        <input type="text" id="vehicleNo" name="vehicleNo" tabindex="4">
+    </form>
+
+    <h4>Generate Consolidate Ewaybill</h4>
+    <input type="button" id="generate" value="Generate" class="btn-primary" />
+    <br />
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>Serial No.</th>
+                <th>Ewb</th>
+                <th>Date</th>
+                <th>GSTIN</th>
+                <th>Vehicle No</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table rows will be added here dynamically -->
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="scripts.js"></script>
+
+<script>
+    // Counter for serial numbers
+    var serialNumber = 1;
+
+    // Function to add a row to the table
+    function addRowOnTab(event) {
+        if (event.key === "Tab" && event.target.id === "vehicleNo") {
+            event.preventDefault(); // Prevent default tab behavior
+
+            var ewb = document.getElementById("ewb").value;
+            var date = document.getElementById("date").value;
+            var gstin = document.getElementById("gstin").value;
+            var vehicleNo = document.getElementById("vehicleNo").value;
+
+            // Validate if all fields are filled
+            if (ewb === '' || date === '' || gstin === '' || vehicleNo === '') {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            // Reference to the table
+            var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+
+            // Insert a row at the end of the table
+            var newRow = table.insertRow();
+
+            // Insert cells into the new row
+            var cell0 = newRow.insertCell(0); // Serial No.
+            var cell1 = newRow.insertCell(1); // Ewb
+            var cell2 = newRow.insertCell(2); // Date
+            var cell3 = newRow.insertCell(3); // GSTIN
+            var cell4 = newRow.insertCell(4); // Vehicle No
+            var cell5 = newRow.insertCell(5); // Action (Delete)
+
+            // Populate cells with data
+            cell0.textContent = serialNumber++;
+            cell1.textContent = ewb;
+            cell2.textContent = date;
+            cell3.textContent = gstin;
+            cell4.textContent = vehicleNo;
+
+            // Add delete button to the new row
+            var deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.setAttribute('onclick', 'deleteRow(this)');
+            cell5.appendChild(deleteButton);
+
+            // Clear input fields after adding to table
+            document.getElementById("inputForm").reset();
+
+            // Move focus back to the Ewb input field
+            document.getElementById("ewb").focus();
+        }
+    }
+
+    // Event listener for keydown events on vehicleNo input
+    document.getElementById("vehicleNo").addEventListener('keydown', addRowOnTab);
+
+    // Function to delete a row from the table
+    function deleteRow(button) {
+        var row = button.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+
+        // Update serial numbers after deletion
+        // var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+        // var rows = table.getElementsByTagName('tr');
+        // for (var i = 0; i < rows.length; i++) {
+        //    rows[i].cells[0].textContent = i + 1; // Update serial number
+        // }
+
+        // Reset serialNumber counter
+        // serialNumber = rows.length + 1;
+
+        // Move focus back to the Ewb input field
+        document.getElementById("ewb").focus();
+
+    }
+    // Event listener for Generate button click
+    document.getElementById("generate").addEventListener('click', function () {
+        var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+        var rows = table.getElementsByTagName('tr');
+        var data = [];
+
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            var rowData = {
+                "Serial No.": row.cells[0].textContent,
+                "Ewb": row.cells[1].textContent,
+                "Date": row.cells[2].textContent,
+                "GSTIN": row.cells[3].textContent,
+                "Vehicle No": row.cells[4].textContent
+            };
+            data.push(rowData);
+        }
+
+        // Convert data array to JSON string
+        var jsonData = JSON.stringify(data, null, 2);
+        console.log(jsonData); // Display JSON data in console (you can use it as needed)
+
+        var parseData = JSON.parse(jsonData);
+        console.log(parseData);
+
+        document.getElementById("dataTable").getElementsByTagName('tbody')[0].innerHTML = '';
+
+        alert("Ewaybill are successfully generated")
+
+        // Optionally, display JSON data in an alert or textarea
+        // alert(jsonData);
+        // document.getElementById("jsonOutput").value = jsonData;
+    });
+
+</script>
