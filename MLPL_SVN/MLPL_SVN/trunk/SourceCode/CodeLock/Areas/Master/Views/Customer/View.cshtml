@@ -47,18 +47,6 @@
                 </dd>
             </dl>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-3" id="dvGstTinNo">
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.GstTinNo)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.MasterCustomerDetail.GstTinNo)
-                </dd>
-            </dl>
-        </div>
         <div class="col-xs-3">
             <dl>
                 <dt>
@@ -69,11 +57,6 @@
                 </dd>
             </dl>
         </div>
-    </div>
-
-
-    <div class="row">
-
         <div class="col-xs-3">
             <dl>
                 <dt>
@@ -104,9 +87,6 @@
                 </dd>
             </dl>
         </div>
-    </div>
-    <div class="row">
-
         <div class="col-xs-3">
             <dl>
                 <dt>
@@ -117,81 +97,300 @@
                 </dd>
             </dl>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-3" id="dvGstTinNo">
             <dl>
                 <dt>
-                    @Html.DisplayNameFor(model => model.SavedCustomerLocation)
+                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.GstTinNo)
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.CustomerLocation)
+                    @Html.DisplayFor(model => model.MasterCustomerDetail.GstTinNo)
                 </dd>
             </dl>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xs-3">
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(model => model.SavedCustomerDeliveryLocation)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.CustomerDeliveryLocation)
-                </dd>
-            </dl>
-        </div>
-        <div class="col-xs-3">
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(model => model.PayBasName)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.PayBasName)
-                </dd>
-            </dl>
-        </div>
-        <div class="col-xs-3">
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.IsMilkrunHrsPerDayEnabled)
-                </dt>
-                <dd>
-                    @Html.YesNo(Model.MasterCustomerDetail.IsMilkrunHrsPerDayEnabled)
-                </dd>
-            </dl>
-        </div>
- 
-       
+<div class="row">
+    <div class="col-xs-3">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.SavedCustomerDeliveryLocation)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CustomerDeliveryLocation)
+            </dd>
+        </dl>
     </div>
+    <div class="col-xs-3">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.PayBasName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.PayBasName)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-xs-3">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.MasterCustomerDetail.IsMilkrunHrsPerDayEnabled)
+            </dt>
+            <dd>
+                @Html.YesNo(Model.MasterCustomerDetail.IsMilkrunHrsPerDayEnabled)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-xs-3">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.MasterCustomerDetail.IsLaneID)
+            </dt>
+            <dd>
+                @Html.YesNo(Model.MasterCustomerDetail.IsLaneID)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-xs-3">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.MasterCustomerDetail.IsTruckForwardNote)
+            </dt>
+            <dd>
+                @Html.YesNo(Model.MasterCustomerDetail.IsTruckForwardNote)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-xs-3">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </dt>
+            <dd>
+                @Html.YesNo(Model.IsActive)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-xs-3">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.CityId)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.MasterCustomerAddressInfo.CityName)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-xs-3">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.Pincode)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.MasterCustomerAddressInfo.Pincode)
+            </dd>
+        </dl>
+    </div>
+</div>
+
+    <div class="page-separator">Address (Primary)</div>
     <div class="row">
         <div class="col-xs-3">
             <dl>
                 <dt>
-                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.IsLaneID)
+                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.Address1)
                 </dt>
                 <dd>
-                    @Html.YesNo(Model.MasterCustomerDetail.IsLaneID)
+                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.Address1)
                 </dd>
             </dl>
         </div>
         <div class="col-xs-3">
             <dl>
                 <dt>
-                    @Html.DisplayNameFor(model => model.MasterCustomerDetail.IsTruckForwardNote)
+                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.Address2)
                 </dt>
                 <dd>
-                    @Html.YesNo(Model.MasterCustomerDetail.IsTruckForwardNote)
+                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.Address2)
                 </dd>
             </dl>
         </div>
         <div class="col-xs-3">
             <dl>
                 <dt>
-                    @Html.DisplayNameFor(model => model.IsActive)
+                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.CountryId)
                 </dt>
                 <dd>
-                    @Html.YesNo(Model.IsActive)
+                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.CountryName)
                 </dd>
             </dl>
+        </div>
+        <div class="col-xs-3">
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.StateId)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.StateName)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div id="secondaryAddressForm" class="address-form">
+        <div class="tab-pane">
+            <div class="page-separator">Address (Secondary)</div>
+            <div id="addressRowsContainer">
+                <!-- Iterate over each item in the MasterAddressList -->
+                @for (int i = 0; i < Model.MasterAddressList.Count; i++)
+                {
+                    <div class="row address-row">
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].AddressCode)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.MasterAddressList[i].AddressCode)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].Address1)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.MasterAddressList[i].Address1)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].Address2)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.MasterAddressList[i].Address2)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].StateName)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.MasterAddressList[i].StateName)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].CityName)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.MasterAddressList[i].CityName)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].Pincode)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.MasterAddressList[i].Pincode)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].MobileNo)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.MasterAddressList[i].MobileNo)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].EmailId)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.MasterAddressList[i].EmailId)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].StatisticalChargesCode)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.MasterAddressList[i].StatisticalChargesCode)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].GstTinNo)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.MasterAddressList[i].GstTinNo)
+                                </dd>
+                            </dl>
+                        </div>
+                        @*<div class="col-sm-2">
+                                <dl>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.MasterAddressList[i].ProvisionalId)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.MasterAddressList[i].ProvisionalId)
+                                    </dd>
+                                </dl>
+                            </div>*@
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].RegistrationType)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.MasterAddressList[i].RegistrationTypeId)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].IsActive)
+                                </dt>
+                                <dd>
+                                    @Html.YesNo(Model.MasterAddressList[i].IsActive)
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-sm-2">
+                            <dl>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.MasterAddressList[i].IsMreNoApplicable)
+                                </dt>
+                                <dd>
+                                    @Html.YesNo(Model.MasterAddressList[i].IsMreNoApplicable)
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                    if (i < Model.MasterAddressList.Count - 1) // Check if it's not the last iteration
+                    {
+                        <div class="page-separator"></div>
+                    }
+
+                }
+            </div>
+
         </div>
     </div>
     <div class="page-separator">Decision Maker</div>
@@ -323,73 +522,201 @@
             </dl>
         </div>
     </div>
-
-    <div class="page-separator">Billing Address Details</div>
-    <div class="row">
-        <div class="col-xs-3">
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.Address1)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.Address1)
-                </dd>
-            </dl>
-        </div>
-        <div class="col-xs-3">
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.Address2)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.Address2)
-                </dd>
-            </dl>
-        </div>
-        <div class="col-xs-3">
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.CountryId)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.CountryName)
-                </dd>
-            </dl>
-        </div>
-        <div class="col-xs-3">
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.StateId)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.StateName)
-                </dd>
-            </dl>
+    <div id="PaymentTerms" class="address-form">
+        <div class="tab-pane">
+            <div class="page-separator">Payment Terms</div>
+            <div class="row">
+                <div class="col-sm-3">                                    
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.MasterCustomerDetail.SalesPersonClosingDealEmailId)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.MasterCustomerDetail.SalesPersonClosingDealEmailId)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                  
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.InterestOnArrearsPercentage)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.InterestOnArrearsPercentage)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                   
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.PriceList)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.PriceList)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                   
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.TotalDiscountPercentage)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.TotalDiscountPercentage)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                   
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.CommitmentLimit)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.CommitmentLimit)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                   
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.EffectiveDiscountsGroups)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.EffectiveDiscountsGroups)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                  
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.DunningTerm)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.DunningTerm)
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <!-- Similar structure to Primary Address form -->
         </div>
     </div>
-    <div class="row">
-
-        <div class="col-xs-3">
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.CityId)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.CityName)
-                </dd>
-            </dl>
+    <div id="BusinessPartnerBank" class="address-form">
+        <div class="tab-pane">
+            <div class="page-separator">Business Partner Bank</div>
+            <div class="row">
+                <div class="col-sm-3">                  
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.BankCountryRegion)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.BankCountryRegion)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                   
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.BankName)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.BankName)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                   
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.BankCode)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.BankCode)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                   
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Account)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Account)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                  
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.BICSWIFTCode)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.BICSWIFTCode)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.BankAccountName)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.BankAccountName)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                   
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Branch)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Branch)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                   
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.CtrlIntID)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.CtrlIntID)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                  
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.MandateID)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.MandateID)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.DateOfSignature)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.DateOfSignature)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">                   
+                    <dl>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.AddressCode)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.AddressCode)
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <!-- Similar structure to Primary Address form -->
         </div>
-        <div class="col-xs-3">
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(model => model.MasterCustomerAddressInfo.Pincode)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.MasterCustomerAddressInfo.Pincode)
-                </dd>
-            </dl>
-        </div>
-
     </div>
 </div>
 <script>

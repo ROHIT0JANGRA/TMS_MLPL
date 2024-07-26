@@ -27,7 +27,8 @@ namespace CodeLock.Areas.Master.Repository
     {
       DynamicParameters dynamicParameters = new DynamicParameters();
       dynamicParameters.Add("@UserId", (object) userId, new DbType?(DbType.Int16), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-      return DataBaseFactory.QuerySP<MasterUserWarehouseMapping>("Usp_MasterUserWarehouseMapping_GetById", (object) dynamicParameters, "MasterUserWarehouseMapping - GetById");
+    return DataBaseFactory.QuerySP<MasterUserWarehouseMapping>("Usp_MasterUserWarehouseMapping_GetById", (object) dynamicParameters, "MasterUserWarehouseMapping - GetById");
+    
     }
 
     public Response Mapping(

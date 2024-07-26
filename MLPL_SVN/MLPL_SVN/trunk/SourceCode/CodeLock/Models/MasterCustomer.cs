@@ -12,7 +12,7 @@ namespace CodeLock.Models
         {
             this.MasterCustomerDetail = new MasterCustomerDetail();
             this.MasterCustomerAddressInfo = new Models.MasterCustomerAddressInfo();
-            this.BusinessPartnerDetails = new BusinessPartnerDetails();
+            //this.BusinessPartnerDetails = new BusinessPartnerDetails();
             this.MasterAddressList = new List<MasterAddress>();
         }
 
@@ -68,9 +68,73 @@ namespace CodeLock.Models
 
         // *************************** Adding InsertBp Models Required Fields ****************************************
 
-
+        [Required(ErrorMessage = "At least a Secondory Address is required")]
         public List<MasterAddress> MasterAddressList { get; set; }
-        public BusinessPartnerDetails BusinessPartnerDetails { get; set; }
+        //public BusinessPartnerDetails BusinessPartnerDetails { get; set; }
+        public bool IsAddressMapped { get; set; }
+        public bool IsGSTMapped { get; set; }
+        // Payment Terms
+        [Display(Name = "Payment Terms")]
+        public string PaymentTerms { get; set; }
+
+        [Display(Name = "Interest On Arrears Percentage")]
+        public decimal? InterestOnArrearsPercentage { get; set; }
+
+        [Display(Name = "Price List")]
+        public string PriceList { get; set; }
+        [Display(Name = "Total Discount Percentage")]
+
+        public decimal? TotalDiscountPercentage { get; set; }
+
+        // Credit Limit and Commitment Limit
+        [Display(Name = "Credit Limit")]
+
+        public decimal? CreditLimit { get; set; }
+        [Display(Name = "Commitment Limit")]
+
+        public decimal? CommitmentLimit { get; set; }
+        [Display(Name = "Dunning Term")]
+
+        public string DunningTerm { get; set; }
+        [Display(Name = "Effective Discounts Groups")]
+
+        public string EffectiveDiscountsGroups { get; set; }
+
+        // Business Partner Bank
+        [Display(Name = "Bank Country Regions")]
+        public string BankCountryRegion { get; set; }
+        [Display(Name = "Bank Name")]
+
+        public string BankName { get; set; }
+        [Display(Name = "Bank Code")]
+
+        public string BankCode { get; set; }
+        [Display(Name = "Account")]
+
+        public string Account { get; set; }
+        [Display(Name = "BICSWIFT Code")]
+
+        public string BICSWIFTCode { get; set; }
+        [Display(Name = "Bank Account Name")]
+
+        public string BankAccountName { get; set; }
+        [Display(Name = "Branch")]
+
+        public string Branch { get; set; }
+        [Display(Name = "CtrlIntID")]
+
+        public string CtrlIntID { get; set; }
+
+        // Mandate Details
+        [Display(Name = "MandateID")]
+
+        public string MandateID { get; set; }
+        [Display(Name = "Date Of Signature")]
+
+        public string DateOfSignature { get; set; }
+        [Display(Name = "Address Code")]
+
+        public string AddressCode { get; set; }
     }
     public class CustomerDetail
     {
@@ -117,35 +181,10 @@ namespace CodeLock.Models
         public string EntryByName { get; set; }
         public string EntryDate { get; set; }
     }
-    public class BusinessPartnerDetails
-    {
-        // Payment Terms
-        public string PaymentTerms { get; set; }
-        public decimal? InterestOnArrearsPercentage { get; set; }
-        public string PriceList { get; set; }
-        public decimal? TotalDiscountPercentage { get; set; }
-
-        // Credit Limit and Commitment Limit
-        public decimal? CreditLimit { get; set; }
-        public decimal? CommitmentLimit { get; set; }
-        public string DunningTerm { get; set; }
-        public string EffectiveDiscountsGroups { get; set; }
-
-        // Business Partner Bank
-        public string BankCountryRegion { get; set; }
-        public string BankName { get; set; }
-        public string BankCode { get; set; }
-        public string Account { get; set; }
-        public string BICSWIFTCode { get; set; }
-        public string BankAccountName { get; set; }
-        public string Branch { get; set; }
-        public string CtrlIntID { get; set; }
-
-        // Mandate Details
-        public string MandateID { get; set; }
-        public string DateOfSignature { get; set; }
-        public string AddressCode { get; set; }
-    }
+    //public class BusinessPartnerDetails
+    //{
+       
+    //}
 
 }
 

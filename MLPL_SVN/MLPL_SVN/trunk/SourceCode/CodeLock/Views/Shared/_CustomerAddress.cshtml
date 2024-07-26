@@ -1,0 +1,162 @@
+﻿@using CodeLock.Areas.Master.Controllers
+
+@model CodeLock.Models.MasterAddress
+@{
+    // Retrieve the current index from ViewData or ViewBag
+    int index = ViewBag.Index ?? 0;
+    ViewData.TemplateInfo.HtmlFieldPrefix = $"MasterAddressList[{index}]";
+
+}
+
+<!-- Iterate over each item in the MasterAddressList -->
+
+<div class="row address-row">
+    @Html.HiddenFor(model => model.AddressId)
+    <div class="col-sm-2">
+        <div class="form-group">
+            @Html.LabelFor(model => model.AddressCode, new { @class = "label" })
+
+            @Html.TextBoxFor(model => model.AddressCode
+, new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.AddressCode", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.AddressCode" })
+        </div>
+        @Html.ValidationMessageFor(model => model.AddressCode)
+    </div>
+    <div class="col-sm-2">
+        <div class="form-group">
+            @Html.LabelFor(model => model.Address1, new { @class = "label" })
+
+            @Html.TextBoxFor(model => model.Address1, new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.Address1", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.Address1" })
+        </div>
+        @Html.ValidationMessageFor(model => model.Address1)
+
+    </div>
+    <div class="col-sm-2">
+        <div class="form-group">
+            @Html.LabelFor(model => model.Address2, new { @class = "label" })
+
+            @Html.TextBoxFor(model => model.Address2, new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.Address2", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.Address2" })
+        </div>
+        @Html.ValidationMessageFor(model => model.Address2)
+    </div>
+    <div class="col-sm-2">
+        <div class="form-group">
+            @Html.LabelFor(model => model.StateName, new { @class = "label" })
+            <div class="select">
+                @Html.DropDownListFor(model => model.StateId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.StateId", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.StateId", @onchange = "OnChangeStateWiseCity(this)" })
+                <i></i>
+            </div>
+            @Html.ValidationMessageFor(model => model.StateId)
+
+
+        </div>
+
+    </div>  
+    <div class="col-sm-2">
+        <div class="form-group">
+            @Html.LabelFor(model => model.CityId, new { @class = "label" })
+            <div class="select">
+                @if (Model.StateId > 0)
+                {
+                    var StateWiseCityList = ((CustomerController)this.ViewContext.Controller).GetCityStateWise(Model.StateId);
+                    List<SelectListItem> CityList =new List<SelectListItem>();
+                    foreach (var item in StateWiseCityList)
+                    {
+                        SelectListItem objItem = new SelectListItem();
+                        objItem.Value = item.Value;
+                        objItem.Text = item.Name;
+                        CityList.Add(objItem);
+                        // Log or debug item.Value and item.Text
+                    }
+                    @Html.DropDownListFor(model => model.CityId, new SelectList(CityList, "Value", "Text"), "Select City", new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.CityId", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.CityId" })
+
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.CityId, Enumerable.Empty<SelectListItem>(), "Select City", new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.CityId", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.CityId" })
+
+                }
+                <i></i>
+            </div>
+            @Html.ValidationMessageFor(model => model.CityId)
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <div class="form-group">
+            @Html.LabelFor(model => model.Pincode, new { @class = "label" })
+
+            @Html.TextBoxFor(model => model.Pincode, new { @class = "form-control Number", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.Pincode", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.Pincode", @onkeyup = "this.value=this.value.replace(/[^0-9]/g,'')" })
+        </div>
+        @Html.ValidationMessageFor(model => model.Pincode)
+
+    </div>
+    <div class="col-sm-2">
+        <div class="form-group">
+            @Html.LabelFor(model => model.MobileNo, new { @class = "label" })
+
+            @Html.TextBoxFor(model => model.MobileNo, new { @class = "form-control Number", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.MobileNo", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.MobileNo", @onkeyup = "this.value=this.value.replace(/[^0-9]/g,'')" })
+        </div>
+        @Html.ValidationMessageFor(model => model.MobileNo)
+    </div>
+    <div class="col-sm-2">
+        <div class="form-group">
+            @Html.LabelFor(model => model.EmailId, new { @class = "label" })
+
+            @Html.TextBoxFor(model => model.EmailId, new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.EmailId", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.EmailId" })
+        </div>
+        @Html.ValidationMessageFor(model => model.EmailId)
+    </div>
+    <div class="col-sm-2">
+        <div class="form-group">
+            @Html.LabelFor(model => model.StatisticalChargesCode, new { @class = "label" })
+
+            @Html.TextBoxFor(model => model.StatisticalChargesCode, new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.StatisticalChargesCode", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.StatisticalChargesCode" })
+        </div>
+        @Html.ValidationMessageFor(model => model.StatisticalChargesCode)
+    </div>
+    <div class="col-sm-2">
+        <div class="form-group">
+            <div class="input-wrapper">
+                @Html.LabelFor(model => model.GstTinNo, new { @class = "label" })
+
+                @Html.TextBoxFor(model => model.GstTinNo, new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.GstTinNo", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.GstTinNo" })
+            </div>
+            @Html.ValidationMessageFor(model => model.GstTinNo)
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            @Html.LabelFor(model => model.RegistrationType, new { @class = "label" })
+            <div class="select">
+                @Html.DropDownListFor(model => model.RegistrationType, new SelectList(ViewBag.RegistrationTypeList, "Value", "Name"), "Select Registration Type", new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.RegistrationType", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.RegistrationType" })
+                <i></i>
+            </div>
+            @Html.ValidationMessageFor(model => model.RegistrationType)
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsActive, new { @class = "label" })
+            <label class="checkbox">
+                @Html.CheckBoxFor(model => model.IsActive, new { @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.IsActive", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.IsActive" })
+                <i></i>
+            </label>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsMreNoApplicable, new { @class = "label" })
+
+            <label class="checkbox">
+                @Html.CheckBoxFor(model => model.IsMreNoApplicable, new { @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.IsMreNoApplicable", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.IsMreNoApplicable" })
+                <i></i>
+            </label>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <button type="button" class="btn btn-danger btnDelete"><i class="fa fa-minus"></i>Delete</button>
+    </div>
+</div>
+<div class="page-separator"></div>
+
+
+

@@ -39,8 +39,9 @@
     $(document).ready(function () {
         dtMapping = LoadDataTable('dtMapping', false, false, true, null, null, [],
             [
-                { title: '@Html.DisplayNameFor(model => model.WarehouseList)', data: "WarehouseId" },
-                { title: '@Html.DisplayNameFor(model => model.DefaultWarehouseId)', data: "DefaultWarehouseId" }
+                { title: '@Html.DisplayNameFor(model => model.WarehouseList)', data: "WarehouseName" },
+                { title: '@Html.DisplayNameFor(model => model.DefaultWarehouseId)', data: "WarehouseId" },
+                @*{ title: '@Html.DisplayNameFor(model => model.DefaultWarehouseId)', data: "DefaultWarehouseId" }*@
             ]);
         hndWarehouse = $('#hndWarehouse')
         ddlUser = $('#ddlUser');
@@ -51,20 +52,16 @@
         btnSubmit.click(OnSubmit);
         SetPageLoad('User to Warehouse', 'Mapping', ddlUser.attr('id'), 'Go To List', '@Url.Action("Index")');
     });
-
-
     function SetRadio(obj) {
         $('input[type=radio]:checked').not(obj).prop('checked', false);
         $(obj).val(true);
         //return false;
     }
-
-
     function OnSubmit() {
         var hndWarehouse = $('#hndWarehouse');
         $('#dtMapping tr:not(:first)').each(function () {
             var tr = $(this);
-            var rdbWarehouse = tr.find('[id*="DefaultWarehouseId"]');
+            var rdbWarehouse = tr.find('[id*="WarehouseName"]');
             var hndWarehouseId = tr.find('[id*="hndWarehouseId"]');
             if (rdbWarehouse.is(":checked")) {
                 hndWarehouse.val(hndWarehouseId.val());
@@ -83,23 +80,31 @@
     function OnUserChangeSuccess(responseData) {
         dtMapping.fnClearTable();
         if (responseData.length > 0) {
+            debugger;
             $.each(responseData, function (i, item) {
-                item.WarehouseId =
-                     "<input type='hidden' name='WarehouseList[" + i + "].WarehouseId' value='" + item.WarehouseId + "' id='hndWarehouseId[" + i + "]' />" +
-                     "<label class='label'>" + item.WarehouseName + "</label>";
-                item.DefaultWarehouseId =
-                    "<label class='radio'>" +
-                      "<input type='radio' name='WarehouseList[" + i + "].IsActive' id='rdIsActive" + i + "' value='" + item.IsActive + "'" + (item.IsActive ? "checked" : "") + " onclick='SetRadio(this)'/>" +
-                      "<i></i>" +
-                      "<label  for='WarehouseList[" + i + "].IsActive'></label>" +
-                "</label>";
+                item.WarehouseName =
+                    "<input type='hidden' name='WarehouseList[" + i + "].WarehouseName' value='" + item.WarehouseName + "' id='hndWarehouseName[" + i + "]' />" +
+                     "<label class='label'>" + item.WarehouseName + "</label>";                
+                item.WarehouseId = SelectAll.GetChk('chkAllWarehouse', 'chkWarehouseId' + i, 'WarehouseList[' + i + '].IsActive', SelectWarehouse, item.IsActive) +
+                    "<input type='hidden' value='" + item.WarehouseId + "' name='WarehouseList[" + i + "].WarehouseId' id='hndWarehouseId" + i + "' checked='" + item.IsActive + "'/>";
             });
             dtMapping.fnAddData(responseData);
-
         }
     }
 
     function SetCheck(obj) {
         obj.value = obj.checked;
     }
+    function SelectWarehouse() {
+        debugger;
+        selectedWarehouseList = []
+        $('[id*="chkWarehouseId"]').each(function () {
+            var chkWarehouseId = $(this);
+            if (chkWarehouseId.IsActive) {
+                selectedWarehouseList.push($('#' + chkGrnId.Id.replace('chkWarehouseId', 'hndWarehouseId')).val());
+            }
+        });
+    }
+    
+
 </script>

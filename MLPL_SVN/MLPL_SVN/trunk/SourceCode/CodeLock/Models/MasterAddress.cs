@@ -53,26 +53,19 @@ namespace CodeLock.Models
         public string EmailId { get; set; }
 
         public byte CountryId { get; set; }
-
+        [Display(Name = "State Name")]
+        [Required(ErrorMessage = "Please select State Name")]
         public short StateId { get; set; }
 
         public short CustomerId { get; set; }
 
-
-        public string StateName { get; set; }
-
-        //[Display(Name = "Address")]
-        //[Required(ErrorMessage = "Please enter Address")]
-        //public string Address { get; set; }
-
-        [StringLength(10, ErrorMessage = "Provisional ID/No must be 10 character long", MinimumLength = 10)]
-        [Required(ErrorMessage = "Please enter Provisional ID/No")]
+        [Display(Name = "State Name")]
+        public string StateName { get; set; }   
         [Display(Name = "Provisional Id/No")]
         public string ProvisionalId { get; set; }
 
         [GstInNoAnnotation]
-        //[Required(ErrorMessage = "Please enter GSTIN No")]
-        // [AssertThat("RegistrationType = 1", ErrorMessage = "Please enter GSTIN No")]
+        [Required(ErrorMessage = "Please enter GSTIN No")]
         [Display(Name = "GSTIN No")]
         [StringLength(15, ErrorMessage = "GSTIN No must be 15 character long", MinimumLength = 15)]
         public string GstTinNo { get; set; }
@@ -87,5 +80,8 @@ namespace CodeLock.Models
         [Display(Name = "Registration Type")]
         [Required(ErrorMessage = "Please select registration type")]
         public string RegistrationType { get; set; }
+        [Display(Name = "Registration Type")]
+        public string RegistrationTypeId { get; set; }
+        public bool IsActive { get; set; }
     }
 }

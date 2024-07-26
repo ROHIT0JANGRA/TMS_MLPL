@@ -21,12 +21,12 @@ namespace CodeLock.Models
     [Display(Name = "Warehouse Name")]
     public string WarehouseName { get; set; }
 
-    [Display(Name = "Default Warehouse")]
+    [Display(Name = "")]
     public short DefaultWarehouseId { get; set; }
 
     [Display(Name = "Warehouse")]
     public List<MasterUserWarehouseMapping> WarehouseList { get; set; }
 
     public bool IsDefault { get; set; }
-  }
+    }
 }

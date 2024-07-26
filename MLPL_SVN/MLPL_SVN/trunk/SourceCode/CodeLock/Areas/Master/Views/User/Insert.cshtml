@@ -43,6 +43,12 @@
 
                 </div>
             </div>
+            @*<div class="col-sm-4">
+                @Html.LabelFor(model => model.UserDetails.UserLocation, new { @class = "label" })
+                @Html.HiddenFor(model => model.UserDetails.UserLocation, new { @id = "hdnUserLocation" })
+                @Html.DropDownListFor(model => model.UserDetails.UserLocation, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlUserLocation", @placeholder = "Select Location" })
+                @Html.ValidationMessageFor(model => model.UserDetails.UserLocation)
+            </div>*@
         </div>
         <div class="row">
             <div class="col-sm-4">
@@ -231,6 +237,12 @@
 }
 <script>
     $(document).ready(function () {
+        ddlUserLocation = $('#ddlUserLocation');
+        InitMultiSelect(ddlUserLocation.Id, true, false, true);
+        DropDownChange('ddlUserLocation', function () {
+            $('#hdnUserLocation').val($(this).val());
+        });
+
         SetPageLoad('User', 'Insert', 'txtUserName', 'Goto List', '@Url.Action("Index")');
         ddlUserType = $('#ddlUserType');
         hdnUserTypeMapId = $('#hdnUserTypeMapId');

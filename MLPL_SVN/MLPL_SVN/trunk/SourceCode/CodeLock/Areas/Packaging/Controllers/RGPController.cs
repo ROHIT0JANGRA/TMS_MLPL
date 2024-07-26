@@ -50,7 +50,7 @@ namespace CodeLock.Areas.Packaging.Controllers
         }
         //***************************************------Sap RGP Insert Api Fetch ---------------**************************************
 
-        private static List<BusinessPartnerDetails> _allBusinessPartners = new List<BusinessPartnerDetails>();
+        //private static List<BusinessPartnerDetails> _allBusinessPartners = new List<BusinessPartnerDetails>();
 
         //public async Task<ActionResult> GetRGPData(int start, int length, int draw)
         //{
