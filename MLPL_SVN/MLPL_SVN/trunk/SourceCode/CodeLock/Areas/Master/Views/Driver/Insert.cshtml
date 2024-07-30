@@ -5,203 +5,182 @@
     ViewBag.Title = "Insert";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .fa-image {
+        border: 2px solid #000; /* Black border */
+        padding: 10px; /* Padding around the image */
+        border-radius: 5px; /* Rounded corners */
+        width: 100%; /* Adjust the width as needed */
+        max-width: 150px; /* Maximum width */
+        display: block; /* Center the image */
+        margin: 0 auto; /* Center the image */
+    }
+</style>
 @using (Html.BeginForm("Insert", "Driver", FormMethod.Post, new { @class = "j-forms", enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     @Html.AntiModelInjectionFor(m => m.DriverId)
     @Html.Hidden("DriverId", 0)
 
-    <div class="widget-wrap">
-        <div class="row col-12 p-0 m-0 mb-4">
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.LicenseNo, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.LicenseNo, new { @class = "form-control", @id = "dlNo", @Value = "GJ04 20120005008" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.LicenseNo)
-                </div>
+<div class="widget-wrap">
+    <div class="row p-0 m-0 mb-4">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.LicenseNo, new { @class = "label" })
+                @Html.TextBoxFor(model => model.LicenseNo, new { @class = "form-control", @id = "dlNo" })
+                @Html.ValidationMessageFor(model => model.LicenseNo)
             </div>
-            @*
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.Partial("DateTimePicker", new DateTimePicker()
-                   {
-                       FieldName = "DoB",
-                       FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DoB),
-                       IsRequired = true,
-                       AllowFutureDate = false,
-                       AllowPastDate = true,
-                       MinDate = new DateTime(1950, 1, 1),
-                       MaxDate = DateTime.Now.AddDays(-18 * 365),
-                       // SetBlank = true,
-                       IsValidateFinYear = false,
-                       DefaultDate = new DateTime(1987, 5, 26)
+        </div>
 
-                   })
-                    </div>
-                </div>
-            *@
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="row">
-                    <div class="col-8 col-sm-8 col-md-8 pr-0">
-                        @Html.Partial("DateTimePicker", new DateTimePicker()
-                   {
-                       FieldName = "DoB",
-                       FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DoB),
-                       IsRequired = true,
-                       AllowFutureDate = false,
-                       AllowPastDate = true,
-                       MinDate = new DateTime(1950, 1, 1),
-                       MaxDate = DateTime.Now.AddDays(-18 * 365),
-                       // SetBlank = true,
-                       IsValidateFinYear = false,
-                       DefaultDate = new DateTime(1987, 5, 26)
+        <div class="col-lg-2 col-md-8 col-sm-6 mb-3">
+            <div class="">
+                @Html.Partial("DateTimePicker", new DateTimePicker()
+                {
+                    FieldName = "DoB",
+                    FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DoB),
+                    IsRequired = true,
+                    AllowFutureDate = false,
+                    AllowPastDate = true,
+                    MinDate = new DateTime(1950, 1, 1),
+                    MaxDate = DateTime.Now.AddDays(-18 * 365),
+                    IsValidateFinYear = false,
+                })
+            </div>
+        </div>
 
-                   })
-                    </div>
-                    <div class="col-4 col-sm-4 col-md-4 pl-0">
-                        <input type="button" id="btnGetDetail" class="btn btn-primary" value="Autofill">
-                    </div>
-                </div>
-            </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <input type="button" id="btnGetDetail" class="btn btn-primary w-100" value="Autofill">
+        </div>
 
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.DriverName, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.DriverName, new { @class = "form-control", @id = "txtDriverName" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.DriverName)
-                </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.DriverName, new { @class = "label" })
+                @Html.TextBoxFor(model => model.DriverName, new { @class = "form-control", @id = "txtDriverName", @disabled = "disabled" })
+                @Html.ValidationMessageFor(model => model.DriverName)
             </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.ManualDriverCode, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.ManualDriverCode, new { @class = "form-control", @id = "txtManualDriverCode" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.ManualDriverCode)
-                </div>
-            </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.DriverFatherName, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.DriverFatherName, new { @class = "form-control", @id = "txtDriverFatherName" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.DriverFatherName)
-                </div>
-            </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
-                    @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "txtVehicleNo" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.VehicleNo)
-                </div>
-            </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.HiddenFor(model => model.DriverLocationId, new { @id = "hdnDriverLocationId" })
-                    @Html.LabelFor(model => model.DriverLocationCode, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.DriverLocationCode, new { @class = "form-control", @id = "txtDriverLocationCode" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.DriverLocationCode)
-                </div>
-            </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.MobileNo, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.MobileNo, new { @class = "form-control", @id = "mobileNo" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.MobileNo)
-                </div>
-            </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.PermanentAddress, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.PermanentAddress, new { @class = "form-control", @id = "txtPermanentAddress" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.PermanentAddress)
-                </div>
-            </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.HiddenFor(model => model.PermanentCityId, new { @id = "hdnPermanentCityId" })
-                    @Html.LabelFor(model => model.PermanentCityName, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.PermanentCityName, new { @class = "form-control", @id = "txtPermanentCityName" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.PermanentCityName)
-                </div>
-            </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.PermanentPincode, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.PermanentPincode, new { @class = "form-control", @id = "txtPermanentPincode" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.PermanentPincode)
-                </div>
-            </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.UsePermanentAddressAsCurrentAddress, new { @class = "label", @for = "chkCopyAddress" })
-                    <label class="checkbox">
-                        @Html.CheckBoxFor(model => model.UsePermanentAddressAsCurrentAddress, new { @id = "chkCopyAddress" })
-                        <i></i>
-                    </label>
-                </div>
-            </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.CurrentAddress, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.CurrentAddress, new { @class = "form-control", @id = "txtCurrentAddress" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.CurrentAddress)
-                </div>
-            </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.HiddenFor(model => model.CurrentCityId, new { @id = "hdnCurrentCityId" })
-                    @Html.LabelFor(model => model.CurrentCityName, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.CurrentCityName, new { @class = "form-control", @id = "txtCurrentCityName" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.CurrentCityName)
-                </div>
-            </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.CurrentPincode, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.CurrentPincode, new { @class = "form-control", @id = "txtCurrentPincode" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.CurrentPincode)
-                </div>
-            </div>
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "LicenseValidityDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.LicenseValidityDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = false, SetBlank = true, IsValidateFinYear = false })
-                </div>
-            </div>
+        </div>
 
-            <div class="m-0 col-12 col-sm-4 col-md-3">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.LicenseIssueBy, new { @class = "label" })
-                    <div class="input">
-                        @Html.TextBoxFor(model => model.LicenseIssueBy, new { @class = "form-control" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.LicenseIssueBy)
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <label class="form-content"></label>
+            <img id="fuDocumentAttachment" name="DocumentDetails[1].DocumentAttachment" class="fa-image" alt="Driver Profile Image" />
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ManualDriverCode, new { @class = "label" })
+                @Html.TextBoxFor(model => model.ManualDriverCode, new { @class = "form-control", @id = "txtManualDriverCode", @disabled = "disabled" })
+                @Html.ValidationMessageFor(model => model.ManualDriverCode)
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.DriverFatherName, new { @class = "label" })
+                @Html.TextBoxFor(model => model.DriverFatherName, new { @class = "form-control", @id = "txtDriverFatherName", @disabled = "disabled" })
+                @Html.ValidationMessageFor(model => model.DriverFatherName)
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.HiddenFor(model => model.VehicleId, new { @id = "hdnVehicleId" })
+                @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
+                @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "txtVehicleNo" })
+                @Html.ValidationMessageFor(model => model.VehicleNo)
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.HiddenFor(model => model.DriverLocationId, new { @id = "hdnDriverLocationId" })
+                @Html.LabelFor(model => model.DriverLocationCode, new { @class = "label" })
+                @Html.TextBoxFor(model => model.DriverLocationCode, new { @class = "form-control", @id = "txtDriverLocationCode" })
+                @Html.ValidationMessageFor(model => model.DriverLocationCode)
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MobileNo, new { @class = "label" })
+                @Html.TextBoxFor(model => model.MobileNo, new { @class = "form-control", @id = "mobileNo" })
+                @Html.ValidationMessageFor(model => model.MobileNo)
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.PermanentAddress, new { @class = "label" })
+                @Html.TextBoxFor(model => model.PermanentAddress, new { @class = "form-control", @id = "txtPermanentAddress" })
+                @Html.ValidationMessageFor(model => model.PermanentAddress)
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.HiddenFor(model => model.PermanentCityId, new { @id = "hdnPermanentCityId" })
+                @Html.LabelFor(model => model.PermanentCityName, new { @class = "label" })
+                @Html.TextBoxFor(model => model.PermanentCityName, new { @class = "form-control", @id = "txtPermanentCityName" })
+                @Html.ValidationMessageFor(model => model.PermanentCityName)
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.PermanentPincode, new { @class = "label" })
+                @Html.TextBoxFor(model => model.PermanentPincode, new { @class = "form-control", @id = "txtPermanentPincode" })
+                @Html.ValidationMessageFor(model => model.PermanentPincode)
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.UsePermanentAddressAsCurrentAddress, new { @class = "label", @for = "chkCopyAddress" })
+                <div class="form-check">
+                    @Html.CheckBoxFor(model => model.UsePermanentAddressAsCurrentAddress, new { @class = "form-check-input", @id = "chkCopyAddress" })
+                    <i></i>
                 </div>
             </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.CurrentAddress, new { @class = "label" })
+                @Html.TextBoxFor(model => model.CurrentAddress, new { @class = "form-control", @id = "txtCurrentAddress" })
+                @Html.ValidationMessageFor(model => model.CurrentAddress)
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.HiddenFor(model => model.CurrentCityId, new { @id = "hdnCurrentCityId" })
+                @Html.LabelFor(model => model.CurrentCityName, new { @class = "label" })
+                @Html.TextBoxFor(model => model.CurrentCityName, new { @class = "form-control", @id = "txtCurrentCityName" })
+                @Html.ValidationMessageFor(model => model.CurrentCityName)
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.CurrentPincode, new { @class = "label" })
+                @Html.TextBoxFor(model => model.CurrentPincode, new { @class = "form-control", @id = "txtCurrentPincode", @disabled = "disabled" })
+                @Html.ValidationMessageFor(model => model.CurrentPincode)
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.Partial("DateTimePicker", new DateTimePicker() { FieldName = "LicenseValidityDate", FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.LicenseValidityDate), IsRequired = true, AllowFutureDate = true, AllowPastDate = false, SetBlank = true, IsValidateFinYear = false })
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="form-group">
+                @Html.LabelFor(model => model.LicenseIssueBy, new { @class = "label" })
+                @Html.TextBoxFor(model => model.LicenseIssueBy, new { @class = "form-control", @id = "txtLicenseIssueBy" })
+                @Html.ValidationMessageFor(model => model.LicenseIssueBy)
+            </div>
+        </div>
+
             <div class="m-0 col-12 col-sm-4 col-md-3">
                 <div class="form-group">
                     @Html.LabelFor(model => model.GuarantorName, new { @class = "label" })
@@ -281,58 +260,59 @@
                 </div>
             </div>
         </div>
-        <div class="page-separator">Driver Document Type</div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="flip-scroll overflow-table">
-                    <table class="table table-condensed cf" id="dtDocumentDetail">
-                        <thead class="cf">
-                            <tr>
-                                <th>Document</th>
-                                <th></th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (int i = 0; i < Model.DocumentDetails.Count; i++)
-                            {
+            <div class="page-separator">Driver Document Type</div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="flip-scroll overflow-table">
+                        <table class="table table-condensed cf" id="dtDocumentDetail">
+                            <thead class="cf">
                                 <tr>
-                                    <td>
-                                        <div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.DocumentDetails[i].DocumentTypeId, new { @class = "label" })
-                                                <div class="select">
-                                                    @Html.DropDownListFor(model => model.DocumentDetails[i].DocumentTypeId, new SelectList(ViewBag.DriverDocumentList, "Value", "Name"), "Select Driver DocumentList", new { @class = "form-control", @id = "ddlDocumentTypeId" + i.ToString() })
-                                                    <i></i>
-                                                </div>
-                                                @Html.ValidationMessageFor(model => model.DocumentDetails[i].DocumentTypeId)
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="input">
-                                            Browse
-                                            <input type="file" class="form-control" id="@("fuDocumentAttachment" + i)" name="@("DocumentDetails[" + i + "].DocumentAttachment")" onchange="document.getelementbyid('prepend-big-btn').value=this.value;">
-                                            @Html.HiddenFor(model => model.DocumentDetails[i].DocumentAttachment, new { @id = "hdnDocumentAttachment", @Value = Model.DocumentDetails[i].DocumentAttachment })
-                                        </div>
-                                        @Html.ValidationMessageFor(model => model.DocumentDetails[i].DocumentAttachment)
-                                    </td>
-                                    <td></td>
+                                    <th>Document</th>
+                                    <th></th>
+                                    <th>Action</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.DocumentDetails.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.DocumentDetails[i].DocumentTypeId, new { @class = "label" })
+                                                    <div class="select">
+                                                        @Html.DropDownListFor(model => model.DocumentDetails[i].DocumentTypeId, new SelectList(ViewBag.DriverDocumentList, "Value", "Name"), "Select Driver DocumentList", new { @class = "form-control", @id = "ddlDocumentTypeId" + i.ToString() })
+                                                        <i></i>
+                                                    </div>
+                                                    @Html.ValidationMessageFor(model => model.DocumentDetails[i].DocumentTypeId)
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="input">
+                                                Browse
+                                                <input type="file" class="form-control" id="@("fuDocumentAttachment" + i)" name="@("DocumentDetails[" + i + "].DocumentAttachment")" onchange="document.getelementbyid('prepend-big-btn').value=this.value;">
+                                                @Html.HiddenFor(model => model.DocumentDetails[i].DocumentAttachment, new { @id = "hdnDocumentAttachment", @Value = Model.DocumentDetails[i].DocumentAttachment })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.DocumentDetails[i].DocumentAttachment)
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+            <div class="form-footer">
+                <button type="submit" class="btn btn-success primary-btn">Create</button>
+            </div>
         </div>
-        <div class="form-footer">
-            <button type="submit" class="btn btn-success primary-btn">Create</button>
-        </div>
-    </div>
 }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script>
+    var mob = 0;
     $(document).ready(function () {
         SetPageLoad('Driver', 'Add', 'DriverName', 'Go To List', '@Url.Action("Index")');
         txtVehicleNo = $('#txtVehicleNo');
@@ -450,7 +430,11 @@
 
         console.log('typeof dlDobDate : ', typeof dlDobDate);
         console.log('dlNo : ', dlNo, 'dlDobDate : ', dlDobDate);
-        if (dlNo && dlDobDate) {
+        if (dlNo.value = '') {
+            alert("Please Enter Driving License No");
+        } if (dlDobDate.value = '') {
+            alert("Please Enter Driver DOB");
+        } if (dlNo && dlDobDate) { 
             $.ajax({
                 url: '@Url.Action("FetchDriverDetailsFromApi", "Driver")',
                 type: 'POST',
@@ -461,6 +445,7 @@
                 },
                 success: function (data) {
                     parseData = JSON.parse(data);
+                    console.log(data);
                     if (parseData.code === "200") {
                         console.log('parseData : ', parseData);
                         bioObj = parseData.response[0].response.dldetobj[0].bioObj;
@@ -468,8 +453,9 @@
                         $('#txtDriverName').val(bioFullName);
                         bioSwdFullName = bioObj.bioSwdFullName;
                         $('#txtDriverFatherName').val(bioSwdFullName);
-                        bioMobileNo = bioObj.bioMobileNo;
+                        bioMobileNo = bioObj.bioMobileNo;                 
                         $('#mobileNo').val(bioMobileNo);
+                        mob = bioMobileNo;
                         bioApplno = bioObj.bioApplno;
                         $('#txtManualDriverCode').val(bioApplno);
                         bioPermAdd1 = bioObj.bioPermAdd1;
@@ -488,7 +474,6 @@
                         $('#txtCurrentPincode').val(bioTempPin);
                         bioTempSdName = bioObj.bioTempSdName;
                         $('#txtCurrentCityName').val(bioTempSdName);
-
                         dlobj = parseData.response[0].response.dldetobj[0].dlobj;
                         olaName = dlobj.olaName;
                         $('#LicenseIssueBy').val(olaName);
@@ -497,8 +482,17 @@
                         dlIssuedt = moment(dlobj.dlIssuedt, "YYYY-MM-DD").format("DD/MM/YYYY");
                         $('#txtLicenseInitialIssueDate').val(dlIssuedt);
                         $('#txtLicenseCurrentIssueDate').val(dlIssuedt);
-
-
+                        // Set the driver image
+                        var driverImageBase64 = parseData.response[0].response.dldetobj[0].bioImgObj.biPhoto;
+                            // Assuming the image data is in bioDriverImage
+                        console.log(driverImageBase64);                
+                        if (driverImageBase64) {
+                            $('#fuDocumentAttachment').attr('src', 'data:image/png;base64,' + driverImageBase64);
+                        }
+                    else {
+                        console.log(parseData.code);
+                        alert(parseData.message);
+                    }
                     }
                     else {
                         console.log(parseData.code);
@@ -511,9 +505,14 @@
                     alert('Error fetching details');
                 }
             });
+        
         } else {
             alert('Driving License No and DOB are both mandatory');
         }
+
     });
+
+
+    
 });
 </script>

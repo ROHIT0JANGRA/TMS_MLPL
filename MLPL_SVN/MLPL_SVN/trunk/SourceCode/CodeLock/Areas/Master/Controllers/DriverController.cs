@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Secure_Coding.MvcSecurityExtensions;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -221,7 +222,10 @@ namespace CodeLock.Areas.Master.Controllers
                 };
                 var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(requestBody);
                 var content = new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json");
-                var response = await httpClient.PostAsync("https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/SARATHI/01", content);
+                // var response = await httpClient.PostAsync("https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/SARATHI/01", content);
+                string ulipUrl = ConfigurationManager.AppSettings["UlipUrl"];
+
+                var response = await httpClient.PostAsync($"{ulipUrl}/SARATHI/01", content);
                 var statusCode = response.StatusCode;
                 if (response.IsSuccessStatusCode)
                 {

@@ -47,7 +47,7 @@ namespace CodeLock.Api_Services
             {
                 var loginRequestBody = new
                 {
-                    CompanyDB = "MLPLTEST2",
+                    CompanyDB = "MLPLAPI",
                     Password = "9811",
                     UserName = "manager"
                 };

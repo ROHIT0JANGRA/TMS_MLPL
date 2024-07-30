@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Configuration;
 
 namespace CodeLock.Api_Services
 {
@@ -36,13 +37,20 @@ namespace CodeLock.Api_Services
         }
         private static async Task<string> GenerateBearerTokenAsync()
         {
-            // System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
 
+            //var jsonBody = new
+            //{
+            //    username = "mahalakshmi_usr",
+            //    password = "mahalakshmi@30042024"
+            //};
+            // ULIP API  Live Login 
             var jsonBody = new
             {
                 username = "mahalakshmi_usr",
-                password = "mahalakshmi@30042024"
+                password = "mahalakshmi@26072024"
             };
+
             string jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(jsonBody);
             // Create the HTTP client
             using (var httpClient = new HttpClient())
@@ -53,7 +61,12 @@ namespace CodeLock.Api_Services
                 // Create the content to be sent in the request body
                 var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
                 // Make the POST request
-                var response = await httpClient.PostAsync("https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/user/login", content);
+                //   var response = await httpClient.PostAsync("https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/user/login", content);
+
+                string ulipUrl = ConfigurationManager.AppSettings["UlipUrl"];
+
+                var response = await httpClient.PostAsync($"{ulipUrl}/user/login", content);
+
                 // Check if the request was successful
                 if (response.IsSuccessStatusCode)
                 {

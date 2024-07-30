@@ -22,7 +22,13 @@ namespace CodeLock.Areas.Master.Repository
       return DataBaseFactory.QuerySP<MasterGeneral>("Usp_MasterGeneral_GetCodeType", (object) null, "General Master - GetCodeTypeList");
     }
 
-    public string GetCodeTypeById(short id)
+        public IEnumerable<AutoCompleteResult> GetAllPkgWarehouseList()
+        {
+
+            var data = DataBaseFactory.QuerySP<AutoCompleteResult>("Usp_PKG_WarehouseMaster", (object)null, "General Warehouse Master - GetPKGWarehouseList");
+            return data;
+        }
+        public string GetCodeTypeById(short id)
     {
       DynamicParameters dynamicParameters = new DynamicParameters();
       dynamicParameters.Add("@CodeTypeId", (object) id, new DbType?(DbType.Int16), new ParameterDirection?(), new int?(), new byte?(), new byte?());

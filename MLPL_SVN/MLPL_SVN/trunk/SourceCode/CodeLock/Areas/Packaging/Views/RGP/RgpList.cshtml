@@ -1,87 +1,192 @@
-﻿@model CodeLock.Models.MasterCustomer
+﻿@model CodeLock.Models.PackagingModel
 @{
     ViewBag.Title = "RgpList";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <div class="uk-grid">
-    <h2>RgpList</h2>            <p class="text-danger">@ViewBag.Error </p>
-
+    <h2>RgpList</h2>
+    <p class="text-danger">@ViewBag.Error</p>
 </div>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
 
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<div class="widget-wrap material-table-widget">
+    <span><a href="@Url.Action("RgpInsert","RGP")" class="btn btn-primary">Insert</a></span>
+    <div class="table-responsive">
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-12">
 
-            <div>
-                <button id="loadDetails" class="btn btn-purple">Load Details</button>
-                <a class="btn btn-info" href="@Url.Action("RgpInsert","RGP")">Insert</a>
-                <table class="table table-bordered table-responsive " id="orderDetailsTable">
-                    <thead style="background-color: rgb(17, 134, 132);color:white;">
-                        <tr>
-                            <th>CardCode</th>
-                            <th>CardName</th>
-                            <th>CardType</th>
-                       
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <table id="dataTable" class="table table-bordered table-responsive">
+            <thead style="background-color: #139c9b;color:white;">
+                <tr>
+                    <th>Challan No</th>
+                    <th>Series</th>
+                    <th>Card Code</th>
+                    <th>Party Name</th>
+                    <th>From Warehouse</th>
+                    <th>To Warehouse</th>
+                    <th>BPL Name</th>
+                    <th>Creation Date</th>
+                    <th>Vehicle No</th>
+                    <th>Transporter</th>
+                    <th> Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Table body will be populated dynamically -->
+            </tbody>
+        </table>
     </div>
 </div>
-<script>
-$(document).ready(function () {
-    var table = $('#orderDetailsTable').DataTable({
-        "processing": true,
-        "serverSide": true,
-        "ajax": {
-            "url": '@Url.Action("GetRGPData", "RGP")',
-            "type": "GET",
-            "dataSrc": function (json) {
-                try {
-                    // Check if pako is defined
-                    if (typeof pako === 'undefined') {
-                        throw new Error('Pako library is not loaded.');
+
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" />
+
+    <script>
+    $(document).ready(function () {
+        initializeDataTable();
+    });
+
+    function initializeDataTable() {
+        $('#dataTable').DataTable({
+            serverSide: true,
+            ajax: {
+                url: '@Url.Action("StockTransferPagination", "RGP")',
+                type: 'GET',
+                dataType: 'json',
+                data: function (d) {
+                    console.log(d); // Debugging: log data object to check the request parameters
+                    return {
+                        draw: d.draw,
+                        start: d.start,
+                        length: d.length,
+                        search: d.search.value
+                    };
+                },
+                dataSrc: function (json) {
+                    console.log('AJAX response:', json); // Log JSON response for debugging
+                    if (json.error) {
+                        console.error('Error:', json.error);
+                       // Alert user to the error
+                        return [];
                     }
-
-                    // Handle gzip decoding and extract data
-                    var gzipData = json.Content; // Assuming Content contains gzipped data
-
-                    // Decompress gzip data using pako
-                    var inflatedData = pako.inflate(gzipData, { to: 'string' });
-
-                    var jsonData = JSON.parse(inflatedData); // Parse JSON from decompressed string
-
-                    return jsonData.value; // Assuming 'value' contains the array of data
-                } catch (error) {
-                    console.error('Error in dataSrc function:', error);
-                    return [];
+                    return json.data; // Return the 'data' array directly
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX Error:', error);
+                    alert('An error occurred while fetching data.'); // Alert user to the error
                 }
             },
-            "error": function (xhr, error, thrown) {
-                alert('Error loading data: ' + error);
+            lengthMenu: [10, 15, 20, 50, 100], // Define fixed length options
+            pageLength: 10, // Default page length
+            columns: [
+                { data: 'Reference1', title: 'RGP-No' },
+                { data: 'Series', title: 'Series' },
+                { data: 'CardCode', title: 'Card Code' },
+                { data: 'CardName', title: 'Party Name' },
+                { data: 'FromWarehouse', title: 'From Warehouse' },
+                { data: 'ToWarehouse', title: 'To Warehouse' },
+                { data: 'BPLName', title: 'BPL Name' },
+                {
+                    data: 'DocDate', title: 'Creation Date', render: function (data, type, row) {
+                        // Extract timestamp from /Date(1698172200000)/ format
+                        if (data) {
+                            var timestamp = parseInt(data.replace('/Date(', '').replace(')/', ''));
+                            var date = new Date(timestamp);
+                            // Format the date (e.g., YYYY-MM-DD)
+                            return date.toISOString().split('T')[0];
+                        }
+                        return '';
+                    } },
+                { data: 'U_VehicleNo', title: 'Vehicle No' },
+                { data: 'U_TrnspName', title: 'Transporter' },
+                  {
+            data: null, title: 'Actions', render: function (data, type, row) {
+                  var updateUrl = '@Url.Action("Update", "Vehicle", new { id = "__id__" })'.replace('__id__', row.Reference1);
+                   var viewUrl = '@Url.Action("ViewRGPDetails", "RGP", new { Reference1 = "__Reference1__" })'.replace('__Reference1__', row.Reference1);
+            return '<div class="btn-toolbar" role="toolbar">\
+                        <div class="btn-group" role="group">\
+                            <a class="btn btn-default btn-sm m-user-edit" href="' + updateUrl + '"><span class="zmdi zmdi-edit"></span></a>\
+                            <a class="btn btn-default btn-sm m-user-edit" href="' + viewUrl + '"><span class="fa fa-file"></span></a>\
+                        </div>\
+                    </div>';
+        }
+    }
+
+            ],
+
+            drawCallback: function (settings) {
+                var api = this.api();
+                var pageInfo = api.page.info();
+                console.log('Current Page:', pageInfo.page); // Current page index
+                console.log('Records on this page:', pageInfo.recordsDisplay); // Total records displayed
+            },
+            language: {
+                emptyTable: 'No records found.',
+                processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span>'
             }
-        },
-        "columns": [
-            { "data": "CardCode" },
-            { "data": "CardName" },
-            { "data": "CardType" }
-
-        ],
-        "pageLength": 20 // Number of records per page
-    });
-
-    $('#loadDetails').click(function () {
-        table.ajax.reload();
-    });
-});
+        });
+        }
+            function viewDetails(Reference1) {
+        window.location.href = '@Url.Action("ViewRGPDetails", "RGP")' + '?Reference1=' + Reference1;
+    }
+    </script>
+}
 
 
-</script>
+@*@section scripts {
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+        <script>
+            var getAllCustomersUrl = '';
+            $(document).ready(function () {
+                // LoadDataTable('dtCustomer', true, true, true);
+                GetCustomerData();
+            });
+            function GetCustomerData() {
+                $.ajax({
+                    url: '@Url.Action("StockTransferPagination", "RGP")',
+                    type: 'GET',
+                    dataType: 'json', // Specify the expected data type
+                    success: function (d) {
+                        $('#dtCustomer').DataTable({
+                            data: d.data,
+                            lengthMenu: [10, 15, 20, 50, 100], // Define fixed length options
+                            pageLength: 10, // Default page length
+                            columns: [
+                                { data: 'DocDate', title: 'Doc Date' },
+                                { data: 'CardCode', title: 'Card Code' },
+                                { data: 'CardName', title: 'Card Name' },
+                                { data: 'FromWarehouse', title: 'From Warehouse' },
+                                { data: 'ToWarehouse', title: 'To Warehouse' },
+                                { data: 'BPLName', title: 'BPL Name' },
+                                { data: 'ShipToCode', title: 'Ship To Code' },
+                                { data: 'U_VehicleNo', title: 'Vehicle No' },
+                                { data: 'U_TrnspID', title: 'Transporter ID' },
+                                { data: 'U_TrnspName', title: 'Transporter Name' },
+                                { data: 'DocEntry', title: 'Doc Entry' },
+                                { data: 'ItemCode', title: 'Item Code' },
+                                { data: 'ItemDescription', title: 'Item Description' },
+                                { data: 'Quantity', title: 'Quantity' },
+                                { data: 'Price', title: 'Price' },
+                                { data: 'WarehouseCode', title: 'Warehouse Code' },
+                                { data: 'FromWarehouseCode', title: 'From Warehouse Code' }
+                            ],
+                            drawCallback: function (settings) {
+                                var api = this.api();
+                                var pageInfo = api.page.info();
+                                console.log('Current Page:', pageInfo.page); // Current page index
+                                console.log('Records on this page:', pageInfo.recordsDisplay); // Total records displayed
+                            }
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX Error:', error);
+                        alert('An error occurred while fetching data.'); // Optional: Alert user to the error
+                    }
+                });
+            }
+        </script>
+    }
+*@

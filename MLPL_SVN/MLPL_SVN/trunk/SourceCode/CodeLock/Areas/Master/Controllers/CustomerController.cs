@@ -203,8 +203,7 @@ namespace CodeLock.Areas.Master.Controllers
                 EmailId = "",
                 StatisticalChargesCode = "",
                 IsActive = true,
-                IsMreNoApplicable = false
-                ,
+                IsMreNoApplicable = false,
                 CountryId = 0,
                 StateId = 0
             };
@@ -225,7 +224,7 @@ namespace CodeLock.Areas.Master.Controllers
 
         [HttpPost]
         [ValidateAntiModelInjection("CustomerId")]
-        public ActionResult Insert(MasterCustomer objMasterCustomer)
+        public   ActionResult Insert(MasterCustomer objMasterCustomer)
         {
 
             ActionResult action;
@@ -241,7 +240,9 @@ namespace CodeLock.Areas.Master.Controllers
             objMasterCustomer.MasterCustomerDetail.EntryBy = SessionUtility.LoginUserId;
 
             int num = this.customerRepository.Insert(objMasterCustomer);
+
             action = base.RedirectToAction("View", new { id = num });
+
             //}
             return action;
         }
@@ -353,16 +354,87 @@ namespace CodeLock.Areas.Master.Controllers
 
             return null;
         }
-
-        public async Task<ActionResult> GetData()
+        public async Task<ActionResult> PostBPMasterDataWithApi(MasterCustomer masterCustomer)
         {
+            // Get or generate session ID
             string sessionId = SapSessionManagerController.GetSessionId();
-
             if (string.IsNullOrEmpty(sessionId))
             {
                 sessionId = await SapSessionManagerController.GenerateToken();
             }
             ViewBag.SessionId = sessionId;
+
+            // Build the request body
+            var requestBody = new
+            {
+                CustomerCode = masterCustomer.CustomerCode,
+                CustomerName = masterCustomer.CustomerName,
+                CustomerLocation = masterCustomer.CustomerLocation,
+                CustomerDeliveryLocation = masterCustomer.CustomerDeliveryLocation,
+                SystemCode = masterCustomer.SystemCode,
+                GroupCode = masterCustomer.GroupCode,
+                GroupName = masterCustomer.GroupName,
+                PayBasId = masterCustomer.PayBasId,
+                PayBasName = masterCustomer.PayBasName,
+                SavedCustomerLocation = masterCustomer.SavedCustomerLocation,
+                SavedCustomerDeliveryLocation = masterCustomer.SavedCustomerDeliveryLocation,
+                IsMilkrunHrsPerDayEnabled = masterCustomer.IsMilkrunHrsPerDayEnabled,
+                PhoneNo = masterCustomer.PhoneNo,
+                TotalCustomers = masterCustomer.TotalCustomers,
+                FilterCustomers = masterCustomer.FilterCustomers,
+
+                // Nested BusinessPartnerDetails
+                BusinessPartnerDetails = new
+                {
+                    PaymentTerms = masterCustomer.BusinessPartnerDetails.PaymentTerms,
+                    InterestOnArrearsPercentage = masterCustomer.BusinessPartnerDetails.InterestOnArrearsPercentage,
+                    PriceList = masterCustomer.BusinessPartnerDetails.PriceList,
+                    TotalDiscountPercentage = masterCustomer.BusinessPartnerDetails.TotalDiscountPercentage,
+                    CreditLimit = masterCustomer.BusinessPartnerDetails.CreditLimit,
+                    CommitmentLimit = masterCustomer.BusinessPartnerDetails.CommitmentLimit,
+                    DunningTerm = masterCustomer.BusinessPartnerDetails.DunningTerm,
+                    EffectiveDiscountsGroups = masterCustomer.BusinessPartnerDetails.EffectiveDiscountsGroups,
+                    BankCountryRegion = masterCustomer.BusinessPartnerDetails.BankCountryRegion,
+                    BankName = masterCustomer.BusinessPartnerDetails.BankName,
+                    BankCode = masterCustomer.BusinessPartnerDetails.BankCode,
+                    Account = masterCustomer.BusinessPartnerDetails.Account,
+                    BICSWIFTCode = masterCustomer.BusinessPartnerDetails.BICSWIFTCode,
+                    BankAccountName = masterCustomer.BusinessPartnerDetails.BankAccountName,
+                    Branch = masterCustomer.BusinessPartnerDetails.Branch,
+                    CtrlIntID = masterCustomer.BusinessPartnerDetails.CtrlIntID,
+                    MandateID = masterCustomer.BusinessPartnerDetails.MandateID,
+                    DateOfSignature = masterCustomer.BusinessPartnerDetails.DateOfSignature,
+                    AddressCode = masterCustomer.BusinessPartnerDetails.AddressCode
+                },
+
+                // Nested MasterCustomerDetail (if applicable)
+                MasterCustomerDetail = new
+                {
+                    // Add fields from MasterCustomerDetail if needed
+                },
+
+                // Nested MasterCustomerAddressInfo (if applicable)
+                MasterCustomerAddressInfo = new
+                {
+                    // Add fields from MasterCustomerAddressInfo if needed
+                },
+
+                // Nested MasterAddressList (if applicable)
+                MasterAddressList = masterCustomer.MasterAddressList.Select(address => new
+                {
+                    AddressCode = address.AddressCode,
+                    Address1 = address.Address1,
+                    Address2 = address.Address2,
+                    CityId = address.CityId,
+                    CityName = address.CityName,
+                    Pincode = address.Pincode,
+                    MobileNo = address.MobileNo,
+                    EmailId = address.EmailId,
+                    StatisticalChargesCode = address.StatisticalChargesCode,
+                    IsActive = address.IsActive,
+                    IsMreNoApplicable = address.IsMreNoApplicable
+                }).ToList()
+            };
 
             // Create HttpClient instance with handlers to ignore certificate validation
             HttpClientHandler handler = new HttpClientHandler();
@@ -379,58 +451,142 @@ namespace CodeLock.Areas.Master.Controllers
                     client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
 
                     // Set cookies for session management
-                    CookieContainer cookies = new CookieContainer();
+                    var cookies = new CookieContainer();
                     cookies.Add(new Cookie("B1SESSION", sessionId) { Domain = "103.194.8.71" }); // Replace with your session ID
                     cookies.Add(new Cookie("ROUTEID", ".node1") { Domain = "103.194.8.71" });
                     handler.CookieContainer = cookies;
 
-                    // Send GET request
-                    HttpResponseMessage response = await client.GetAsync("https://103.194.8.71:50000/b1s/v1/BusinessPartners"); // ('V0137')";
+                    // Send POST request with the request body
+                    var jsonString = JsonConvert.SerializeObject(requestBody);
+                    var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = await client.PostAsync("https://103.194.8.71:50000/b1s/v1/BusinessPartners", content);
 
                     // Check if successful
                     if (response.IsSuccessStatusCode)
                     {
+                        string responseBody = await response.Content.ReadAsStringAsync();
                         if (response.Content.Headers.ContentEncoding.Contains("gzip"))
                         {
                             using (var gzipStream = new GZipStream(await response.Content.ReadAsStreamAsync(), CompressionMode.Decompress))
                             using (var streamReader = new StreamReader(gzipStream))
                             {
-                                string responseBody = await streamReader.ReadToEndAsync();
-                                // string responseObject = JsonConvert.DeserializeObject<string>(responseBody);
-                                ViewBag.responseData = responseBody;
-
-                                return Json(responseBody, JsonRequestBehavior.AllowGet);
-                                // return View();
+                                responseBody = await streamReader.ReadToEndAsync();
                             }
                         }
-                        else
-                        {
-                            // Handle unsuccessful request (e.g., log, throw exception, return error response)
-                            // return Json("response is ok but data not retrive", JsonRequestBehavior.AllowGet);
-                            return ViewBag.responseData = "response is ok but data not retrive";
-                        }
+
+                        ViewBag.ResponseData = responseBody;
+                        return Json(responseBody, JsonRequestBehavior.AllowGet);
                     }
                     else
                     {
                         sessionId = await SapSessionManagerController.GenerateToken();
-                        ViewBag.responseData = $"Failed to retrieve data. Status code: {response.StatusCode}";
+                        ViewBag.ResponseData = $"Failed to retrieve data. Status code: {response.StatusCode}";
                         return View();
                     }
                 }
                 catch (HttpRequestException ex)
                 {
                     // Handle HTTP request exceptions
-                    // return Json(new { error = $"HttpRequestException: {ex.Message}" }, JsonRequestBehavior.AllowGet);
-                    return ViewBag.responseData = $"HttpRequestException: {ex.Message}";
+                    ViewBag.ResponseData = $"HttpRequestException: {ex.Message}";
+                    return View();
                 }
                 catch (Exception ex)
                 {
                     // Handle other exceptions
-                    // return Json(new { error = $"Exception: {ex.Message}" }, JsonRequestBehavior.AllowGet);
-                    return ViewBag.responseData = $"Exception: {ex.Message}";
+                    ViewBag.ResponseData = $"Exception: {ex.Message}";
+                    return View();
                 }
             }
         }
+
+        //public async Task<ActionResult> PostBPMasterDataWithApi(MasterCustomer masterCustomer)
+        //{
+        //    string sessionId = SapSessionManagerController.GetSessionId();
+
+
+        //    if (string.IsNullOrEmpty(sessionId))
+        //    {
+        //        sessionId = await SapSessionManagerController.GenerateToken();
+        //    }
+        //    ViewBag.SessionId = sessionId;
+
+        //    var RequestBody = new
+        //    {
+        //        CustomerCode = masterCustomer.CustomerCode,
+        //        CustomerName = masterCustomer.CustomerName,
+        //        CustomerLocation = masterCustomer.CustomerLocation
+
+
+        //    };
+
+
+        //    // Create HttpClient instance with handlers to ignore certificate validation
+        //    HttpClientHandler handler = new HttpClientHandler();
+        //    handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+
+        //    using (HttpClient client = new HttpClient(handler))
+        //    {
+        //        try
+        //        {
+        //            // Set headers
+        //            client.DefaultRequestHeaders.Add("B1S-WCFCompatible", "true");
+        //            client.DefaultRequestHeaders.Add("B1S-MetadataWithoutSession", "true");
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+        //            client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+
+        //            // Set cookies for session management
+        //            CookieContainer cookies = new CookieContainer();
+        //            cookies.Add(new Cookie("B1SESSION", sessionId) { Domain = "103.194.8.71" }); // Replace with your session ID
+        //            cookies.Add(new Cookie("ROUTEID", ".node1") { Domain = "103.194.8.71" });
+        //            handler.CookieContainer = cookies;
+
+        //            // Send GET request
+        //            HttpResponseMessage response = await client.GetAsync("https://103.194.8.71:50000/b1s/v1/BusinessPartners"); // ('V0137')";
+
+        //            // Check if successful
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                if (response.Content.Headers.ContentEncoding.Contains("gzip"))
+        //                {
+        //                    using (var gzipStream = new GZipStream(await response.Content.ReadAsStreamAsync(), CompressionMode.Decompress))
+        //                    using (var streamReader = new StreamReader(gzipStream))
+        //                    {
+        //                        string responseBody = await streamReader.ReadToEndAsync();
+        //                        // string responseObject = JsonConvert.DeserializeObject<string>(responseBody);
+        //                        ViewBag.responseData = responseBody;
+
+        //                        return Json(responseBody, JsonRequestBehavior.AllowGet);
+        //                        // return View();
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    // Handle unsuccessful request (e.g., log, throw exception, return error response)
+        //                    // return Json("response is ok but data not retrive", JsonRequestBehavior.AllowGet);
+        //                    return ViewBag.responseData = "response is ok but data not retrive";
+        //                }
+        //            }
+        //            else
+        //            {
+        //                sessionId = await SapSessionManagerController.GenerateToken();
+        //                ViewBag.responseData = $"Failed to retrieve data. Status code: {response.StatusCode}";
+        //                return View();
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            // Handle HTTP request exceptions
+        //            // return Json(new { error = $"HttpRequestException: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+        //            return ViewBag.responseData = $"HttpRequestException: {ex.Message}";
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            // Handle other exceptions
+        //            // return Json(new { error = $"Exception: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+        //            return ViewBag.responseData = $"Exception: {ex.Message}";
+        //        }
+        //    }
+        //}
 
         public JsonResult IsCustomerCodeExist(string customerCode)
         {

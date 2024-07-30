@@ -1,10 +1,18 @@
-﻿@model CodeLock.Models.RgpChallanModal
+﻿
+@model CodeLock.Models.PackagingModel
 @{
     ViewBag.Title = "RgpInsert";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
-<style>
+@*<style>
     table,
     th,
     td {
@@ -53,109 +61,112 @@
         background-color: lightgray;
         padding: 2px;
     }
-</style>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script src="~/Areas/Operation/Views/Docket/InsertMLPL.js?version=@DateTime.Now.Ticks"></script>
+    .form-control-date {
+        position: relative;
+        cursor: pointer;
+    }
 
+        .form-control-date::before {
+            content: attr(placeholder);
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            color: #aaa;
+            pointer-events: none;
+        }
 
-<script>
-    $(document).ready(function () {
-        $('#ddlWarehouse').select2();
+        .form-control-date:focus::before,
+        .form-control-date:not(:placeholder-shown)::before {
+            display: none;
+        }
+</style>*@
 
-    });
- 
-</script>
-<p>Create Rgp</p>
 <div class="widget-wrap">
     <div class="row">
         <div class="col-lg-12">
             <div class="">
                 <div class="inline-group">
                     <form class="form-group">
-                        <div class=" head">
+                        <div class="head">
                             <button class="btn btn-success" type="submit">Submit</button>
                             <span><a href="@Url.Action("RgpList","RGP")" class="btn btn-primary">List</a></span>
+                            <button type="button" class="btn btn-info" id="Getitems">Get The Item Details</button>
                         </div>
 
-
-                        <div class="row">
-                            <div class="col-lg-2">
-
-                                <label class="inline-group" for="BusinessPartnerCode">Business Partner Code</label>
-                                <input type="text" class="form-control" id="BusinessPartnerCode" placeholder="BusinessPartnerCode" />
+                        <div class="row col-lg-12">
+                            <div class="col-sm-3 inline-group">
+                                @Html.Label("Customer", new { @id = "lblCustomerId", @class = "inline-group" })
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.CustomerId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Customer", new { @class = "form-control select2", @id = "ddlCustomerId" })
+                                </div>
                             </div>
-                            <div class="col-lg-3">
-                                <label class="inline-group" for="BusinessPartner">Business Partner</label>
-                                <input type="text" class="form-control" id="BusinessPartner" placeholder="BusinessPartner" />
-                            </div>
-
                             <div class="col-lg-2">
-                                <label class="inline-group" for="rgpDate">RGP Date</label>
-
-                                <input type="date" class="form-control" id="rgpDate" placeholder="RGP Date" />
+                                <label class="inline-group" for="txtRgpDocDateTime">RGP Date</label>
+                                <div class="form-group">
+                                    <input type="date" class="form-control form-control-date" id="txtRgpDocDateTime" placeholder="RGP Date" />
+                                </div>
                             </div>
                             <div class="col-lg-2">
                                 <label class="inline-group" for="postingDate">Posting Date</label>
-                                <input type="date" class="form-control" id="postingDate" placeholder="Posting Date" />
+                                <div class="form-group">
+                                    <input type="date" class="form-control form-control-date" id="postingDate" placeholder="Posting Date" disabled />
+                                </div>
                             </div>
                             <div class="col-lg-2 inline-group">
-                                <label class="inline-group" for="rgpNo">RGP Series</label>
-
-                                <select class="form-control" id="rgpSeries">
-                                    <option selected>Select Series</option>
-                                    <option value="RGP#MDP">RGP#MDP</option>
-                                    <option value="FBD#MDP">FBD#MDP</option>
-
-                                </select>
+                                <label class="inline-group" for="rgpSeries">RGP Series</label>
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.Series, new SelectList(ViewBag.RGPListSeries, "Value", "Name"), "Select RGP Series", new { @class = "form-control select2", @id = "ddlRgpSeries" })
+                                </div>
                             </div>
                             <div class="col-lg-2">
                                 <label class="inline-group" for="rgpNo">RGP No</label>
                                 <input type="text" class="form-control" id="rgpNo" placeholder="RGP no" />
                             </div>
-
-                            <div class="col-lg-3">
-                                <label class="inline-group" for="shipTo">Ship To</label>
-                                <input type="text" class="form-control" id="shipTo" placeholder="Ship To" />
-                            </div>
                         </div>
 
-                        <div class="row">
-
+                        <div class="row col-lg-12">
+                            <div class="col-lg-3">
+                                <label class="inline-group" for="shipTo">Ship To</label>
+                                <textarea type="text" class="form-control" id="shipToDisplay" placeholder="Ship To"></textarea>
+                                <input type="hidden" id="shipTo" name="shipTo" />
+                            </div>
 
                             <div class="col-lg-2">
                                 <label class="form-inline" for="fromBranch">From Branch</label>
                                 <select class="select form-control" id="fromBranch">
-                                    <option value="Packaging" selected>Packaging</option>
+                                    <option value="Packaging" selected class="select-item">Packaging</option>
                                     <option value="Manufacture">Manufacture</option>
                                 </select>
                             </div>
 
                             <div class="col-lg-2">
                                 <label class="form-inline" for="fromWarehouse">From Warehouse</label>
-                                <label class="label">Warehouse</label>
-                                @Html.DropDownList("ddlWarehouse", new SelectList(ViewBag.WarehouseList, "Value", "Text", SessionUtility.WarehouseId), new { @class = "form-control select2", @id = "ddlWarehouse", @disabled = "disabled" })
+                                @Html.DropDownListFor(model => model.WarehouseId, new SelectList(ViewBag.WarehouseList, "Value", "Text", SessionUtility.CompanyId), "Select Warehouse", new { @class = "form-control select2", @id = "ddlFromWarehouse" })
                             </div>
+
                             <div class="col-lg-2">
                                 <label class="form-inline" for="toWarehouse">To Warehouse</label>
-                                <input type="text" class="form-control" id="toWarehouse" placeholder="To Warehouse" />
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.WarehouseId, new SelectList(ViewBag.PkgWarehouseList, "Value", "Name"), "Select Warehouse", new { @class = "form-control select2", @id = "ddlToWarehouse" })
+                                </div>
                             </div>
 
                         </div>
 
                         <div class="row-border">
                             <div class="col-lg-12">
+                                <button id="Getitems" class="btn btn-primary">Fetch Items</button>
                                 <table class="table table-responsive table-bordered" id="myTable">
-                                    <thead>
+                                    <thead style="background-color: #139c9b;color:white;">
                                         <tr>
                                             <th><label for="itemNo">Item No</label></th>
                                             <th><label for="itemDescription">Item Description</label></th>
+                                            <th><label for="qty">Stock-Qty</label></th>
                                             <th><label for="fromWH">From W/H</label></th>
                                             <th><label for="toWH">To W/H</label></th>
                                             <th><label for="location">Location</label></th>
-                                            <th><label for="qty">Qty</label></th>
                                             <th><label for="infoPrice">Info Price</label></th>
                                             <th><label for="taxCat">Tax Cat</label></th>
                                             <th><label for="taxable">Taxable</label></th>
@@ -165,25 +176,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td><input type="text" class="form-control" id="itemNo" /></td>
-                                            <td><input type="text" class="form-control" id="itemDescription" /></td>
-                                            <td><input type="text" class="form-control" id="fromWH" /></td>
-                                            <td><input type="text" class="form-control" id="toWH" /></td>
-                                            <td><input type="text" class="form-control" id="location" /></td>
-                                            <td><input type="text" class="form-control" id="qty" /></td>
-                                            <td><input type="text" class="form-control" id="infoPrice" /></td>
-                                            <td><input type="text" class="form-control" id="taxCat" /></td>
-                                            <td><input type="text" class="form-control" id="taxable" /></td>
-                                            <td><input type="text" class="form-control" id="gstAmt" /></td>
-                                            <td><input type="text" class="form-control" id="total" /></td>
-                                            <td>
-                                                <button class="btn btn-primary" onclick="addRow()" type="button"><i class="fa fa-plus"></i></button>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-danger" onclick="deleteRow(this)" type="button"><i class="fa fa-trash"></i></button>
-                                            </td>
-                                        </tr>
+                                        <!-- Rows will be added dynamically here -->
                                     </tbody>
                                 </table>
                             </div>
@@ -208,78 +201,23 @@
                                                 <label class="inline-group" for="ewayBillNo">EwayBill No</label>
                                                 <input type="text" class="form-control" id="ewayBillNo" placeholder="EwayBill no" disabled />
                                             </div>
-                                            <div class="col-lg-3">
-                                                <label class="inline-group" for="supplyType">Supply Type</label>
-                                                <select class="form-control" id="supplyType" name="supplytype">
-                                                    <option selected value="Inward">Inward</option>
-                                                    <option value="Outward">Outward</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <label class="inline-group" for="ewayBillStatus">EWayBill Status</label>
-                                                <input type="text" class="form-control" id="ewayBillStatus" placeholder="EWayBill Status" disabled />
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <label class="inline-group" for="vehicleNo">Vehicle No</label>
-                                                <input type="text" class="form-control" id="vehicleNo" placeholder="Vehicle No" />
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-3">
-                                                <label class="inline-group" for="transporterId">Transporter ID</label>
-                                                <input type="text" class="form-control" id="transporterId" placeholder="Transporter ID" disabled />
-                                            </div>
+
                                             <div class="col-lg-3">
                                                 <label class="inline-group" for="transporterName">Transporter Name</label>
-                                                <input type="text" class="form-control" id="transporterName" placeholder="Transporter Name" />
+                                                <input type="text" class="form-control" id="transporterName" placeholder="Transporter Name" disabled />
                                             </div>
+
                                             <div class="col-lg-3">
-                                                <label class="inline-group" for="grNo">Gr No</label>
-                                                <input type="text" class="form-control" id="grNo" placeholder="Gr No" />
+                                                <label class="inline-group" for="transporterGST">Transporter GST</label>
+                                                <input type="text" class="form-control" id="transporterGST" placeholder="Transporter GST" disabled />
                                             </div>
+
                                             <div class="col-lg-3">
-                                                <label class="inline-group" for="grDate">Gr Date</label>
-                                                <input type="date" class="form-control" id="grDate" placeholder="Gr Date" />
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-3">
-                                                <label class="inline-group" for="driverNo">Driver No</label>
-                                                <input type="text" class="form-control" id="driverNo" placeholder="Driver No" />
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <label class="inline-group" for="invoiceType">Invoice Type</label>
-                                                <input type="text" class="form-control" id="invoiceType" placeholder="Invoice Type" />
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <label class="inline-group" for="invoiceNo">Invoice No</label>
-                                                <input type="text" class="form-control" id="invoiceNo" placeholder="Invoice No" />
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <label class="inline-group" for="invoiceDate">Invoice Date</label>
-                                                <input type="date" class="form-control" id="invoiceDate" placeholder="Invoice Date" />
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <div class="col-lg-2">
-                                                    <label class="inline-group" for="priceList">Price List</label>
-                                                    <input type="text" class="form-control" id="priceList" placeholder="Price List" />
-                                                </div>
-                                                <div class="col-lg-2">
-                                                    <label class="inline-group" for="customerPart">Part</label>
-                                                    <input type="text" class="form-control" id="customerPart" placeholder="Customer Part" />
-                                                </div>
-                                                <div class="col-lg-8">
-                                                    <label class="inline-group" for="remarks">Remarks</label>
-                                                    <input type="text" class="form-control" id="remarks" />
-                                                </div>
+                                                <label class="inline-group" for="LRNo">LR No</label>
+                                                <input type="text" class="form-control" id="LRNo" placeholder="LR No" disabled />
                                             </div>
                                         </div>
                                     </div>
-
-
-
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                         <button type="button" class="btn btn-primary">Save changes</button>
@@ -294,30 +232,98 @@
         </div>
     </div>
 </div>
-
 <script>
+  $(document).ready(function () {
+    // Initialize Select2
+    $('#ddlCustomerId').select2();
+    $('#ddlFromWarehouse').select2();
+    $('#ddlToWarehouse').select2();
+
+    // Fetch items
+    $('#Getitems').click(function () {
+        $.ajax({
+            url: '@Url.Action("GetTheRgpItemDetailsByIds", "RGP")',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                if (response.error) {
+                    alert('Error: ' + response.error);
+                    return;
+                }
+
+                var data = response.data;
+
+                // Clear existing rows
+                $('#myTable tbody').empty();
+
+                // Get selected values
+                var fromWarehouse = $('#ddlFromWarehouse').find('option:selected').text();
+                var toWarehouse = $('#ddlToWarehouse').find('option:selected').text();
+
+                // Iterate over the response data
+                $.each(data, function (index, item) {
+                    var newRow = `
+                        <tr>
+                            <td><input type="text" class="form-control" value="${item.ItemCode || ''}" /></td>
+                            <td><input type="text" class="form-control" value="${item.ItemDescription || ''}" /></td>
+                            <td><input type="text" class="form-control" value="${item.Quantity || ''}" disabled /></td>
+                            <td><input type="text" class="form-control" value="${fromWarehouse}" disabled /></td>
+                            <td><input type="text" class="form-control" value="${toWarehouse}" disabled /></td>
+                            <td><input type="text" class="form-control" value="${item.Location || ''}" /></td>
+                            <td><input type="text" class="form-control" value="${item.InfoPrice || ''}" /></td>
+                            <td><input type="text" class="form-control" value="${item.TaxCat || ''}" /></td>
+                            <td><input type="text" class="form-control" value="${item.Taxable || ''}" /></td>
+                            <td><input type="text" class="form-control" value="${item.GstAmt || ''}" /></td>
+                            <td><input type="text" class="form-control" value="${item.Total || ''}" /></td>
+                            <td>
+                                <button class="btn btn-primary" onclick="addRow()" type="button"><i class="fa fa-plus"></i></button>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteRow(this)" type="button"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    $('#myTable tbody').append(newRow);
+                });
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred while fetching the data.');
+            }
+        });
+    });
+});
+
     function addRow() {
-        var tableBody = document.getElementById("myTable").getElementsByTagName('tbody')[0];
-        var newRow = tableBody.insertRow();
-        for (var i = 0; i < 11; i++) {
-            var cell = newRow.insertCell(i);
-            cell.innerHTML = '<input type="text" class="form-control" name="input' + i + '" />';
-        }
-        var addCell = newRow.insertCell(11);
-        addCell.innerHTML = '<button class="btn btn-primary" onclick="addRow()" type="button"><i class="fa fa-plus"></i></button>';
-        var deleteCell = newRow.insertCell(12);
-        deleteCell.innerHTML = '<button class="btn btn-danger" onclick="deleteRow(this)" type="button"><i class="fa fa-trash"></i></button>';
+        // Get selected values from dropdowns
+        var fromWarehouse = $('#ddlWarehouse option:selected').text();
+        var toWarehouse = $('#ddlWarehouse option:selected').text();
+
+        var newRow = `
+            <tr>
+                <td><input type="text" class="form-control" /></td>
+                <td><input type="text" class="form-control" /></td>
+                <td><input type="text" class="form-control" /></td>
+                <td><input type="text" class="form-control" value="${fromWarehouse}" /></td>
+                <td><input type="text" class="form-control" value="${toWarehouse}" /></td>
+                <td><input type="text" class="form-control" /></td>
+                <td><input type="text" class="form-control" /></td>
+                <td><input type="text" class="form-control" /></td>
+                <td><input type="text" class="form-control" /></td>
+                <td><input type="text" class="form-control" /></td>
+                <td><input type="text" class="form-control" /></td>
+                <td>
+                    <button class="btn btn-primary" onclick="addRow()" type="button"><i class="fa fa-plus"></i></button>
+                </td>
+                <td>
+                    <button class="btn btn-danger" onclick="deleteRow(this)" type="button"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        `;
+        $('#myTable tbody').append(newRow);
     }
 
     function deleteRow(button) {
-        var row = button.closest('tr');
-        var tableBody = row.parentNode;
-        var rowIndex = Array.prototype.indexOf.call(tableBody.children, row);
-
-        // Do not remove the first row
-        if (rowIndex > 0) {
-            tableBody.removeChild(row);
-        }
+        $(button).closest('tr').remove();
     }
 </script>
 
