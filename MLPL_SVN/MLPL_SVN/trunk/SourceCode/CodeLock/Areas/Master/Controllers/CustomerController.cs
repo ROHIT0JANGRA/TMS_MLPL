@@ -21,9 +21,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CodeLock.Api_Services;
 using DocumentFormat.OpenXml.Wordprocessing;
-using Newtonsoft.Json.Linq;
-using Org.BouncyCastle.Asn1.Ocsp;
-using static CodeLock.Api_Services.UlipTokenManagerController.TokenResponse;
+using Microsoft.Owin.BuilderProperties;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using System.Reflection;
 
 namespace CodeLock.Areas.Master.Controllers
 {
@@ -135,7 +135,60 @@ namespace CodeLock.Areas.Master.Controllers
                 ((dynamic)base.ViewBag).CityList = Enumerable.Empty<SelectListItem>();
             }
         }
+        public IEnumerable<AutoCompleteResult> GetCityStateWise(int StateId)
+        {
+          return this.cityRepository.GetCityListByStateId(StateId.ConvertToShort());
+            
+        }
+        //public ActionResult Insert()
+        //{
+        //    ///MasterGeneral masterPayBas;
 
+        //    //   MasterCustomer objCustomer = new MasterCustomer();
+        //    // this.Init(0, 0);
+        //    MasterCustomer objCustomer = new MasterCustomer()
+        //    {
+        //        MasterAddress = new List<MasterAddress>()
+        //    };
+        //    List<MasterAddress> addressDetails = objCustomer.MasterAddress;
+        //    MasterAddress addressDocument = new MasterAddress()
+        //    {
+        //        CityId = 0,
+        //        CityName = "",
+        //        AddressId = 0,
+        //        AddressCode = "",
+        //        Address1 = "",
+        //        EmailId = "",
+        //        Address2 = "",
+        //        Pincode = "",
+        //        MobileNo = "",
+        //        StatisticalChargesCode = "",
+        //        IsMreNoApplicable = false,
+        //        GstTinNo = "",
+        //        ProvisionalId = "",
+        //        IsActive = false
+        //    };
+        //    addressDetails.Add(addressDocument);
+
+        //    this.Init(0, 0);
+
+
+
+        //    objCustomer.PayBas = this.generalRepository.GetByGeneralList(14).ToArray<MasterGeneral>();
+
+
+        //    for (int i = 0; i < objCustomer.PayBas.Length; i++)
+        //    {
+        //        objCustomer.PayBas[i].IsActive = false;
+        //    }
+
+        //     ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
+        //    ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
+
+        //    ((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
+
+        //    return base.View(objCustomer);
+        //}
         public ActionResult Insert()
         {
             
@@ -146,7 +199,7 @@ namespace CodeLock.Areas.Master.Controllers
             MasterAddress objAdd = new MasterAddress()
             {
                 AddressId = 0,
-                AddressCode = "",
+                AddressCode = this.customerRepository.GetCustomerAddressCode(0),
                 Address1 = "",
                 Address2 = "",
                 CityId = 0,
@@ -171,7 +224,6 @@ namespace CodeLock.Areas.Master.Controllers
             }
             ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
             ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
-
             //((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
 
             return View(objCustomer);
@@ -193,12 +245,91 @@ namespace CodeLock.Areas.Master.Controllers
             objMasterCustomer.EntryBy = SessionUtility.LoginUserId;
             objMasterCustomer.WarehouseId = SessionUtility.WarehouseId;
             objMasterCustomer.MasterCustomerDetail.EntryBy = SessionUtility.LoginUserId;
-
             int num = this.customerRepository.Insert(objMasterCustomer);
             action = base.RedirectToAction("View", new { id = num });
             //}
             return action;
         }
+        [HttpPost]
+        public ActionResult GetNewCustomerAddress(int Index,int ClickCount)
+        {
+            var MasterAddress = new MasterAddress(); // Create a new Address object
+            MasterAddress.IsActive= true;
+            if (ClickCount ==-1)
+            {
+                MasterAddress.AddressCode = this.customerRepository.GetCustomerAddressCode((Index == null ? 0 : Index));
+
+            }
+            else
+            {
+                MasterAddress.AddressCode = this.customerRepository.GetCustomerAddressCode(ClickCount);
+
+            }
+            ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
+            ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
+            ((dynamic)base.ViewBag).CityList = Enumerable.Empty<SelectListItem>();
+
+            ViewBag.Index = Index;
+            ViewData.TemplateInfo.HtmlFieldPrefix = $"MasterAddressList[{Index}]";
+            // Return partial view for Address
+            return PartialView("_CustomerAddress", MasterAddress);
+        }
+        // **********************  Changes Method according to  Sap and ULIP-Api Intigration **************************
+
+        //public ActionResult InsertBp()
+        //{
+        //    ///MasterGeneral masterPayBas;
+
+        //    MasterCustomer objCustomer = new MasterCustomer();
+        //    this.Init(0, 0);
+
+        //    objCustomer.PayBas = this.generalRepository.GetByGeneralList(14).ToArray<MasterGeneral>();
+        //    for (int i = 0; i < objCustomer.PayBas.Length; i++)
+        //    {
+        //        objCustomer.PayBas[i].IsActive = false;
+        //    }
+
+
+        //    //((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
+
+        //    return base.View(objCustomer);
+        //}
+
+        //[HttpPost]
+        //[ValidateAntiModelInjection("CustomerId")]
+        //public ActionResult InsertBp(MasterCustomer objMasterCustomer)
+        //{
+        //    ActionResult action;
+        //    try
+        //    {
+        //        if (!ModelState.IsValid)
+        //        {
+        //            return base.View(objMasterCustomer);
+        //        }
+
+        //        if (!base.ModelState.IsValid)
+        //        {
+        //            action = base.View(objMasterCustomer);
+        //        }
+        //        else
+        //        {
+        //            objMasterCustomer.EntryBy = SessionUtility.LoginUserId;
+        //            objMasterCustomer.WarehouseId = SessionUtility.WarehouseId;
+        //            objMasterCustomer.MasterCustomerDetail.EntryBy = SessionUtility.LoginUserId;
+
+        //            int num = this.customerRepository.Insert(objMasterCustomer);
+        //            action = base.RedirectToAction("View", new { id = num });
+        //        }
+        //        return action;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ViewBag.Error =ex.Message;
+        //    }
+        //    return base.View();
+        //}
+
+        //*******************************************************************************************************************
         public async Task<dynamic> FetchCustomerDetailsFromApi(string gstin)
         {
             string token = UlipTokenManagerController.GetTokenId();
@@ -470,7 +601,28 @@ namespace CodeLock.Areas.Master.Controllers
                 objCustomer = this.customerRepository.GetById(id.Value);
                 this.Init(objCustomer.MasterCustomerAddressInfo.CountryId, objCustomer.MasterCustomerAddressInfo.StateId);
                 objCustomer.PayBas = this.generalRepository.GetByGeneralList(14).ToArray<MasterGeneral>();
-
+                if (objCustomer.MasterAddressList.Count == 0)
+                {
+                    List<MasterAddress> MasterAddressList = objCustomer.MasterAddressList;
+                    MasterAddress objAdd = new MasterAddress()
+                    {
+                        AddressId = 0,
+                        AddressCode = "",
+                        Address1 = "",
+                        Address2 = "",
+                        CityId = 0,
+                        CityName = "",
+                        Pincode = ""                ,
+                        MobileNo = "",
+                        EmailId = "",
+                        StatisticalChargesCode = "",
+                        IsActive = true,
+                        IsMreNoApplicable = false                ,
+                        CountryId = 0,
+                        StateId = 0
+                    };
+                    MasterAddressList.Add(objAdd);
+                }
                 for (int i = 0; i < objCustomer.PayBas.Length; i++)
                 {
                     objCustomer.PayBas[i].IsActive = false;
@@ -496,12 +648,12 @@ namespace CodeLock.Areas.Master.Controllers
                     for (int i = 0; i < objCustomer.PayBas.Length; i++)
                     {
                         if (objCustomer.PayBasId.ToString() == objCustomer.PayBas[i].CodeId.ToString())
-                        {
+                            {
                             objCustomer.PayBas[i].IsActive = true;
                         }
                     }
                 }
-
+                ViewBag.StateWiseCityList =null;
 
                 httpStatusCodeResult = base.View(objCustomer);
             }
@@ -609,7 +761,7 @@ namespace CodeLock.Areas.Master.Controllers
         [HttpGet]
         public FileResult DownloadExcel()
         {
-            DataTable dt = new DataTable();
+            System.Data.DataTable dt = new System.Data.DataTable();
             string ReportName = string.Empty;
 
             ReportName = "CustomerList.xlsx";
@@ -626,7 +778,7 @@ namespace CodeLock.Areas.Master.Controllers
             }
         }
 
-        protected DataTable CustomerListForDownloadExcel()
+        protected System.Data.DataTable CustomerListForDownloadExcel()
         {
             DataColumn dt;
 
@@ -787,6 +939,13 @@ namespace CodeLock.Areas.Master.Controllers
         {
             JsonResult jsonResult = base.Json(this.customerRepository.GetById(CustomerId));
             return jsonResult;
+        }
+        [HttpPost]
+        public JsonResult GetCustomerAddressCode(int CustomerAddressId)
+        {
+            Dictionary<string, string> Dic = new Dictionary<string, string>();
+            Dic["CustomerAddressCode"]= this.customerRepository.GetCustomerAddressCode(CustomerAddressId);
+            return Json(Dic);
         }
     }
 }

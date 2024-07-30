@@ -19,6 +19,7 @@ namespace CodeLock.Areas.Master.Repository
         MasterCustomer GetById(int id);
 
         int Insert(MasterCustomer objMasterCustomer);
+        string GetCustomerAddressCode(int AddressId);
 
         int Update(MasterCustomer objMasterCustomer);
 

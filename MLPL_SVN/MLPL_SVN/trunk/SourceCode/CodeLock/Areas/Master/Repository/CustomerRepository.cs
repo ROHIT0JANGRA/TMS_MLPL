@@ -28,7 +28,7 @@ namespace CodeLock.Areas.Master.Repository
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@CustomerId", (object)id, new DbType?(DbType.Int32), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-            Tuple<IEnumerable<MasterCustomer>, IEnumerable<MasterCustomerDetail>, IEnumerable<MasterCustomerAddressInfo>> tuple = DataBaseFactory.QueryMultipleSP<MasterCustomer, MasterCustomerDetail, MasterCustomerAddressInfo>("Usp_MasterCustomer_GetById", (object)dynamicParameters, "Customer Master - GetById");
+            Tuple<IEnumerable<MasterCustomer>, IEnumerable<MasterCustomerDetail>, IEnumerable<MasterCustomerAddressInfo> ,IEnumerable<MasterAddress>> tuple = DataBaseFactory.QueryMultipleSP<MasterCustomer, MasterCustomerDetail, MasterCustomerAddressInfo,MasterAddress>("Usp_MasterCustomer_GetById", (object)dynamicParameters, "Customer Master - GetById");
             MasterCustomer masterCustomer = new MasterCustomer();
             if (tuple != null && tuple.Item1 != null)
             {
@@ -38,6 +38,8 @@ namespace CodeLock.Areas.Master.Repository
 
                 if (tuple.Item3 != null)
                     masterCustomer.MasterCustomerAddressInfo = tuple.Item3.FirstOrDefault<MasterCustomerAddressInfo>();
+                if(tuple.Item4 != null)
+                    masterCustomer.MasterAddressList=tuple.Item4.ToList();
             }
             // return DataBaseFactory.QuerySP<MasterCustomer>("Usp_MasterCustomer_GetById", (object) dynamicParameters, "Customer Master - GetById").FirstOrDefault<MasterCustomer>();
             return masterCustomer;
@@ -67,7 +69,7 @@ namespace CodeLock.Areas.Master.Repository
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@XmlCustomer", (object)XmlUtility.XmlSerializeToString((object)objMasterCustomer), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());
             dynamicParameters.Add("@CustomerId", (object)null, new DbType?(DbType.Int32), new ParameterDirection?(ParameterDirection.Output), new int?(), new byte?(), new byte?());
-            DataBaseFactory.QuerySP("Usp_MasterCustomer_Update", (object)dynamicParameters, "Customer Master - Update");
+            DataBaseFactory.QuerySP("Usp_MasterCustomer_Update_Test", (object)dynamicParameters, "Customer Master - Update");
             return dynamicParameters.Get<int>("@CustomerId");
         }
 
@@ -363,7 +365,14 @@ namespace CodeLock.Areas.Master.Repository
             return DataBaseFactory.QuerySP<AutoCompleteResult>("Usp_MasterCustomer_GetAutoCompletePanNo", (object)dynamicParameters, "Customer Master - GetAutoCompletePanNo");
         }
 
-
+        public string GetCustomerAddressCode(int AddressId)
+        {
+            DynamicParameters dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("@AddressId", (object)AddressId, new DbType?(DbType.Int32), new ParameterDirection?(), new int?(), new byte?(), new byte?());
+            dynamicParameters.Add("@CustomerAddressCode","", new DbType?(DbType.String), new ParameterDirection?(ParameterDirection.Output), new int?(), new byte?(), new byte?());
+            var res=DataBaseFactory.QuerySP("Usp_GetCustomerAddressCode", (object)dynamicParameters, "Customer Master - GetCustomerAddressCode");
+            return dynamicParameters.Get<string>("@CustomerAddressCode");
+        }
 
     }
 }

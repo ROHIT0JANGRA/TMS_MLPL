@@ -18,12 +18,15 @@
 
 
     function GetCustomerData() {
+        debugger;
         var tblCustomersContent = '<table id="dtCustomer" class="table table-bordered table-striped display nowrap" style="width:100%"><thead><tr>\
                             <th>Group Code</th>\
                             <th>Customer Code</th>\
                             <th>Customer Name</th>\
                             <th>Is Active</th>\
                             <th>Is Walk-In</th>\
+                            <th>Is Address Mapped</th>\
+                            <th>Is GST Mapped</th>\
                             <th>Action</th>\
                             </tr></thead><tbody></tbody></table>';
         $("#dvCustomers").html(tblCustomersContent);
@@ -84,6 +87,22 @@
                         var isWalkIn = row.IsWalkIn ? 'Yes' : 'No';
                         var activeClass = row.IsWalkIn ? 'label label-success' : 'label label-default';
                         return '<label class="' + activeClass + '">' + isWalkIn + '</label>';
+                    }, "searchable": false
+                },
+                {
+                    "data": "IsAddressMapped", "width": "15px", "orderable": false, "name": "IsAddressMapped",
+                    "render": function (data, type, row, meta) {
+                        var isAddressMapped = row.IsAddressMapped ? 'Yes' : 'No';
+                        var activeClass = row.IsAddressMapped ? 'label label-success' : 'label label-default';
+                        return '<label class="' + activeClass + '">' + isAddressMapped + '</label>';
+                    }, "searchable": false
+                },
+                {
+                    "data": "IsGSTMapped", "width": "15px", "orderable": false, "name": "IsGSTMapped",
+                    "render": function (data, type, row, meta) {
+                        var isGSTMapped = row.IsGSTMapped ? 'Yes' : 'No';
+                        var activeClass = row.IsGSTMapped ? 'label label-success' : 'label label-default';
+                        return '<label class="' + activeClass + '">' + isGSTMapped + '</label>';
                     }, "searchable": false
                 },
                 {
