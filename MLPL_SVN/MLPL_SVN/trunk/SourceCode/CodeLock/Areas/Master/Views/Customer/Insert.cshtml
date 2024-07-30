@@ -112,8 +112,6 @@
                     </div>
 
                     <div class="row col-12">
-
-
                         <div class="col-sm-3" id="dvCustomerPhoneNo">
                             <div class="form-group">
                                 @Html.LabelFor(model => model.PhoneNo, new { @class = "label" })
@@ -140,16 +138,14 @@
                             @Html.ValidationMessageFor(model => model.MasterCustomerDetail.CustomerLocation)
                         </div>
 
-                        <div class="col-sm-3">
+                        @*<div class="col-sm-3">
                             @Html.LabelFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation, new { @class = "label" })
                             @Html.HiddenFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation, new { @id = "hdnCustomerDeliveryLocation" })
                             @Html.DropDownListFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlCustomerDeliveryLocation", @placeholder = "Select Location" })
                             @Html.ValidationMessageFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation)
-                        </div>
+                        </div>*@
 
                     </div>
-
-
                     <div class="row col-12">
                         <div class="col-sm-2">
                             <div class="form-group">
@@ -160,8 +156,6 @@
                                 </label>
                             </div>
                         </div>
-
-
                         <div class="col-sm-2">
                             <div class="form-group">
                                 @Html.LabelFor(model => model.MasterCustomerDetail.IsMilkrunHrsPerDayEnabled, new { @class = "label" })
@@ -215,12 +209,10 @@
                 <div class="btn-block">
                     <button class="btn btn-primary" type="button" onclick="showAddressForm('primaryAddressForm')">Primary Address</button>
                     <button class="btn btn-primary" type="button" onclick="showAddressForm('secondaryAddressForm')">Secondary Address</button>
-                    @*<button class="btn btn-primary" type="button" onclick="showAddressForm('secondaryAddressMapping')">Secondary Address(Mapping)</button>*@
-                    @*<button class="btn btn-primary" type="button" onclick="showAddressForm('GstMapping')">Gst(Mapping)</button>*@
                     <button class="btn btn-primary" type="button" onclick="showAddressForm('ContactPerson')">ContactPerson</button>
                     <button class="btn btn-primary" type="button" onclick="showAddressForm('PaymentTerms')">PaymentTerms</button>
                     <button class="btn btn-primary" type="button" onclick="showAddressForm('BusinessPartnerBank')">Business Partner Bank</button>
-
+                    <button class="btn btn-success" type="button" style="margin-top:2px" id="btnAddRow"><i class="fa fa-plus"></i> Add Row</button>
                 </div>
 
                 <div id="primaryAddressForm" class="address-form">
@@ -283,7 +275,7 @@
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.MasterCustomerAddressInfo.Pincode, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Pincode, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Pincode, new { @class = "form-control Number" })
                                     </div>
                                     @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.Pincode)
                                 </div>
@@ -426,65 +418,65 @@
                         <div class="row">
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.PaymentTerms, new { @class = "label" })
+                                    @Html.LabelFor(model => model.PaymentTerms, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.PaymentTerms, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.PaymentTerms, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.PaymentTerms)
+                                    @Html.ValidationMessageFor(model => model.PaymentTerms)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.InterestOnArrearsPercentage, new { @class = "label" })
+                                    @Html.LabelFor(model => model.InterestOnArrearsPercentage, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.InterestOnArrearsPercentage, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.InterestOnArrearsPercentage, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.InterestOnArrearsPercentage)
+                                    @Html.ValidationMessageFor(model => model.InterestOnArrearsPercentage)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.PriceList, new { @class = "label" })
+                                    @Html.LabelFor(model => model.PriceList, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.PriceList, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.PriceList, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.PriceList)
+                                    @Html.ValidationMessageFor(model => model.PriceList)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.TotalDiscountPercentage, new { @class = "label" })
+                                    @Html.LabelFor(model => model.TotalDiscountPercentage, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.TotalDiscountPercentage, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.TotalDiscountPercentage, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.TotalDiscountPercentage)
+                                    @Html.ValidationMessageFor(model => model.TotalDiscountPercentage)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.CommitmentLimit, new { @class = "label" })
+                                    @Html.LabelFor(model => model.CommitmentLimit, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.CommitmentLimit, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.CommitmentLimit, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.CommitmentLimit)
+                                    @Html.ValidationMessageFor(model => model.CommitmentLimit)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.EffectiveDiscountsGroups, new { @class = "label" })
+                                    @Html.LabelFor(model => model.EffectiveDiscountsGroups, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.EffectiveDiscountsGroups, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.EffectiveDiscountsGroups, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.EffectiveDiscountsGroups)
+                                    @Html.ValidationMessageFor(model => model.EffectiveDiscountsGroups)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.DunningTerm, new { @class = "label" })
+                                    @Html.LabelFor(model => model.DunningTerm, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.DunningTerm, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.DunningTerm, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.DunningTerm)
+                                    @Html.ValidationMessageFor(model => model.DunningTerm)
                                 </div>
                             </div>
                         </div>
@@ -497,101 +489,101 @@
                         <div class="row">
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.BankCountryRegion, new { @class = "label" })
+                                    @Html.LabelFor(model => model.BankCountryRegion, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.BankCountryRegion, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.BankCountryRegion, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.BankCountryRegion)
+                                    @Html.ValidationMessageFor(model => model.BankCountryRegion)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.BankName, new { @class = "label" })
+                                    @Html.LabelFor(model => model.BankName, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.BankName, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.BankName, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.BankName)
+                                    @Html.ValidationMessageFor(model => model.BankName)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.BankCode, new { @class = "label" })
+                                    @Html.LabelFor(model => model.BankCode, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.BankCode, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.BankCode, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.BankCode)
+                                    @Html.ValidationMessageFor(model => model.BankCode)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.Account, new { @class = "label" })
+                                    @Html.LabelFor(model => model.Account, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.Account, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.Account, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.Account)
+                                    @Html.ValidationMessageFor(model => model.Account)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.BICSWIFTCode, new { @class = "label" })
+                                    @Html.LabelFor(model => model.BICSWIFTCode, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.BICSWIFTCode, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.BICSWIFTCode, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.BICSWIFTCode)
+                                    @Html.ValidationMessageFor(model => model.BICSWIFTCode)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.BankAccountName, new { @class = "label" })
+                                    @Html.LabelFor(model => model.BankAccountName, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.BankAccountName, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.BankAccountName, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.BankAccountName)
+                                    @Html.ValidationMessageFor(model => model.BankAccountName)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.Branch, new { @class = "label" })
+                                    @Html.LabelFor(model => model.Branch, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.Branch, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.Branch, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.Branch)
+                                    @Html.ValidationMessageFor(model => model.Branch)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.CtrlIntID, new { @class = "label" })
+                                    @Html.LabelFor(model => model.CtrlIntID, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.CtrlIntID, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.CtrlIntID, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.CtrlIntID)
+                                    @Html.ValidationMessageFor(model => model.CtrlIntID)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.MandateID, new { @class = "label" })
+                                    @Html.LabelFor(model => model.MandateID, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.MandateID, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.MandateID, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.MandateID)
+                                    @Html.ValidationMessageFor(model => model.MandateID)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.DateOfSignature, new { @class = "label" })
+                                    @Html.LabelFor(model => model.DateOfSignature, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.DateOfSignature, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.DateOfSignature, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.DateOfSignature)
+                                    @Html.ValidationMessageFor(model => model.DateOfSignature)
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.BusinessPartnerDetails.AddressCode, new { @class = "label" })
+                                    @Html.LabelFor(model => model.AddressCode, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.BusinessPartnerDetails.AddressCode, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.AddressCode, new { @class = "form-control" })
                                     </div>
-                                    @Html.ValidationMessageFor(model => model.BusinessPartnerDetails.AddressCode)
+                                    @Html.ValidationMessageFor(model => model.AddressCode)
                                 </div>
                             </div>
                         </div>
@@ -599,171 +591,26 @@
                     </div>
                 </div>
                 <div id="secondaryAddressForm" class="address-form" style="display:none;">
-                    <div class="tab-pane">
+                    <div  class="tab-pane">
                         <div class="page-separator">Address (Secondary)</div>
                         <div id="addressRowsContainer">
-                            <!-- Iterate over each item in the MasterAddressList -->
-                            @for (int i = 0; i < Model.MasterAddressList.Count; i++)
+                            @if (Model.MasterAddressList != null && Model.MasterAddressList.Count > 0)
                             {
-                                <div class="row address-row">
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].AddressCode, new { @class = "label" })
+                                for (int i = 0; i < Model.MasterAddressList.Count; i++)
+                                {
 
-                                            @Html.TextBoxFor(model => model.MasterAddressList[i].AddressCode
-                                       , new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].AddressCode" + i.ToString(), @Name = "MasterAddressList[" + i + "].AddressCode" })
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].Address1, new { @class = "label" })
-
-                                            @Html.TextBoxFor(model => model.MasterAddressList[i].Address1, new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].Address1" + i.ToString(), @Name = "MasterAddressList[" + i + "].Address1" })
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].Address2, new { @class = "label" })
-
-                                            @Html.TextBoxFor(model => model.MasterAddressList[i].Address2, new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].Address2" + i.ToString(), @Name = "MasterAddressList[" + i + "].Address2" })
-                                        </div>
-                                    </div>
-                                    @*<div class="col-sm-2">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.MasterAddressList[i].CityName, new { @class = "label" })
-
-                                    @Html.HiddenFor(model => model.MasterAddressList[i].CityId, new { @id = "hdnMasterAddressList[" + i + "].CityId" + i.ToString(), @Name = "MasterAddressList[" + i + "].CityId" })
-                                    @Html.TextBoxFor(model => model.MasterAddressList[i].CityName, new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].CityName" + i.ToString(), @Name = "MasterAddressList[" + i + "].CityName" })
-                                </div>
-                            </div>*@
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].StateName, new { @class = "label" })
-                                            <div class="select">
-                                                @Html.DropDownListFor(model => model.MasterAddressList[i].StateId, new SelectList(ViewBag.StateList, "Value", "Name"), "Select State", new { @class = "form-control", @id = "ddlMasterAddressList[" + i + "].State", @onchange = "OnChangeStateWiseCity(this)" })
-                                                <i></i>
-                                            </div>
-                                            @Html.ValidationMessageFor(model => model.MasterAddressList[i].StateId)
-
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].CityId, new { @class = "label" })
-                                            <div class="select">
-                                                @Html.DropDownListFor(model => model.MasterAddressList[i].CityId, new SelectList(ViewBag.CityList, "Value", "Name"), "Select City", new { @class = "form-control", @id = "ddlMasterAddressList[" + i + "].CityId", @Name = "MasterAddressList[" + i + "].CityId" })
-                                                <i></i>
-                                            </div>
-                                            @Html.ValidationMessageFor(model => model.MasterAddressList[i].CityId)
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].Pincode, new { @class = "label" })
-
-                                            @Html.TextBoxFor(model => model.MasterAddressList[i].Pincode, new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].Pincode" + i.ToString(), @Name = "MasterAddressList[" + i + "].Pincode" })
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].MobileNo, new { @class = "label" })
-
-                                            @Html.TextBoxFor(model => model.MasterAddressList[i].MobileNo, new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].MobileNo" + i.ToString(), @Name = "MasterAddressList[" + i + "].MobileNo" })
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].EmailId, new { @class = "label" })
-
-                                            @Html.TextBoxFor(model => model.MasterAddressList[i].EmailId, new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].EmailId" + i.ToString(), @Name = "MasterAddressList[" + i + "].EmailId" })
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].StatisticalChargesCode, new { @class = "label" })
-
-                                            @Html.TextBoxFor(model => model.MasterAddressList[i].StatisticalChargesCode, new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].StatisticalChargesCode" + i.ToString(), @Name = "MasterAddressList[" + i + "].StatisticalChargesCode" })
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <div class="input-wrapper">
-                                                @Html.LabelFor(model => model.MasterAddressList[i].GstTinNo, new { @class = "label" })
-
-                                                @Html.TextBoxFor(model => model.MasterAddressList[i].GstTinNo, new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].GstTinNo" })
-                                            </div>
-                                            @Html.ValidationMessageFor(model => model.MasterAddressList[i].GstTinNo)
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].ProvisionalId, new { @class = "label" })
-                                            <div class="input-wrapper">
-                                                @Html.TextBoxFor(model => model.MasterAddressList[i].ProvisionalId, new { @class = "form-control", @id = "txtMasterAddressList[" + i + "].ProvisionalId" })
-                                            </div>
-                                            @Html.ValidationMessageFor(model => model.MasterAddressList[i].ProvisionalId)
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].RegistrationType, new { @class = "label" })
-                                            <div class="select">
-                                                @Html.DropDownListFor(model => model.MasterAddressList[i].RegistrationType, new SelectList(ViewBag.RegistrationTypeList, "Value", "Name"), "Select Registration Type", new { @class = "form-control", @id = "ddltxtMasterAddressList[" + i + "].RegistrationType" })
-                                                <i></i>
-                                            </div>
-                                            @Html.ValidationMessageFor(model => model.MasterAddressList[i].RegistrationType)
-                                        </div>
-                                    </div>
-                                    @*<div class="col-sm-2">
-                                <div class="form-group">
-                                    @Html.Label("GstType", new { @class = "label" })
-                                    <div class="clearfix">
-                                        @Html.Label(" ", new { @id = "lbltxtMasterAddressList[" + i + "].GstType", @class = "label-bold" })
-                                    </div>
-                                </div>
-                            </div>*@
-                                    <div class="col-sm-1">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].IsActive, new { @class = "label" })
-                                            <label class="checkbox">
-                                                @Html.CheckBoxFor(model => model.MasterAddressList[i].IsActive, new { @id = "txtMasterAddressList[" + i + "].IsActive", @Name = "MasterAddressList[" + i + "].IsActive" })
-                                                <i></i>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MasterAddressList[i].IsMreNoApplicable, new { @class = "label" })
-                                            <label class="checkbox">
-                                                @Html.CheckBoxFor(model => model.MasterAddressList[i].IsMreNoApplicable, new { @id = "txtMasterAddressList[" + i + "].IsMreNoApplicable", @Name = "MasterAddressList[" + i + "].IsMreNoApplicable" })
-                                                <i></i>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        @if (i == 0)
-                                        {
-                                            <button class="btn btn-primary btnAddRow" type="button" style="margin-top:2px;"><i class="fa fa-plus"></i> Add Row</button>
-                                        }
-                                        else
-                                        { // Display Remove Row button for other rows
-                                            <button class="btn btn-danger btnRemoveRow" type="button"><i class="fa fa-minus"></i> Remove</button>
-                                        }
-                                    </div>
-
-                                </div>
-                                <div class="page-separator"></div>
+                                    @Html.Partial("_CustomerAddress", Model.MasterAddressList[i], new ViewDataDictionary(ViewData) { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = $"MasterAddressList[{i}]" } })
+                                }
 
                             }
                         </div>
-
+                       
                     </div>
                 </div>
 
                 <div class="display text-right">
-                    <button class="btn btn-success  " type="submit"><i class="fa fa-save fa-adjust"></i>Save</button>
-                    <button class="btn btn-warning  " type="reset"><i class="fa fa-refresh fa-adjust"></i>Reset</button>
+                    <button class="btn btn-success" type="submit"><i class="fa fa-save fa-adjust"></i>Save</button>
+                    <button class="btn btn-warning" type="reset"><i class="fa fa-refresh fa-adjust"></i>Reset</button>
 
                 </div>
             </div>
@@ -773,613 +620,360 @@
 
 </div>
 
+
 <script>
     var ruleMasterUrl, ddlState = $("#ddlState");
     $(document).ready(function () {
-        $('#ddlCountry').change(function () {
-            OnCountryChange();
-            return false;
+    $('#ddlCountry').change(function () {
+        OnCountryChange();
+        return false;
+    });
+    SetPageLoad('Customer', 'Create', 'ddlGroupCode', 'Go To List', '@Url.Action("Index")');
+    ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
+        baseUrl = '@Url.Action("", "Gst", new { Area = "Master" })';
+    ddlCustomerLocation = $('#ddlCustomerLocation');
+    ddlCustomerDeliveryLocation = $('#ddlCustomerDeliveryLocation');
+    // *****************Add Buttion Functaionality **************
 
-        });
-        $(document).on('click', '.btnAddRow', function () {
-            var index = $('.address-row').length; // Get current number of rows
-            var newRow = $('.address-row').first().clone(); // Clone the first row
-            // Clear input values in the cloned row
-            newRow.find('input').val('');
-
-            // Update IDs and Names with the new index
-            newRow.find('[id]').each(function () {
-                var newId = this.id.replace(/[0-9]+/, index);
-                $(this).attr('id', newId);
-            });
-
-            newRow.find('[name]').each(function () {
-                var newName = this.name.replace(/[0-9]+/, index);
-                $(this).attr('name', newName);
-            });
-
-            // Update button types and add remove button
-            newRow.find('.btnAddRow').remove(); // Remove add button
-
-            var removeButton = $('<button type="button" class="btn btn-danger btnRemoveRow"><i class="fa fa-minus"></i> Remove</button>');
-            newRow.find('.col-sm-2:last-child').append(removeButton); // Append remove button to last column
-
-            // Append the cloned row to the container
-            $('#addressRowsContainer').append(newRow);
-            $('#addressRowsContainer').append("<div class='page-separator'></div>");
-        });
-
-        // Remove Row button click event
-        $(document).on('click', '.btnRemoveRow', function () {
-            //$(this).closest('.address-row').remove(); // Remove the row
-            var rowToRemove = $(this).closest('.address-row');
-            var separatorToRemove = rowToRemove.next('.page-separator');
-
-            // Remove the row
-            rowToRemove.remove();
-
-            // Remove the separator if it exists
-            if (separatorToRemove.length > 0) {
-                separatorToRemove.remove();
+    // Add Address
+    $('#btnAddRow').click(function () {
+        var addressIndex = $('#addressRowsContainer .address-row').length;
+        $.ajax({
+            url: '@Url.Action("GetNewCustomerAddress", "Customer")',
+            type: 'POST',
+            data: { Index: addressIndex, ClickCount:-1},
+            success: function (partialView) {
+                var newIndex = addressIndex++; // Increment addressIndex after sending it
+                partialView = partialView.replace(new RegExp(`MasterAddressList\\[\\d+\\]`, 'g'), `MasterAddressList[${newIndex}]`);
+                 $('#addressRowsContainer').append(partialView);                  
+            },
+            error: function () {
+                alert('Error fetching new address.');
             }
         });
-        SetPageLoad('Customer', 'Create', 'ddlGroupCode', 'Go To List', '@Url.Action("Index")');
-        ruleMasterUrl = '@Url.Action("", "Rules", new { Area = "Master" })';
-         baseUrl = '@Url.Action("", "Gst", new { Area = "Master" })';
-        ddlCustomerLocation = $('#ddlCustomerLocation');
-        ddlCustomerDeliveryLocation = $('#ddlCustomerDeliveryLocation');
-        // *****************Add Buttion Functaionality **************
-        $('#btnAddRow').click(function () {
-            var newRow = $('.address-row:first').clone();
-            newRow.find('input').val('');
-            newRow.find('.btn-remove').remove(); // Ensure the cloned row doesn't have remove button initially
-            newRow.append('<button class="btn btn-dark btn-remove" type="button"><i class="fa fa-minus"></i></button>');
-            $('#addressTableBody').append(newRow);
-        });
-
-        $(document).on('click', '.btn-remove', function () {
-            $(this).closest('tr').remove();
-        });
-
-        //InitWizard('dvWizard', [
-        //    { StepName: 'Basic Details', StepFunction: ValidateOnStep1 },
-        //    { StepName: 'Deal Person Details' },
-        //    { StepName: 'Billing Address Details' }
-        //], 'Add Customer');
-     //   InitWizard('dvWizard','Add Customer');
-
-        AttachEvents();
-        //$('#ddlCountry').val(1).change();
-        $('#ddlCustomerType').change(OnCustomerTypeChange);
-        //$("#ddlRegistrationType").change(RegistrationTypeChange);
-        //RegistrationTypeChange();
-
-        var requestData = { moduleId: 15, ruleId: 11 };
-        AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(requestData), function (result) {
-            var useCustomerType = true;
-            useCustomerType = result == "Y" ? true : false;
-            $('#dvCustomerType').showHide(result == "Y" ? true : false);
-            if (!useCustomerType)
-                $('#ddlCustomerType').val(1);
-        }, ErrorFunction, false);
-
-        var allowPhoneNoMandatoryForCustomer = false;
-        var request = { moduleId: 15, ruleId: 12 };
-        AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(request), function (result) {
-            allowPhoneNoMandatoryForCustomer = (result == "Y" ? true : false);
-            if (!allowPhoneNoMandatoryForCustomer) {
-                RemoveRequired(txtPhoneNo);
-            }
-            else {
-                AddRequired(txtPhoneNo, 'Please enter Phone No. ');
-            }
-        }, ErrorFunction, false);
-
-        InitGrid('AddMultiAddress', false, 2, Init);
-
-        OnCustomerTypeChange();
-        InitObjects();
+       
     });
 
-    function AttachEvents() {
-        $('#ddlState').change(OnStateChange);
-       $('[id*="chkPayBas"]').prop("checked", false);
-        InitMultiSelect(ddlCustomerLocation.Id, true, false, true);
-        DropDownChange('ddlCustomerLocation', function () {
-            $('#hdnCustomerLocation').val($(this).val());
-        });
-
-        InitMultiSelect(ddlCustomerDeliveryLocation.Id, true, false, true);
-
-        DropDownChange('ddlCustomerDeliveryLocation', function () {
-            $('#hdnCustomerDeliveryLocation').val($(this).val());
-        });
-
-        $('#txtMobileNo').on('input', function () {
-            var numericValue = $(this).val().replace(/[^0-9]/g, '');
-            $(this).val(numericValue);
-        });
-
-        $('#txtPhoneNo').on('input', function () {
-            var numericValue = $(this).val().replace(/[^0-9]/g, '');
-            $(this).val(numericValue);
-        });
-
-
-        ddlState.change(function () {
-            txtCityName.val('');
-            hdnCityId.val('');
-            if (ddlState.val() != '') {
-                var requestData = { GstId: 0, StateId: ddlState.val() };
-                AjaxRequestWithPostAndJson(baseUrl + '/ValidateGSTState', JSON.stringify(requestData), function (result) {
-                    if (!result.IsSuccessfull) {
-                        ShowMessage(result.ErrorMessage);
-                        ddlState.val('');
-                        hdnStateId.val('');
-                        lblGstType.text('');
-                        ddlState.focus();
-                        isStepValid = false;
-                        return false;
-                    }
-
-                }, ErrorFunction, false);
-            }
-
-            /* var result = IsStateNameExist(ddlState);*/
-            GetGstTypeByStateId(ddlState, lblGstType);
-            debugger;
-            /* return result;*/
-            AutoComplete('txtCityName', cityMasterUrl + '/GetAutoCompleteCityNameListByStateId', 'cityName', 'l', 'l', 'l', 'd', '', 'hdnCityId', '', '', true, function () {
-                return [{ Key: 'stateId', Value: ddlState.val() }];
-            });
-            txtCityName.blur(function () { return IsCityNameExist(txtCityName, hdnCityId); });
-            $("#ddlRegistrationType").change(RegistrationTypeChange);
-            RegistrationTypeChange();
-        });
-
-    }
-
-    function OnCustomerTypeChange() {
-        $('#dvGstTinNo').showHide($('#ddlCustomerType').val() == 1);
-        if ($('#ddlCustomerType').val() == 1)
-            AddRequired($('#txtGstTinNo'), 'Please Enter Gst No');
-        else
-            RemoveRequired($('#txtGstTinNo'));
-    }
-    function showAddressForm(formId) {
-        debugger;
-            document.getElementById('primaryAddressForm').style.display = 'none';
-            document.getElementById('secondaryAddressForm').style.display = 'none';
-            //document.getElementById('GstMapping').style.display = 'none';
-            document.getElementById('ContactPerson').style.display = 'none';
-            document.getElementById('PaymentTerms').style.display = 'none';
-            document.getElementById('BusinessPartnerBank').style.display = 'none';
-            //document.getElementById('secondaryAddressMapping').style.display = 'none';
-
-            document.getElementById(formId).style.display = 'block';
+    // Delete Address
+    $(document).on('click', '.btnDelete', function () {       
+        var rowToRemove = $(this).closest('.address-row');
+        var separatorToRemove = rowToRemove.next('.page-separator');
+        if (separatorToRemove.length > 0) {
+            separatorToRemove.remove();
         }
-    function ValidateOnStep1() {
-        if (!ValidateMultiCheckBox('chkPayBas', 'PayBas')) {
-            isStepValid = false;
-            return false;
+        if ($('#addressRowsContainer .address-row').length > 1) {
+            $(this).closest('.address-row').remove();
+            // Enable delete button for the new first row
+            $('#addressRowsContainer .address-row:first-child .btnDelete').prop('disabled', false);
+        } else {
+            alert('At least one address must be present.');
+        }
+    });
+
+
+
+    AttachEvents();
+    $('#ddlCustomerType').change(OnCustomerTypeChange);
+    var requestData = { moduleId: 15, ruleId: 11 };
+    AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(requestData), function (result) {
+        var useCustomerType = true;
+        useCustomerType = result == "Y" ? true : false;
+        $('#dvCustomerType').showHide(result == "Y" ? true : false);
+        if (!useCustomerType)
+            $('#ddlCustomerType').val(1);
+    }, ErrorFunction, false);
+
+    var allowPhoneNoMandatoryForCustomer = false;
+    var request = { moduleId: 15, ruleId: 12 };
+    AjaxRequestWithPostAndJson(ruleMasterUrl + '/GetModuleRuleByIdAndRuleId', JSON.stringify(request), function (result) {
+        allowPhoneNoMandatoryForCustomer = (result == "Y" ? true : false);
+        if (!allowPhoneNoMandatoryForCustomer) {
+            RemoveRequired(txtPhoneNo);
         }
         else {
-            isStepValid = true;
+            AddRequired(txtPhoneNo, 'Please enter Phone No. ');
         }
-        return true;
-    }
+    }, ErrorFunction, false);
 
-    function ValidateMultiCheckBox(partialId, entityName) {
-        var selected = false, firstCheckBox = null;
-        $('[id*="' + partialId + '"]').each(function () {
-            if (firstCheckBox == null)
-                firstCheckBox = $(this);
-            if ($(this).is(':checked'))
-                selected = true;
-        });
-        if (!selected) {
-            ShowMessage("Please select at-least one " + entityName);
-            firstCheckBox.focus();
-            return false;
-        }
-        return true;
-    }
-    function OnCountryChange() {
-        if ($('#ddlCountry').val() != "") {
-            var requestData = { countryId: $('#ddlCountry').val() };
-            AjaxRequestWithPostAndJson('@Url.Action("GetStateListByCountryId", "State")', JSON.stringify(requestData), GetStateListSuccess, ErrorFunction, false);
-        }
-        else
-            GetStateListSuccess([]);
-    }
+    InitGrid('AddMultiAddress', false, 2, Init);
 
-    function GetStateListSuccess(responseData) {
-        BindDropDownList('ddlState', responseData, 'Value', 'Name', '', 'Select State');
-    }
+    OnCustomerTypeChange();
+    InitObjects();
+});
 
-    function OnStateChange() {
-        if ($('#ddlState').val() != "") {
-            var requestData = { stateId: $('#ddlState').val() };
-            AjaxRequestWithPostAndJson('@Url.Action("GetCityListByStateId", "City")', JSON.stringify(requestData), GetCityListSuccess, ErrorFunction, false);
-        }
-        else
-            GetCityListSuccess([]);
-    }
-
-    function GetCityListSuccess(responseData) {
-        BindDropDownList('ddlCity', responseData, 'Value', 'Name', '', 'Select City');
-    }
-    //**********************************-------------Customer Master Data push to  Sap Api through this method-----------------------************************/
-    $(document).ready(function () {
-        $('#btnFetchData').click(function () {
-            debugger;
-        $.ajax({
-            url: '@Url.Action("FetchCustomerDetailsFromApi", "Customer")',
-            method: 'POST',
-            success: function (data) {
-                // Process and populate table with fetched data
-                data.forEach(function (customer) {
-                    var newRow = $('.address-row:first').clone();
-                    // Populate the cloned row with customer data
-                    newRow.find('input[name="AddressCode[]"]').val(customer.AddressCode);
-                    newRow.find('input[name="Address1[]"]').val(customer.Address1);
-                    newRow.find('input[name="Address2[]"]').val(customer.Address2);
-                    newRow.find('input[name="CityId[]"]').val(customer.CityId);
-                    newRow.find('input[name="CityName[]"]').val(customer.CityName);
-                    newRow.find('input[name="Pincode[]"]').val(customer.Pincode);
-                    newRow.find('input[name="MobileNo[]"]').val(customer.MobileNo);
-                    newRow.find('input[name="EmailId[]"]').val(customer.EmailId);
-                    newRow.find('input[name="StatisticalChargesCode[]"]').val(customer.StatisticalChargesCode);
-                    newRow.find('input[name="IsActive[]"]').prop('checked', customer.IsActive);
-                    newRow.find('input[name="IsMreNoApplicable[]"]').prop('checked', customer.IsMreNoApplicable);
-
-                    // Add other fields based on the provided models
-                    newRow.find('input[name="SystemCode[]"]').val(customer.SystemCode);
-                    newRow.find('input[name="GroupCode[]"]').val(customer.GroupCode);
-                    newRow.find('input[name="GroupName[]"]').val(customer.GroupName);
-                    newRow.find('input[name="CustomerCode[]"]').val(customer.CustomerCode);
-                    newRow.find('input[name="CustomerName[]"]').val(customer.CustomerName);
-                    newRow.find('input[name="CustomerLocation[]"]').val(customer.CustomerLocation);
-                    newRow.find('input[name="CustomerDeliveryLocation[]"]').val(customer.CustomerDeliveryLocation);
-                    newRow.find('input[name="PayBasId[]"]').val(customer.PayBasId);
-                    newRow.find('input[name="PayBasName[]"]').val(customer.PayBasName);
-                    newRow.find('input[name="SavedCustomerLocation[]"]').val(customer.SavedCustomerLocation);
-                    newRow.find('input[name="SavedCustomerDeliveryLocation[]"]').val(customer.SavedCustomerDeliveryLocation);
-                    newRow.find('input[name="IsMilkrunHrsPerDayEnabled[]"]').prop('checked', customer.IsMilkrunHrsPerDayEnabled);
-                    newRow.find('input[name="PhoneNo[]"]').val(customer.PhoneNo);
-                    newRow.find('input[name="TotalCustomers[]"]').val(customer.TotalCustomers);
-                    newRow.find('input[name="FilterCustomers[]"]').val(customer.FilterCustomers);
-
-                    // BusinessPartnerDetails fields
-                    newRow.find('input[name="PaymentTerms[]"]').val(customer.BusinessPartnerDetails.PaymentTerms);
-                    newRow.find('input[name="InterestOnArrearsPercentage[]"]').val(customer.BusinessPartnerDetails.InterestOnArrearsPercentage);
-                    newRow.find('input[name="PriceList[]"]').val(customer.BusinessPartnerDetails.PriceList);
-                    newRow.find('input[name="TotalDiscountPercentage[]"]').val(customer.BusinessPartnerDetails.TotalDiscountPercentage);
-                    newRow.find('input[name="CreditLimit[]"]').val(customer.BusinessPartnerDetails.CreditLimit);
-                    newRow.find('input[name="CommitmentLimit[]"]').val(customer.BusinessPartnerDetails.CommitmentLimit);
-                    newRow.find('input[name="DunningTerm[]"]').val(customer.BusinessPartnerDetails.DunningTerm);
-                    newRow.find('input[name="EffectiveDiscountsGroups[]"]').val(customer.BusinessPartnerDetails.EffectiveDiscountsGroups);
-                    newRow.find('input[name="BankCountryRegion[]"]').val(customer.BusinessPartnerDetails.BankCountryRegion);
-                    newRow.find('input[name="BankName[]"]').val(customer.BusinessPartnerDetails.BankName);
-                    newRow.find('input[name="BankCode[]"]').val(customer.BusinessPartnerDetails.BankCode);
-                    newRow.find('input[name="Account[]"]').val(customer.BusinessPartnerDetails.Account);
-                    newRow.find('input[name="BICSWIFTCode[]"]').val(customer.BusinessPartnerDetails.BICSWIFTCode);
-                    newRow.find('input[name="BankAccountName[]"]').val(customer.BusinessPartnerDetails.BankAccountName);
-                    newRow.find('input[name="Branch[]"]').val(customer.BusinessPartnerDetails.Branch);
-                    newRow.find('input[name="CtrlIntID[]"]').val(customer.BusinessPartnerDetails.CtrlIntID);
-                    newRow.find('input[name="MandateID[]"]').val(customer.BusinessPartnerDetails.MandateID);
-                    newRow.find('input[name="DateOfSignature[]"]').val(customer.BusinessPartnerDetails.DateOfSignature);
-                    newRow.find('input[name="AddressCode[]"]').val(customer.BusinessPartnerDetails.AddressCode);
-
-                    newRow.append('<button class="btn btn-dark btn-remove" type="button"><i class="fa fa-minus"></i></button>');
-                    $('#addressTableBody').append(newRow);
-                    debugger;
-                });
-
-                // Add click event for dynamically added remove buttons
-                $('.btn-remove').click(function () {
-                    $(this).closest('.address-row').remove();
-                });
-            },
-            error: function (xhr, status, error) {
-                console.error("Error fetching data: ", status, error);
-                alert("An error occurred while fetching the data. Please try again.");
-            }
-        });
+function AttachEvents() {
+    $('#ddlState').change(OnStateChange);
+    $('[id*="chkPayBas"]').prop("checked", false);
+    InitMultiSelect(ddlCustomerLocation.Id, true, false, true);
+    DropDownChange('ddlCustomerLocation', function () {
+        $('#hdnCustomerLocation').val($(this).val());
     });
 
-    $('#btnSubmitData').click(function () {
-        var customerData = [];
+    InitMultiSelect(ddlCustomerDeliveryLocation.Id, true, false, true);
 
-        $('#addressTableBody .address-row').each(function () {
-            debugger;
-            var customer = {
-                AddressCode: $(this).find('input[name="AddressCode[]"]').val(),
-                Address1: $(this).find('input[name="Address1[]"]').val(),
-                Address2: $(this).find('input[name="Address2[]"]').val(),
-                CityId: $(this).find('input[name="CityId[]"]').val(),
-                CityName: $(this).find('input[name="CityName[]"]').val(),
-                Pincode: $(this).find('input[name="Pincode[]"]').val(),
-                MobileNo: $(this).find('input[name="MobileNo[]"]').val(),
-                EmailId: $(this).find('input[name="EmailId[]"]').val(),
-                StatisticalChargesCode: $(this).find('input[name="StatisticalChargesCode[]"]').val(),
-                IsActive: $(this).find('input[name="IsActive[]"]').prop('checked'),
-                IsMreNoApplicable: $(this).find('input[name="IsMreNoApplicable[]"]').prop('checked'),
-                SystemCode: $(this).find('input[name="SystemCode[]"]').val(),
-                GroupCode: $(this).find('input[name="GroupCode[]"]').val(),
-                GroupName: $(this).find('input[name="GroupName[]"]').val(),
-                CustomerCode: $(this).find('input[name="CustomerCode[]"]').val(),
-                CustomerName: $(this).find('input[name="CustomerName[]"]').val(),
-                CustomerLocation: $(this).find('input[name="CustomerLocation[]"]').val(),
-                CustomerDeliveryLocation: $(this).find('input[name="CustomerDeliveryLocation[]"]').val(),
-                PayBasId: $(this).find('input[name="PayBasId[]"]').val(),
-                PayBasName: $(this).find('input[name="PayBasName[]"]').val(),
-                SavedCustomerLocation: $(this).find('input[name="SavedCustomerLocation[]"]').val(),
-                SavedCustomerDeliveryLocation: $(this).find('input[name="SavedCustomerDeliveryLocation[]"]').val(),
-                IsMilkrunHrsPerDayEnabled: $(this).find('input[name="IsMilkrunHrsPerDayEnabled[]"]').prop('checked'),
-                PhoneNo: $(this).find('input[name="PhoneNo[]"]').val(),
-                TotalCustomers: $(this).find('input[name="TotalCustomers[]"]').val(),
-                FilterCustomers: $(this).find('input[name="FilterCustomers[]"]').val(),
-                BusinessPartnerDetails: {
-                    PaymentTerms: $(this).find('input[name="PaymentTerms[]"]').val(),
-                    InterestOnArrearsPercentage: $(this).find('input[name="InterestOnArrearsPercentage[]"]').val(),
-                    PriceList: $(this).find('input[name="PriceList[]"]').val(),
-                    TotalDiscountPercentage: $(this).find('input[name="TotalDiscountPercentage[]"]').val(),
-                    CreditLimit: $(this).find('input[name="CreditLimit[]"]').val(),
-                    CommitmentLimit: $(this).find('input[name="CommitmentLimit[]"]').val(),
-                    DunningTerm: $(this).find('input[name="DunningTerm[]"]').val(),
-                    EffectiveDiscountsGroups: $(this).find('input[name="EffectiveDiscountsGroups[]"]').val(),
-                    BankCountryRegion: $(this).find('input[name="BankCountryRegion[]"]').val(),
-                    BankName: $(this).find('input[name="BankName[]"]').val(),
-                    BankCode: $(this).find('input[name="BankCode[]"]').val(),
-                    Account: $(this).find('input[name="Account[]"]').val(),
-                    BICSWIFTCode: $(this).find('input[name="BICSWIFTCode[]"]').val(),
-                    BankAccountName: $(this).find('input[name="BankAccountName[]"]').val(),
-                    Branch: $(this).find('input[name="Branch[]"]').val(),
-                    CtrlIntID: $(this).find('input[name="CtrlIntID[]"]').val(),
-                    MandateID: $(this).find('input[name="MandateID[]"]').val(),
-                    DateOfSignature: $(this).find('input[name="DateOfSignature[]"]').val(),
-                    AddressCode: $(this).find('input[name="AddressCode[]"]').val()
+    DropDownChange('ddlCustomerDeliveryLocation', function () {
+        $('#hdnCustomerDeliveryLocation').val($(this).val());
+    });
+
+    $('#txtMobileNo').on('input', function () {
+        var numericValue = $(this).val().replace(/[^0-9]/g, '');
+        $(this).val(numericValue);
+    });
+
+    $('#txtPhoneNo').on('input', function () {
+        var numericValue = $(this).val().replace(/[^0-9]/g, '');
+        $(this).val(numericValue);
+    });
+
+    $('.Number').on('input', function () {
+        var numericValue = $(this).val().replace(/[^0-9]/g, '');
+        $(this).val(numericValue);
+    });
+    ddlState.change(function () {
+        //txtCityName.val('');
+        //hdnCityId.val('');
+        if (ddlState.val() != '') {
+            var requestData = { GstId: 0, StateId: ddlState.val() };
+            AjaxRequestWithPostAndJson(baseUrl + '/ValidateGSTState', JSON.stringify(requestData), function (result) {
+                if (!result.IsSuccessfull) {
+                    ShowMessage(result.ErrorMessage);
+                    ddlState.val('');
+                    hdnStateId.val('');
+                    lblGstType.text('');
+                    ddlState.focus();
+                    isStepValid = false;
+                    return false;
                 }
-            };
 
-            customerData.push(customer);
-        });
+            }, ErrorFunction, false);
+        }
+
+        /* var result = IsStateNameExist(ddlState);*/
+        GetGstTypeByStateId(ddlState, lblGstType);
         debugger;
-        $.ajax({
-            url: '@Url.Action("PostBPMasterDataWithApi", "Customer")',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(customerData),
-            success: function (response) {
-                debugger
-                console.log("Data submitted successfully", response);
-                alert("Data submitted successfully!");
-            },
-            error: function (xhr, status, error) {
-                console.error("Error submitting data: ", status, error);
-                alert("An error occurred while submitting the data. Please try again.");
-            }
+        /* return result;*/
+        AutoComplete('txtCityName', cityMasterUrl + '/GetAutoCompleteCityNameListByStateId', 'cityName', 'l', 'l', 'l', 'd', '', 'hdnCityId', '', '', true, function () {
+            return [{ Key: 'stateId', Value: ddlState.val() }];
         });
+        //txtCityName.blur(function () { return IsCityNameExist(txtCityName, hdnCityId); });
+        $("#ddlRegistrationType").change(RegistrationTypeChange);
+        RegistrationTypeChange();
     });
+
+}
+
+function OnCustomerTypeChange() {
+    $('#dvGstTinNo').showHide($('#ddlCustomerType').val() == 1);
+    if ($('#ddlCustomerType').val() == 1)
+        AddRequired($('#txtGstTinNo'), 'Please Enter Gst No');
+    else
+        RemoveRequired($('#txtGstTinNo'));
+}
+function showAddressForm(formId) {
+    debugger;
+        document.getElementById('primaryAddressForm').style.display = 'none';
+        document.getElementById('secondaryAddressForm').style.display = 'none';
+        //document.getElementById('GstMapping').style.display = 'none';
+        document.getElementById('ContactPerson').style.display = 'none';
+        document.getElementById('PaymentTerms').style.display = 'none';
+        document.getElementById('BusinessPartnerBank').style.display = 'none';
+        //document.getElementById('secondaryAddressMapping').style.display = 'none';
+
+    document.getElementById(formId).style.display = 'block';
+    //if (formId == 'secondaryAddressForm') {
+    //    document.getElementById('btnAddRow').style.display = 'block';
+    //} else {
+    //    document.getElementById('btnAddRow').style.display = 'none';
+    //}
+    }
+function ValidateOnStep1() {
+    if (!ValidateMultiCheckBox('chkPayBas', 'PayBas')) {
+        isStepValid = false;
+        return false;
+    }
+    else {
+        isStepValid = true;
+    }
+    return true;
+}
+
+function ValidateMultiCheckBox(partialId, entityName) {
+    var selected = false, firstCheckBox = null;
+    $('[id*="' + partialId + '"]').each(function () {
+        if (firstCheckBox == null)
+            firstCheckBox = $(this);
+        if ($(this).is(':checked'))
+            selected = true;
+    });
+    if (!selected) {
+        ShowMessage("Please select at-least one " + entityName);
+        firstCheckBox.focus();
+        return false;
+    }
+    return true;
+}
+function OnCountryChange() {
+    if ($('#ddlCountry').val() != "") {
+        var requestData = { countryId: $('#ddlCountry').val() };
+        AjaxRequestWithPostAndJson('@Url.Action("GetStateListByCountryId", "State")', JSON.stringify(requestData), GetStateListSuccess, ErrorFunction, false);
+    }
+    else
+        GetStateListSuccess([]);
+}
+
+function GetStateListSuccess(responseData) {
+    BindDropDownList('ddlState', responseData, 'Value', 'Name', '', 'Select State');
+}
+
+function OnStateChange() {
+    if ($('#ddlState').val() != "") {
+        var requestData = { stateId: $('#ddlState').val() };
+        AjaxRequestWithPostAndJson('@Url.Action("GetCityListByStateId", "City")', JSON.stringify(requestData), GetCityListSuccess, ErrorFunction, false);
+    }
+    else
+        GetCityListSuccess([]);
+}
+
+function GetCityListSuccess(responseData) {
+    BindDropDownList('ddlCity', responseData, 'Value', 'Name', '', 'Select City');
+}
+
+$(document).ready(function () {
+    $.ajax({
+        url: '@Url.Action("PostBPMasterDataWithApi", "Customer")',
+        type: 'POST',
+        dataType: 'json', // Specify the expected data type
+        success: function (data) {
+            parseData = JSON.parse(data);
+            console.log(parseData); // Log the response data to console
+
+            var nextLink = parseData['odata.nextLink'];
+            console.log(nextLink);
+
+
+            value = parseData.value;
+            $('#dataTable').DataTable({
+                data: value, // Assuming 'value' is the array of objects in your JSON
+                columns: [
+                    { data: 'CardCode', title: 'Party Code' },
+                    { data: 'CardType', title: 'Type' },
+                    { data: 'CardName', title: 'Name' },
+                    { data: 'CreateDate', title: 'Create Date' }
+                ]
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error); // Log any errors to console
+        }
+    });
+
 });
-    @*
-        $(document).ready(function () {
-        $.ajax({
-            url: '@Url.Action("PostBPMasterDataWithApi", "Customer")',
-            type: 'POST',
-            dataType: 'json', // Specify the expected data type
-            success: function (data) {
-                parseData = JSON.parse(data);
-                console.log(parseData); // Log the response data to console
 
-                var nextLink = parseData['odata.nextLink'];
-                console.log(nextLink);
+        function GetGstTypeByStateId(ddlState, lblGstType) {
+    if (ddlState.val() != 0 && ddlState.val() != '') {
+        var requestData = { stateId: ddlState.val() };
+    AjaxRequestWithPostAndJson('@Url.Action("CheckIsStateOrUnionTerritory","State")', JSON.stringify(requestData), function (result) {
+        if (result.IsState)
+            lblGstType.text('SGST');
+        else
+            lblGstType.text('UGST');
 
+    }, ErrorFunction, false);
+}
+else
+    lblGstType.text('');
+}
+function InitObjects() {
+    txtStateName = $('#txtStateName');
+    ddlState = $('#ddlState');
+    txtCityName = $('#txtCityName'); hdnCityId = $('#hdnCityId'); lblGstType = $('#lblGstType'); hdnGstId = $('#hdnGstId');
+    txtAddress = $('#txtAddress'); txtGstTinNo = $('#txtGstTinNo'); txtProvisionalId = $('#txtProvisionalId');
+    spnMassage = $('#spnMassage');
+    txtPanNo = $('#txtPanNo');
+    cityMasterUrl = '@Url.Action("", "City", new { Area = "Master" })';
+}
 
-                value = parseData.value;
-                $('#dataTable').DataTable({
-                    data: value, // Assuming 'value' is the array of objects in your JSON
-                    columns: [
-                        { data: 'CardCode', title: 'Party Code' },
-                        { data: 'CardType', title: 'Type' },
-                        { data: 'CardName', title: 'Name' },
-                        { data: 'CreateDate', title: 'Create Date' }
-                    ]
-                });
-            },
-            error: function (xhr, status, error) {
-                console.error('Error:', error); // Log any errors to console
-            }
-        });
-
-    });
-        *@
-
-         function GetGstTypeByStateId(ddlState, lblGstType) {
-     if (ddlState.val() != 0 && ddlState.val() != '') {
-         var requestData = { stateId: ddlState.val() };
-     AjaxRequestWithPostAndJson('@Url.Action("CheckIsStateOrUnionTerritory","State")', JSON.stringify(requestData), function (result) {
-         if (result.IsState)
-             lblGstType.text('SGST');
-         else
-             lblGstType.text('UGST');
-
-     }, ErrorFunction, false);
- }
- else
-     lblGstType.text('');
-    }
-    function InitObjects() {
-       txtStateName = $('#txtStateName');
-       ddlState = $('#ddlState');
-       txtCityName = $('#txtCityName'); hdnCityId = $('#hdnCityId'); lblGstType = $('#lblGstType'); hdnGstId = $('#hdnGstId');
-       txtAddress = $('#txtAddress'); txtGstTinNo = $('#txtGstTinNo'); txtProvisionalId = $('#txtProvisionalId');
-       spnMassage = $('#spnMassage');
-       txtPanNo = $('#txtPanNo');
-       cityMasterUrl = '@Url.Action("", "City", new { Area = "Master" })';
-    }
-
-    // ******************  FETCH UULIP-API *******************
-
-    @*$(document).ready(function () {
-        $('#btnFetchData').click(function () {
-         
-        $.ajax({
+// ******************  FETCH UULIP-API *******************
+$('#btnFetchData').click(function () {
+    $.ajax({
             url: '@Url.Action("FetchCustomerDetailsFromApi", "Customer")',
-            method: 'POST',
-            success: function (data) {
-                data.forEach(function (customer) {
-                    var newRow = $('.address-row:first').clone();
-
-                    newRow.find('input[name="AddressCode[]"]').val(customer.AddressCode);
-                    newRow.find('input[name="Address1[]"]').val(customer.Address1);
-                    newRow.find('input[name="Address2[]"]').val(customer.Address2);
-                    newRow.find('input[name="CityId[]"]').val(customer.CityId);
-                    newRow.find('input[name="CityName[]"]').val(customer.CityName);
-                    newRow.find('input[name="Pincode[]"]').val(customer.Pincode);
-                    newRow.find('input[name="MobileNo[]"]').val(customer.MobileNo);
-                    newRow.find('input[name="EmailId[]"]').val(customer.EmailId);
-                    newRow.find('input[name="StatisticalChargesCode[]"]').val(customer.StatisticalChargesCode);
-                    newRow.find('input[name="IsActive[]"]').prop('checked', customer.IsActive);
-                    newRow.find('input[name="IsMreNoApplicable[]"]').prop('checked', customer.IsMreNoApplicable);
-
-                    // Add other fields based on the provided models
-                    newRow.find('input[name="SystemCode[]"]').val(customer.SystemCode);
-                    newRow.find('input[name="GroupCode[]"]').val(customer.GroupCode);
-                    newRow.find('input[name="GroupName[]"]').val(customer.GroupName);
-                    newRow.find('input[name="CustomerCode[]"]').val(customer.CustomerCode);
-                    newRow.find('input[name="CustomerName[]"]').val(customer.CustomerName);
-                    newRow.find('input[name="CustomerLocation[]"]').val(customer.CustomerLocation);
-                    newRow.find('input[name="CustomerDeliveryLocation[]"]').val(customer.CustomerDeliveryLocation);
-                    newRow.find('input[name="PayBasId[]"]').val(customer.PayBasId);
-                    newRow.find('input[name="PayBasName[]"]').val(customer.PayBasName);
-                    newRow.find('input[name="SavedCustomerLocation[]"]').val(customer.SavedCustomerLocation);
-                    newRow.find('input[name="SavedCustomerDeliveryLocation[]"]').val(customer.SavedCustomerDeliveryLocation);
-                    newRow.find('input[name="IsMilkrunHrsPerDayEnabled[]"]').prop('checked', customer.IsMilkrunHrsPerDayEnabled);
-                    newRow.find('input[name="PhoneNo[]"]').val(customer.PhoneNo);
-                    newRow.find('input[name="TotalCustomers[]"]').val(customer.TotalCustomers);
-                    newRow.find('input[name="FilterCustomers[]"]').val(customer.FilterCustomers);
-
-                    // BusinessPartnerDetails fields
-                    newRow.find('input[name="PaymentTerms[]"]').val(customer.BusinessPartnerDetails.PaymentTerms);
-                    newRow.find('input[name="InterestOnArrearsPercentage[]"]').val(customer.BusinessPartnerDetails.InterestOnArrearsPercentage);
-                    newRow.find('input[name="PriceList[]"]').val(customer.BusinessPartnerDetails.PriceList);
-                    newRow.find('input[name="TotalDiscountPercentage[]"]').val(customer.BusinessPartnerDetails.TotalDiscountPercentage);
-                    newRow.find('input[name="CreditLimit[]"]').val(customer.BusinessPartnerDetails.CreditLimit);
-                    newRow.find('input[name="CommitmentLimit[]"]').val(customer.BusinessPartnerDetails.CommitmentLimit);
-                    newRow.find('input[name="DunningTerm[]"]').val(customer.BusinessPartnerDetails.DunningTerm);
-                    newRow.find('input[name="EffectiveDiscountsGroups[]"]').val(customer.BusinessPartnerDetails.EffectiveDiscountsGroups);
-                    newRow.find('input[name="BankCountryRegion[]"]').val(customer.BusinessPartnerDetails.BankCountryRegion);
-                    newRow.find('input[name="BankName[]"]').val(customer.BusinessPartnerDetails.BankName);
-                    newRow.find('input[name="BankCode[]"]').val(customer.BusinessPartnerDetails.BankCode);
-                    newRow.find('input[name="Account[]"]').val(customer.BusinessPartnerDetails.Account);
-                    newRow.find('input[name="BICSWIFTCode[]"]').val(customer.BusinessPartnerDetails.BICSWIFTCode);
-                    newRow.find('input[name="BankAccountName[]"]').val(customer.BusinessPartnerDetails.BankAccountName);
-                    newRow.find('input[name="Branch[]"]').val(customer.BusinessPartnerDetails.Branch);
-                    newRow.find('input[name="CtrlIntID[]"]').val(customer.BusinessPartnerDetails.CtrlIntID);
-                    newRow.find('input[name="MandateID[]"]').val(customer.BusinessPartnerDetails.MandateID);
-                    newRow.find('input[name="DateOfSignature[]"]').val(customer.BusinessPartnerDetails.DateOfSignature);
-                    newRow.find('input[name="AddressCode[]"]').val(customer.BusinessPartnerDetails.AddressCode);
-
-                    newRow.append('<button class="btn btn-dark btn-remove" type="button"><i class="fa fa-minus"></i></button>');
-                    $('#addressTableBody').append(newRow);
-                });
-
-                // Add click event for dynamically added remove buttons
-                $('.btn-remove').click(function () {
-                    $(this).closest('.address-row').remove();
-                });
-            },
-            error: function (xhr, status, error) {
-                console.error("Error fetching data: ", status, error);
-                alert("An error occurred while fetching the data. Please try again.");
-            }
-        });
+        method: 'POST',
+        success: function (data) {
+            data.forEach(function (address) {
+                var newRow = $('.address-row:first').clone();
+                newRow.find('input[name="AddressCode[]"]').val(address.AddressCode);
+                newRow.find('input[name="Address1[]"]').val(address.Address1);
+                newRow.find('input[name="Address2[]"]').val(address.Address2);
+                newRow.find('input[name="CityId[]"]').val(address.CityId);
+                newRow.find('input[name="CityName[]"]').val(address.CityName);
+                newRow.find('input[name="Pincode[]"]').val(address.Pincode);
+                newRow.find('input[name="MobileNo[]"]').val(address.MobileNo);
+                newRow.find('input[name="EmailId[]"]').val(address.EmailId);
+                newRow.find('input[name="StatisticalChargesCode[]"]').val(address.StatisticalChargesCode);
+                newRow.find('input[name="IsActive[]"]').prop('checked', address.IsActive);
+                newRow.find('input[name="IsMreNoApplicable[]"]').prop('checked', address.IsMreNoApplicable);
+                newRow.append('<button class="btn btn-dark btn-remove" type="button"><i class="fa fa-minus"></i></button>');
+                $('#addressTableBody').append(newRow);
+            });
+        }
     });
 });
-        *@
 
-    @*
-        $('#btnFetchData').click(function () {
-        $.ajax({
-             url: '@Url.Action("FetchCustomerDetailsFromApi", "Customer")',
-            method: 'POST',
-            success: function (data) {
-                data.forEach(function (address) {
-                    var newRow = $('.address-row:first').clone();
-                    newRow.find('input[name="AddressCode[]"]').val(address.AddressCode);
-                    newRow.find('input[name="Address1[]"]').val(address.Address1);
-                    newRow.find('input[name="Address2[]"]').val(address.Address2);
-                    newRow.find('input[name="CityId[]"]').val(address.CityId);
-                    newRow.find('input[name="CityName[]"]').val(address.CityName);
-                    newRow.find('input[name="Pincode[]"]').val(address.Pincode);
-                    newRow.find('input[name="MobileNo[]"]').val(address.MobileNo);
-                    newRow.find('input[name="EmailId[]"]').val(address.EmailId);
-                    newRow.find('input[name="StatisticalChargesCode[]"]').val(address.StatisticalChargesCode);
-                    newRow.find('input[name="IsActive[]"]').prop('checked', address.IsActive);
-                    newRow.find('input[name="IsMreNoApplicable[]"]').prop('checked', address.IsMreNoApplicable);
-                    newRow.append('<button class="btn btn-dark btn-remove" type="button"><i class="fa fa-minus"></i></button>');
-                    $('#addressTableBody').append(newRow);
-                });
+    function RegistrationTypeChange() {
+        $("#dvgsttinno").showHide($("#ddlRegistrationType").val() != 2)
+        if ($("#ddlRegistrationType").val() != 2) {
+            if (hdnOwnerType.val() == 3) {
+                var requestData = { CustomerId: hdnOwnerId.val() };
+                AjaxRequestWithPostAndJson('@Url.Action("GetById", "Customer")', JSON.stringify(requestData), function (result) {
+                    if (result.MasterCustomerDetail.IsTruckForwardNote) {
+                        RemoveRequired(txtGstTinNo);
+                        AddRequired($('#txtPanNo'), 'Please PAN No');
+                    }
+                }, ErrorFunction, false);
             }
-        });
-    });*@
-    //************************************ ULIP API END LINE ****************************************** */
-     function RegistrationTypeChange() {
-            $("#dvgsttinno").showHide($("#ddlRegistrationType").val() != 2)
-            if ($("#ddlRegistrationType").val() != 2) {
-                if (hdnOwnerType.val() == 3) {
-                    var requestData = { CustomerId: hdnOwnerId.val() };
-                    AjaxRequestWithPostAndJson('@Url.Action("GetById", "Customer")', JSON.stringify(requestData), function (result) {
-                        if (result.MasterCustomerDetail.IsTruckForwardNote) {
-                            RemoveRequired(txtGstTinNo);
-                            AddRequired($('#txtPanNo'), 'Please PAN No');
-                        }
-                    }, ErrorFunction, false);
-                }
-                else
-                    AddRequired($('#txtGstTinNo'), 'Please Enter Gst No');
-            } else {
-                RemoveRequired($('#txtGstTinNo'));
-            }
+            else
+                AddRequired($('#txtGstTinNo'), 'Please Enter Gst No');
+        } else {
+            RemoveRequired($('#txtGstTinNo'));
+        }
 
-    }
+}
 
-    function OnChangeStateWiseCity(selectElement) {
-        var stateId = $(selectElement).val(); // Get selected state ID
-        var index = $(selectElement).attr('id').match(/\[(.*?)\]/)[1]; // Extract index from ID
-        console.log("Selected State ID:", stateId);
-        console.log("Index:", index);
+function OnChangeStateWiseCity(selectElement) {
+    var stateId = $(selectElement).val(); // Get selected state ID
+    var index = $(selectElement).attr('id').match(/\[(.*?)\]/)[1]; // Extract index from ID
+    console.log("Selected State ID:", stateId);
+    console.log("Index:", index);
 
-        // AJAX request to fetch cities based on selected state ID
-        $.ajax({
-            url: '@Url.Action("GetCityListByStateId", "City")', // Replace with your actual endpoint
-            type: 'POST',
-            dataType: 'json',
-            data: { stateId: stateId }, // Data to send to the server
-            success: function(response) {
-                console.log("Received response:", response);
+    // AJAX request to fetch cities based on selected state ID
+    $.ajax({
+        url: '@Url.Action("GetCityListByStateId", "City")', // Replace with your actual endpoint
+        type: 'POST',
+        dataType: 'json',
+        data: { stateId: stateId }, // Data to send to the server
+        success: function(response) {
+            console.log("Received response:", response);
 
-                // Clear existing options and populate new ones
-                var cityDropdown = $('#ddlMasterAddressList\\[' + index + '\\]\\.CityId'); // Escape special characters in ID
-                console.log("City Dropdown ID:", cityDropdown.attr('id'));
-                cityDropdown.empty(); // Clear previous options
+            // Clear existing options and populate new ones
+            var cityDropdown = $('#MasterAddressList\\[' + index + '\\]\\.CityId'); // Escape special characters in ID
+            console.log("City Dropdown ID:", cityDropdown.attr('id'));
+            cityDropdown.empty(); // Clear previous options
 
-                // Populate dropdown with new options
-                $.each(response, function(index, city) {
-                    console.log("Adding city:", city.Value, city.Name);
-                    cityDropdown.append($('<option>', {
-                        value: city.Value,
-                        text: city.Name
-                    }));
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching cities:', error);
-                // Handle error scenario
-            }
-        });
-    }
+            // Populate dropdown with new options
+            $.each(response, function(index, city) {
+                console.log("Adding city:", city.Value, city.Name);
+                cityDropdown.append($('<option>', {
+                    value: city.Value,
+                    text: city.Name
+                }));
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching cities:', error);
+            // Handle error scenario
+        }
+    });
+}
 
+   
 </script>

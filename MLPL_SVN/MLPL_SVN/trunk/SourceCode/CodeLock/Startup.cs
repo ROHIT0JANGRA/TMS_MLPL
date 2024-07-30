@@ -4,7 +4,6 @@ using Owin;
 [assembly: OwinStartupAttribute(typeof(CodeLock.Startup))]
 [assembly: OwinStartup(typeof(CodeLock.Startup))]
 
-
 namespace CodeLock
 {
     public partial class Startup

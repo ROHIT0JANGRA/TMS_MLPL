@@ -142,9 +142,6 @@ namespace CodeLock.Areas.Master.Controllers
             return this.Json((object)this.partRepository.GetPartDetailByPartIdAndPackingTypeId(partId, packingTypeId, consignorId, consigneeId));
         }
 
-
-
-
         public JsonResult GetPartByPagination(Pagination pagination)
         {
             DTResponse DTResponse = new DTResponse();

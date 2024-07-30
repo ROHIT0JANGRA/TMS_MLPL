@@ -21,6 +21,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CodeLock.Api_Services;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Microsoft.Owin.BuilderProperties;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using System.Reflection;
 
 namespace CodeLock.Areas.Master.Controllers
 {
@@ -132,7 +135,11 @@ namespace CodeLock.Areas.Master.Controllers
                 ((dynamic)base.ViewBag).CityList = Enumerable.Empty<SelectListItem>();
             }
         }
-
+        public IEnumerable<AutoCompleteResult> GetCityStateWise(int StateId)
+        {
+          return this.cityRepository.GetCityListByStateId(StateId.ConvertToShort());
+            
+        }
         //public ActionResult Insert()
         //{
         //    ///MasterGeneral masterPayBas;
@@ -193,7 +200,7 @@ namespace CodeLock.Areas.Master.Controllers
             MasterAddress objAdd = new MasterAddress()
             {
                 AddressId = 0,
-                AddressCode = "",
+                AddressCode = this.customerRepository.GetCustomerAddressCode(0),
                 Address1 = "",
                 Address2 = "",
                 CityId = 0,
@@ -216,7 +223,6 @@ namespace CodeLock.Areas.Master.Controllers
             }
       ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
             ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
-
             //((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
 
             return base.View(objCustomer);
@@ -238,7 +244,6 @@ namespace CodeLock.Areas.Master.Controllers
             objMasterCustomer.EntryBy = SessionUtility.LoginUserId;
             objMasterCustomer.WarehouseId = SessionUtility.WarehouseId;
             objMasterCustomer.MasterCustomerDetail.EntryBy = SessionUtility.LoginUserId;
-
             int num = this.customerRepository.Insert(objMasterCustomer);
 
             action = base.RedirectToAction("View", new { id = num });
@@ -246,7 +251,30 @@ namespace CodeLock.Areas.Master.Controllers
             //}
             return action;
         }
+        [HttpPost]
+        public ActionResult GetNewCustomerAddress(int Index,int ClickCount)
+        {
+            var MasterAddress = new MasterAddress(); // Create a new Address object
+            MasterAddress.IsActive= true;
+            if (ClickCount ==-1)
+            {
+                MasterAddress.AddressCode = this.customerRepository.GetCustomerAddressCode((Index == null ? 0 : Index));
 
+            }
+            else
+            {
+                MasterAddress.AddressCode = this.customerRepository.GetCustomerAddressCode(ClickCount);
+
+            }
+            ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
+            ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
+            ((dynamic)base.ViewBag).CityList = Enumerable.Empty<SelectListItem>();
+
+            ViewBag.Index = Index;
+            ViewData.TemplateInfo.HtmlFieldPrefix = $"MasterAddressList[{Index}]";
+            // Return partial view for Address
+            return PartialView("_CustomerAddress", MasterAddress);
+        }
         // **********************  Changes Method according to  Sap and ULIP-Api Intigration **************************
 
         //public ActionResult InsertBp()
@@ -354,114 +382,74 @@ namespace CodeLock.Areas.Master.Controllers
 
             return null;
         }
-        public async Task<ActionResult> PostBPMasterDataWithApi(MasterCustomer masterCustomer)
+        public ActionResult SAPBPMasterList() { return View(); }
+        public async Task<JsonResult> BPMasterPagination(int draw, int start, int length, string search = null)
         {
-            // Get or generate session ID
-            string sessionId = SapSessionManagerController.GetSessionId();
-            if (string.IsNullOrEmpty(sessionId))
+            try
             {
-                sessionId = await SapSessionManagerController.GenerateToken();
+                var totalRecordsTask = FetchBPMasterCount();
+                var totalRecords = await totalRecordsTask.ConfigureAwait(false);
+
+                var BPMasterListTask = FetchBPMasterList(start, length, search);
+                var BPMasterListResponse = await BPMasterListTask.ConfigureAwait(false);
+
+                if (BPMasterListResponse != null && BPMasterListResponse.ContainsKey("value"))
+                {
+                    var BPMasterList = BPMasterListResponse["value"];
+                    var responseOK = new
+                    {
+                        draw = draw,
+                        recordsTotal = totalRecords,
+                        recordsFiltered = totalRecords,
+                        data = BPMasterList
+                    };
+                    var jsonDes = Newtonsoft.Json.JsonConvert.SerializeObject(responseOK);
+                    return Json(jsonDes, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        draw = draw,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = new object[] { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
             }
-            ViewBag.SessionId = sessionId;
-
-            // Build the request body
-            var requestBody = new
+            catch (Exception ex)
             {
-                CustomerCode = masterCustomer.CustomerCode,
-                CustomerName = masterCustomer.CustomerName,
-                CustomerLocation = masterCustomer.CustomerLocation,
-                CustomerDeliveryLocation = masterCustomer.CustomerDeliveryLocation,
-                SystemCode = masterCustomer.SystemCode,
-                GroupCode = masterCustomer.GroupCode,
-                GroupName = masterCustomer.GroupName,
-                PayBasId = masterCustomer.PayBasId,
-                PayBasName = masterCustomer.PayBasName,
-                SavedCustomerLocation = masterCustomer.SavedCustomerLocation,
-                SavedCustomerDeliveryLocation = masterCustomer.SavedCustomerDeliveryLocation,
-                IsMilkrunHrsPerDayEnabled = masterCustomer.IsMilkrunHrsPerDayEnabled,
-                PhoneNo = masterCustomer.PhoneNo,
-                TotalCustomers = masterCustomer.TotalCustomers,
-                FilterCustomers = masterCustomer.FilterCustomers,
-
-                // Nested BusinessPartnerDetails
-                BusinessPartnerDetails = new
-                {
-                    PaymentTerms = masterCustomer.BusinessPartnerDetails.PaymentTerms,
-                    InterestOnArrearsPercentage = masterCustomer.BusinessPartnerDetails.InterestOnArrearsPercentage,
-                    PriceList = masterCustomer.BusinessPartnerDetails.PriceList,
-                    TotalDiscountPercentage = masterCustomer.BusinessPartnerDetails.TotalDiscountPercentage,
-                    CreditLimit = masterCustomer.BusinessPartnerDetails.CreditLimit,
-                    CommitmentLimit = masterCustomer.BusinessPartnerDetails.CommitmentLimit,
-                    DunningTerm = masterCustomer.BusinessPartnerDetails.DunningTerm,
-                    EffectiveDiscountsGroups = masterCustomer.BusinessPartnerDetails.EffectiveDiscountsGroups,
-                    BankCountryRegion = masterCustomer.BusinessPartnerDetails.BankCountryRegion,
-                    BankName = masterCustomer.BusinessPartnerDetails.BankName,
-                    BankCode = masterCustomer.BusinessPartnerDetails.BankCode,
-                    Account = masterCustomer.BusinessPartnerDetails.Account,
-                    BICSWIFTCode = masterCustomer.BusinessPartnerDetails.BICSWIFTCode,
-                    BankAccountName = masterCustomer.BusinessPartnerDetails.BankAccountName,
-                    Branch = masterCustomer.BusinessPartnerDetails.Branch,
-                    CtrlIntID = masterCustomer.BusinessPartnerDetails.CtrlIntID,
-                    MandateID = masterCustomer.BusinessPartnerDetails.MandateID,
-                    DateOfSignature = masterCustomer.BusinessPartnerDetails.DateOfSignature,
-                    AddressCode = masterCustomer.BusinessPartnerDetails.AddressCode
-                },
-
-                // Nested MasterCustomerDetail (if applicable)
-                MasterCustomerDetail = new
-                {
-                    // Add fields from MasterCustomerDetail if needed
-                },
-
-                // Nested MasterCustomerAddressInfo (if applicable)
-                MasterCustomerAddressInfo = new
-                {
-                    // Add fields from MasterCustomerAddressInfo if needed
-                },
-
-                // Nested MasterAddressList (if applicable)
-                MasterAddressList = masterCustomer.MasterAddressList.Select(address => new
-                {
-                    AddressCode = address.AddressCode,
-                    Address1 = address.Address1,
-                    Address2 = address.Address2,
-                    CityId = address.CityId,
-                    CityName = address.CityName,
-                    Pincode = address.Pincode,
-                    MobileNo = address.MobileNo,
-                    EmailId = address.EmailId,
-                    StatisticalChargesCode = address.StatisticalChargesCode,
-                    IsActive = address.IsActive,
-                    IsMreNoApplicable = address.IsMreNoApplicable
-                }).ToList()
-            };
-
-            // Create HttpClient instance with handlers to ignore certificate validation
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-
-            using (HttpClient client = new HttpClient(handler))
+                return Json(new { error = ex.Message });
+            }
+        }
+        public async Task<int> FetchBPMasterCount()
+        {
+            try
             {
-                try
+                string sessionId = SapSessionManagerController.GetSessionId();
+
+                if (string.IsNullOrEmpty(sessionId))
                 {
-                    // Set headers
+                    sessionId = await SapSessionManagerController.GenerateToken();
+                }
+
+                HttpClientHandler handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
                     client.DefaultRequestHeaders.Add("B1S-WCFCompatible", "true");
                     client.DefaultRequestHeaders.Add("B1S-MetadataWithoutSession", "true");
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
                     client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
 
-                    // Set cookies for session management
-                    var cookies = new CookieContainer();
-                    cookies.Add(new Cookie("B1SESSION", sessionId) { Domain = "103.194.8.71" }); // Replace with your session ID
+                    CookieContainer cookies = new CookieContainer();
+                    cookies.Add(new Cookie("B1SESSION", sessionId) { Domain = "103.194.8.71" });
                     cookies.Add(new Cookie("ROUTEID", ".node1") { Domain = "103.194.8.71" });
                     handler.CookieContainer = cookies;
 
-                    // Send POST request with the request body
-                    var jsonString = JsonConvert.SerializeObject(requestBody);
-                    var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = await client.PostAsync("https://103.194.8.71:50000/b1s/v1/BusinessPartners", content);
+                    HttpResponseMessage response = await client.GetAsync("https://103.194.8.71:50000/b1s/v1/BusinessPartners/$count");
 
-                    // Check if successful
                     if (response.IsSuccessStatusCode)
                     {
                         string responseBody = await response.Content.ReadAsStringAsync();
@@ -470,123 +458,81 @@ namespace CodeLock.Areas.Master.Controllers
                             using (var gzipStream = new GZipStream(await response.Content.ReadAsStreamAsync(), CompressionMode.Decompress))
                             using (var streamReader = new StreamReader(gzipStream))
                             {
-                                responseBody = await streamReader.ReadToEndAsync();
+                                string responseBody = await streamReader.ReadToEndAsync();
+                                ViewBag.responseData = responseBody;
+                                int totalCount = int.Parse(responseBody.Trim());
+                                return totalCount;
                             }
                         }
-
-                        ViewBag.ResponseData = responseBody;
-                        return Json(responseBody, JsonRequestBehavior.AllowGet);
+                        return 0;
                     }
                     else
                     {
-                        sessionId = await SapSessionManagerController.GenerateToken();
-                        ViewBag.ResponseData = $"Failed to retrieve data. Status code: {response.StatusCode}";
-                        return View();
+                        string errorMessage = $"Failed to retrieve BPMaster count. Status code: {response.StatusCode}";
+                        throw new HttpRequestException(errorMessage);
                     }
                 }
-                catch (HttpRequestException ex)
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error in FetchBPMasterCount: {ex.Message}", ex);
+            }
+        }
+        public async Task<Dictionary<string, object>> FetchBPMasterList(int start, int length, string search)
+        {
+            try
+            {
+                string sessionId = SapSessionManagerController.GetSessionId();
+
+                if (string.IsNullOrEmpty(sessionId))
                 {
-                    // Handle HTTP request exceptions
-                    ViewBag.ResponseData = $"HttpRequestException: {ex.Message}";
-                    return View();
+                    sessionId = await SapSessionManagerController.GenerateToken();
                 }
-                catch (Exception ex)
+
+                HttpClientHandler handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
                 {
-                    // Handle other exceptions
-                    ViewBag.ResponseData = $"Exception: {ex.Message}";
-                    return View();
+                    client.DefaultRequestHeaders.Add("B1S-WCFCompatible", "true");
+                    client.DefaultRequestHeaders.Add("B1S-MetadataWithoutSession", "true");
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                    client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+
+                    CookieContainer cookies = new CookieContainer();
+                    cookies.Add(new Cookie("B1SESSION", sessionId) { Domain = "103.194.8.71" });
+                    cookies.Add(new Cookie("ROUTEID", ".node1") { Domain = "103.194.8.71" });
+                    handler.CookieContainer = cookies;
+
+                    string url = $"https://103.194.8.71:50000/b1s/v1/BusinessPartners?$select=CardName,CardCode,CardType,CreateDate&$skip={start}&$top={length}";
+
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        if (response.Content.Headers.ContentEncoding.Contains("gzip"))
+                        {
+                            using (var gzipStream = new GZipStream(await response.Content.ReadAsStreamAsync(), CompressionMode.Decompress))
+                            using (var streamReader = new StreamReader(gzipStream))
+                            {
+                                string responseBody = await streamReader.ReadToEndAsync();
+                                var responseObject = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseBody);
+                                return responseObject;
+                            }
+                        }
+                        return null;
+                    }
+                    else
+                    {
+                        throw new Exception($"Failed to retrieve BPMaster list. Status code: {response.StatusCode}");
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error in FetchBPMasterList: {ex.Message}", ex);
             }
         }
 
-        //public async Task<ActionResult> PostBPMasterDataWithApi(MasterCustomer masterCustomer)
-        //{
-        //    string sessionId = SapSessionManagerController.GetSessionId();
-
-
-        //    if (string.IsNullOrEmpty(sessionId))
-        //    {
-        //        sessionId = await SapSessionManagerController.GenerateToken();
-        //    }
-        //    ViewBag.SessionId = sessionId;
-
-        //    var RequestBody = new
-        //    {
-        //        CustomerCode = masterCustomer.CustomerCode,
-        //        CustomerName = masterCustomer.CustomerName,
-        //        CustomerLocation = masterCustomer.CustomerLocation
-
-
-        //    };
-
-
-        //    // Create HttpClient instance with handlers to ignore certificate validation
-        //    HttpClientHandler handler = new HttpClientHandler();
-        //    handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-
-        //    using (HttpClient client = new HttpClient(handler))
-        //    {
-        //        try
-        //        {
-        //            // Set headers
-        //            client.DefaultRequestHeaders.Add("B1S-WCFCompatible", "true");
-        //            client.DefaultRequestHeaders.Add("B1S-MetadataWithoutSession", "true");
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-        //            client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
-
-        //            // Set cookies for session management
-        //            CookieContainer cookies = new CookieContainer();
-        //            cookies.Add(new Cookie("B1SESSION", sessionId) { Domain = "103.194.8.71" }); // Replace with your session ID
-        //            cookies.Add(new Cookie("ROUTEID", ".node1") { Domain = "103.194.8.71" });
-        //            handler.CookieContainer = cookies;
-
-        //            // Send GET request
-        //            HttpResponseMessage response = await client.GetAsync("https://103.194.8.71:50000/b1s/v1/BusinessPartners"); // ('V0137')";
-
-        //            // Check if successful
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                if (response.Content.Headers.ContentEncoding.Contains("gzip"))
-        //                {
-        //                    using (var gzipStream = new GZipStream(await response.Content.ReadAsStreamAsync(), CompressionMode.Decompress))
-        //                    using (var streamReader = new StreamReader(gzipStream))
-        //                    {
-        //                        string responseBody = await streamReader.ReadToEndAsync();
-        //                        // string responseObject = JsonConvert.DeserializeObject<string>(responseBody);
-        //                        ViewBag.responseData = responseBody;
-
-        //                        return Json(responseBody, JsonRequestBehavior.AllowGet);
-        //                        // return View();
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    // Handle unsuccessful request (e.g., log, throw exception, return error response)
-        //                    // return Json("response is ok but data not retrive", JsonRequestBehavior.AllowGet);
-        //                    return ViewBag.responseData = "response is ok but data not retrive";
-        //                }
-        //            }
-        //            else
-        //            {
-        //                sessionId = await SapSessionManagerController.GenerateToken();
-        //                ViewBag.responseData = $"Failed to retrieve data. Status code: {response.StatusCode}";
-        //                return View();
-        //            }
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            // Handle HTTP request exceptions
-        //            // return Json(new { error = $"HttpRequestException: {ex.Message}" }, JsonRequestBehavior.AllowGet);
-        //            return ViewBag.responseData = $"HttpRequestException: {ex.Message}";
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            // Handle other exceptions
-        //            // return Json(new { error = $"Exception: {ex.Message}" }, JsonRequestBehavior.AllowGet);
-        //            return ViewBag.responseData = $"Exception: {ex.Message}";
-        //        }
-        //    }
-        //}
 
         public JsonResult IsCustomerCodeExist(string customerCode)
         {
@@ -657,7 +603,28 @@ namespace CodeLock.Areas.Master.Controllers
                 objCustomer = this.customerRepository.GetById(id.Value);
                 this.Init(objCustomer.MasterCustomerAddressInfo.CountryId, objCustomer.MasterCustomerAddressInfo.StateId);
                 objCustomer.PayBas = this.generalRepository.GetByGeneralList(14).ToArray<MasterGeneral>();
-
+                if (objCustomer.MasterAddressList.Count == 0)
+                {
+                    List<MasterAddress> MasterAddressList = objCustomer.MasterAddressList;
+                    MasterAddress objAdd = new MasterAddress()
+                    {
+                        AddressId = 0,
+                        AddressCode = "",
+                        Address1 = "",
+                        Address2 = "",
+                        CityId = 0,
+                        CityName = "",
+                        Pincode = ""                ,
+                        MobileNo = "",
+                        EmailId = "",
+                        StatisticalChargesCode = "",
+                        IsActive = true,
+                        IsMreNoApplicable = false                ,
+                        CountryId = 0,
+                        StateId = 0
+                    };
+                    MasterAddressList.Add(objAdd);
+                }
                 for (int i = 0; i < objCustomer.PayBas.Length; i++)
                 {
                     objCustomer.PayBas[i].IsActive = false;
@@ -683,12 +650,12 @@ namespace CodeLock.Areas.Master.Controllers
                     for (int i = 0; i < objCustomer.PayBas.Length; i++)
                     {
                         if (objCustomer.PayBasId.ToString() == objCustomer.PayBas[i].CodeId.ToString())
-                        {
+                            {
                             objCustomer.PayBas[i].IsActive = true;
                         }
                     }
                 }
-
+                ViewBag.StateWiseCityList =null;
 
                 httpStatusCodeResult = base.View(objCustomer);
             }
@@ -796,7 +763,7 @@ namespace CodeLock.Areas.Master.Controllers
         [HttpGet]
         public FileResult DownloadExcel()
         {
-            DataTable dt = new DataTable();
+            System.Data.DataTable dt = new System.Data.DataTable();
             string ReportName = string.Empty;
 
             ReportName = "CustomerList.xlsx";
@@ -813,7 +780,7 @@ namespace CodeLock.Areas.Master.Controllers
             }
         }
 
-        protected DataTable CustomerListForDownloadExcel()
+        protected System.Data.DataTable CustomerListForDownloadExcel()
         {
             DataColumn dt;
 
@@ -974,6 +941,13 @@ namespace CodeLock.Areas.Master.Controllers
         {
             JsonResult jsonResult = base.Json(this.customerRepository.GetById(CustomerId));
             return jsonResult;
+        }
+        [HttpPost]
+        public JsonResult GetCustomerAddressCode(int CustomerAddressId)
+        {
+            Dictionary<string, string> Dic = new Dictionary<string, string>();
+            Dic["CustomerAddressCode"]= this.customerRepository.GetCustomerAddressCode(CustomerAddressId);
+            return Json(Dic);
         }
     }
 }

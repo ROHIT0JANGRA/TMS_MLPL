@@ -11,8 +11,12 @@ using System.Web.Mvc;
 
 namespace CodeLock.Models
 {
-    public class MasterUser : BaseModel
+    public class MasterUser : BaseModel    
     {
+        //public MasterUser()
+        //{
+        //    this.UserDetails = new UserDetails();
+        //}
         [Display(Name = "User")]
         public short UserId { get; set; }
 
@@ -124,6 +128,7 @@ namespace CodeLock.Models
         [Required(ErrorMessage = "Please select At-least one thing")]
         public string UserCompany { get; set; }
         public string SavedUserCompany { get; set; }
+        //public UserDetails UserDetails { get; set; }
     }
     public class MasterUserDetail
     {
@@ -176,4 +181,13 @@ namespace CodeLock.Models
         public short locationId { get; set; }
 
     }
+    //public class UserDetails
+    //{
+    //    [Display(Name = "Location")]
+    //    [Required(ErrorMessage = "Please select At-least one thing")]
+    //    public string UserLocation { get; set; }
+    //    public string UserLocationId { get; set; }
+    //}
+
+
 }

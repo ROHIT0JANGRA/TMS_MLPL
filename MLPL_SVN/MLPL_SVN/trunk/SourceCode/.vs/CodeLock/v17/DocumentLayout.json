@@ -61,10 +61,6 @@
               "Name": "ST:0:0:{9183c819-01e4-3cc8-b93b-edcdbb0ef36c}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{01321f1c-6c9e-3b5b-9c0f-66d2a373c254}"
-            },
-            {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "DriverController.cs",

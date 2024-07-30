@@ -10,6 +10,8 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.SessionState;
 using System.Web.Http;
+using CodeLock.Areas.Ewaybill.Repository;
+using Unity;
 
 namespace CodeLock
 {
@@ -27,6 +29,13 @@ namespace CodeLock
             RegisterValidation.Init();
             DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false;
             ModelValidatorProviders.Providers.Add((ModelValidatorProvider)new ExtendedDataAnnotationsModelValidatorProvider());
+            
+            var container = DependencyResolver.Current.GetService<IUnityContainer>();
+            var ewaybillRepository = container.Resolve<EwaybillRepository>();
+            if (ewaybillRepository.GetUpdateIsSchedulerActiveOrUpdate("DailyEwaybillTaskScheduler", "GetIsActive", false) == true)
+            {
+                ewaybillRepository.Start();
+            }
         }
 
         protected void Application_PreRequestHandlerExecute(object sender, EventArgs e)
@@ -57,7 +66,7 @@ namespace CodeLock
                     this.Context.Response.Redirect("~/Home/Index");
             }
         }
-         private static void RegisterExpressiveAttributes()
+        private static void RegisterExpressiveAttributes()
         {
             DataAnnotationsModelValidatorProvider.RegisterAdapter(typeof(RequiredIfAttribute), typeof(RequiredIfValidator));
             DataAnnotationsModelValidatorProvider.RegisterAdapter(typeof(AssertThatAttribute), typeof(AssertThatValidator));

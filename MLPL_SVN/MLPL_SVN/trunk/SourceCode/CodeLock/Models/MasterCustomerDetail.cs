@@ -52,7 +52,7 @@ namespace CodeLock.Models
         public string CustomerLocation { get; set; }
 
         [Display(Name = "Customer Delivery Location")]
-        [Required(ErrorMessage = "Please select At-least one thing")]
+        //[Required(ErrorMessage = "Please select At-least one thing")]
         public string CustomerDeliveryLocation { get; set; }
 
 
