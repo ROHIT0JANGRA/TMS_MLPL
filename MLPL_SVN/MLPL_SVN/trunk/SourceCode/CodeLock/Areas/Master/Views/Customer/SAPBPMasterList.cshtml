@@ -1,0 +1,95 @@
+﻿
+@{
+    ViewBag.Title = "SAPBPMasterList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+<div id="dvCustomers" class="widget-wrap material-table-widget">
+    
+</div>
+
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        var getAllCustomersUrl = ''
+        $(document).ready(function () {
+            SetPageLoad('Business Masters', 'List', 'filter', 'Customer List', '@Url.Action("Index")', 'Insert', '@Url.Action("Insert")', '','','','');
+            // LoadDataTable('dtCustomer', true, true, true);
+            GetCustomerData();
+        });
+        function GetCustomerData() {
+            var tblCustomersContent = `<table id="dtCustomer" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>CardCode</th>
+                        <th>CardType</th>
+                        <th>CardName</th>
+                        <th>CreateDate</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table body will be populated dynamically -->
+                </tbody>
+            </table>`;
+            $("#dvCustomers").html(tblCustomersContent);
+            table = $('#dtCustomer').DataTable({
+                serverSide: true,
+                ajax: {
+                    url: '@Url.Action("BPMasterPagination", "Customer")',
+                    type: 'GET', 
+                    dataType: 'json', 
+                    "data": function (d) {
+                        return { 
+                            draw: d.draw,
+                            start: d.start,
+                            length: d.length,
+                            search: d.search.value
+                        };
+                    },
+                    "dataSrc": function (json) {
+                        json = JSON.parse(json)
+                        console.log(json)
+                        // Check if 'data' property exists in the JSON response
+                        if (json.hasOwnProperty('data')) {
+                            return json.data; // Return the 'data' array directly
+                        } else {
+                            console.error("Error: 'data' property not found in JSON response.");
+                            return []; // Return an empty array if 'data' property is missing or empty
+                        }
+                    }
+                },
+                columns: [
+                    { data: 'CardCode', name: 'CardCode', autowidth: true },
+                    { data: 'CardType', name: 'CardType', autowidth: true },
+                    { data: 'CardName', name: 'CardName', autowidth: true },
+                    { data: 'CreateDate', name: 'CreateDate', autowidth: true },
+                    {
+                        render: function (data, type, row, meta) {
+                            return '<a class="btn btn-default btn-sm m-user-edit" data-ewbno="' + row.CardCode + '">View</a>' +
+                                `<button type="button" class="btn btn-default btn-sm m-user-edit data-toggle="modal" data-target=".bd-example-modal-lg">Edit</button>
+                                <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                      ...
+                                    </div>
+                                  </div>
+                                </div>
+                                `;
+                        },
+                        orderable: false // Make this column not sortable
+                    }
+                ],
+                // Optional: Customize language settings
+                language: {
+                    emptyTable: 'No records found.',
+                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span>'
+                }
+            });
+        }
+
+    </script>
+}

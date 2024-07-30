@@ -202,7 +202,7 @@ namespace CodeLock.Areas.Master.Controllers
                 var requestBody = new { vehiclenumber = vehicleno };
                 var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(requestBody);
                 var content = new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json");
-                var response = await httpClient.PostAsync("https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/VAHAN/01", content);
+                var response = await httpClient.PostAsync("https://www.ulip.dpiit.gov.in/ulip/v1.0.0/v1.0.0/VAHAN/01", content);
                 var statusCode = response.StatusCode;
                 if (response.IsSuccessStatusCode)
                 {

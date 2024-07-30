@@ -367,6 +367,7 @@
     <Compile Include="Areas\Contract\Repository\IExpenseContractRepository.cs" />
     <Compile Include="Areas\Contract\Repository\IVendorContractRepository.cs" />
     <Compile Include="Areas\Contract\Repository\VendorContractRepository.cs" />
+    <Compile Include="Areas\Ewaybill\Controllers\EwaybillMasterController.cs" />
     <Compile Include="Areas\Ewaybill\Controllers\ExtendEWBController.cs" />
     <Compile Include="Areas\Ewaybill\Controllers\FetchByTransporterController.cs" />
     <Compile Include="Areas\Ewaybill\Controllers\FetchController.cs" />
@@ -1312,6 +1313,7 @@
     <Compile Include="Repository\IDashboardRepository.cs" />
     <Compile Include="Repository\IHomeRepository.cs" />
     <Compile Include="RuleHelper.cs" />
+    <Compile Include="Scheduler\DataSyncScheduler.cs" />
     <Compile Include="SessionUtility.cs" />
     <Compile Include="SsrsHelper.cs" />
     <Compile Include="Startup.cs" />
@@ -3974,6 +3976,8 @@
     <Content Include="Areas\Ewaybill\Views\Fetch\ConsolidateEwb.cshtml" />
     <Content Include="Areas\Ewaybill\Views\FetchByTransporter\Index.cshtml" />
     <Content Include="Areas\Ewaybill\Views\ExtendEWB\Index.cshtml" />
+    <Content Include="Areas\Master\Views\Customer\SAPBPMasterList.cshtml" />
+    <Content Include="Areas\Ewaybill\Views\EwaybillMaster\Index.cshtml" />
     <None Include="Properties\PublishProfiles\TMS.pubxml" />
     <None Include="Scripts\_references.js" />
     <Content Include="Scripts\xlsx.full.min.js" />
@@ -4005,7 +4009,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Areas\Ewaybill\Views\EwayBillPanel\" />
     <Folder Include="Areas\Ewaybill\Views\Shared\" />
     <Folder Include="Views\Ewaybill\" />
@@ -4146,8 +4149,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>12132</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:12133/</IISUrl>
-          <IISUrl>http://localhost:12131/</IISUrl>
+          <IISUrl>http://localhost:12132/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
@@ -4155,7 +4157,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties content_4bootstrap_1min_1css_1map__JsonSchema="https://json.schemastore.org/stale.json" _UserPromptedForCS6Upgrade="true" />
+      <UserProperties _UserPromptedForCS6Upgrade="true" content_4bootstrap_1min_1css_1map__JsonSchema="https://json.schemastore.org/stale.json" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

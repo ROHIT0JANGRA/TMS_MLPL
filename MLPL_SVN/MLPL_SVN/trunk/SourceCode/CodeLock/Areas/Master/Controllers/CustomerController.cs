@@ -21,6 +21,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CodeLock.Api_Services;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Asn1.Ocsp;
+using static CodeLock.Api_Services.UlipTokenManagerController.TokenResponse;
 
 namespace CodeLock.Areas.Master.Controllers
 {
@@ -133,55 +136,6 @@ namespace CodeLock.Areas.Master.Controllers
             }
         }
 
-        //public ActionResult Insert()
-        //{
-        //    ///MasterGeneral masterPayBas;
-
-        //    //   MasterCustomer objCustomer = new MasterCustomer();
-        //    // this.Init(0, 0);
-        //    MasterCustomer objCustomer = new MasterCustomer()
-        //    {
-        //        MasterAddress = new List<MasterAddress>()
-        //    };
-        //    List<MasterAddress> addressDetails = objCustomer.MasterAddress;
-        //    MasterAddress addressDocument = new MasterAddress()
-        //    {
-        //        CityId = 0,
-        //        CityName = "",
-        //        AddressId = 0,
-        //        AddressCode = "",
-        //        Address1 = "",
-        //        EmailId = "",
-        //        Address2 = "",
-        //        Pincode = "",
-        //        MobileNo = "",
-        //        StatisticalChargesCode = "",
-        //        IsMreNoApplicable = false,
-        //        GstTinNo = "",
-        //        ProvisionalId = "",
-        //        IsActive = false
-        //    };
-        //    addressDetails.Add(addressDocument);
-
-        //    this.Init(0, 0);
-
-
-
-        //    objCustomer.PayBas = this.generalRepository.GetByGeneralList(14).ToArray<MasterGeneral>();
-
-
-        //    for (int i = 0; i < objCustomer.PayBas.Length; i++)
-        //    {
-        //        objCustomer.PayBas[i].IsActive = false;
-        //    }
-
-        //     ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
-        //    ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
-
-        //    ((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
-
-        //    return base.View(objCustomer);
-        //}
         public ActionResult Insert()
         {
             
@@ -197,14 +151,12 @@ namespace CodeLock.Areas.Master.Controllers
                 Address2 = "",
                 CityId = 0,
                 CityName = "",
-                Pincode = ""
-                ,
+                Pincode = "",
                 MobileNo = "",
                 EmailId = "",
                 StatisticalChargesCode = "",
                 IsActive = true,
-                IsMreNoApplicable = false
-                ,
+                IsMreNoApplicable = false,
                 CountryId = 0,
                 StateId = 0
             };
@@ -247,63 +199,6 @@ namespace CodeLock.Areas.Master.Controllers
             //}
             return action;
         }
-
-        // **********************  Changes Method according to  Sap and ULIP-Api Intigration **************************
-
-        //public ActionResult InsertBp()
-        //{
-        //    ///MasterGeneral masterPayBas;
-
-        //    MasterCustomer objCustomer = new MasterCustomer();
-        //    this.Init(0, 0);
-
-        //    objCustomer.PayBas = this.generalRepository.GetByGeneralList(14).ToArray<MasterGeneral>();
-        //    for (int i = 0; i < objCustomer.PayBas.Length; i++)
-        //    {
-        //        objCustomer.PayBas[i].IsActive = false;
-        //    }
-
-
-        //    //((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
-
-        //    return base.View(objCustomer);
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiModelInjection("CustomerId")]
-        //public ActionResult InsertBp(MasterCustomer objMasterCustomer)
-        //{
-        //    ActionResult action;
-        //    try
-        //    {
-        //        if (!ModelState.IsValid)
-        //        {
-        //            return base.View(objMasterCustomer);
-        //        }
-
-        //        if (!base.ModelState.IsValid)
-        //        {
-        //            action = base.View(objMasterCustomer);
-        //        }
-        //        else
-        //        {
-        //            objMasterCustomer.EntryBy = SessionUtility.LoginUserId;
-        //            objMasterCustomer.WarehouseId = SessionUtility.WarehouseId;
-        //            objMasterCustomer.MasterCustomerDetail.EntryBy = SessionUtility.LoginUserId;
-
-        //            int num = this.customerRepository.Insert(objMasterCustomer);
-        //            action = base.RedirectToAction("View", new { id = num });
-        //        }
-        //        return action;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ViewBag.Error =ex.Message;
-        //    }
-        //    return base.View();
-        //}
-
-        //*******************************************************************************************************************
         public async Task<dynamic> FetchCustomerDetailsFromApi(string gstin)
         {
             string token = UlipTokenManagerController.GetTokenId();
@@ -355,41 +250,74 @@ namespace CodeLock.Areas.Master.Controllers
 
             return null;
         }
-
-        public async Task<ActionResult> GetData()
+        public ActionResult SAPBPMasterList() { return View(); }
+        public async Task<JsonResult> BPMasterPagination(int draw, int start, int length, string search = null)
         {
-            string sessionId = SapSessionManagerController.GetSessionId();
-
-            if (string.IsNullOrEmpty(sessionId))
+            try
             {
-                sessionId = await SapSessionManagerController.GenerateToken();
-            }
-            ViewBag.SessionId = sessionId;
+                var totalRecordsTask = FetchBPMasterCount();
+                var totalRecords = await totalRecordsTask.ConfigureAwait(false);
 
-            // Create HttpClient instance with handlers to ignore certificate validation
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+                var BPMasterListTask = FetchBPMasterList(start, length, search);
+                var BPMasterListResponse = await BPMasterListTask.ConfigureAwait(false);
 
-            using (HttpClient client = new HttpClient(handler))
-            {
-                try
+                if (BPMasterListResponse != null && BPMasterListResponse.ContainsKey("value"))
                 {
-                    // Set headers
+                    var BPMasterList = BPMasterListResponse["value"];
+                    var responseOK = new
+                    {
+                        draw = draw,
+                        recordsTotal = totalRecords,
+                        recordsFiltered = totalRecords,
+                        data = BPMasterList
+                    };
+                    var jsonDes = Newtonsoft.Json.JsonConvert.SerializeObject(responseOK);
+                    return Json(jsonDes, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        draw = draw,
+                        recordsTotal = 0,
+                        recordsFiltered = 0,
+                        data = new object[] { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+        public async Task<int> FetchBPMasterCount()
+        {
+            try
+            {
+                string sessionId = SapSessionManagerController.GetSessionId();
+
+                if (string.IsNullOrEmpty(sessionId))
+                {
+                    sessionId = await SapSessionManagerController.GenerateToken();
+                }
+
+                HttpClientHandler handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
                     client.DefaultRequestHeaders.Add("B1S-WCFCompatible", "true");
                     client.DefaultRequestHeaders.Add("B1S-MetadataWithoutSession", "true");
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
                     client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
 
-                    // Set cookies for session management
                     CookieContainer cookies = new CookieContainer();
-                    cookies.Add(new Cookie("B1SESSION", sessionId) { Domain = "103.194.8.71" }); // Replace with your session ID
+                    cookies.Add(new Cookie("B1SESSION", sessionId) { Domain = "103.194.8.71" });
                     cookies.Add(new Cookie("ROUTEID", ".node1") { Domain = "103.194.8.71" });
                     handler.CookieContainer = cookies;
 
-                    // Send GET request
-                    HttpResponseMessage response = await client.GetAsync("https://103.194.8.71:50000/b1s/v1/BusinessPartners"); // ('V0137')";
+                    HttpResponseMessage response = await client.GetAsync("https://103.194.8.71:50000/b1s/v1/BusinessPartners/$count");
 
-                    // Check if successful
                     if (response.IsSuccessStatusCode)
                     {
                         if (response.Content.Headers.ContentEncoding.Contains("gzip"))
@@ -398,41 +326,80 @@ namespace CodeLock.Areas.Master.Controllers
                             using (var streamReader = new StreamReader(gzipStream))
                             {
                                 string responseBody = await streamReader.ReadToEndAsync();
-                                // string responseObject = JsonConvert.DeserializeObject<string>(responseBody);
                                 ViewBag.responseData = responseBody;
-
-                                return Json(responseBody, JsonRequestBehavior.AllowGet);
-                                // return View();
+                                int totalCount = int.Parse(responseBody.Trim());
+                                return totalCount;
                             }
                         }
-                        else
-                        {
-                            // Handle unsuccessful request (e.g., log, throw exception, return error response)
-                            // return Json("response is ok but data not retrive", JsonRequestBehavior.AllowGet);
-                            return ViewBag.responseData = "response is ok but data not retrive";
-                        }
+                        return 0;
                     }
                     else
                     {
-                        sessionId = await SapSessionManagerController.GenerateToken();
-                        ViewBag.responseData = $"Failed to retrieve data. Status code: {response.StatusCode}";
-                        return View();
+                        string errorMessage = $"Failed to retrieve BPMaster count. Status code: {response.StatusCode}";
+                        throw new HttpRequestException(errorMessage);
                     }
                 }
-                catch (HttpRequestException ex)
-                {
-                    // Handle HTTP request exceptions
-                    // return Json(new { error = $"HttpRequestException: {ex.Message}" }, JsonRequestBehavior.AllowGet);
-                    return ViewBag.responseData = $"HttpRequestException: {ex.Message}";
-                }
-                catch (Exception ex)
-                {
-                    // Handle other exceptions
-                    // return Json(new { error = $"Exception: {ex.Message}" }, JsonRequestBehavior.AllowGet);
-                    return ViewBag.responseData = $"Exception: {ex.Message}";
-                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error in FetchBPMasterCount: {ex.Message}", ex);
             }
         }
+        public async Task<Dictionary<string, object>> FetchBPMasterList(int start, int length, string search)
+        {
+            try
+            {
+                string sessionId = SapSessionManagerController.GetSessionId();
+
+                if (string.IsNullOrEmpty(sessionId))
+                {
+                    sessionId = await SapSessionManagerController.GenerateToken();
+                }
+
+                HttpClientHandler handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.DefaultRequestHeaders.Add("B1S-WCFCompatible", "true");
+                    client.DefaultRequestHeaders.Add("B1S-MetadataWithoutSession", "true");
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                    client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+
+                    CookieContainer cookies = new CookieContainer();
+                    cookies.Add(new Cookie("B1SESSION", sessionId) { Domain = "103.194.8.71" });
+                    cookies.Add(new Cookie("ROUTEID", ".node1") { Domain = "103.194.8.71" });
+                    handler.CookieContainer = cookies;
+
+                    string url = $"https://103.194.8.71:50000/b1s/v1/BusinessPartners?$select=CardName,CardCode,CardType,CreateDate&$skip={start}&$top={length}";
+
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        if (response.Content.Headers.ContentEncoding.Contains("gzip"))
+                        {
+                            using (var gzipStream = new GZipStream(await response.Content.ReadAsStreamAsync(), CompressionMode.Decompress))
+                            using (var streamReader = new StreamReader(gzipStream))
+                            {
+                                string responseBody = await streamReader.ReadToEndAsync();
+                                var responseObject = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseBody);
+                                return responseObject;
+                            }
+                        }
+                        return null;
+                    }
+                    else
+                    {
+                        throw new Exception($"Failed to retrieve BPMaster list. Status code: {response.StatusCode}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error in FetchBPMasterList: {ex.Message}", ex);
+            }
+        }
+
 
         public JsonResult IsCustomerCodeExist(string customerCode)
         {

@@ -176,11 +176,4 @@ namespace CodeLock.Models
         public short locationId { get; set; }
 
     }
-    public class User
-    {
-        public string API_USER { get; set; }
-        public string API_PASSWORD { get; set; }
-        public string GstTinNo { get; set; }
-        public short StateId { get; set; }
-    }
 }
