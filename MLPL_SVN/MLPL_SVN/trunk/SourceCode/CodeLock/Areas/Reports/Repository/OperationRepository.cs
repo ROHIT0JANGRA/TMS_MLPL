@@ -2,6 +2,7 @@
 using CodeLock.Models;
 using CodeLock.Repository;
 using Dapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -44,30 +45,8 @@ namespace CodeLock.Areas.Reports.Repository
             dynamicParameters.Add("@BaseCode", (object)baseCode, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
             return DataBaseFactory.QuerySP<DocketCharge>("Usp_Report_GetDeliveryMrCharges", (object)dynamicParameters, "Report - GetDeliveryMrCharges");
         }
-
-        //   public IEnumerable<DocketCharge> GetPrsAnalysisReport(
-        //byte baseOn,
-        //byte baseCode)
-        //   {
-        //       DynamicParameters dynamicParameters = new DynamicParameters();
-        //       dynamicParameters.Add("@BaseOn", (object)baseOn, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-        //       dynamicParameters.Add("@BaseCode", (object)baseCode, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-        //       return DataBaseFactory.QuerySP<DocketCharge>("Usp_Report_PRS", (object)dynamicParameters, "Report - GetPrsAnalysisReport");
-        //   }
-
-        //public IEnumerable<Prs> GetPrsAnalysisReport(DateTime fromDate, DateTime toDate, short locationId)
-        //{
-        //    DynamicParameters dynamicParameters = new DynamicParameters();
-        //    dynamicParameters.Add("@FromDate", (object)fromDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-        //    dynamicParameters.Add("@ToDate", (object)toDate, new DbType?(DbType.Date), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-        //    dynamicParameters.Add("@LocationId", (object)locationId, new DbType?(DbType.Int16), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-
-        //    return DataBaseFactory.QuerySP<Prs>("Usp_Report_PRS", (object)dynamicParameters, "Report Excel Download - SalesRegister");
-
-
-        // ***************************************************************   Analysis Report  Modules ***************************************************************************
-
-        public IEnumerable<PRSReport> GetPRSReport(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames)
+        // ***************************************************************   Analysis Report  Modules ***************************************************************************                 
+        public IEnumerable<IDictionary<string, object>> GetPRSReport(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
             // Define the dynamic parameters
             DynamicParameters dynamicParameters = new DynamicParameters();
@@ -76,14 +55,13 @@ namespace CodeLock.Areas.Reports.Repository
             dynamicParameters.Add("@LocationID", locationID, DbType.Int32);
             dynamicParameters.Add("@CompanyId", companyId, DbType.Int32);
             dynamicParameters.Add("@CheckedFieldNames", CheckedFieldNames, DbType.String);
-            // Execute the stored procedure and return the results
-            return DataBaseFactory.QuerySP<PRSReport>(
-                "Usp_Report_PRS",
-                dynamicParameters,
-                "PRS Reports - GetPRSReports");
+            if(AdvanceFilterColumnsList!=null && AdvanceFilterColumnsList.Count > 0)
+            {
+                dynamicParameters.Add("@AdvanceFilterColumnsList", (object)XmlUtility.XmlSerializeToString((object)AdvanceFilterColumnsList), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());        // Execute the stored procedure and return the results
+            }
+            return DataBaseFactory.QuerySP("Usp_Report_PRS_Test", dynamicParameters, "PRS Reports - GetPRSReports", "PRSReport");
         }
-
-        public IEnumerable<DRSReportModel> GetDRSReports(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames)
+        public IEnumerable<IDictionary<string, object>> GetDRSReports(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@FromDate", fromDate, DbType.Date);
@@ -91,12 +69,15 @@ namespace CodeLock.Areas.Reports.Repository
             dynamicParameters.Add("@LocationID", locationID, DbType.Int32);
             dynamicParameters.Add("@CompanyId", companyId, DbType.Int32);
             dynamicParameters.Add("@CheckedFieldNames", CheckedFieldNames, DbType.String);
-            // Execute the stored procedure and return the results
-            //return DataBaseFactory.QuerySP<DRSReportModel>("Usp_Report_DRS", dynamicParameters, "DRS Reports - GetDRSReports");
-            return DataBaseFactory.QuerySP<DRSReportModel>("Usp_Report_DRS", dynamicParameters, "DRS Reports - GetDRSReports");
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                dynamicParameters.Add("@AdvanceFilterColumnsList", (object)XmlUtility.XmlSerializeToString((object)AdvanceFilterColumnsList), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());        // Execute the stored procedure and return the results
+            }
+            return DataBaseFactory.QuerySP("Usp_Report_DRS", dynamicParameters, "DRS Reports - GetDRSReports","DRSReport");
+
         }
 
-        public IEnumerable<BookingReport> GetBookingReports(DateTime fromDate, DateTime toDate, short FromLocationID, short CompanyId, short ToLocationId, string CheckedFieldNames,int customerId)
+        public IEnumerable<IDictionary<string, object>> GetBookingReports(DateTime fromDate, DateTime toDate, short FromLocationID, short CompanyId, short ToLocationId, string CheckedFieldNames,int customerId, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@FromDate", fromDate, DbType.Date);
@@ -106,11 +87,32 @@ namespace CodeLock.Areas.Reports.Repository
             dynamicParameters.Add("@ToLocationId", ToLocationId, DbType.Int32);
             dynamicParameters.Add("@CustomerId", customerId, DbType.Int32);
             dynamicParameters.Add("@CheckedFieldNames", CheckedFieldNames, DbType.String);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                dynamicParameters.Add("@AdvanceFilterColumnsList", (object)XmlUtility.XmlSerializeToString((object)AdvanceFilterColumnsList), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());        // Execute the stored procedure and return the results
+            }
             // Execute the stored procedure and return the results
-            return DataBaseFactory.QuerySP<BookingReport>("Usp_Report_Booking", dynamicParameters, "BookingDetails Reports - GetBookingDetailsReport");
+            return DataBaseFactory.QuerySP("Usp_Report_Booking", dynamicParameters, "BookingDetails Reports - GetBookingDetailsReport","BookingReport");
         }
-        public IEnumerable<BookingReport> GetBookingDetailsReport(
-DateTime fromDate, DateTime toDate, short level, short levelType)
+
+        public IEnumerable<IDictionary<string, object>> GetInvoiceBookingReport(DateTime fromDate, DateTime toDate, short FromLocationID, short CompanyId, short ToLocationId, string CheckedFieldNames, int customerId, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
+        {
+            DynamicParameters dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("@FromDate", fromDate, DbType.Date);
+            dynamicParameters.Add("@ToDate", toDate, DbType.Date);
+            dynamicParameters.Add("@FromLocationID", FromLocationID, DbType.Int32);
+            dynamicParameters.Add("@CompanyId", CompanyId, DbType.Int32);
+            dynamicParameters.Add("@ToLocationId", ToLocationId, DbType.Int32);
+            dynamicParameters.Add("@CustomerId", customerId, DbType.Int32);
+            dynamicParameters.Add("@CheckedFieldNames", CheckedFieldNames, DbType.String);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                dynamicParameters.Add("@AdvanceFilterColumnsList", (object)XmlUtility.XmlSerializeToString((object)AdvanceFilterColumnsList), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());        // Execute the stored procedure and return the results
+            }
+            // Execute the stored procedure and return the results
+            return DataBaseFactory.QuerySP("Usp_Report_InvoiceBooking_Details", dynamicParameters, "Invoice Booking Report - GetInvoiceBookingReport", "BookingReport");
+        }
+        public IEnumerable<BookingReport> GetBookingDetailsReport(DateTime fromDate, DateTime toDate, short level, short levelType)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@FromDate", fromDate, DbType.Date);
@@ -121,42 +123,51 @@ DateTime fromDate, DateTime toDate, short level, short levelType)
             // Execute the stored procedure and return the results
             return DataBaseFactory.QuerySP<BookingReport>("Usp_Report_Booking_Details", dynamicParameters, "BookingDetails Reports - GetBookingDetailsReport");
         }
-        public IEnumerable<ManifestReport> GetManifiestReport(DateTime fromDate, DateTime toDate, short level, short levelType)
+        public IEnumerable<IDictionary<string, object>> GetManifestReport(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@FromDate", fromDate, DbType.Date);
             dynamicParameters.Add("@ToDate", toDate, DbType.Date);
-            dynamicParameters.Add("@Level", level, DbType.Int16);
-            dynamicParameters.Add("@LevelType", levelType, DbType.Int16);
+            dynamicParameters.Add("@LocationID", locationID, DbType.Int32);
+            dynamicParameters.Add("@CompanyId", companyId, DbType.Int32);
+            dynamicParameters.Add("@CheckedFieldNames", CheckedFieldNames, DbType.String);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                dynamicParameters.Add("@AdvanceFilterColumnsList", (object)XmlUtility.XmlSerializeToString((object)AdvanceFilterColumnsList), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());        // Execute the stored procedure and return the results
+            }
+            return DataBaseFactory.QuerySP("Usp_Report_Manifest", dynamicParameters, "ManifestReport - GetManifiestReport", "ManifestReport");
 
-            // Execute the stored procedure and return the results
-            return DataBaseFactory.QuerySP<ManifestReport>("Usp_Report_Manifest", dynamicParameters, "Manifiest Reports - GetManifiestReport");
         }
-
-        public IEnumerable<THCReport> GetThcReport(DateTime fromDate, DateTime toDate, short level, short levelType)
+        public IEnumerable<IDictionary<string, object>> GetThcReport(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@FromDate", fromDate, DbType.Date);
             dynamicParameters.Add("@ToDate", toDate, DbType.Date);
-            dynamicParameters.Add("@Level", level, DbType.Int16);
-            dynamicParameters.Add("@LevelType", levelType, DbType.Int16);
-
-            // Execute the stored procedure and return the results
-            return DataBaseFactory.QuerySP<THCReport>("[Usp_Report_THC]", dynamicParameters, "Manifiest Reports - GetManifiestReport");
+            dynamicParameters.Add("@LocationID", locationID, DbType.Int32);
+            dynamicParameters.Add("@CompanyId", companyId, DbType.Int32);
+            dynamicParameters.Add("@CheckedFieldNames", CheckedFieldNames, DbType.String);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                dynamicParameters.Add("@AdvanceFilterColumnsList", (object)XmlUtility.XmlSerializeToString((object)AdvanceFilterColumnsList), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());        // Execute the stored procedure and return the results
+            }
+            return DataBaseFactory.QuerySP("Usp_Report_THC", dynamicParameters, "Usp_Report_THC - GetThcReport", "ThcReport");
 
         }
-        public IEnumerable<THCReport> GetThcDetailsReport(DateTime fromDate, DateTime toDate, short level, short levelType)
+        public IEnumerable<IDictionary<string, object>> GetTHCDetailsReports(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@FromDate", fromDate, DbType.Date);
             dynamicParameters.Add("@ToDate", toDate, DbType.Date);
-            dynamicParameters.Add("@Level", level, DbType.Int16);
-            dynamicParameters.Add("@LevelType", levelType, DbType.Int16);
+            dynamicParameters.Add("@LocationID", locationID, DbType.Int32);
+            dynamicParameters.Add("@CompanyId", companyId, DbType.Int32);
+            dynamicParameters.Add("@CheckedFieldNames", CheckedFieldNames, DbType.String);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                dynamicParameters.Add("@AdvanceFilterColumnsList", (object)XmlUtility.XmlSerializeToString((object)AdvanceFilterColumnsList), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());        // Execute the stored procedure and return the results
+            }
+            return DataBaseFactory.QuerySP("Usp_Report_THCDetails", dynamicParameters, "THCDetailsReports - GetTHCDetailsReports", "THCDetailsReports");
 
-            // Execute the stored procedure and return the results
-            return DataBaseFactory.QuerySP<THCReport>("[Usp_Report_THC]", dynamicParameters, "Manifiest Reports - GetManifiestReport");
-
-        }
+        }       
         public IEnumerable<ExpenseRegisterModel> GetExpenseRegisterReport(DateTime fromDate, DateTime toDate, string DocumentNos, string ManualDocumentNos, string DocumentTypes)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
@@ -170,36 +181,27 @@ DateTime fromDate, DateTime toDate, short level, short levelType)
             return DataBaseFactory.QuerySP<ExpenseRegisterModel>("[Usp_Report_ExpenseRegister]", dynamicParameters, "ExpenseRegister Reports - GetExpenseRegisterReport");
 
         }
-
-        public IEnumerable<UnloadingReportModel> GetUnloadingReport(DateTime fromDate, DateTime toDate, short level, short levelType)
+        public IEnumerable<IDictionary<string, object>> GetUnloadingReport(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@FromDate", fromDate, DbType.Date);
             dynamicParameters.Add("@ToDate", toDate, DbType.Date);
-            dynamicParameters.Add("@Level", level, DbType.Int16);
-            dynamicParameters.Add("@LevelType", levelType, DbType.Int16);
+            dynamicParameters.Add("@LocationID", locationID, DbType.Int32);
+            dynamicParameters.Add("@CompanyId", companyId, DbType.Int32);
+            dynamicParameters.Add("@CheckedFieldNames", CheckedFieldNames, DbType.String);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                dynamicParameters.Add("@AdvanceFilterColumnsList", (object)XmlUtility.XmlSerializeToString((object)AdvanceFilterColumnsList), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());        // Execute the stored procedure and return the results
+            }
+            return DataBaseFactory.QuerySP("Usp_Report_Unloading", dynamicParameters, "Usp_Report_Unloading - GetUnloadingReport", "UnloadingReport");
 
-            // Execute the stored procedure and return the results
-            return DataBaseFactory.QuerySP<UnloadingReportModel>("[Usp_Report_Unloading]", dynamicParameters, "Usp_Report_Unloading Reports - GetUnloadingReport");
-        }
-
-
-
-
-
+        }      
 
         public IEnumerable<PRSReport> GetPRSReportsbyPagination(
         DateTime fromDate, DateTime toDate, short level, short levelType, int pageNumber, int pageSize)
         {
             // Define the dynamic parameters
-            DynamicParameters dynamicParameters = new DynamicParameters();
-            //dynamicParameters.Add("@FromDate", (object)fromDate, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-            //dynamicParameters.Add("@ToDate", (object)toDate, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-            //dynamicParameters.Add("@Level", (object)level, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-            //dynamicParameters.Add("@LevelType", (object)levelType, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-            //  dynamicParameters.Add("@PageNumber", (object)pageNumber, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-            // dynamicParameters.Add("@PageSize", (object)pageSize, new DbType?(DbType.Byte), new ParameterDirection?(), new int?(), new byte?(), new byte?());
-
+            DynamicParameters dynamicParameters = new DynamicParameters();            
             dynamicParameters.Add("@FromDate", fromDate, DbType.Date);
             dynamicParameters.Add("@ToDate", toDate, DbType.Date);
             dynamicParameters.Add("@Level", level, DbType.Int16);
@@ -213,29 +215,36 @@ DateTime fromDate, DateTime toDate, short level, short levelType)
                 dynamicParameters,
                 "PRS Reports - GetPRSReports");
         }
-        public IEnumerable<ArrivalReport> GeArrivalPendingReport(DateTime fromDate, DateTime toDate, short level, short levelType)
+        public IEnumerable<IDictionary<string, object>> GeArrivalPendingReport(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@FromDate", fromDate, DbType.Date);
             dynamicParameters.Add("@ToDate", toDate, DbType.Date);
-            dynamicParameters.Add("@Level", level, DbType.Int16);
-            dynamicParameters.Add("@LevelType", levelType, DbType.Int16);
-
-            // Execute the stored procedure and return the results
-            return DataBaseFactory.QuerySP<ArrivalReport>("[Usp_Report_PendingArrival]", dynamicParameters, "Usp_Report_pendingArrival Reports - GeArrivalPendingReport");
+            dynamicParameters.Add("@LocationID", locationID, DbType.Int32);
+            dynamicParameters.Add("@CompanyId", companyId, DbType.Int32);
+            dynamicParameters.Add("@CheckedFieldNames", CheckedFieldNames, DbType.String);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                dynamicParameters.Add("@AdvanceFilterColumnsList", (object)XmlUtility.XmlSerializeToString((object)AdvanceFilterColumnsList), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());        // Execute the stored procedure and return the results
+            }
+            return DataBaseFactory.QuerySP("Usp_Report_PendingArrival", dynamicParameters, "Usp_Report_PendingArrival - GeArrivalPendingReport", "ArrivalPendingReport");
 
         }
 
-        public IEnumerable<PODPendingReport> GetPODPendingReport(DateTime fromDate, DateTime toDate, short level, short levelType)
+        public IEnumerable<IDictionary<string, object>> GetPODPendingReport(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("@FromDate", fromDate, DbType.Date);
             dynamicParameters.Add("@ToDate", toDate, DbType.Date);
-            dynamicParameters.Add("@Level", level, DbType.Int16);
-            dynamicParameters.Add("@LevelType", levelType, DbType.Int16);
+            dynamicParameters.Add("@LocationID", locationID, DbType.Int32);
+            dynamicParameters.Add("@CompanyId", companyId, DbType.Int32);
+            dynamicParameters.Add("@CheckedFieldNames", CheckedFieldNames, DbType.String);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                dynamicParameters.Add("@AdvanceFilterColumnsList", (object)XmlUtility.XmlSerializeToString((object)AdvanceFilterColumnsList), new DbType?(DbType.Xml), new ParameterDirection?(), new int?(), new byte?(), new byte?());        // Execute the stored procedure and return the results
+            }
+            return DataBaseFactory.QuerySP("Usp_Report_PODPending", dynamicParameters, "Usp_Report_PODPending - GePODPendingReport", "PODPendingReport");
 
-            // Execute the stored procedure and return the results
-            return DataBaseFactory.QuerySP<PODPendingReport>("Usp_Report_PODPending", dynamicParameters, "Usp_Report_PODPending Reports - GetPODPendingReport");
         }
         public IEnumerable<BillReportModel> GetBillGenarte(DateTime fromDate, DateTime toDate, short level, short levelType, string Customer, int BillType)
         {
@@ -251,21 +260,6 @@ DateTime fromDate, DateTime toDate, short level, short levelType)
             // Execute the stored procedure and return the results
             return DataBaseFactory.QuerySP<BillReportModel>("Usp_Report_Bill", dynamicParameters, "Usp_Report_Bills Reports - GetBillGenarteReport");
         }
-
-        //public IEnumerable<ReportBillSubmissionModel> GetBillSubmissionGenerate(DateTime fromDate, DateTime toDate, short level, short levelType, string Customer, int BillType)
-        //{
-        //    DynamicParameters dynamicParameters = new DynamicParameters();
-        //    dynamicParameters.Add("@FromDate", fromDate, DbType.Date);
-        //    dynamicParameters.Add("@ToDate", toDate, DbType.Date);
-        //    dynamicParameters.Add("@Level", level, DbType.Int16);
-        //    dynamicParameters.Add("@LevelType", levelType, DbType.Int16);
-        //    dynamicParameters.Add("@Customer", Customer, DbType.String);
-        //    dynamicParameters.Add("@BillType", BillType, DbType.Int16);
-
-
-        //    // Execute the stored procedure and return the results
-        //    return DataBaseFactory.QuerySP<ReportBillSubmissionModel>("Usp_Report_Bill_Submission", dynamicParameters, "Usp_Report_Bill_Submission Reports - GetBillSubmissionGenerate");
-        //}
         public IEnumerable<ReportBillSubmissionModel> GetBillSubmissionGenerate(DateTime fromDate, DateTime toDate, short level, short levelType, string Customer, int BillType)
         {
             try
@@ -327,7 +321,14 @@ DateTime fromDate, DateTime toDate, short level, short levelType)
                 throw;
             }
         }
-
+        public string GetSearchingCheckedField(string FormName)
+        {
+            DynamicParameters dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("@FormName", FormName, DbType.String);
+            dynamicParameters.Add("@CheckboxFieldName", "", new DbType?(DbType.String), new ParameterDirection?(ParameterDirection.Output), new int?(), new byte?(), new byte?());
+            var res = DataBaseFactory.QuerySP("USP_GetSearchingCheckedField", (object)dynamicParameters, "USP_GetSearchingCheckedField- GetSearchingCheckedField");
+            return dynamicParameters.Get<string>("@CheckboxFieldName");           
+        }
 
     }
 }

@@ -22,6 +22,7 @@ namespace CodeLock.Areas.Reports.Controllers
         private readonly IRouteRepository routeRepository;
         private readonly IPrsRepository prsRepository;
         private readonly ICustomerRepository customerRepository;
+        private readonly IAnalysisRepository analysisRepository;
 
         public AnalysisController()
         {
@@ -30,7 +31,7 @@ namespace CodeLock.Areas.Reports.Controllers
         public AnalysisController(IOperationRepository operationRepository
             , ILocationRepository locationRepository, ICompanyRepository companyRepository
             , IGeneralRepository generalRepository
-            ,ICustomerRepository _customerRepository)
+            ,ICustomerRepository _customerRepository, IAnalysisRepository _analysisRepository)
         {
             this.operationRepository = new OperationRepository();
             this.generalRepository = new GeneralRepository();
@@ -38,22 +39,9 @@ namespace CodeLock.Areas.Reports.Controllers
             this.companyRepository = new CompanyRepository();
             this.routeRepository = new RouteRepository();
             this.customerRepository = _customerRepository;
+            this.analysisRepository = _analysisRepository;
 
         }
-
-
-
-        //public ActionResult PrsReport()
-        //{
-        //    Prs prs = new Prs();
-        //    ((dynamic)base.ViewBag).LocationList = this.locationRepository.GetLocationList();
-        //    ((dynamic)base.ViewBag).CompanyList = this.companyRepository.GetCompanyList();
-
-        //    return base.View(prs);
-        //}
-
-
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -65,39 +53,71 @@ namespace CodeLock.Areas.Reports.Controllers
 
         public ActionResult PrsReport()
         {
-            return base.View();
+            IEnumerable<AdvanceFilterColumns> AdvanceFilterColumnList = this.analysisRepository.GetAdvanceSearchingColumnList("PRSReport");
+            // Convert IEnumerable<AdvanceFilterColumn> to List<AdvanceFilterColumn>
+            List<AdvanceFilterColumns> advanceFilterColumnsList = AdvanceFilterColumnList.ToList();
+            // Create and populate the PRSReport object
+            PRSReport objPrs = new PRSReport
+            {
+                AdvanceFilterColumnList = advanceFilterColumnsList
+            };           
+            return View(objPrs);
         }
-
+       
         [HttpPost]
-        public ActionResult GetPRSReport(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames)
+        public ActionResult GetPRSReport(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames,List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
-            var prsReports = this.operationRepository.GetPRSReport(fromDate, toDate, locationID,  companyId,  CheckedFieldNames);
+            if(AdvanceFilterColumnsList!=null && AdvanceFilterColumnsList.Count > 0)
+            {
+                AdvanceFilterColumnsList = AdvanceFilterColumnsList.Where(m => m.SearchingColumnValue != "" || m.SearchingColumnValue != null).ToList();
+            }
+            var prsReports = this.operationRepository.GetPRSReport(fromDate, toDate, locationID,  companyId,  CheckedFieldNames, AdvanceFilterColumnsList);
             return Json(prsReports, JsonRequestBehavior.AllowGet);
         }
         public ActionResult DrsReport()
         {
-            return base.View();
+            IEnumerable<AdvanceFilterColumns> AdvanceFilterColumnList = this.analysisRepository.GetAdvanceSearchingColumnList("DRSReport");
+            List<AdvanceFilterColumns> advanceFilterColumnsList = AdvanceFilterColumnList.ToList();
+            DRSReportModel objDRS = new DRSReportModel
+            {
+                AdvanceFilterColumnList = advanceFilterColumnsList
+            };
+            return base.View(objDRS);
         }
 
         [HttpPost]
-        public ActionResult GetDRSReport(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames)
+        public ActionResult GetDRSReport(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
-            var drsReports = this.operationRepository.GetDRSReports(fromDate, toDate, locationID, companyId, CheckedFieldNames);
-            return Json(drsReports, JsonRequestBehavior.AllowGet);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                AdvanceFilterColumnsList = AdvanceFilterColumnsList.Where(m => m.SearchingColumnValue != "" || m.SearchingColumnValue != null).ToList();
+            }
+            var prsReports = this.operationRepository.GetDRSReports(fromDate, toDate, locationID, companyId, CheckedFieldNames, AdvanceFilterColumnsList);
+            return Json(prsReports, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult BookingReport()
         {
+            IEnumerable<AdvanceFilterColumns> AdvanceFilterColumnList = this.analysisRepository.GetAdvanceSearchingColumnList("BookingReport");
+            List<AdvanceFilterColumns> advanceFilterColumnsList = AdvanceFilterColumnList.ToList();
+            BookingReport objBookingReport = new BookingReport
+            {
+                AdvanceFilterColumnList = advanceFilterColumnsList
+            };
             IEnumerable<AutoCompleteResult> iEnumerabledocket = this.customerRepository.GetCustomerListUserwise(SessionUtility.LoginUserId);
 
             ((dynamic)base.ViewBag).CustomerList = iEnumerabledocket;
-            return base.View();
+            return base.View(objBookingReport);
         }      
         [HttpPost]
-        public ActionResult GetBookingReports(DateTime fromDate, DateTime toDate, short FromLocationID, short CompanyId, short ToLocationId, string CheckedFieldNames, int customerId)
+        public ActionResult GetBookingReports(DateTime fromDate, DateTime toDate, short FromLocationID, short CompanyId, short ToLocationId, string CheckedFieldNames, int customerId, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
-            var prsReports = this.operationRepository.GetBookingReports( fromDate,  toDate,  FromLocationID,  CompanyId,  ToLocationId,  CheckedFieldNames,customerId);
-            return Json(prsReports, JsonRequestBehavior.AllowGet);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                AdvanceFilterColumnsList = AdvanceFilterColumnsList.Where(m => m.SearchingColumnValue != "" || m.SearchingColumnValue != null).ToList();
+            }
+            var bookingReport = this.operationRepository.GetBookingReports( fromDate,  toDate,  FromLocationID,  CompanyId,  ToLocationId,  CheckedFieldNames,customerId, AdvanceFilterColumnsList);
+            return Json(bookingReport, JsonRequestBehavior.AllowGet);
         }
         public ActionResult BookingDetailsReport()
         {
@@ -109,35 +129,87 @@ namespace CodeLock.Areas.Reports.Controllers
             var prsReports = this.operationRepository.GetBookingDetailsReport(fromDate, toDate, level, levelType);
             return Json(prsReports, JsonRequestBehavior.AllowGet);
         }
+        public ActionResult InvoiceBookingReport()
+        {
+            IEnumerable<AdvanceFilterColumns> AdvanceFilterColumnList = this.analysisRepository.GetAdvanceSearchingColumnList("BookingReport");
+            List<AdvanceFilterColumns> advanceFilterColumnsList = AdvanceFilterColumnList.ToList();
+            BookingReport objBookingReport = new BookingReport
+            {
+                AdvanceFilterColumnList = advanceFilterColumnsList
+            };
+            IEnumerable<AutoCompleteResult> iEnumerabledocket = this.customerRepository.GetCustomerListUserwise(SessionUtility.LoginUserId);
+
+            ((dynamic)base.ViewBag).CustomerList = iEnumerabledocket;
+            return base.View(objBookingReport);
+        }
+        public ActionResult GetInvoiceBookingReport(DateTime fromDate, DateTime toDate, short FromLocationID, short CompanyId, short ToLocationId, string CheckedFieldNames, int customerId, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
+        {
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                AdvanceFilterColumnsList = AdvanceFilterColumnsList.Where(m => m.SearchingColumnValue != "" || m.SearchingColumnValue != null).ToList();
+            }
+            var bookingReport = this.operationRepository.GetInvoiceBookingReport(fromDate, toDate, FromLocationID, CompanyId, ToLocationId, CheckedFieldNames, customerId, AdvanceFilterColumnsList);
+            return Json(bookingReport, JsonRequestBehavior.AllowGet);
+        }
         public ActionResult ManifiestReport()
         {
-            return base.View();
+            IEnumerable<AdvanceFilterColumns> AdvanceFilterColumnList = this.analysisRepository.GetAdvanceSearchingColumnList("ManifestReport");
+            List<AdvanceFilterColumns> advanceFilterColumnsList = AdvanceFilterColumnList.ToList();
+            ManifestReport objManifest = new ManifestReport
+            {
+                AdvanceFilterColumnList = advanceFilterColumnsList
+            };
+            return View(objManifest);
         }
         [HttpPost]
-        public ActionResult ManifiestReports(DateTime fromDate, DateTime toDate, short level, short levelType)
+        public ActionResult GetManifiestReports(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
-            var prsReports = this.operationRepository.GetManifiestReport(fromDate, toDate, level, levelType);
-            return Json(prsReports, JsonRequestBehavior.AllowGet);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                AdvanceFilterColumnsList = AdvanceFilterColumnsList.Where(m => m.SearchingColumnValue != "" || m.SearchingColumnValue != null).ToList();
+            }
+            var manifestReport = this.operationRepository.GetManifestReport(fromDate, toDate, locationID, companyId, CheckedFieldNames, AdvanceFilterColumnsList);
+            return Json(manifestReport, JsonRequestBehavior.AllowGet);
         }
         public ActionResult ThcReport()
         {
-            return base.View();
+            IEnumerable<AdvanceFilterColumns> AdvanceFilterColumnList = this.analysisRepository.GetAdvanceSearchingColumnList("THCReport");
+            List<AdvanceFilterColumns> advanceFilterColumnsList = AdvanceFilterColumnList.ToList();
+            THCReport objTHCReport = new THCReport
+            {
+                AdvanceFilterColumnList = advanceFilterColumnsList
+            };
+            return View(objTHCReport);
         }
         [HttpPost]
-        public ActionResult ThcReports(DateTime fromDate, DateTime toDate, short level, short levelType)
+        public ActionResult GetThcReports(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
-            var prsReports = this.operationRepository.GetThcReport(fromDate, toDate, level, levelType);
-            return Json(prsReports, JsonRequestBehavior.AllowGet);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                AdvanceFilterColumnsList = AdvanceFilterColumnsList.Where(m => m.SearchingColumnValue != "" || m.SearchingColumnValue != null).ToList();
+            }
+            var thcReports = this.operationRepository.GetThcReport(fromDate, toDate, locationID, companyId, CheckedFieldNames, AdvanceFilterColumnsList);            
+            return Json(thcReports, JsonRequestBehavior.AllowGet);
         }
         public ActionResult THCDetailsReport()
         {
-            return base.View();
+            IEnumerable<AdvanceFilterColumns> AdvanceFilterColumnList = this.analysisRepository.GetAdvanceSearchingColumnList("THCReport");
+            List<AdvanceFilterColumns> advanceFilterColumnsList = AdvanceFilterColumnList.ToList();
+            THCReport objTHCReport = new THCReport
+            {
+                AdvanceFilterColumnList = advanceFilterColumnsList
+            };
+            return View(objTHCReport);
         }
         [HttpPost]
-        public ActionResult ThcDetailsReports(DateTime fromDate, DateTime toDate, short level, short levelType)
+        public ActionResult GetTHCDetailsReports(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
-            var prsReports = this.operationRepository.GetThcDetailsReport(fromDate, toDate, level, levelType);
-            return Json(prsReports, JsonRequestBehavior.AllowGet);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                AdvanceFilterColumnsList = AdvanceFilterColumnsList.Where(m => m.SearchingColumnValue != "" || m.SearchingColumnValue != null).ToList();
+            }
+            var thcReports = this.operationRepository.GetTHCDetailsReports(fromDate, toDate, locationID, companyId, CheckedFieldNames, AdvanceFilterColumnsList);
+            return Json(thcReports, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult ExpenseRegisterReport()
@@ -151,39 +223,59 @@ namespace CodeLock.Areas.Reports.Controllers
             var _ExpenseRegister = this.operationRepository.GetExpenseRegisterReport(fromDate, toDate, DocumentNos, ManualDocumentNos, DocumentTypes);
             return Json(_ExpenseRegister, JsonRequestBehavior.AllowGet);
         }
-
-
         public ActionResult UnloadingReport()
         {
-            return base.View();
+            IEnumerable<AdvanceFilterColumns> AdvanceFilterColumnList = this.analysisRepository.GetAdvanceSearchingColumnList("UnloadingReport");
+            List<AdvanceFilterColumns> advanceFilterColumnsList = AdvanceFilterColumnList.ToList();
+            UnloadingReportModel objUnloading = new UnloadingReportModel
+            {
+                AdvanceFilterColumnList = advanceFilterColumnsList
+            };
+            return View(objUnloading);
         }
         [HttpPost]
-        public ActionResult UnloadingReports(DateTime fromDate, DateTime toDate, short level, short levelType)
+        public ActionResult UnloadingReports(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
-            var prsReports = this.operationRepository.GetUnloadingReport(fromDate, toDate, level, levelType);
-            return Json(prsReports, JsonRequestBehavior.AllowGet);
+            if (AdvanceFilterColumnsList != null && AdvanceFilterColumnsList.Count > 0)
+            {
+                AdvanceFilterColumnsList = AdvanceFilterColumnsList.Where(m => m.SearchingColumnValue != "" || m.SearchingColumnValue != null).ToList();
+            }
+            var thcReports = this.operationRepository.GetUnloadingReport(fromDate, toDate, locationID, companyId, CheckedFieldNames, AdvanceFilterColumnsList);
+            return Json(thcReports, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult PendingArrivals()
         {
-            return base.View();
+            IEnumerable<AdvanceFilterColumns> AdvanceFilterColumnList = this.analysisRepository.GetAdvanceSearchingColumnList("PendingArrivalReport");
+            List<AdvanceFilterColumns> advanceFilterColumnsList = AdvanceFilterColumnList.ToList();
+            ArrivalReport objArrivalReport = new ArrivalReport
+            {
+                AdvanceFilterColumnList = advanceFilterColumnsList
+            };
+            return View(objArrivalReport);
         }
         [HttpPost]
-        public ActionResult PendingArrival(DateTime fromDate, DateTime toDate, short level, short levelType)
+        public ActionResult PendingArrival(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
-            var _arrivalReports = this.operationRepository.GeArrivalPendingReport(fromDate, toDate, level, levelType);
+            var _arrivalReports = this.operationRepository.GeArrivalPendingReport(fromDate, toDate, locationID, companyId, CheckedFieldNames, AdvanceFilterColumnsList);
             return Json(_arrivalReports, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult POD_Reports()
         {
-            return base.View();
+            IEnumerable<AdvanceFilterColumns> AdvanceFilterColumnList = this.analysisRepository.GetAdvanceSearchingColumnList("PODPendingReport");
+            List<AdvanceFilterColumns> advanceFilterColumnsList = AdvanceFilterColumnList.ToList();
+            PODPendingReport objPODPending = new PODPendingReport
+            {
+                AdvanceFilterColumnList = advanceFilterColumnsList
+            };
+            return View(objPODPending);
         }
 
         [HttpPost]
-        public ActionResult POD_Report(DateTime fromDate, DateTime toDate, short level, short levelType)
+        public ActionResult POD_Report(DateTime fromDate, DateTime toDate, short locationID, short companyId, string CheckedFieldNames, List<AdvanceFilterColumns> AdvanceFilterColumnsList)
         {
-            var _podlReports = this.operationRepository.GetPODPendingReport(fromDate, toDate, level, levelType);
+            var _podlReports = this.operationRepository.GetPODPendingReport(fromDate, toDate, locationID, companyId, CheckedFieldNames, AdvanceFilterColumnsList); ;
             return Json(_podlReports, JsonRequestBehavior.AllowGet);
         }
         public ActionResult BillGenerateReport()
@@ -286,209 +378,10 @@ namespace CodeLock.Areas.Reports.Controllers
             JsonResult jsonResult = base.Json(this.operationRepository.GetColumnListByReport(FormName), JsonRequestBehavior.AllowGet);
             return jsonResult;
         }
-        //[HttpPost]
-        //public ActionResult GetPRSReport(DateTime fromDate, DateTime toDate, short level, short levelType)
-        //{
-        //    var prsReports = this.operationRepository.GetPRSReports(fromDate, toDate, level, levelType);
-        //    return Json(prsReports, JsonRequestBehavior.AllowGet);
-        //}
-
-        //[HttpPost]
-        //public ActionResult GetPRSReports(Pagination pagination, DateTime fromDate, DateTime toDate)
-        //{
-        //    try
-        //    {
-        //        // Ensure pagination and its properties are not null
-        //        if (pagination == null || pagination.Data == null || pagination.Data.columns == null || pagination.Data.order == null || pagination.Data.order.Count == 0)
-        //        {
-        //            throw new ArgumentException("Invalid pagination object.");
-        //        }
-
-        //        // Extracting the sorting column and direction from pagination data
-        //        string sortingColumn = pagination.Data.columns[pagination.Data.order[0].column].name;
-        //        string sortingDirection = pagination.Data.order[0].dir;
-        //        string sorting = string.IsNullOrEmpty(sortingColumn) ? "PrsDate DESC" : $"{sortingColumn} {sortingDirection}";
-
-        //        short level = 0; // Default value
-        //        if (!string.IsNullOrEmpty(pagination.Data.search.level))
-        //        {
-        //            short.TryParse(pagination.Data.search.level, out level);
-        //        }
-
-        //        short levelType = 0; // Default value
-        //        if (!string.IsNullOrEmpty(pagination.Data.search.levelType))
-        //        {
-        //            short.TryParse(pagination.Data.search.levelType, out levelType);
-        //        }
-
-        //        int pageNumber = pagination.Data.start / pagination.Data.length + 1;
-        //        int pageSize = pagination.Data.length;
-
-        //        // Fetching the PRS reports from the repository
-        //        var prsReports = this.operationRepository.GetPRSReportsbyPagination(fromDate, toDate, level, levelType, pageNumber, pageSize);
-
-        //        // Setting up the response object
-        //        var dtResponse = new DTResponse
-        //        {
-        //            recordsTotal = prsReports.FirstOrDefault()?.recordsTotal ?? 0,
-        //            recordsFiltered = prsReports.FirstOrDefault()?.recordsFiltered ?? 0,
-        //            data = prsReports // Assuming prsReports is already in the required format
-        //        };
-
-        //        dtResponse.data = JsonConvert.SerializeObject(dtResponse);
-        //        return Json(dtResponse, JsonRequestBehavior.AllowGet);
-
-        //    }
-
-        //    catch (Exception ex)
-        //    {
-        //        // Log the exception
-        //        Console.WriteLine($"Error in GetPRSReports: {ex.Message}");
-
-        //        // Set error message in response object
-        //        ViewBag.Error = "An error occurred while processing the request: " + ex.Message;
-        //        return Json(new { error = "An error occurred while processing the request." });
-        //    }
-        //}
-
-
-        //[HttpPost]
-        //public ActionResult GetPRSReports(Pagination pagination, DateTime? fromDate, DateTime? toDate)
-        //{
-        //    try
-        //    {
-        //        // Ensure pagination and its properties are not null
-        //        if (pagination == null || pagination.Data == null || pagination.Data.columns == null || pagination.Data.order == null || pagination.Data.order.Count == 0)
-        //        {
-        //            throw new ArgumentException("Invalid pagination object.");
-        //        }
-
-        //        // Extracting the sorting column and direction from pagination data
-        //        string sortingColumn = pagination.Data.columns[pagination.Data.order[0].column].name;
-        //        string sortingDirection = pagination.Data.order[0].dir;
-        //        string sorting = string.IsNullOrEmpty(sortingColumn) ? "PrsDate DESC" : $"{sortingColumn} {sortingDirection}";
-
-        //        short level = 0; // Default value
-        //        if (!string.IsNullOrEmpty(pagination.Data.search.level))
-        //        {
-        //            short.TryParse(pagination.Data.search.level, out level);
-        //        }
-
-        //        short levelType = 0; // Default value
-        //        if (!string.IsNullOrEmpty(pagination.Data.search.levelType))
-        //        {
-        //            short.TryParse(pagination.Data.search.levelType, out levelType);
-        //        }
-
-        //        int pageNumber = pagination.Data.start / pagination.Data.length + 1;
-        //        int pageSize = pagination.Data.length;
-
-        //        // Fetching the PRS reports from the repository
-        //        var prsReports = this.operationRepository.GetPRSReports(fromDate, toDate, level, levelType, pageNumber, pageSize);
-
-        //        // Setting up the response object
-        //        var dtResponse = new DTResponse
-        //        {
-        //            recordsTotal = prsReports.FirstOrDefault()?.recordsTotal ?? 0,
-        //            recordsFiltered = prsReports.FirstOrDefault()?.recordsFiltered ?? 0,
-        //            data = prsReports // Assuming prsReports is already in the required format
-        //        };
-
-        //        return Json(dtResponse);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log the exception
-        //        Console.WriteLine($"Error in GetPRSReports: {ex.Message}");
-
-        //        // Set error message in response object
-        //        ViewBag.Error = "An error occurred while processing the request: " + ex.Message;
-        //        return Json(new { error = "An error occurred while processing the request." });
-        //    }
-        //}
-
-
-
-
-        //[HttpPost]
-        //public ActionResult GetPRSReports(Pagination pagination, DateTime? fromDate, DateTime? toDate)
-        //{
-        //    try
-        //    {
-        //        // Extracting the sorting column and direction from pagination data
-        //        string sortingColumn = pagination.data.columns[pagination.data.order[0].column].name;
-        //        string sortingDirection = pagination.data.order[0].dir;
-        //        string sorting = string.IsNullOrEmpty(sortingColumn) ? "PrsDate DESC" : $"{sortingColumn} {sortingDirection}";
-
-        //        short level = 0; // Default value
-        //        if (!string.IsNullOrEmpty(pagination.data.search.level))
-        //        {
-        //            short.TryParse(pagination.data.search.level, out level);
-        //        }
-
-        //        short levelType = 0; // Default value
-        //        if (!string.IsNullOrEmpty(pagination.data.search.levelType))
-        //        {
-        //            short.TryParse(pagination.data.search.levelType, out levelType);
-        //        }
-
-        //        int pageNumber = pagination.data.start / pagination.data.length + 1;
-        //        int pageSize = pagination.data.length;
-
-        //        // Fetching the PRS reports from the repository
-        //        var prsReports = this.operationRepository.GetPRSReports(fromDate, toDate, level, levelType, pageNumber, pageSize);
-
-        //        // Setting up the response object
-        //        var dtResponse = new DTResponse
-        //        {
-        //            recordsTotal = prsReports.FirstOrDefault()?.recordsTotal ?? 0,
-        //            recordsFiltered = prsReports.FirstOrDefault()?.recordsFiltered ?? 0,
-        //            data = prsReports // Assuming prsReports is already in the required format
-        //        };
-
-        //        return Json(dtResponse);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log the exception
-        //        Console.WriteLine($"Error in GetPRSReports: {ex.Message}");
-
-        //        // Set error message in response object
-        //        ViewBag.Error = "An error occurred while processing the request.";
-        //        return Json(new { error = "An error occurred while processing the request." });
-        //    }
-        //}
-
-
-
-
-
-
-
-
-        //public JsonResult PrsReport(Pagination pagination)
-        //{
-
-
-        //    // Call the repository method
-        //    var products = operationRepository.PrsReport(
-        //         pagination.data.fromDate,
-        //        pagination.data.toDate,
-        //        pagination.data.level,
-        //        pagination.data.levelType,
-        //        pagination.data.start / pagination.data.length + 1,
-        //        pagination.data.length
-        //    );
-
-        //    // Prepare the response
-        //    DTResponse dtResponse = new DTResponse
-        //    {
-        //        recordsTotal = products.FirstOrDefault()?.recordsTotal ?? 0,
-        //        recordsFiltered = products.FirstOrDefault()?.recordsFiltered ?? 0, // Assuming no additional filtering applied here
-        //        data = JsonConvert.SerializeObject(products)
-        //    };
-
-        //    return Json(dtResponse, JsonRequestBehavior.AllowGet);
-        //}
+        public JsonResult GetSearchingCheckedField(string formName)
+        {
+            JsonResult jsonResult = base.Json(this.operationRepository.GetSearchingCheckedField(formName), JsonRequestBehavior.AllowGet);
+            return jsonResult;
+        }
     }
     }

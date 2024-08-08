@@ -64,8 +64,7 @@ namespace CodeLock.Models
         public short BookedBy { get; set; }
 
         [Display(Name = "Use Ad-hoc Amount")]
-        //public bool IsAdhoc { get; set; }
-        public string IsAdhoc { get; set; }
+        public bool IsAdhoc { get; set; }
 
         public short? ContractId { get; set; }
 
@@ -201,8 +200,7 @@ namespace CodeLock.Models
         public string OutgoingRemark { get; set; }
 
         [Display(Name = "Overload")]
-        //public bool IsOverLoaded { get; set; }
-        public string IsOverLoaded { get; set; }
+        public bool IsOverLoaded { get; set; }
 
 
         [RequiredIf("IsOverLoaded == true", ErrorMessage = "Please select Overloaded Reason")]
@@ -367,94 +365,8 @@ namespace CodeLock.Models
 
     public class PRSReport
     {
-        public int SRNo { get; set; }
-
-        public string PrsNo { get; set; }
-        public string PrsDate { get; set; }
-        public string PrsTime { get; set; }
-        public string DocketNo { get; set; }
-        public string CustomerCode { get; set; }
-        public bool MyProIsAdhocperty { get; set; }
-        public string VendorName { get; set; }
-        public string RegistrationDate { get; set; }
-        public string EngineNo { get; set; }
-        public string ChassisNo { get; set; }
-        public string RcBookNo { get; set; }
-        public string InsuranceValidityDate { get; set; }
-        public string FitnessValidityDate { get; set; }
-        public string PermitValidityDate { get; set; }
-        public string FirstDriverName { get; set; }
-        public string FirstDriverMobileNo { get; set; }
-        public string FirstDriverLicenseNo { get; set; }
-        public string FirstDriverLicenseIssueBy { get; set; }
-        public string FirstDriverLicenseValidityDate { get; set; }
-        public string SecondDriverName { get; set; }
-        public string SecondDriverMobileNo { get; set; }
-        public string SecondDriverLicenseNo { get; set; }
-        public string SecondDriverLicenseIssueBy { get; set; }
-        public string SecondDriverLicenseValidityDate { get; set; }
-        public int StartKm { get; set; }
-        public int EndKm { get; set; }
-        public string OutgoingRemark { get; set; }
-        public string IsOverLoaded { get; set; }
-        public int OverLoadedReasonId { get; set; }
-        public int WeightLoaded { get; set; }
-        public int CapacityUtilization { get; set; }
-        public int TotalDocket { get; set; }
-        public int TotalPackages { get; set; }
-        public int TotalActualWeight { get; set; }
-        public decimal ContractAmount { get; set; }
-        public int BalanceLocationId { get; set; }
-        public decimal AdvanceAmount { get; set; }
-        public string FinacialStatus { get; set; }
-        public string IsCancel { get; set; }
-        public string CancelDate { get; set; }
-        public string CancelReason { get; set; }
-        public string EntryBy { get; set; }
-        public string EntryDate { get; set; }
-        public string Company { get; set; }
-        public string IsUpdated { get; set; }
-        public int UpdateBy { get; set; }
-        public string UpdateDate { get; set; }
-        public decimal OtherAmount { get; set; }
-        public int CancelBy { get; set; }
-        public string EwayBillNo { get; set; }
-        public string EwayBillIssueDate { get; set; }
-        public string EwayBillExpiryDate { get; set; }
-        public string TransportMode { get; set; }
-        public string FromCity { get; set; }
-        public string ToCity { get; set; }
-        public string LocationUpdatedBy { get; set; }
-        public string LocationUpdatedDate { get; set; }
-        public string IsOutCapacity { get; set; }
-        public string UndeliveredDate { get; set; }
-        public string UndeliveredReason { get; set; }
-        public string IsMultiAdvApply { get; set; }
-        public string IsLabourBilling { get; set; }
-        public decimal TotalLabourAmount { get; set; }
-        public string PanNo { get; set; }
-        public int KantaWeight { get; set; }
-        public string SlipNo { get; set; }
-        public string ReasonForWeightLoss { get; set; }
-        public string IsAdvancePaymentDone { get; set; }
-        public string DrsCloseRemarks { get; set; }
-        public decimal BalanceAmount { get; set; }
-        public decimal TDSAmount { get; set; }
-        public decimal TdsAmountOnAdvance { get; set; }
-        public bool ReportType { get; set; }
-        public bool FormatType { get; set; }
-        public int recordsTotal { get; set; }
-        public int recordsFiltered { get; set; }
-        public string data { get; set; }
-        public DateTime fromDate { get; set; }
-        public DateTime toDate { get; set; }
-        [Display(Name = "Level")]
-        public short level { get; set; }
-        public short levelType { get; set; }
-        public int length { get; set; }
-        public int total { get; set; }
-        public int start { get; set; }
-        public short Wise { get; set; }
+        public  List<AdvanceFilterColumns> AdvanceFilterColumnList { get; set; }      
+       
     }
 
 }

@@ -699,7 +699,9 @@
     <Compile Include="Areas\Reports\Controllers\OperationController.cs" />
     <Compile Include="Areas\Reports\Controllers\WMSController.cs" />
     <Compile Include="Areas\Reports\ReportsAreaRegistration.cs" />
+    <Compile Include="Areas\Reports\Repository\AnalysisRepository.cs" />
     <Compile Include="Areas\Reports\Repository\FinanceRepository.cs" />
+    <Compile Include="Areas\Reports\Repository\IAnalysisRepository.cs" />
     <Compile Include="Areas\Reports\Repository\IFinanceRepository.cs" />
     <Compile Include="Areas\Reports\Repository\IOperationRepository.cs" />
     <Compile Include="Areas\Reports\Repository\OperationRepository.cs" />
@@ -751,6 +753,7 @@
     <Compile Include="MobileAnnotation.cs" />
     <Compile Include="Models\AccountingDetail.cs" />
     <Compile Include="Models\AccountOpeningDetail.cs" />
+    <Compile Include="Models\AdvanceFilterColumns.cs" />
     <Compile Include="Models\AdvanceTrialBalance.cs" />
     <Compile Include="Models\Advice.cs" />
     <Compile Include="Models\AdviceAcknowledgement.cs" />
@@ -3975,6 +3978,14 @@
     <Content Include="Areas\Ewaybill\Views\Fetch\ConsolidateEwb.cshtml" />
     <Content Include="Areas\Ewaybill\Views\FetchByTransporter\Index.cshtml" />
     <Content Include="Areas\Ewaybill\Views\ExtendEWB\Index.cshtml" />
+    <Content Include="Areas\Reports\Views\Analysis\_AdvanceFilter.cshtml" />
+    <Content Include="Areas\Reports\Views\Analysis\InvoiceBookingReport.cshtml" />
+    <Content Include="Areas\Reports\Views\Analysis\ManifiestReport.cshtml" />
+    <Content Include="Areas\Reports\Views\Analysis\ThcReport.cshtml" />
+    <Content Include="Areas\Reports\Views\Analysis\THCDetailsReport.cshtml" />
+    <Content Include="Areas\Reports\Views\Analysis\UnloadingReport.cshtml" />
+    <Content Include="Areas\Reports\Views\Analysis\PendingArrivals.cshtml" />
+    <Content Include="Areas\Reports\Views\Analysis\POD_Reports.cshtml" />
     <None Include="Properties\PublishProfiles\TMS.pubxml" />
     <None Include="Scripts\_references.js" />
     <Content Include="Scripts\xlsx.full.min.js" />

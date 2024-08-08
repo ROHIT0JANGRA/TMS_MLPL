@@ -668,6 +668,17 @@
         } else {
             alert('At least one address must be present.');
         }
+        $('#addressRowsContainer .address-row').each(function (index) {
+            debugger;
+            $(this).find('input, select').each(function () {
+                var name = $(this).attr('name');
+                if (name) {
+                    var newName = name.replace(/\[\d+\]/, '[' + index + ']');
+                    $(this).attr('name', newName);
+                    $(this).attr('id', newName);
+                }
+            });
+        });
     });
 
 

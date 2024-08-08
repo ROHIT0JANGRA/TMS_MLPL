@@ -199,7 +199,7 @@ namespace CodeLock.Areas.Master.Controllers
             MasterAddress objAdd = new MasterAddress()
             {
                 AddressId = 0,
-                AddressCode = this.customerRepository.GetCustomerAddressCode(0),
+                AddressCode = "",
                 Address1 = "",
                 Address2 = "",
                 CityId = 0,
@@ -256,17 +256,7 @@ namespace CodeLock.Areas.Master.Controllers
         public ActionResult GetNewCustomerAddress(int Index,int ClickCount)
         {
             var MasterAddress = new MasterAddress(); // Create a new Address object
-            MasterAddress.IsActive= true;
-            if (ClickCount ==-1)
-            {
-                MasterAddress.AddressCode = this.customerRepository.GetCustomerAddressCode((Index == null ? 0 : Index));
-
-            }
-            else
-            {
-                MasterAddress.AddressCode = this.customerRepository.GetCustomerAddressCode(ClickCount);
-
-            }
+            MasterAddress.IsActive= true;            
             ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
             ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
             ((dynamic)base.ViewBag).CityList = Enumerable.Empty<SelectListItem>();
@@ -583,8 +573,6 @@ namespace CodeLock.Areas.Master.Controllers
                         }
                     }
                 }
-                ViewBag.StateWiseCityList =null;
-
                 httpStatusCodeResult = base.View(objCustomer);
             }
             else
