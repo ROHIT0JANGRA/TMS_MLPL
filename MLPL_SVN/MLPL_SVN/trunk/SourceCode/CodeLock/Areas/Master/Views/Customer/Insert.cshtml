@@ -13,7 +13,7 @@
 
             <div class="widget-wrap">
                 @Html.AntiModelInjectionFor(m => m.CustomerId)
-                @Html.HiddenFor(m => m.CustomerId, new { @id = "hdnCustomerId" })
+             @Html.HiddenFor(m => m.CustomerId, new { @id = "hdnCustomerId" })
 
                 <div class="tab-pane">
                     <div class="row">
@@ -64,7 +64,7 @@
                                         @Html.TextBoxFor(model => model.MasterCustomerDetail.GstTinNo, new { @class = "form-control", @id = "txtGstTinNo" })
                                     </div>
                                     @Html.ValidationMessageFor(model => model.MasterCustomerDetail.GstTinNo)
-                                    <button type="button" id="btnGetDetail" class="btn btn-primary">Autofill</button>
+                                    <button type="button" id="btnFetchData" class="btn btn-primary">Autofill</button>
                                 </div>
                             </div>
 

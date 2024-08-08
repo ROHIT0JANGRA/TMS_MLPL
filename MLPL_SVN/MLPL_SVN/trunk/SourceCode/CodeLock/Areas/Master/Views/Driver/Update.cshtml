@@ -5,6 +5,19 @@
     ViewBag.Title = "Update";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .fa-image {
+        border: 2px solid #000; /* Black border */
+        padding: 10px; /* Padding around the image */
+        border-radius: 5px; /* Rounded corners */
+        width: 100%; /* Adjust the width as needed */
+        max-width: 150px; /* Maximum width */
+        display: block; /* Center the image */
+        margin: 0 auto; /* Center the image */
+    }
+
+
+</style>
 
 @using (Html.BeginForm("Update", "Driver", FormMethod.Post, new { @class = "j-forms", @enctype = "multipart/form-data" }))
 {
@@ -13,16 +26,57 @@
     @Html.HiddenFor(model => model.DriverId)
     <div class="widget-wrap">
         <div class="row">
-            <div class="col-sm-4">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.DriverCode, new { @class = "label" })
-                    <div class="clearfix">
-                        @Html.HiddenFor(model => model.DriverCode)
-                        @Html.DisplayFor(model => model.DriverCode, new { @class = "label" })
+            <div class=" m-0 col-12 ">
+                <div class="col-sm-4 col-md-3 col-lg-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DriverCode, new { @class = "label" })
+                        <div class="clearfix">
+                            @Html.HiddenFor(model => model.DriverCode)
+                            @Html.DisplayFor(model => model.DriverCode, new { @class = "label" })
+                        </div>
                     </div>
                 </div>
+                <div class="col-sm-4 col-md-3 col-lg-2">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LicenseNo, new { @class = "label" })
+                        <div class="input">
+                            @Html.HiddenFor(model => model.LicenseNo, new { @class = "form-control", @id = "dlNo" })
+                        </div>
+                        @Html.DisplayFor(model => model.LicenseNo, new { @class = "label " })
+                    </div>
+                </div>
+
+
+                <div class="col-sm-4 col-md-3 m-0 col-lg-2">
+                    <div class="form-group">
+                        @Html.Partial("DateTimePicker", new DateTimePicker()
+                   {
+                       FieldName = "DoB",
+                       FieldCaption = DataAnnotationHelper.GetDisplayName(Model, m => m.DoB),
+                       IsRequired = true,
+                       AllowFutureDate = false,
+                       AllowPastDate = true,
+                       MinDate = new DateTime(1950, 1, 1),
+                       MaxDate = DateTime.Now.AddDays(-18 * 365),
+                       // SetBlank = true,
+                       IsValidateFinYear = false,
+                       DefaultDate = new DateTime(1987, 5, 26)
+
+                   })
+
+                    </div>
+
+                </div>
+                <div class="col-lg-2 col-sm-4 col-md-4 pl-0">
+                    <input type="button" id="btnGetDetail" class="btn btn-primary" value="Autofill">
+                </div>
+                <div class="m-0 col-lg-4 col-sm-4 col-md-3">
+                    <label class="form-content"></label>
+                    <img id="fuDocumentAttachment" name="DocumentDetails[1].DocumentAttachment" class="fa-image" alt="Driver Profile Image" />
+                </div>
             </div>
-        </div>
+            </div>
+              
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
@@ -456,4 +510,92 @@
         window.open(filePath + hdnDocumentName.val(), "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=400,height=300");
         return false;
     }
+
+    /// ***********************************  Get The Driver Details *********************
+     $(document).ready(function () {
+ $('#btnGetDetail').click(function () {
+     var dlNo = $('#dlNo').val();
+     var dlDobDate = moment($('#txtDoB').val(), "DD/MM/YYYY", true).format("YYYY-MM-DD");
+
+     console.log('typeof dlDobDate : ', typeof dlDobDate);
+     console.log('dlNo : ', dlNo, 'dlDobDate : ', dlDobDate);
+     if (dlNo && dlDobDate) {
+         $.ajax({
+             url: '@Url.Action("FetchDriverDetailsFromApi", "Driver")',
+             type: 'POST',
+             data:
+             {
+                 dlNo: dlNo,
+                 dlDobDate: dlDobDate
+             },
+             success: function (data) {
+                 parseData = JSON.parse(data);
+                 if (parseData.code === "200") {
+                     console.log('parseData : ', parseData);
+                     bioObj = parseData.response[0].response.dldetobj[0].bioObj;
+                     bioFullName = bioObj.bioFullName;
+                     $('#txtDriverName').val(bioFullName);
+                     bioSwdFullName = bioObj.bioSwdFullName;
+                     $('#txtDriverFatherName').val(bioSwdFullName);
+                     bioMobileNo = bioObj.bioMobileNo;
+                     $('#mobileNo').val(bioMobileNo);
+                     mob = bioMobileNo;
+                     bioApplno = bioObj.bioApplno;
+                     $('#txtManualDriverCode').val(bioApplno);
+                     bioPermAdd1 = bioObj.bioPermAdd1;
+                     bioPermAdd2 = bioObj.bioPermAdd2;
+                     bioPermAdd3 = bioObj.bioPermAdd3;
+                     $('#txtPermanentAddress').val(bioPermAdd1 + " " + bioPermAdd2 + " " + bioPermAdd3);
+                     bioPermPin = bioObj.bioPermPin;
+                     $('#txtPermanentPincode').val(bioPermPin);
+                     bioPermSdName = bioObj.bioPermSdName;
+                     $('#txtPermanentCityName').val(bioPermSdName);
+                     bioTempAdd1 = bioObj.bioTempAdd1;
+                     bioTempAdd2 = bioObj.bioTempAdd2;
+                     bioTempAdd3 = bioObj.bioTempAdd3;
+                     $('#txtCurrentAddress').val(bioTempAdd1 + " " + bioTempAdd2 + " " + bioTempAdd3);
+                     bioTempPin = bioObj.bioTempPin;
+                     $('#txtCurrentPincode').val(bioTempPin);
+                     bioTempSdName = bioObj.bioTempSdName;
+                     $('#txtCurrentCityName').val(bioTempSdName);
+                     dlobj = parseData.response[0].response.dldetobj[0].dlobj;
+                     olaName = dlobj.olaName;
+                     $('#LicenseIssueBy').val(olaName);
+                     dlNtValdtoDt = moment(dlobj.dlNtValdtoDt, "YYYY-MM-DD").format("DD/MM/YYYY");
+                     $('#txtLicenseValidityDate').val(dlNtValdtoDt);
+                     dlIssuedt = moment(dlobj.dlIssuedt, "YYYY-MM-DD").format("DD/MM/YYYY");
+                     $('#txtLicenseInitialIssueDate').val(dlIssuedt);
+                     $('#txtLicenseCurrentIssueDate').val(dlIssuedt);
+                     // Set the driver image
+                     var driverImageBase64 = parseData.response[0].response.dldetobj[0].bioImgObj.biPhoto;
+                     // Set the driver image or default image
+                     console.log(driverImageBase64);
+                     if (driverImageBase64) {
+                         $('#fuDocumentAttachment').attr('src', 'data:image/png;base64,' + driverImageBase64);
+                                } else {
+                                    $('#fuDocumentAttachment').attr('src', '@Url.Content("~/assets/images/camera_logo.jpg")');
+                                }
+                 } else {
+                     console.log(parseData.code);
+                     alert(parseData.message);
+                 }
+             },
+             error: function (xhr, status, error) {
+                 console.error('Error fetching details:', status, error);
+                 console.error('Response:', xhr.responseText);
+                 alert('Error fetching details');
+             }
+         });
+     } else {
+         alert('Driving License No and DOB are both mandatory');
+     }
+ });
+
+     });
+
+
+
+
+
+
 </script>

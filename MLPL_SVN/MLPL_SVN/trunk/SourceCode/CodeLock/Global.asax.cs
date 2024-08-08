@@ -8,6 +8,7 @@ using System.Web.Routing;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Web.Http;
+using CodeLock.Scheduler;
 
 namespace CodeLock
 {
@@ -17,11 +18,13 @@ namespace CodeLock
         void Application_Start(object sender, EventArgs e)
         {
             SqlDependency.Start(connString);
+
         }
         protected void Application_End()
         {
             //Stop SQL dependency
             SqlDependency.Stop(connString);
+
         }
     }
 }

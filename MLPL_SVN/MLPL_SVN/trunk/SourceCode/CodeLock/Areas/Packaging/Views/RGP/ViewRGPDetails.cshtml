@@ -1,0 +1,284 @@
+﻿@model CodeLock.Models.PackagingModel
+
+@{
+    ViewBag.Title = "ViewRGPDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>ViewRGPDetails</h2>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<style>
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
+
+    table {
+        overflow: auto;
+        width: 100%;
+        max-width: 400px;
+        height: 200px;
+        max-height: 500px;
+        display: block;
+        margin: 0 auto;
+        border-spacing: 0;
+    }
+
+    tbody {
+        white-space: nowrap;
+    }
+
+    th,
+    td {
+        padding: 1px 3px;
+        border-top-width: 0;
+        border-left-width: 0;
+    }
+
+    th {
+        position: fixed;
+        top: 10px;
+        background-color: #139c9b;
+        vertical-align: bottom;
+    }
+
+        th:last-child,
+        td:last-child {
+            border-right-width: 0;
+        }
+
+    tr:last-child td {
+        border-bottom-width: 0;
+    }
+
+    .head {
+        background-color: lightgray;
+        padding: 5px;
+    }
+
+    .form-control-date {
+        position: relative;
+        cursor: pointer;
+    }
+
+        .form-control-date::before {
+            content: attr(placeholder);
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            color: #aaa;
+            pointer-events: none;
+        }
+
+        .form-control-date:focus::before,
+        .form-control-date:not(:placeholder-shown)::before {
+            display: none;
+        }
+</style>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#ddlCustomerId').select2();
+        $('#ddlWarehouse').select2();
+        $('#ddlRgpSeries').select2();
+    });
+
+    function addRow() {
+        var tableBody = document.getElementById("myTable").getElementsByTagName('tbody')[0];
+        var newRow = tableBody.insertRow();
+        for (var i = 0; i < 11; i++) {
+            var cell = newRow.insertCell(i);
+            cell.innerHTML = '<input type="text" class="form-control" name="input' + i + '" />';
+        }
+        var addCell = newRow.insertCell(11);
+        addCell.innerHTML = '<button class="btn btn-primary" onclick="addRow()" type="button"><i class="fa fa-plus"></i></button>';
+        var deleteCell = newRow.insertCell(12);
+        deleteCell.innerHTML = '<button class="btn btn-danger" onclick="deleteRow(this)" type="button"><i class="fa fa-trash"></i></button>';
+    }
+
+    function deleteRow(button) {
+        var row = button.closest('tr');
+        var tableBody = row.parentNode;
+        var rowIndex = Array.prototype.indexOf.call(tableBody.children, row);
+
+        // Do not remove the first row
+        if (rowIndex > 0) {
+            tableBody.removeChild(row);
+        }
+    }
+</script>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var today = new Date();
+            var day = String(today.getDate()).padStart(2, '0');
+            var month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0
+            var year = today.getFullYear();
+            var todayDate = year + '-' + month + '-' + day;
+
+            $('#txtRgpDocDateTime').attr('min', todayDate);
+            $('#txtRgpDocDateTime').on('change', function () {
+                $('#postingDate').val($(this).val());
+            });
+            $('.form-control-date').on('click', function () {
+                $(this).focus();
+            });
+        });
+    </script>
+}
+<div class="widget-wrap">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="">
+                <div class="inline-group">
+                    <form class="form-group" method="post" action="@Url.Action("ViewRGPDetails", "RGP")">
+                        <div class="head">
+                            <button class="btn btn-success" disabled type="submit">Submit</button>
+                            <span><a href="@Url.Action("RgpList", "RGP")" class="btn btn-primary">List</a></span>
+                        </div>
+
+                        <div class="row col-lg-12">
+                            
+                            <div class="col-sm-3 inline-group">
+                                @Html.Label("Customer Code and Name", new { @class = "inline-group" })
+                                <div class="form-group">
+                                    @Html.TextBoxFor(model => model.CardCode, new { @class = "", @id = "CardCode", placeholder = "Customer Code" ,@readonly = "readonly" })
+                               
+                                    @Html.TextBoxFor(model => model.CardName, new { @class = "form-control", @id = "CardName", placeholder = "Customer Name", @readonly = "readonly" })
+                                </div>
+
+                                @*<div class="select">
+            @Html.DropDownListFor(model => model.CardCode, new SelectList(ViewBag.CustomerList, "Value", "Text"), "Select Customer", new { @class = "form-control select2", @id = "ddlCustomerId" })
+        </div>*@
+
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="inline-group" for="txtRgpDocDateTime">RGP Date</label>
+                                <div class="form-group">
+                                    @Html.TextBoxFor(model => model.DocDate, "{0:yyyy-MM-dd}", new { @class = "form-control form-control-date", @id = "txtRgpDocDateTime", placeholder = "RGP Date", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="inline-group" for="postingDate">Posting Date</label>
+                                <div class="form-group">
+                                    @Html.TextBoxFor(model => model.DueDate, "{0:yyyy-MM-dd}", new { @class = "form-control form-control-date", @id = "postingDate", placeholder = "Posting Date", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="col-lg-2 inline-group">
+                                <label class="inline-group" for="rgpSeries">RGP Series</label>
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.Series, new SelectList(ViewBag.RGPListSeries, "Value", "Name"), "Select RGP Series", new { @class = "form-control select2", @id = "rgpSeries", @disabled = "disabled" })
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="form-inline" for="docNum">Document Number</label>
+                                @Html.TextBoxFor(model => model.DocNum, new { @class = "form-control", @id = "docNum", placeholder = "Document Number", @readonly = "readonly" })
+                            </div>
+                            @*<div class="col-lg-2">
+            <label class="inline-group" for="rgpNo">RGP No</label>
+            @Html.TextBoxFor(model => model.U_EBILLNO, new { @class = "form-control", @id = "rgpNo", placeholder = "RGP no" })
+        </div>*@
+                        </div>
+
+                        <div class="row col-lg-12">
+                            <div class="col-lg-3">
+                                <label class="inline-group" for="shipTo">Ship To</label>
+                                @Html.TextAreaFor(model => model.ShipToCode, new { @class = "form-control", @id = "shipToDisplay", placeholder = "Ship To", @readonly = "readonly" })
+                                @Html.HiddenFor(model => model.Comments, new { @id = "shipTo", @readonly = "readonly" })
+                            </div>
+
+                            <div class="col-lg-2">
+                                <label class="form-inline" for="fromWarehouse">From Warehouse</label>
+                                @Html.TextBoxFor(model => model.FromWarehouse, new { @class = "form-control select2", @id = "FromWarehouse", @readonly = "readonly" })
+
+                                @*
+        @Html.DropDownListFor(model => model.FromWarehouse, new SelectList(ViewBag.WarehouseList, "Value", "Text"), "Select Warehouse", new { @class = "form-control select2", @id = "fromWarehouse", @disabled = "disabled" })
+                                *@
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="form-inline" for="toWarehouse">To Warehouse</label>
+                                @Html.DropDownListFor(model => model.ToWarehouse, new SelectList(ViewBag.PkgWarehouseList, "Name", "Name"), "Select Warehouse", new { @class = "form-control select2", @id = "toWarehouse", @disabled = "disabled" })
+                            </div>
+                        </div>
+
+                        <div class="row col-lg-12">
+                        
+                            <div class="col-lg-2">
+                                <label class="form-inline" for="taxDate">Tax Date</label>
+                                @Html.TextBoxFor(model => model.TaxDate, "{0:yyyy-MM-dd}", new { @class = "form-control form-control-date", @id = "taxDate", placeholder = "Tax Date", @readonly = "readonly" })
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="form-inline" for="BPLName">Bussinous Type</label>
+                                @Html.TextBoxFor(model => model.BPLName, new { @class = "form-control", @id = "BPLName", placeholder = "Bussinous Type", @readonly = "readonly" })
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="form-inline" for="U_VehicleNo">Vehicle Number</label>
+                                @Html.TextBoxFor(model => model.U_VehicleNo, new { @class = "form-control", @id = "U_VehicleNo", placeholder = "Vehicle Number", @readonly = "readonly" })
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="form-inline" for="authorizationStatus">Authorization Status</label>
+                                @Html.TextBoxFor(model => model.AuthorizationStatus, new { @class = "form-control", @id = "authorizationStatus", placeholder = "Authorization Status", @readonly = "readonly" })
+                            </div>
+                        </div>
+
+                        <!-- Additional fields can be added similarly -->
+                        <!-- Continue adding fields as per your PackagingModel properties -->
+
+                        <table id="myTable" class="table table-bordered table-responsive">
+                            <thead>
+                                <tr>
+                                    <th>Item No</th>
+                                    <th>Description</th>
+                                    <th>From Warehouse</th>
+                                    <th>To Warehouse</th>
+                                    <th>Location</th>
+                                    <th>Qty</th>
+                                    <th>Info Price</th>
+                                    <th>Tax Category</th>
+                                    <th>Taxable</th>
+                                    <th>GST Amt</th>
+                                    <th>Total</th>
+                                    <th>Add</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.StockTransferLines)
+                                {
+                                    <tr>
+                                        <td>@Html.TextBoxFor(m => item.ItemCode, new { @class = "form-control", @readonly = "readonly" })</td>
+                                        <td>@Html.TextBoxFor(m => item.ItemDescription, new { @class = "form-control", @readonly = "readonly" })</td>
+                                        <td>@Html.TextBoxFor(m => item.FromWarehouseCode, new { @class = "form-control", @readonly = "readonly" })</td>
+                                        <td>@Html.TextBoxFor(m => item.WarehouseCode, new { @class = "form-control", @readonly = "readonly" })</td>
+                                        <td>@Html.TextBoxFor(m => item.MeasureUnit, new { @class = "form-control", @readonly = "readonly" })</td>
+                                        <td>@Html.TextBoxFor(m => item.Quantity, new { @class = "form-control", @readonly = "readonly" })</td>
+                                        <td>@Html.TextBoxFor(m => item.Price, new { @class = "form-control", @readonly = "readonly" })</td>
+                                        <td>@Html.TextBoxFor(m => item.DistributionRule, new { @class = "form-control", @readonly = "readonly" })</td>
+                                        <td>@Html.TextBoxFor(m => item.DiscountPercent, new { @class = "form-control", @readonly = "readonly" })</td>
+                                        <td>@Html.TextBoxFor(m => item.Rate, new { @class = "form-control", @readonly = "readonly" })</td>
+                                        <td>@Html.TextBoxFor(m => item.Factor, new { @class = "form-control", @readonly = "readonly" })</td>
+                                        <td><button class="btn btn-primary" type="button" disabled onclick="addRow()">Add</button></td>
+                                        <td><button class="btn btn-danger" type="button" disabled onclick="deleteRow(this)">Delete</button></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        @Html.HiddenFor(model => model.U_EBILLNO, new { @id = "HiddenRgpNo" })
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

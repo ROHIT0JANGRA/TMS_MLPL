@@ -101,7 +101,7 @@ namespace CodeLock.Models
 
     [Required(ErrorMessage = "Please enter RTO Name")]
     [Display(Name = "RTO Name")]
-    [StringLength(15, ErrorMessage = "RTO Name must be minimum 2 and maximum 15 character long", MinimumLength = 2)]
+    [StringLength(50, ErrorMessage = "RTO Name must be minimum 2 and maximum 50 character long", MinimumLength = 2)]
     public string RtoName { get; set; }
 
     [Display(Name = "Pollution Certificate No")]

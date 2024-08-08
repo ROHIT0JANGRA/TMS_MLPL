@@ -60,5 +60,26 @@ namespace CodeLock.Models
         public string validUpto { get; set; }
         public int extendedTimes { get; set; }
         public string rejectStatus { get; set; }
+
+        // using pagination
+        public int TotalEwaybill { get; set; }
+        public int FilterEwaybill { get; set; }
+        public bool IsExtend { get; set; }
+    }
+
+    public class EwaybillSummary
+    {
+        public int TotalCount { get; set; }
+        public int Active {  get; set; }
+        public int TodayExpire { get; set; }
+        public int TomorrowExpire { get; set; }
+        public int Expired { get; set; }
+        public int UndefinedDate { get;set; }
+    }
+
+    public class EwaybillGetDetailFromWebNoAndDate
+    {
+        public int StateId { get; set; } // Adjust data type as needed
+        public string EwbDate { get; set; }
     }
 }

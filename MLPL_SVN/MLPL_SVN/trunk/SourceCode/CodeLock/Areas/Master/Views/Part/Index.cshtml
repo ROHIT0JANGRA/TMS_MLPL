@@ -31,7 +31,7 @@ $(document).ready(function () {
 
     // Destroy any existing DataTable instance to avoid reinitialization error
     if ($.fn.DataTable.isDataTable('#dtParts')) {
-    $('#dtParts').DataTable().destroy();
+        $('#dtParts').DataTable().destroy();
     }
 
     // Initialize DataTable with the desired configuration
@@ -51,10 +51,9 @@ $(document).ready(function () {
             "processing":
                 '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
         },
-    ajax: {
-    // Add your URL for fetching data via AJAX
-    url: '@Url.Action("GetPartByPagination", "Part")',
-    // Add any additional data parameters if needed
+        ajax: {
+            url: '@Url.Action("GetPartByPagination", "Part")',
+            // Add any additional data parameters if needed
             type: "POST",
             contentType: "application/json; charset=utf-8",
             data: function (d) {
@@ -64,6 +63,7 @@ $(document).ready(function () {
             AutoWidth: false,
             "dataSrc": function (json) {
                 var data = json;
+                console.log(data);
                 json.draw = data.draw;
                 json.recordsTotal = data.recordsTotal;
                 json.recordsFiltered = data.recordsFiltered;
@@ -71,30 +71,29 @@ $(document).ready(function () {
                 return json.data;
             }
         },
-    // Define column configurations
-    columns: [
-    { "data": "PartId", name: "PartId", "autowidth": true },
-    { "data": "PartCode", name: "PartCode", "autowidth": true },
-    { "data": "PartNo", name: "PartNo", "autowidth": true },
-    { "data": "PartName", name: "PartName", "autowidth": true },
-    {
-    // Render action buttons
-    render: function (data, type, row, meta) {
-    // Modify the HTML to render the action buttons
-    return '<a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update")/' + row.PartId + '"><span class="zmdi zmdi-edit"></span></a>' +
-    '<a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View")/' + row.PartId + '"><span class="fa fa-file"></span></a>';
-    }
-    }
-    ],
-    // Define columnDefs for additional configuration
-    columnDefs: [
-    {
-    targets: [0],
-    searchable: false
-    }
-    ]
+        // Define column configurations
+        columns: [
+            { "data": "PartId", name: "PartId", "autowidth": true },
+            { "data": "PartCode", name: "PartCode", "autowidth": true },
+            { "data": "PartNo", name: "PartNo", "autowidth": true },
+            { "data": "PartName", name: "PartName", "autowidth": true },
+            {
+                // Render action buttons
+                render: function (data, type, row, meta) {
+                    // Modify the HTML to render the action buttons
+                    return '<a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("Update")/' + row.PartId + '"><span class="zmdi zmdi-edit"></span></a>' +
+                    '<a class="btn btn-default btn-sm m-user-edit" href="@Url.Action("View")/' + row.PartId + '"><span class="fa fa-file"></span></a>';
+                }
+            }
+        ],
+        // Define columnDefs for additional configuration
+        columnDefs: [
+        {
+            targets: [0],
+            searchable: false
+        }]
     });
-    });
+});
 
 
 

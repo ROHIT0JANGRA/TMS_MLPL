@@ -38,6 +38,6 @@ namespace CodeLock.Areas.Master.Repository
         CodeTypeByName GetPickupDelivery(string pickupDelivery);
         CodeTypeByName GetPackageType(string packageTypeName);
         CodeTypeByName GetProductType(string productTypeName);
-
+        IEnumerable<AutoCompleteResult> GetAllPkgWarehouseList();
     }
 }
