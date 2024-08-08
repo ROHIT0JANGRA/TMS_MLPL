@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/MLPL_SVN/MLPL_SVN/trunk/SourceCode/CodeLock/Helper/DataBaseFactory.cs
+/MLPL_SVN/MLPL_SVN/trunk/SourceCode/.vs/CodeLock/v17/.suo

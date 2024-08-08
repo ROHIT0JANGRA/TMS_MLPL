@@ -144,6 +144,7 @@ namespace CodeLock
             container.RegisterType<IEwaybillRepository, EwaybillRepository>(new InjectionMember[0]);
             //  container.RegisterType<IBusinousPatnerApi,BusinousPatnerApi>(new InjectionMember[0]);
             container.RegisterType<IRgpRepository, RgpRepository>(new InjectionMember[0]);
+            container.RegisterType<IAnalysisRepository, AnalysisRepository>(new InjectionMember[0]);
 
 
         }

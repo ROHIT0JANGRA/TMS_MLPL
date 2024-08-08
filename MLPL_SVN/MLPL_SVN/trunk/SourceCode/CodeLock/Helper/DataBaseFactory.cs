@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Web;
+using static CodeLock.Helper.DataBaseFactory;
 
 
 namespace CodeLock.Helper
@@ -499,7 +500,41 @@ namespace CodeLock.Helper
             }
             return ts;
         }
+        public static IEnumerable<IDictionary<string, object>> QuerySP(string storedProcedure, object param = null, string module = null,string FormName="")
+        {
+            IEnumerable<IDictionary<string, object>> result;
+            using (DbConnection conn = DataBaseFactory.ConnString()) // Ensure DataBaseFactory.ConnString() returns an open connection
+            {
+                conn.Open();
+                using (DbTransaction dbTransaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // Execute the stored procedure and get the results as dynamic
+                        var dynamicResult = conn.Query<dynamic>(storedProcedure, param, dbTransaction, commandType: CommandType.StoredProcedure);
 
+                        // Convert the dynamic result to a list of dictionaries
+                        result = dynamicResult.Select(row => (IDictionary<string, object>)row).ToList();
+
+                        // Commit the transaction
+                        dbTransaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback the transaction
+                        dbTransaction.Rollback();
+
+                        // Log the exception and handle as needed
+                        int errorCode = ExceptionUtility.LogException(ex, module, SessionUtility.LoginUserId);
+                        HttpContext.Current.Response.Redirect($"~/Home/Error/{errorCode}", true);
+
+                        // Rethrow the exception
+                        throw;
+                    }
+                }
+            }
+            return result;
+        }
         public static int QuerySP(string storedProcedure, object param = null, string module = null)
         {
             int num;

@@ -1,0 +1,59 @@
+﻿
+@model CodeLock.Models.AdvanceFilterColumns
+@Html.HiddenFor(model => model.SearchingColumnName, new { @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.SearchingColumnName" })
+@Html.HiddenFor(model => model.FieldType, new { @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.FieldType" })
+
+<td>
+    @Model.SRNo
+</td>
+<td>
+    @Model.SearchingLabelName
+</td>
+<td>
+    <div class="form-group" style="margin-top:5px;">
+        <label class="checkbox">
+            @Html.CheckBoxFor(model => model.IsCheckedField, new { @class = "CheckedField" })
+            @Html.HiddenFor(model => model.CheckboxFieldName, new { @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.CheckboxFieldName" })
+            <i></i>
+        </label>
+    </div>
+</td>
+@{
+    List<SelectListItem> OperatorItem = new List<SelectListItem>();
+    foreach (string item in Model.OperatorName.Split(','))
+    {
+        SelectListItem objItem = new SelectListItem();
+        objItem.Value = item.Trim().ToString();
+        objItem.Text = item.Trim().ToString();
+        OperatorItem.Add(objItem);
+    }
+    <td>
+        @Html.DropDownListFor(model => model.OperatorName, new SelectList(OperatorItem, "Value", "Text", "Exact"), "--Select--", new { @class = "select2", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.OperatorName" })
+        @Html.HiddenFor(model => model.OperatorName, new { @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.OperatorName" })
+
+    </td>
+}
+
+
+@if (Model.FieldType == "DROPDOWN" || Model.FieldType.ToUpper() == "BOOL"|| Model.FieldType.ToUpper() == "DATE")
+{
+    List<SelectListItem> ItemList = new List<SelectListItem>();
+    foreach (string item in Model.SearchingColumnValue.Split(','))
+    {
+        SelectListItem objItem = new SelectListItem();
+        objItem.Value = item.Trim();
+        objItem.Text = item.Trim();
+        ItemList.Add(objItem);
+    }
+    <td>
+        @Html.DropDownListFor(model => model.SearchingColumnValue, new SelectList(ItemList, "Value", "Text"), "--Select--"
+       , new { @class = "select2", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.SearchingColumnValue" })
+    </td>
+}
+else if (Model.FieldType == "TEXTBOX")
+{
+    <td>
+        @Html.TextBoxFor(model => model.SearchingColumnValue, new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.SearchingColumnValue" })
+    </td>
+}
+

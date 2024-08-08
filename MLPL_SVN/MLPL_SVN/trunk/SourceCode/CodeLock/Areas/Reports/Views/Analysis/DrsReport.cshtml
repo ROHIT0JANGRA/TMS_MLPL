@@ -1,5 +1,6 @@
-﻿@using CodeLock.Models;
-@model IEnumerable<CodeLock.Models.DRSReportModel>
+﻿
+@using CodeLock.Models;
+@model CodeLock.Models.DRSReportModel
 
 @{
     ViewBag.Title = "DrsReport";
@@ -14,21 +15,10 @@
 @using (Html.BeginForm("DrsReport", "Analysis", FormMethod.Post, new { @class = "j-forms", id = "reportForm" }))
 {
     <div class="widget-wrap">
-        <div class="widget-header">
-            <h3> Drs Report</h3>
-            <button type="submit" id="btnSubmit" class="btn btn-primary primary-btn" tabindex="3">View Report</button>
-            <button type="button" id="btnExcel" class="btn btn-default compose-btn" tabindex="3">Export Excel</button>
-
-        </div>
-
         <div class="row">
-            <div class="col-sm-3">
-                <div class="form-group">
-                    @Html.Label("DRS Date", new { @class = "label" })
-                    <div class="clearfix">
-                        <div id="drDate"></div>
-                    </div>
-                </div>
+            <div class="col-sm-2">
+                @Html.Label("DRS Date", new { @class = "label" })
+                <div id="drDate"></div>               
             </div>
             <div class="col-sm-3">
                 <div class="form-group">
@@ -45,31 +35,87 @@
                 @Html.Partial("LocationHierarchy", new LocationHierarchy() { FieldName = "LocationID", FieldCaption = "Location" })
 
             </div>
-            <div class="col-sm-2">
-                <label class="checkbox" style="margin-top:25px;"><label for="chkAll" class="label">All Check</label><input type="checkbox" id="chkAll"><i></i></label>
+            <div class="col-sm-3">
+                <button type="submit" id="btnSubmit" class="btn btn-primary" tabindex="3" style="margin-top: 17px;margin-right: 14px;">View Report</button>
+                <button type="button" class="btn btn-success success-btn" data-toggle="modal" data-target="#myModal" id="btnOpenModal" style="margin-top: 16px;">Add Filter</button>
+                <button type="button" id="btnExcel" class="btn btn-primary compose-btn" tabindex="3">Export Excel</button>
             </div>
+            @*<div class="col-sm-2">
+            <label class="checkbox" style="margin-top:25px;"><label for="chkAll" class="label">All Check</label><input type="checkbox" id="chkAll"><i></i></label>
+        </div>*@
         </div>
-        <div class="row">
+        @*<div class="row">
             <div class="col-sm-12" id="dvCheckbox"></div>
+        </div>*@
+    </div>
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog" style="width:1000px;">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Report Columns</h4>
+                </div>
+                @if (Model.AdvanceFilterColumnList != null && Model.AdvanceFilterColumnList.Count > 0)
+                {
+                    <div class="table-responsive" style="height:400px;">
+                        <table class="table table-sm" id="advanceFilterTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>
+                                        <label>SR No.</label>
+                                    </th>
+                                    <th>
+                                        <label>Field Name</label>
+                                    </th>
+                                    <th>
+                                        <label>Select</label>
+                                    </th>
+                                    <th>
+                                        <label>Operator Name</label>
+                                    </th>
+
+                                    <th>
+                                        <label>Field Value</label>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model.AdvanceFilterColumnList != null && Model.AdvanceFilterColumnList.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.AdvanceFilterColumnList.Count; i++)
+                                    {
+                                        <tr>
+                                            @Html.Partial("_AdvanceFilter", Model.AdvanceFilterColumnList[i], new ViewDataDictionary(ViewData) { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = $"AdvanceFilterColumnList[{i}]" } })
+                                        </tr>
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-save btn-primary" data-dismiss="modal" id="btnSaveModal">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
         </div>
     </div>
-    <div class="report-container table-responsive">
-        <table id="dtDRSReport" class="table table-bordered table-striped">
-            <thead class="bg-primary">
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+    <div class="widget-wrap material-table-widget table-responsive" id="dvDRSReport">
     </div>
     <!-- Display error message if any -->
     <h4 class="text-danger">@ViewBag.Error</h4>
 
 
     <script>
-
-        var baseUrl, dvFieldCheckboxContainer, columnsToDisplay = ["SRNo", "DrsNo", "DRSDate", "DocketNo", "Location", "VendorName", "OutgoingRemark",
-            "TotalDocket", "TotalPackages", "TotalActualWeight", "EntryBy", "EntryDate"];
+        var baseUrl;
+        var ModalCheckFields, advanceFilterColumnsList = [];
         $(document).ready(function () {
+            SetPageLoad('DRS Report', '');
+      $('select[name*=".OperatorName"]').val('Contains').trigger('change');
          baseUrl = '@Url.Action("", "Analysis", new { Area = "Reports" })';
             $("#CompanyId").val(1);
     // Initialize date range picker
@@ -81,25 +127,32 @@
         var dateString = currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getDate();
         return 'DRSReport_' + dateString;
     }
-            GetDocketFieldList();
-            updateColumnsToDisplay();
+    $("#btnSaveModal").click(function () {
+        advanceFilterColumnsList = [];
+        $('#advanceFilterTable tbody tr').each(function () {
+            var row = $(this);
+            var fieldType = row.find('input[name$=".FieldType"]').val(); // Get the FieldType for the row
+            var searchingColumnValue = getSearchingColumnValue(row, fieldType);
 
-    $("#chkAll").on("click", function () {
-        if ($("#chkAll").is(':checked')) {
-            $('.CheckedFieldNames').prop("checked", true);
-        }
-        else {
-            $('.CheckedFieldNames').prop("checked", false);
-        }
-        updateColumnsToDisplay();
-    });
-    $('.CheckedFieldNames').change(function () {
-        updateColumnsToDisplay();
-        // You can use columnsToDisplay array here as needed
-    });
+            // Only push to the array if SearchingColumnValue is not blank or null
+            if (searchingColumnValue && fieldType && searchingColumnValue.trim() !== '' && fieldType != "") {
+                var item = {
+                    SearchingLabelName: row.find('input[name$=".SearchingLabelName"]').val(),
+                    SearchingColumnName: row.find('input[name$=".SearchingColumnName"]').val(),
+                    SearchingColumnValue: searchingColumnValue,
+                    IsCheckedField: row.find('input[name$=".IsCheckedField"]').val(),
+                    CheckboxFieldName: row.find('input[name$=".CheckboxFieldName"]').val(),
+                    FieldType: fieldType,
+                    OperatorName: row.find('select[name$=".OperatorName"]').select2('val') // Use select2 API to get the value
+                };
+                advanceFilterColumnsList.push(item);
+            }
+        });
+    })
     $('#reportForm').submit(function(e) {
         e.preventDefault(); // Prevent default form submission
-
+        ModalCheckFields = [];
+        SelectColumnName();
         // Get date range from the picker
         var fromDate = $('#drDate').data('daterangepicker').startDate.format('DD-MM-YYYY');
         var toDate = $('#drDate').data('daterangepicker').endDate.format('DD-MM-YYYY');
@@ -109,10 +162,20 @@
         var companyId = $('#CompanyId').val();
         if (companyId == "") {
             companyId = 0;
-           }
-        var CheckedFieldNames = '';
+        }
+        // Append form data to the request
+        var CheckedFieldNames = ModalCheckFields.join(', ');
         // Make AJAX request
-        fetchData('fromDate=' + fromDate + '&toDate=' + toDate + '&locationID=' + locationID + '&CompanyId=' + companyId + '&CheckedFieldNames=' + CheckedFieldNames);
+        var requestData = {
+            fromDate: fromDate,
+            toDate: toDate,
+            locationID: locationID,
+            CompanyId: companyId,
+            CheckedFieldNames: CheckedFieldNames, // Assuming you populate this elsewhere
+            AdvanceFilterColumnsList: advanceFilterColumnsList
+        };
+        //    fetchData(requestData);
+        fetchData(requestData);
     });
 
     $('#btnExcel').click(function () {
@@ -130,94 +193,113 @@
         }
     });
 
-    function fetchData(formData) {
-        if (columnsToDisplay.length <= 1) {
-            alert("Please check atleast one checkbox of column ..!")
-        }
-        else {
-            $.ajax({
-                url: '@Url.Action("GetDRSReport", "Analysis")',
-                type: 'POST',
-                data: formData,
-                dataType: 'json',
-                success: function (response) {
-                    console.log(response);
-
-                    // Clear previous table data
-                    $('#dtDRSReport thead').empty();
-                    $('#dtDRSReport tbody').empty();
-
-                    // Check if response data is not empty
-                    if (response && response.length > 0) {
-                        var columns = Object.keys(response[0]);
-                        // Create table headers
-                        var headerRow = '<tr>';
-                        columnsToDisplay.forEach(function (column) {
-                            headerRow += '<th>' + column + '</th>';
-                        });
-                        headerRow += '</tr>';
-                        $('#dtDRSReport thead').append(headerRow);
-                        response.forEach(function (item) {
-                            var row = '<tr>';
-                            columnsToDisplay.forEach(function (column) {
-                                if (item[column] == null) {
-                                    row += '<td></td>';
-                                } else {
-                                    row += '<td>' + item[column] + '</td>';
-                                }
-                            });
-                            row += '</tr>';
-                            $('#dtDRSReport tbody').append(row);
-                        });
-                    } else {
-                        // If response data is empty, display a message or handle it accordingly
-                        $('#dtDRSReport tbody').append('<tr><td colspan="0">No data available</td></tr>');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                }
-            });
-        }
+ });
+function InitializeDataTable(columns, data) {
+    // Destroy any existing DataTable instance
+    if ($.fn.DataTable.isDataTable('#dtDRSReport')) {
+        $('#dtDRSReport').DataTable().destroy();
     }
-});
-function GetDocketFieldList() {
-    var requestData = { FormName: "DRSReport" };
-    AjaxRequestWithPostAndJson(baseUrl + '/GetColumnListByReport', JSON.stringify(requestData), function (result) {
-        if (result.length == 0)
-            $("#dvCheckbox").empty();
-        else {
-            $("#dvCheckbox").empty();
-            var content = '';
-            debugger;
-            $.each(result, function (index, value) {
-                content += "<div class='col-sm-3'> <label class='checkbox'>" +
-                    '<label for = "chkDocketField' + index + '" class="label">' + value.FieldCaption.replace(/\s+/g, '') + '</label>' +
-                    '<input type="checkbox"  id="chkField' + index + '" value="' + value.FieldName.replace(/\s+/g, '') + '" class="CheckedFieldNames"/><i></i>' +
-                    //'<input type="hidden" id="hdnFieldId' + index + '" value = ' + value.FieldId + ' />' +
-                    '</label></div>'
-            });
-            $("#dvCheckbox").html(content);
-            var valueToCheck = ["SRNo", "DrsNo", "DRSDate", "DocketNo", "Location", "VendorName", "OutgoingRemark",
-                "TotalDocket", "TotalPackages", "TotalActualWeight", "EntryBy", "EntryDate"];
-            $(".CheckedFieldNames").each(function () {
-                var checkboxValue = $(this).val();
-                if ($.inArray(checkboxValue, valueToCheck) !== -1) {
-                    $(this).prop("checked", true);  // Check the checkbox
-                } else {
-                    $(this).prop("checked", false);
-                }
-            });
-            $("#dvCheckbox").show();
-        }
-    }, ErrorFunction, false);
-}
-function updateColumnsToDisplay() {
-    columnsToDisplay = ["SRNo"];
-    $('.CheckedFieldNames:checked').each(function () {
-        columnsToDisplay.push($(this).val());
 
+    // Generate the table HTML
+    var tblDRSReport = '<table id="dtDRSReport" class="table table-bordered display nowrap" style="width:100%"><thead class="bg-primary"><tr>';
+    // Create headers based on dynamic columns
+    columns.forEach(function (col) {
+        tblDRSReport += '<th>' + col.name + '</th>';
     });
+    tblDRSReport += '</tr></thead><tbody></tbody></table>';
+
+    // Insert table HTML into the container
+    $("#dvDRSReport").html(tblDRSReport);
+
+    // Initialize DataTable
+    $('#dtDRSReport').DataTable({
+        data: data,
+        columns: columns,
+        paging: true,
+        lengthChange: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        autoWidth: true,
+        language: {
+            emptyTable: "No data available",
+            processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span>'
+        }
+    });
+}
+
+function SelectColumnName() {
+    $(".CheckedField:checked").each(function () {
+        var nameAttribute = $(this).attr('name');
+        nameAttribute = nameAttribute.replace("IsCheckedField", "CheckboxFieldName");
+        if ($(this).is(':checked')) {
+            ModalCheckFields.push($('input[name="' + nameAttribute + '"]').val());
+        } else {
+            var index = ModalCheckFields.indexOf($('input[name="' + nameAttribute + '"]').val());
+            if (index > -1) {
+                ModalCheckFields.splice(index, 1); // Remove unchecked value from array
+            }
+        }
+    })
+}
+function getSearchingColumnValue(row, fieldType) {
+    if (fieldType === "TEXTBOX") {
+        return row.find('input[name$=".SearchingColumnValue"]').val(); // TextBox value
+    } else if (fieldType === "DROPDOWN" || fieldType.toUpperCase() === "BOOL") {
+        return row.find('select[name$=".SearchingColumnValue"]').select2('val'); // Select2 dropdown value
+    } else {
+        return null; // Handle other types or provide a default value
+    }
+        }
+function fetchData(formData) {
+    if (ModalCheckFields.length <= 1) {
+        alert("Please check at least one checkbox of column ..!");
+    } else {
+        $.ajax({
+            url: '@Url.Action("GetDRSReport", "Analysis")',
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
+                if (response && response.length > 0) {
+                    var columns = [];
+                    var data = [];
+                    var columnSet = new Set();
+                    // Process the first row to determine columns
+                    response[0].forEach(function (cell) {
+                        columnSet.add(cell.Key);
+                    });
+                    // Convert columnSet to array for DataTable
+                    columns = Array.from(columnSet).map(function (column) {
+                        return {
+                            data: column,
+                            name: column,
+                            searchable: true,
+                            orderable: true
+                        };
+                    });
+                    // Prepare data for DataTables
+                    response.forEach(function (row) {
+                        var rowObject = {};
+                        row.forEach(function (cell) {
+                            rowObject[cell.Key] = cell.Value;
+                        });
+                        data.push(rowObject);
+                    });
+
+                    // Initialize DataTable with dynamic columns and data
+                    InitializeDataTable(columns, data);
+                } else {
+                    // No records found, display message
+                    $("#dvDRSReport").html('<div class="alert alert-info" role="alert">No records found. Please adjust your filters and try again.</div>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
 }
     </script>
 }
@@ -225,85 +307,3 @@ function updateColumnsToDisplay() {
 
 
 
-<style>
-    /* Table Header */
-    #dtDRSReport thead {
-        background-color: #139c9b;
-        color: #ffffff;
-    }
-
-    /* Table Body */
-    #dtDRSReport tbody {
-        font-size: 14px;
-    }
-
-        /* Odd rows */
-        #dtDRSReport tbody tr:nth-child(odd) {
-            background-color: #f2f2f2;
-        }
-
-        /* Even rows */
-        #dtDRSReport tbody tr:nth-child(even) {
-            background-color: #ffffff;
-        }
-
-        /* Hover effect on rows */
-        #dtDRSReport tbody tr:hover {
-            background-color: #cceeff;
-        }
-
-    /* Table Borders */
-    #dtDRSReport {
-        border-collapse: collapse;
-        border: 1px solid #dddddd;
-        width: 100%;
-    }
-
-        /* Table Header Cells */
-        #dtDRSReport th {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 2px solid #ffffff;
-        }
-
-        /* Table Body Cells */
-        #dtDRSReport td {
-            padding: 8px;
-            border-bottom: 1px solid #dddddd;
-        }
-
-
-    /* Search Box */
-    div.dataTables_wrapper input[type="search"] {
-        width: 300px; /* Adjust the width as needed */
-        padding: 5px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-    }
-
-    /* Pagination */
-    .dataTables_paginate {
-        text-align: center;
-    }
-
-        .dataTables_paginate .paginate_button {
-            display: inline-block;
-            padding: 5px 10px;
-            margin: 0 5px;
-            background-color: #f2f2f2;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-            .dataTables_paginate .paginate_button:hover {
-                background-color: #e6e6e6;
-            }
-
-            .dataTables_paginate .paginate_button.current {
-                background-color: #139c9b;
-                color: #ffffff;
-                border: 1px solid #139c9b;
-            }
-</style>

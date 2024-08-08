@@ -668,8 +668,6 @@ namespace CodeLock.Areas.Master.Controllers
                         }
                     }
                 }
-                ViewBag.StateWiseCityList =null;
-
                 httpStatusCodeResult = base.View(objCustomer);
             }
             else

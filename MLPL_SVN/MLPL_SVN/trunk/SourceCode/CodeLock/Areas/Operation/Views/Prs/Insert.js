@@ -14,7 +14,7 @@ $(document).ready(function () {
     InitObjects();
     AttachEvents();
     InitGrid('dtAdvBalPmtDtl', false, 2, InitdtAdvBalPmtDtl);
-
+    debugger;
 });
 
 
@@ -252,6 +252,7 @@ function AttachEvents() {
 
     var list = ["4", "5", "6", "7", "8", "9", "10", "11", "12", "13"];
     $('#ddlVendorTypeId option').filter(function () {
+        debugger;
         return $.inArray(this.value, list) !== -1
     }).remove();
 
