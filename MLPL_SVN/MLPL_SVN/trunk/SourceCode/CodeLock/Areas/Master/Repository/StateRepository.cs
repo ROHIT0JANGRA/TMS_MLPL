@@ -8,6 +8,7 @@ using CodeLock.Helper;
 using CodeLock.Models;
 using CodeLock.Repository;
 using Dapper;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -21,8 +22,21 @@ namespace CodeLock.Areas.Master.Repository
     {
       return DataBaseFactory.QuerySP<MasterState>("Usp_MasterState_GetAll", (object) null, "State Master - GetAll");
     }
+        public short GetSateIdBySateName(string stateName)
+        {
+            DynamicParameters dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("@StateName", stateName, DbType.String);
 
-    public IEnumerable<AutoCompleteResult> GetStateList()
+            var result = DataBaseFactory.QuerySP<AutoCompleteResult>(
+                "Usp_MasterState_GetStateListByStateName",
+                dynamicParameters,
+                "State Master - IsStateNameExist"
+            ).FirstOrDefault();
+
+            return result != null ? Convert.ToInt16(result.Value) : (short)0;
+        }
+
+        public IEnumerable<AutoCompleteResult> GetStateList()
     {
       return DataBaseFactory.QuerySP<AutoCompleteResult>("Usp_MasterState_GetStateList", (object) null, "State Master - GetStateList");
     }
@@ -117,5 +131,20 @@ namespace CodeLock.Areas.Master.Repository
       DataBaseFactory.QuerySP("Usp_MasterState_GetStateByLocation", (object) dynamicParameters, "State Master - GetStateByLocation");
       return dynamicParameters.Get<short>("@StateId");
     }
-  }
+        public string GetSateCodeBySateId(short sateId)
+        {
+            DynamicParameters dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("@StateId", sateId, DbType.Int16);
+
+            // Execute the stored procedure and retrieve the state code
+            string stateCode = DataBaseFactory.QuerySP<string>(
+                "USP_GetStateCodeByStateId",
+                dynamicParameters,
+                "State Master - USP_GetStateCodeByStateId"
+            ).FirstOrDefault();
+
+            return stateCode;
+        }
+
+    }
 }

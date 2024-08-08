@@ -37,5 +37,7 @@ namespace CodeLock.Areas.Master.Repository
     CheckIsState CheckIsStateOrUnionTerritory(short stateId);
 
     AutoCompleteResult IsStateNameExist(string stateName);
+        short GetSateIdBySateName (string sateName);
+        string GetSateCodeBySateId(short sateId);
   }
 }

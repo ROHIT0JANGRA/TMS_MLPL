@@ -83,5 +83,19 @@ namespace CodeLock.Models
         [Display(Name = "Registration Type")]
         public string RegistrationTypeId { get; set; }
         public bool IsActive { get; set; }
+        public string AddressName { get; set; }
+        public string ZipCode { get; set; }
+        public string City { get; set; }
+        public string Country { get; set; }
+        public string State { get; set; }
+        public string AddressType { get; set; }
+        public string AddressName2 { get; set; }
+        public string AddressName3 { get; set; }
+        public string BPCode { get; set; }
+        public int RowNum { get; set; }
+        public string GSTIN { get; set; }
+        public string CreateDate { get; set; }
+        public string CreateTime { get; set; }
+        public string U_PANNo { get; set; }
     }
 }

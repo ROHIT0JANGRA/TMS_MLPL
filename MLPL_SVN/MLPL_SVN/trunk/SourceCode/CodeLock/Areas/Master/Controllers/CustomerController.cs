@@ -24,6 +24,12 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Owin.BuilderProperties;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using System.Reflection;
+using System.Configuration;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNet.SignalR.Hosting;
+using System.Web.Helpers;
+using CodeLock.Areas.Packaging.Repository;
+using Newtonsoft.Json.Linq;
 
 namespace CodeLock.Areas.Master.Controllers
 {
@@ -36,11 +42,12 @@ namespace CodeLock.Areas.Master.Controllers
         private readonly IGeneralRepository generalRepository;
         private readonly ICustomerGroupRepository customerGroupRepository;
         private readonly ILocationRepository locationRepository;
+        private readonly IRgpRepository rgpRepository;
         public CustomerController()
         {
         }
 
-        public CustomerController(ICustomerRepository _customerRepository, ICountryRepository _countryRepository, IStateRepository _stateRepository, ICityRepository _cityRepository, IGeneralRepository _generalRepository, ICustomerGroupRepository _customerGroupRepository, ILocationRepository _locationRepository)
+        public CustomerController(ICustomerRepository _customerRepository, ICountryRepository _countryRepository, IStateRepository _stateRepository, ICityRepository _cityRepository, IGeneralRepository _generalRepository, ICustomerGroupRepository _customerGroupRepository, ILocationRepository _locationRepository, IRgpRepository rgpRepository)
         {
             this.customerRepository = _customerRepository;
             this.countryRepository = _countryRepository;
@@ -49,6 +56,7 @@ namespace CodeLock.Areas.Master.Controllers
             this.generalRepository = _generalRepository;
             this.customerGroupRepository = _customerGroupRepository;
             this.locationRepository = _locationRepository;
+            this.rgpRepository = rgpRepository;
         }
 
         protected override void Dispose(bool disposing)
@@ -116,6 +124,7 @@ namespace CodeLock.Areas.Master.Controllers
 
         private void Init(byte countryId, short stateId)
         {
+             countryId = 1;
             ((dynamic)base.ViewBag).IndustryList = this.generalRepository.GetByIdList(12);
             ((dynamic)base.ViewBag).OwnerShipList = this.generalRepository.GetByIdList(13);
             ((dynamic)base.ViewBag).CustomerTypeList = this.generalRepository.GetByIdList(303);
@@ -189,6 +198,67 @@ namespace CodeLock.Areas.Master.Controllers
 
         //    return base.View(objCustomer);
         //}
+        //public async Task<BPMasterModel> MapMasterCustomerToBPMasterModel(MasterCustomer masterCustomer)
+        //{
+        //    List<ContactEmployee> BPContactEmployee = new List<ContactEmployee>();
+        //    ContactEmployee bpContactEmpObj = new ContactEmployee();
+        //    bpContactEmpObj.CardCode = masterCustomer.CustomerCode; // Example mapping
+        //    bpContactEmpObj.Name = masterCustomer.MasterCustomerDetail.DecisionMakerName; // Example mapping
+        //    bpContactEmpObj.MobilePhone = masterCustomer.MasterCustomerDetail.MobileNo; // Example mapping
+        //    bpContactEmpObj.E_Mail = masterCustomer.MasterCustomerDetail.EmailId;
+        //    BPContactEmployee.Add(bpContactEmpObj);
+        //    // ************* For Add Bank **********************
+        //    List<BPBankAccount> BPBankAccounts = new List<BPBankAccount>();
+        //    BPBankAccount objBPBank = new BPBankAccount();
+        //    objBPBank.BPCode = masterCustomer.BPCode;
+        //    objBPBank.Branch = masterCustomer.Branch;
+        //    objBPBank.Country = "INDIA";
+        //    objBPBank.BankCode = masterCustomer.BankCode;
+        //    objBPBank.AccountNo = masterCustomer.Account;
+        //    objBPBank.AccountName = masterCustomer.BankAccountName;
+        //    objBPBank.BICSwiftCode = masterCustomer.BICSWIFTCode;
+        //    BPBankAccounts.Add(objBPBank);
+
+        //    var bpmMasterModel = new BPMasterModel
+        //    {
+        //        // Map common fields
+        //        CardCode = masterCustomer.CustomerCode,
+        //        CardName = masterCustomer.CustomerName,
+        //        GroupCode = int.TryParse(masterCustomer.GroupCode, out var groupCode) ? groupCode : 0, // Assuming GroupCode is an integer in BPMasterModel
+        //        CardType = masterCustomer.GroupName, // Adjust based on your logic
+        //        U_Controling_Branch = masterCustomer.U_Controling_Branch,
+        //        DefaultAccount = masterCustomer.PhoneNo, // Example mapping, adjust as needed
+        //        DefaultBranch = masterCustomer.Branch,
+        //        // Map bank accounts (assuming multiple bank accounts are present)
+        //        ContactEmployees = BPContactEmployee,
+        //        BPBankAccounts = BPBankAccounts,
+        //        // Map addresses
+        //        BPAddresses = masterCustomer.MasterAddressList.Select(address => new BPAddress
+        //        {
+        //            AddressName = address.AddressCode,
+        //            ZipCode = address.Pincode,
+        //            City = address.CityName,
+        //            Country = "INDIA",
+        //            State = address.StateName,
+        //            AddressType = address.AddressType,
+        //            AddressName2 = address.Address1,
+        //            AddressName3 = address.Address2,
+        //            BPCode = address.AddressCode,
+        //            RowNum = address.RowNum,
+        //            GSTIN = address.GSTIN,
+        //            GstType = address.GstType,
+        //            CreateDate = address.CreateDate,
+        //            CreateTime = address.CreateTime,
+        //            U_PANNo = address.ProvisionalId
+        //        }).ToList()
+        //    };
+        //    if (bpmMasterModel != null)
+        //    {
+        //        await SaveTheCustomerMasterDataInSap(bpmMasterModel);
+        //    }
+        //    return bpmMasterModel;
+        //}
+      
 
         public ActionResult Insert()
         {
@@ -200,7 +270,7 @@ namespace CodeLock.Areas.Master.Controllers
             MasterAddress objAdd = new MasterAddress()
             {
                 AddressId = 0,
-                AddressCode = this.customerRepository.GetCustomerAddressCode(0),
+                AddressCode = "",
                 Address1 = "",
                 Address2 = "",
                 CityId = 0,
@@ -228,44 +298,53 @@ namespace CodeLock.Areas.Master.Controllers
             return base.View(objCustomer);
         }
 
+     
+
         [HttpPost]
         [ValidateAntiModelInjection("CustomerId")]
-        public   ActionResult Insert(MasterCustomer objMasterCustomer)
+        public  async Task<ActionResult> Insert(MasterCustomer objMasterCustomer)
         {
-
             ActionResult action;
-            //if (!base.ModelState.IsValid)
-            //{
             this.Init(0, 0);
-            //    action = base.View(objMasterCustomer);
-            //}
-            //else
-            //{
-            objMasterCustomer.EntryBy = SessionUtility.LoginUserId;
-            objMasterCustomer.WarehouseId = SessionUtility.WarehouseId;
-            objMasterCustomer.MasterCustomerDetail.EntryBy = SessionUtility.LoginUserId;
-            int num = this.customerRepository.Insert(objMasterCustomer);
+            int num = 0;
 
-            action = base.RedirectToAction("View", new { id = num });
+            if (objMasterCustomer != null)
+            {
+                objMasterCustomer.EntryBy = SessionUtility.LoginUserId;
+                objMasterCustomer.WarehouseId = SessionUtility.WarehouseId;
 
-            //}
+                if (objMasterCustomer.MasterCustomerDetail != null)
+                {
+                    objMasterCustomer.MasterCustomerDetail.EntryBy = SessionUtility.LoginUserId;
+                }
+             await this.customerRepository.MapMasterCustomerToBPMaster(objMasterCustomer);
+                           
+                  num = this.customerRepository.Insert(objMasterCustomer);
+                
+            }
+
+            action = RedirectToAction("View", new { id = num });
             return action;
         }
+
+     
         [HttpPost]
         public ActionResult GetNewCustomerAddress(int Index,int ClickCount)
         {
-            var MasterAddress = new MasterAddress(); // Create a new Address object
-            MasterAddress.IsActive= true;
-            if (ClickCount ==-1)
+            var MasterAddress = new MasterAddress
             {
-                MasterAddress.AddressCode = this.customerRepository.GetCustomerAddressCode((Index == null ? 0 : Index));
+                IsActive = true
+            };
+            //if (ClickCount == -1)
+            //{
+            //    MasterAddress.AddressCode = this.customerRepository.GetCustomerAddressCode((Index == 0 ? 0 : Index));
 
-            }
-            else
-            {
-                MasterAddress.AddressCode = this.customerRepository.GetCustomerAddressCode(ClickCount);
+            //}
+            //else
+            //{
+            //    MasterAddress.AddressCode = this.customerRepository.GetCustomerAddressCode(ClickCount);
 
-            }
+            //}
             ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
             ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
             ((dynamic)base.ViewBag).CityList = Enumerable.Empty<SelectListItem>();
@@ -275,64 +354,80 @@ namespace CodeLock.Areas.Master.Controllers
             // Return partial view for Address
             return PartialView("_CustomerAddress", MasterAddress);
         }
-        // **********************  Changes Method according to  Sap and ULIP-Api Intigration **************************
+        [HttpPost]
+        public ActionResult GetCustomerAddressForAPI(string MasterAddressJson, int Index)
+        {
+            // Deserialize JSON string to MasterAddress object
+            var masterAddress = JsonConvert.DeserializeObject<MasterAddress>(MasterAddressJson);
 
-        //public ActionResult InsertBp()
-        //{
-        //    ///MasterGeneral masterPayBas;
+            // Fetch state and city IDs based on names
+            short stateId = stateRepository.GetSateIdBySateName(masterAddress.StateName);
+            short cityId = cityRepository.GetCityIdByStateId(stateId, masterAddress.CityName);
 
-        //    MasterCustomer objCustomer = new MasterCustomer();
-        //    this.Init(0, 0);
+            // Assign the IDs to the MasterAddress object
+            masterAddress.StateId = stateId;
+            masterAddress.CityId = cityId;
 
-        //    objCustomer.PayBas = this.generalRepository.GetByGeneralList(14).ToArray<MasterGeneral>();
-        //    for (int i = 0; i < objCustomer.PayBas.Length; i++)
-        //    {
-        //        objCustomer.PayBas[i].IsActive = false;
-        //    }
+            // Populate ViewBag with required lists
+            ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
+            ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
+            ((dynamic)base.ViewBag).CityList = this.cityRepository.GetCityList();
 
+            // Set ViewBag.Index and ViewData.TemplateInfo.HtmlFieldPrefix for the partial view
+            ViewBag.Index = Index;
+            ViewData.TemplateInfo.HtmlFieldPrefix = $"MasterAddressList[{Index}]";
 
-        //    //((dynamic)base.ViewBag).PayBasList = this.generalRepository.GetByIdList(14);
+            // Optional: Get the customer address code if needed
+         //   masterAddress.AddressCode =  this.customerRepository.GetCustomerAddressCode(Index);
 
-        //    return base.View(objCustomer);
-        //}
+            // Return partial view with the masterAddress object
+            return PartialView("_CustomerAddress", masterAddress);
+        }
 
         //[HttpPost]
-        //[ValidateAntiModelInjection("CustomerId")]
-        //public ActionResult InsertBp(MasterCustomer objMasterCustomer)
+        //public ActionResult GetCustomerAddressForAPIS(MasterAddress MasterAddress, int Index)
         //{
-        //    ActionResult action;
-        //    try
-        //    {
-        //        if (!ModelState.IsValid)
-        //        {
-        //            return base.View(objMasterCustomer);
-        //        }
+        //    //((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
+        //    //((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
+        //    //((dynamic)base.ViewBag).CityList = Enumerable.Empty<SelectListItem>();
+        //    short stateId = this.stateRepository.GetSateIdBySateName(MasterAddress.StateName);
+        //    short cityId = this.cityRepository.GetCityIdByStateId(stateId, MasterAddress.CityName);
+        //    // Assign the IDs to the MasterAddress object
+        //    MasterAddress.StateId = stateId;
+        //    MasterAddress.CityId = cityId;
+        //    // Fetch lists for dropdowns
+        //    ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
+        //    ((dynamic)base.ViewBag).RegistrationTypeList = this.generalRepository.GetByIdList(201);
+        //    ((dynamic)base.ViewBag).CityList = this.cityRepository.GetCityList();
+        //    //   ((dynamic)base.ViewBag).CityList = Enumerable.Empty<SelectListItem>();
+        //    //ViewBag.Index = Index;
+        //    //ViewData.TemplateInfo.HtmlFieldPrefix = $"MasterAddressList[{Index}]";
+        //    // Return partial view for Address
+        //    MasterAddress.AddressCode = this.customerRepository.GetCustomerAddressCode(Index);
 
-        //        if (!base.ModelState.IsValid)
-        //        {
-        //            action = base.View(objMasterCustomer);
-        //        }
-        //        else
-        //        {
-        //            objMasterCustomer.EntryBy = SessionUtility.LoginUserId;
-        //            objMasterCustomer.WarehouseId = SessionUtility.WarehouseId;
-        //            objMasterCustomer.MasterCustomerDetail.EntryBy = SessionUtility.LoginUserId;
-
-        //            int num = this.customerRepository.Insert(objMasterCustomer);
-        //            action = base.RedirectToAction("View", new { id = num });
-        //        }
-        //        return action;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ViewBag.Error =ex.Message;
-        //    }
-        //    return base.View();
+        //    return PartialView("_CustomerAddress", MasterAddress);
         //}
+        public JsonResult GetCustomerAddressInfoForApi(string CityName, string StateName)
+        {
+            Dictionary<string, short> Dic = new Dictionary<string, short>();
+            short StateId = this.stateRepository.GetSateIdBySateName(StateName);
+            short CityId = this.cityRepository.GetCityIdByStateId(StateId,CityName);
+            Dic["StateId"] = StateId;
+            Dic["CityId"] = CityId;
+            ((dynamic)base.ViewBag).StateList = this.stateRepository.GetStateList();
+            ((dynamic)base.ViewBag).CityList = this.cityRepository.GetCityList();
+
+            return Json(Dic);
+
+        }
 
         //*******************************************************************************************************************
         public async Task<dynamic> FetchCustomerDetailsFromApi(string gstin)
         {
+            if (string.IsNullOrEmpty(gstin))
+            {
+                return Json(new { success = false, message = "GST number is required" });
+            }
             string token = UlipTokenManagerController.GetTokenId();
             if (string.IsNullOrEmpty(token))
             {
@@ -347,13 +442,20 @@ namespace CodeLock.Areas.Master.Controllers
 
                 var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(requestBody);
                 var content = new StringContent(jsonString, System.Text.Encoding.UTF8, "application/json");
-                var response = await httpClient.PostAsync("https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/GST/01", content);
+
+              //  var response = await httpClient.PostAsync("https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/GST/01", content);
+                string ulipUrl = ConfigurationManager.AppSettings["UlipUrl"];
+
+                var response = await httpClient.PostAsync($"{ulipUrl}/GST/01", content);
                 var statusCode = response.StatusCode;
 
                 if (response.IsSuccessStatusCode)
                 {
                     var responseData = await response.Content.ReadAsStringAsync();
                     return Json(responseData);
+                    //var masterCustomer = Newtonsoft.Json.JsonConvert.DeserializeObject<MasterCustomer>(responseData);
+                    //return Json(new { success = true, data = masterCustomer });
+
                 }
                 else if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
@@ -382,159 +484,70 @@ namespace CodeLock.Areas.Master.Controllers
 
             return null;
         }
+        // ***********************  Fetch The List Of Sap BP Master ******************************
+
         public ActionResult SAPBPMasterList() { return View(); }
-        public async Task<JsonResult> BPMasterPagination(int draw, int start, int length, string search = null)
+        public async Task<JsonResult> BpMasterPagination(int draw, int start, int length, string search = null)
         {
             try
             {
-                var totalRecordsTask = FetchBPMasterCount();
-                var totalRecords = await totalRecordsTask.ConfigureAwait(false);
+                // Fetch data from repository
+                var result = await FetchBPMasterPaginations(start, length, search);
 
-                var BPMasterListTask = FetchBPMasterList(start, length, search);
-                var BPMasterListResponse = await BPMasterListTask.ConfigureAwait(false);
+                // Check for errors in the result
+                if (result.ContainsKey("error"))
+                {
+                    return Json(new { error = result["error"] }, JsonRequestBehavior.AllowGet);
+                }
 
-                if (BPMasterListResponse != null && BPMasterListResponse.ContainsKey("value"))
+                // Extract total records and data list
+                var totalRecords = (int)result["totalRecords"];
+                var bpmMasterListJson = result["BPMasterList"] as JArray;
+                var bpmMasterList = bpmMasterListJson?.ToObject<List<BpMasterTable>>() ?? new List<BpMasterTable>();
+
+                // Construct the response object for DataTables
+                var responseOK = new
                 {
-                    var BPMasterList = BPMasterListResponse["value"];
-                    var responseOK = new
-                    {
-                        draw = draw,
-                        recordsTotal = totalRecords,
-                        recordsFiltered = totalRecords,
-                        data = BPMasterList
-                    };
-                    var jsonDes = Newtonsoft.Json.JsonConvert.SerializeObject(responseOK);
-                    return Json(jsonDes, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    return Json(new
-                    {
-                        draw = draw,
-                        recordsTotal = 0,
-                        recordsFiltered = 0,
-                        data = new object[] { }
-                    }, JsonRequestBehavior.AllowGet);
-                }
+                    draw = draw,
+                    recordsTotal = totalRecords,
+                    recordsFiltered = totalRecords,
+                    data = bpmMasterList
+                };
+
+                return Json(responseOK, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
-                return Json(new { error = ex.Message });
+                // Return error message if an exception occurs
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
-        public async Task<int> FetchBPMasterCount()
+        public async Task<Dictionary<string, object>> FetchBPMasterPaginations(int start, int length, string search = null)
         {
+            var result = new Dictionary<string, object>();
             try
             {
-                string sessionId = SapSessionManagerController.GetSessionId();
-
-                if (string.IsNullOrEmpty(sessionId))
+                string countUrl = "/BusinessPartners/$count";
+                string BpMaasterurl = $"https://103.194.8.71:50000/b1s/v1/BusinessPartners?$select=CardName,CardCode,CardType,CreateDate&$skip={start}&$top={length}";
+                if (!string.IsNullOrEmpty(search))
                 {
-                    sessionId = await SapSessionManagerController.GenerateToken();
+                    // myurl += $"&$filter=contains(CardName,'{search}') or contains(CardCode,'{search}') or contains(U_VehicleNo,'{search}'or contains(Reference1,'{search}')";
+                    BpMaasterurl += $"&$filter=contains(CardName,'{search}') or contains(CardCode,'{search}')";
                 }
+                int totalRecords = await rgpRepository.FetchBPMasterCount(countUrl).ConfigureAwait(false);
+                var BPMasterListResponse = await rgpRepository.FetchBPMasterList(BpMaasterurl, start, length, search).ConfigureAwait(false);
 
-                HttpClientHandler handler = new HttpClientHandler();
-                handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-
-                using (HttpClient client = new HttpClient(handler))
-                {
-                    client.DefaultRequestHeaders.Add("B1S-WCFCompatible", "true");
-                    client.DefaultRequestHeaders.Add("B1S-MetadataWithoutSession", "true");
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                    client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
-
-                    CookieContainer cookies = new CookieContainer();
-                    cookies.Add(new Cookie("B1SESSION", sessionId) { Domain = "103.194.8.71" });
-                    cookies.Add(new Cookie("ROUTEID", ".node1") { Domain = "103.194.8.71" });
-                    handler.CookieContainer = cookies;
-
-                    HttpResponseMessage response = await client.GetAsync("https://103.194.8.71:50000/b1s/v1/BusinessPartners/$count");
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        if (response.Content.Headers.ContentEncoding.Contains("gzip"))
-                        {
-                            using (var gzipStream = new GZipStream(await response.Content.ReadAsStreamAsync(), CompressionMode.Decompress))
-                            using (var streamReader = new StreamReader(gzipStream))
-                            {
-                                string responseBody = await streamReader.ReadToEndAsync();
-                                ViewBag.responseData = responseBody;
-                                int totalCount = int.Parse(responseBody.Trim());
-                                return totalCount;
-                            }
-                        }
-                        return 0;
-                    }
-                    else
-                    {
-                        string errorMessage = $"Failed to retrieve BPMaster count. Status code: {response.StatusCode}";
-                        throw new HttpRequestException(errorMessage);
-                    }
-                }
+                result["totalRecords"] = totalRecords;
+                result["BPMasterList"] = BPMasterListResponse?.ContainsKey("value") == true ? BPMasterListResponse["value"] : new List<object>();
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error in FetchBPMasterCount: {ex.Message}", ex);
+                result["error"] = ex.Message;
             }
+
+            return result;
         }
-        public async Task<Dictionary<string, object>> FetchBPMasterList(int start, int length, string search)
-        {
-            try
-            {
-                string sessionId = SapSessionManagerController.GetSessionId();
-
-                if (string.IsNullOrEmpty(sessionId))
-                {
-                    sessionId = await SapSessionManagerController.GenerateToken();
-                }
-
-                HttpClientHandler handler = new HttpClientHandler();
-                handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-
-                using (HttpClient client = new HttpClient(handler))
-                {
-                    client.DefaultRequestHeaders.Add("B1S-WCFCompatible", "true");
-                    client.DefaultRequestHeaders.Add("B1S-MetadataWithoutSession", "true");
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                    client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
-
-                    CookieContainer cookies = new CookieContainer();
-                    cookies.Add(new Cookie("B1SESSION", sessionId) { Domain = "103.194.8.71" });
-                    cookies.Add(new Cookie("ROUTEID", ".node1") { Domain = "103.194.8.71" });
-                    handler.CookieContainer = cookies;
-
-                    string url = $"https://103.194.8.71:50000/b1s/v1/BusinessPartners?$select=CardName,CardCode,CardType,CreateDate&$skip={start}&$top={length}";
-
-                    HttpResponseMessage response = await client.GetAsync(url);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        if (response.Content.Headers.ContentEncoding.Contains("gzip"))
-                        {
-                            using (var gzipStream = new GZipStream(await response.Content.ReadAsStreamAsync(), CompressionMode.Decompress))
-                            using (var streamReader = new StreamReader(gzipStream))
-                            {
-                                string responseBody = await streamReader.ReadToEndAsync();
-                                var responseObject = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseBody);
-                                return responseObject;
-                            }
-                        }
-                        return null;
-                    }
-                    else
-                    {
-                        throw new Exception($"Failed to retrieve BPMaster list. Status code: {response.StatusCode}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error in FetchBPMasterList: {ex.Message}", ex);
-            }
-        }
-
-
-        public JsonResult IsCustomerCodeExist(string customerCode)
+          public JsonResult IsCustomerCodeExist(string customerCode)
         {
             JsonResult jsonResult = base.Json(this.customerRepository.IsCustomerCodeExist(customerCode, SessionUtility.CompanyId));
             return jsonResult;

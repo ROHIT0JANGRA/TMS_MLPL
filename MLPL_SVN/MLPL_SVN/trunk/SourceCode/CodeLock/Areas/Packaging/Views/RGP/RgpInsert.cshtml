@@ -7,81 +7,10 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
-@*<style>
-    table,
-    th,
-    td {
-        border: 1px solid black;
-    }
-
-    table {
-        overflow: auto;
-        width: 100%;
-        max-width: 400px;
-        height: 200px;
-        max-height: 500px;
-        display: block;
-        margin: 0 auto;
-        border-spacing: 0;
-    }
-
-    tbody {
-        white-space: nowrap;
-    }
-
-    th,
-    td {
-        padding: 1px 3px;
-        border-top-width: 0;
-        border-left-width: 0;
-    }
-
-    th {
-        position: sticky;
-        top: 5px;
-        background-color: lightgray;
-        vertical-align: bottom;
-    }
-
-        th:last-child,
-        td:last-child {
-            border-right-width: 0;
-        }
-
-    tr:last-child td {
-        border-bottom-width: 0;
-    }
-
-    .head {
-        background-color: lightgray;
-        padding: 2px;
-    }
-
-    .form-control-date {
-        position: relative;
-        cursor: pointer;
-    }
-
-        .form-control-date::before {
-            content: attr(placeholder);
-            position: absolute;
-            top: 50%;
-            left: 10px;
-            transform: translateY(-50%);
-            color: #aaa;
-            pointer-events: none;
-        }
-
-        .form-control-date:focus::before,
-        .form-control-date:not(:placeholder-shown)::before {
-            display: none;
-        }
-</style>*@
 
 <div class="widget-wrap">
     <div class="row">
@@ -92,16 +21,29 @@
                         <div class="head">
                             <button class="btn btn-success" type="submit">Submit</button>
                             <span><a href="@Url.Action("RgpList","RGP")" class="btn btn-primary">List</a></span>
-                            <button type="button" class="btn btn-info" id="Getitems">Get The Item Details</button>
                         </div>
 
                         <div class="row col-lg-12">
                             <div class="col-sm-3 inline-group">
                                 @Html.Label("Customer", new { @id = "lblCustomerId", @class = "inline-group" })
                                 <div class="select">
-                                    @Html.DropDownListFor(model => model.CustomerId, new SelectList(ViewBag.CustomerList, "Value", "Name"), "Select Customer", new { @class = "form-control select2", @id = "ddlCustomerId" })
+                                    <select id="ddlCustomerId" class="form-control select2">
+                                        <option value="">Select Customer</option>
+                                    </select>
                                 </div>
                             </div>
+
+                            <div class="col-sm-3 inline-group">
+                                @Html.Label("Address", new { @id = "lblAddressId", @class = "inline-group" })
+                                <div class="select">
+                                    <select id="ddlAddress" class="form-control select2">
+                                        <option value="">Select Address</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+
                             <div class="col-lg-2">
                                 <label class="inline-group" for="txtRgpDocDateTime">RGP Date</label>
                                 <div class="form-group">
@@ -120,18 +62,18 @@
                                     @Html.DropDownListFor(model => model.Series, new SelectList(ViewBag.RGPListSeries, "Value", "Name"), "Select RGP Series", new { @class = "form-control select2", @id = "ddlRgpSeries" })
                                 </div>
                             </div>
-                            <div class="col-lg-2">
+                            @*<div class="col-lg-2">
                                 <label class="inline-group" for="rgpNo">RGP No</label>
                                 <input type="text" class="form-control" id="rgpNo" placeholder="RGP no" />
-                            </div>
+                            </div>*@
                         </div>
 
                         <div class="row col-lg-12">
-                            <div class="col-lg-3">
-                                <label class="inline-group" for="shipTo">Ship To</label>
-                                <textarea type="text" class="form-control" id="shipToDisplay" placeholder="Ship To"></textarea>
-                                <input type="hidden" id="shipTo" name="shipTo" />
-                            </div>
+                            @*<div class="col-lg-3">
+                                    <label class="inline-group" for="shipTo">Ship To</label>
+                                    <textarea type="text" class="form-control" id="shipToDisplay" placeholder="Ship To"></textarea>
+                                    <input type="hidden" id="shipTo" name="shipTo" />
+                                </div>*@
 
                             <div class="col-lg-2">
                                 <label class="form-inline" for="fromBranch">From Branch</label>
@@ -142,8 +84,12 @@
                             </div>
 
                             <div class="col-lg-2">
-                                <label class="form-inline" for="fromWarehouse">From Warehouse</label>
-                                @Html.DropDownListFor(model => model.WarehouseId, new SelectList(ViewBag.WarehouseList, "Value", "Text", SessionUtility.CompanyId), "Select Warehouse", new { @class = "form-control select2", @id = "ddlFromWarehouse" })
+                                <label class="form-inline" for="toWarehouse">To Warehouse</label>
+                                <div class="select">
+                                    @Html.DropDownListFor(model => model.WarehouseId, new SelectList(ViewBag.PkgWarehouseList, "Value", "Name"), "Select Warehouse", new { @class = "form-control select2", @id = "ddlFromWarehouse" })
+                                </div>
+                                @*<label class="form-inline" for="fromWarehouse">From Warehouse</label>
+        @Html.DropDownListFor(model => model.WarehouseId, new SelectList(ViewBag.WarehouseList, "Value", "Text", SessionUtility.CompanyId), "Select Warehouse", new { @class = "form-control select2", @id = "ddlFromWarehouse" })*@
                             </div>
 
                             <div class="col-lg-2">
@@ -152,33 +98,39 @@
                                     @Html.DropDownListFor(model => model.WarehouseId, new SelectList(ViewBag.PkgWarehouseList, "Value", "Name"), "Select Warehouse", new { @class = "form-control select2", @id = "ddlToWarehouse" })
                                 </div>
                             </div>
+                           
 
                         </div>
 
                         <div class="row-border">
                             <div class="col-lg-12">
-                                <button id="Getitems" class="btn btn-primary">Fetch Items</button>
-                                <table class="table table-responsive table-bordered" id="myTable">
-                                    <thead style="background-color: #139c9b;color:white;">
+                                <div class="col-lg-4">
+                                    <label class="inline-group" for="ddlItemDetails">Select Item</label>
+                                    <select class="form-control" id="ddlItemDetails" multiple>
+                                        <option value="">Select an item</option>
+                                    </select>
+                                </div>
+
+                                <table id="itemDetailsTable" class="table">
+                                    <thead class="bg-primary">
                                         <tr>
-                                            <th><label for="itemNo">Item No</label></th>
-                                            <th><label for="itemDescription">Item Description</label></th>
-                                            <th><label for="qty">Stock-Qty</label></th>
-                                            <th><label for="fromWH">From W/H</label></th>
-                                            <th><label for="toWH">To W/H</label></th>
-                                            <th><label for="location">Location</label></th>
-                                            <th><label for="infoPrice">Info Price</label></th>
-                                            <th><label for="taxCat">Tax Cat</label></th>
-                                            <th><label for="taxable">Taxable</label></th>
-                                            <th><label for="gstAmt">Gst Amt</label></th>
-                                            <th><label for="total">Total</label></th>
-                                            <th colspan="2">Add | Remove</th>
+                                            <th>Item Code</th>
+                                            <th>Item Description</th>
+                                            <th>From-WH</th>
+                                            <th>To-WH</th>
+                                            <th>Stock-Quantity</th>
+                                            <th>Add-Quantity</th>
+                                            <th>Action</th>
+                                            <!-- Add more headers as necessary -->
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Rows will be added dynamically here -->
+                                        <!-- Item details will be appended here -->
                                     </tbody>
                                 </table>
+
+
+
                             </div>
                         </div>
 
@@ -204,7 +156,7 @@
 
                                             <div class="col-lg-3">
                                                 <label class="inline-group" for="transporterName">Transporter Name</label>
-                                                <input type="text" class="form-control" id="transporterName" placeholder="Transporter Name" disabled />
+                                                <input type="text" class="form-control" id="transporterName" placeholder="Transporter Name" value="MLPL" disabled />
                                             </div>
 
                                             <div class="col-lg-3">
@@ -215,6 +167,19 @@
                                             <div class="col-lg-3">
                                                 <label class="inline-group" for="LRNo">LR No</label>
                                                 <input type="text" class="form-control" id="LRNo" placeholder="LR No" disabled />
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="inline-group" for="txtVehicalNo">Vehicle No</label>
+                                                @Html.TextBoxFor(model => model.VehicalNo, new { @class = "form-control", @id = "txtVehicalNo" })
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="form-inline" for="supplytype">SupplyType</label>
+                                                <select class="select2" id="supplytype">
+                                                    <option selected>--Select Supply Type--</option>
+                                                    <option value="Outward Supply">Outward Supply</option>
+                                                    <option value="Inward Supply">Inward Supply</option>
+                                                </select>
+
                                             </div>
                                         </div>
                                     </div>
@@ -232,98 +197,247 @@
         </div>
     </div>
 </div>
+
 <script>
-  $(document).ready(function () {
-    // Initialize Select2
+$(document).ready(function () {
+    // Initialize Select2 for dropdowns
+    var txtVehicalNo = $('#txtVehicalNo');
+    var hdnVehicalNo = $('#hdnVehicalNo');
+
+    VehicleAutoComplete(txtVehicalNo.attr('id'), hdnVehicalNo.attr('id'));
     $('#ddlCustomerId').select2();
     $('#ddlFromWarehouse').select2();
     $('#ddlToWarehouse').select2();
+    $('#ddlAddress').select2();
+    $('#ddlItemDetails').select2({
+        placeholder: "Select items",
+        allowClear: true,
+        multiple: true // Enable multiple selection
+    });
 
-    // Fetch items
-    $('#Getitems').click(function () {
+    let itemDetailsList = []; // List to store item details
+
+    // Fetch master customer list on page load
+    GetTheSapCustomerList();
+    initializeCustomerDropdown();
+
+    // Handle RGP Date input changes
+    $('#txtRgpDocDateTime').on('change', function () {
+        var rgpDateValue = $(this).val(); // Get the RGP Date value
+        $('#postingDate').val(rgpDateValue); // Set the Posting Date to the same value
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get references to the RGP Date and Posting Date input fields
+        const rgpDateInput = document.getElementById('txtRgpDocDateTime');
+        const postingDateInput = document.getElementById('postingDate');
+
+        // Add an event listener for changes to the RGP Date input
+        rgpDateInput.addEventListener('input', function () {
+            // Get the RGP Date value
+            const rgpDateValue = rgpDateInput.value;
+
+            // Set the Posting Date value to match the RGP Date
+            postingDateInput.value = rgpDateValue;
+        });
+    });
+    // Fetch items when customer or warehouse is selected
+    $('#ddlCustomerId, #ddlFromWarehouse').on('change', function () {
+        var cardCode = $('#ddlCustomerId').val(); // Get selected customer ID (card code)
+        var fromWarehouse = $('#ddlFromWarehouse').val(); // Get selected warehouse
+
+        if (cardCode && fromWarehouse) {
+            $.ajax({
+                url: '@Url.Action("GetTheRgpItemDetailsByIds", "RGP")',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    cardCode: cardCode,
+                    FromWH: fromWarehouse
+                },
+                success: function (response) {
+                    itemDetailsList = response.data || []; // Store fetched data in the list
+                    if (itemDetailsList.length > 0) {
+                        var options = '<option value="">Select an item</option>';
+                        $.each(itemDetailsList, function (index, item) {
+                            options += '<option value="' + item.ItemCode + '">' + item.ItemDescription + '</option>';
+                        });
+                        $('#ddlItemDetails').html(options).trigger('change'); // Update dropdown options
+                    } else {
+                        $('#ddlItemDetails').html('<option value="">No items available</option>').trigger('change');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching items: ", error);
+                }
+            });
+        }
+    });
+
+    // Event listener for item selection
+    $('#ddlItemDetails').on('change', function () {
+        var selectedItemCodes = $(this).val();
+        if (selectedItemCodes) {
+            // Fetch details for each selected item
+            $.each(selectedItemCodes, function (index, itemCode) {
+                var itemDetails = itemDetailsList.find(item => item.ItemCode === itemCode);
+
+                if (itemDetails) {
+                    appendItemToTable(itemDetails);
+                } else {
+                    // Fetch item details from the server
+                    $.ajax({
+                        url: '@Url.Action("GetSelectedItemDetails", "RGP")',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            itemCode: itemCode,
+                            cardCode: $('#ddlCustomerId').val(),
+                            warehouseId: $('#ddlFromWarehouse').val()
+                        },
+                        success: function (details) {
+                            if (details) {
+                                itemDetailsList.push(details);
+                                appendItemToTable(details);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error fetching item details: ", error);
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    function appendItemToTable(itemDetails) {
+        // Get the latest values of fromWarehouse and toWarehouse
+        var fromWarehouse = $('#ddlFromWarehouse').val();
+        var toWarehouse = $('#ddlToWarehouse').val();
+
+        // Check if the item already exists in the table
+        if ($('#itemDetailsTable tbody tr[data-itemcode="' + itemDetails.ItemCode + '"]').length === 0) {
+            var rowHtml = '<tr data-itemcode="' + itemDetails.ItemCode + '">' +
+                '<td>' + itemDetails.ItemCode + '</td>' +
+                '<td>' + itemDetails.ItemDescription + '</td>' +
+                '<td>' + fromWarehouse + '</td>' +
+                '<td>' + toWarehouse + '</td>' +
+                '<td>' + itemDetails.Quantity + '</td>' +
+                '<td><input type="number" class="form-control add-quantity" data-stockquantity="' + itemDetails.Quantity + '" /></td>' +
+                '<td><button class="btn btn-danger btn-sm remove-row">Remove</button></td>' +
+                '<td><span class="validation-message text-danger"></span></td>' +
+                '</tr>';
+            $('#itemDetailsTable tbody').append(rowHtml);
+        }
+    }
+    // Event listener for "Add-Quantity" input field
+    $('#itemDetailsTable').on('input', '.add-quantity', function () {
+        var $input = $(this);
+        var stockQuantity = parseFloat($input.data('stockquantity'));
+        var addQuantity = parseFloat($input.val());
+        var $validationMessage = $input.closest('tr').find('.validation-message');
+
+        if (addQuantity > stockQuantity) {
+            $validationMessage.text('Add-Quantity cannot be greater than Stock-Quantity');
+            $input.val(''); // Clear the input value
+        } else {
+            $validationMessage.text('');
+        }
+    });
+    // Event listener for remove button
+    $('#itemDetailsTable').on('click', '.remove-row', function () {
+        // Remove the row from the table
+        $(this).closest('tr').remove();
+
+        // Update dropdown selection
+        var itemCode = $(this).closest('tr').data('itemcode');
+        var selectedItems = $('#ddlItemDetails').val();
+        if (selectedItems) {
+            var index = selectedItems.indexOf(itemCode);
+            if (index > -1) {
+                selectedItems.splice(index, 1);
+                $('#ddlItemDetails').val(selectedItems).trigger('change'); // Update dropdown with remaining selected items
+            }
+        }
+    });
+
+    // Function to fetch SAP customer list and populate the customer dropdown
+    function GetTheSapCustomerList() {
         $.ajax({
-            url: '@Url.Action("GetTheRgpItemDetailsByIds", "RGP")',
+            url: '@Url.Action("GetSapCustomerList", "RGP")', // Adjust the URL to your action method
             type: 'GET',
             dataType: 'json',
             success: function (response) {
-                if (response.error) {
-                    alert('Error: ' + response.error);
-                    return;
+                if (response != null && response.length > 0) {
+                    var options = '<option value="">Select a customer</option>';
+                    $.each(response, function (index, customer) {
+                        options += '<option value="' + customer.CardCode + '">' + customer.CardCode + ' - ' + customer.CardName + '</option>';
+                    });
+                    $('#ddlCustomerId').html(options).trigger('change'); // Update dropdown options
+                } else {
+                    $('#ddlCustomerId').html('<option value="">No customers available</option>').trigger('change');
                 }
-
-                var data = response.data;
-
-                // Clear existing rows
-                $('#myTable tbody').empty();
-
-                // Get selected values
-                var fromWarehouse = $('#ddlFromWarehouse').find('option:selected').text();
-                var toWarehouse = $('#ddlToWarehouse').find('option:selected').text();
-
-                // Iterate over the response data
-                $.each(data, function (index, item) {
-                    var newRow = `
-                        <tr>
-                            <td><input type="text" class="form-control" value="${item.ItemCode || ''}" /></td>
-                            <td><input type="text" class="form-control" value="${item.ItemDescription || ''}" /></td>
-                            <td><input type="text" class="form-control" value="${item.Quantity || ''}" disabled /></td>
-                            <td><input type="text" class="form-control" value="${fromWarehouse}" disabled /></td>
-                            <td><input type="text" class="form-control" value="${toWarehouse}" disabled /></td>
-                            <td><input type="text" class="form-control" value="${item.Location || ''}" /></td>
-                            <td><input type="text" class="form-control" value="${item.InfoPrice || ''}" /></td>
-                            <td><input type="text" class="form-control" value="${item.TaxCat || ''}" /></td>
-                            <td><input type="text" class="form-control" value="${item.Taxable || ''}" /></td>
-                            <td><input type="text" class="form-control" value="${item.GstAmt || ''}" /></td>
-                            <td><input type="text" class="form-control" value="${item.Total || ''}" /></td>
-                            <td>
-                                <button class="btn btn-primary" onclick="addRow()" type="button"><i class="fa fa-plus"></i></button>
-                            </td>
-                            <td>
-                                <button class="btn btn-danger" onclick="deleteRow(this)" type="button"><i class="fa fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                    $('#myTable tbody').append(newRow);
-                });
             },
             error: function (xhr, status, error) {
-                alert('An error occurred while fetching the data.');
+                console.error("Error fetching customer list: ", error);
             }
         });
-    });
+    }
+
+    // Function to initialize the customer dropdown with select2
+    function initializeCustomerDropdown() {
+        $('#ddlCustomerId').select2({
+            placeholder: "Select Customer",
+            allowClear: true,
+            ajax: {
+                url: '@Url.Action("GetTheBpMasterCustomerList", "RGP")',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        search: params.term || '' // Use the search term from select2
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                id: item.CardCode,
+                                text: item.CardCode + ' - ' + item.CardName,
+                                addresses: item.BPAddresses // Store addresses with each item
+                            };
+                        })
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 0 // Show all results on open if no input
+        }).on('select2:select', function (e) {
+            var selectedData = e.params.data;
+            populateAddressDropdown(selectedData.addresses);
+        });
+    }
+
+    // Function to populate the address dropdown based on the selected customer
+    function populateAddressDropdown(addresses) {
+        var $ddlAddress = $('#ddlAddress');
+        $ddlAddress.empty(); // Clear existing options
+        $ddlAddress.append($('<option></option>').val('').text('Select Address')); // Add default option
+
+        if (addresses) {
+            $.each(addresses, function (index, address) {
+                var formattedAddress = formatAddress(address);
+                $ddlAddress.append($('<option></option>').val(address.AddressID).text(formattedAddress));
+            });
+        }
+
+        $ddlAddress.trigger('change'); // Trigger change event
+    }
+
+    // Function to format the address for display
+    function formatAddress(address) {
+        var addressParts = [address.Street, address.City, address.State, address.ZipCode];
+        return addressParts.filter(Boolean).join(', ');
+    }
 });
-
-    function addRow() {
-        // Get selected values from dropdowns
-        var fromWarehouse = $('#ddlWarehouse option:selected').text();
-        var toWarehouse = $('#ddlWarehouse option:selected').text();
-
-        var newRow = `
-            <tr>
-                <td><input type="text" class="form-control" /></td>
-                <td><input type="text" class="form-control" /></td>
-                <td><input type="text" class="form-control" /></td>
-                <td><input type="text" class="form-control" value="${fromWarehouse}" /></td>
-                <td><input type="text" class="form-control" value="${toWarehouse}" /></td>
-                <td><input type="text" class="form-control" /></td>
-                <td><input type="text" class="form-control" /></td>
-                <td><input type="text" class="form-control" /></td>
-                <td><input type="text" class="form-control" /></td>
-                <td><input type="text" class="form-control" /></td>
-                <td><input type="text" class="form-control" /></td>
-                <td>
-                    <button class="btn btn-primary" onclick="addRow()" type="button"><i class="fa fa-plus"></i></button>
-                </td>
-                <td>
-                    <button class="btn btn-danger" onclick="deleteRow(this)" type="button"><i class="fa fa-trash"></i></button>
-                </td>
-            </tr>
-        `;
-        $('#myTable tbody').append(newRow);
-    }
-
-    function deleteRow(button) {
-        $(button).closest('tr').remove();
-    }
 </script>
 

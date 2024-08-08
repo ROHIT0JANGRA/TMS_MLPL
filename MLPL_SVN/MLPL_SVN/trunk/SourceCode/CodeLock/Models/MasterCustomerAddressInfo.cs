@@ -10,7 +10,7 @@ namespace CodeLock.Models
 {
   public class MasterCustomerAddressInfo
   {
-    public short CustomerId { get; set; }
+   // public short CustomerId { get; set; }
 
    [Required(ErrorMessage = "Please select Communication Address 1")]
     [Display(Name = "Communication Address 1")]
@@ -28,9 +28,9 @@ namespace CodeLock.Models
     [Display(Name = "Pincode")]
     public string Pincode { get; set; }
 
-    [Required(ErrorMessage = "Please select Country")]
-    [Display(Name = "Country")]
-    public byte CountryId { get; set; }
+        [Required(ErrorMessage = "Please select Country")]
+        [Display(Name = "Country")]
+        public byte CountryId { get; set; } = 1;
 
     [Required(ErrorMessage = "Please select State")]
     [Display(Name = "State")]

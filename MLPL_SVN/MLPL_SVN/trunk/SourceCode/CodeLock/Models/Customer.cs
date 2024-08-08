@@ -1,4 +1,5 @@
 ﻿
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -20,7 +21,14 @@ namespace CodeLock.Models
     }
     public class BPMasterModel
     {
-        public string CardCode { get; set; }
+        public BPMasterModel()
+        {
+            this.ContactEmployees = new List<ContactEmployee>();
+            this.BPBankAccounts = new List<BPBankAccount>();
+            //this.BusinessPartnerDetails = new BusinessPartnerDetails();
+            this.BPAddresses = new List<BPAddress>();
+        }
+        public int Series { get; set; }
         public string CardName { get; set; }
         public string CardType { get; set; }
         public int GroupCode { get; set; }
@@ -31,7 +39,6 @@ namespace CodeLock.Models
         public string DefaultBankCode { get; set; }
         public string CompanyPrivate { get; set; }
         public int Industry { get; set; }
-        public string U_Controling_Branch { get; set; }
         public List<BPAddress> BPAddresses { get; set; }
         public List<ContactEmployee> ContactEmployees { get; set; }
         public List<BPBankAccount> BPBankAccounts { get; set; }
@@ -47,18 +54,16 @@ namespace CodeLock.Models
         public string AddressType { get; set; }
         public string AddressName2 { get; set; }
         public string AddressName3 { get; set; }
-        public string BPCode { get; set; }
         public int RowNum { get; set; }
         public string GSTIN { get; set; }
-        public string GstType { get; set; }
-        public string CreateDate { get; set; }
-        public string CreateTime { get; set; }
+        public string GstType { get; set; }   
         public string U_PANNo { get; set; }
+        public string Street { get; set; }
+        public string Block { get; set; }
     }
 
     public class ContactEmployee
     {
-        public string CardCode { get; set; }
         public string Name { get; set; }
         public string Position { get; set; }
         public string Address { get; set; }
@@ -71,13 +76,31 @@ namespace CodeLock.Models
     }
 
     public class BPBankAccount
-    {
-        public string BPCode { get; set; }
+    {   
         public string Branch { get; set; }
         public string Country { get; set; }
         public string BankCode { get; set; }
         public string AccountNo { get; set; }
         public string AccountName { get; set; }
         public string BICSwiftCode { get; set; }
+    }
+    public class BpMasterTable
+    {
+        [JsonProperty("CardCode")]
+        public string CardCode { get; set; }
+
+        [JsonProperty("CardName")]
+        public string CardName { get; set; }
+        public string CardType { get; set; }
+        public int GroupCode { get; set; }
+        public string CreateDate { get; set; }
+        [JsonProperty("BPAddresses")]
+        public List<BPAddress> BPAddresses { get; set; }
+
+    }
+    public class BpMasterTableResponse
+    {
+        [JsonProperty("value")]
+        public List<BpMasterTable> Value { get; set; }
     }
 }

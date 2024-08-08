@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-
 using CodeLock.Helper;
 using CodeLock.Models;
 using CodeLock.Repository;
@@ -17,12 +15,13 @@ using System.Net;
 using Newtonsoft.Json;
 using System.IO.Compression;
 using Brotli;
+using System.Web.Http.Results;
+using System.Web.Mvc;
 
 namespace CodeLock.Areas.Packaging.Repository
 {
     public class RgpRepository : BaseRepository, IRgpRepository, IDisposable
     {
-
 
         public int InsertRGP(PackagingModel rgpChallan)
         {
@@ -57,9 +56,7 @@ namespace CodeLock.Areas.Packaging.Repository
         {
             var data = DataBaseFactory.QuerySP<AutoCompleteResult>("Usp_RGP_SeriesList", (object)null, "Pkg RGP Master - GetPKGRgpSeriesList");
             return data;
-
         }
-
 
         // **********************  Rgp List Fetch StockTransfer List Data All Methods **************************
 
@@ -69,8 +66,16 @@ namespace CodeLock.Areas.Packaging.Repository
             var result = new Dictionary<string, object>();
             try
             {
-                int totalRecords = await FetchBPMasterCount().ConfigureAwait(false);
-                var BPMasterListResponse = await FetchBPMasterList(start, length, search).ConfigureAwait(false);
+                string countUrl = "/StockTransfers/$count";
+                string FetchRgpmyurl = $"https://103.194.8.71:50000/b1s/v1/StockTransfers?$select=Series,CardCode,CardName,FromWarehouse,ToWarehouse,BPLName,DocDate,U_VehicleNo,U_TrnspName,Reference1&$skip={start}&$top={length}";
+                if (!string.IsNullOrEmpty(search))
+                {
+                    // myurl += $"&$filter=contains(CardName,'{search}') or contains(CardCode,'{search}') or contains(U_VehicleNo,'{search}'or contains(Reference1,'{search}')";
+                    FetchRgpmyurl += $"&$filter=contains(CardName,'{search}') or contains(CardCode,'{search}') or contains(U_VehicleNo,'{search}') or contains(Reference1,'{search}')";
+                }
+
+                int totalRecords = await FetchBPMasterCount(countUrl).ConfigureAwait(false);
+                var BPMasterListResponse = await FetchBPMasterList(FetchRgpmyurl,start, length, search).ConfigureAwait(false);
 
                 result["totalRecords"] = totalRecords;
                 result["BPMasterList"] = BPMasterListResponse?.ContainsKey("value") == true ? BPMasterListResponse["value"] : new List<object>();
@@ -83,15 +88,15 @@ namespace CodeLock.Areas.Packaging.Repository
             return result;
         }
 
-
-        public async Task<int> FetchBPMasterCount()
+        public async Task<int> FetchBPMasterCount(string countUrl)
         {
             try
             {
                 string sessionId = await GetSessionIdAsync().ConfigureAwait(false);
                 using (var client = CreateHttpClient(sessionId))
                 {
-                    HttpResponseMessage response = await client.GetAsync("https://103.194.8.71:50000/b1s/v1/StockTransfers/$count");
+                    //HttpResponseMessage response = await client.GetAsync("https://103.194.8.71:50000/b1s/v1/StockTransfers/$count");
+                    HttpResponseMessage response = await client.GetAsync("https://103.194.8.71:50000/b1s/v1" + countUrl);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -104,6 +109,8 @@ namespace CodeLock.Areas.Packaging.Repository
                     }
                     else
                     {
+                        SapSessionManagerController.LogError(response.StatusCode);
+
                         string errorResponse = await response.Content.ReadAsStringAsync();
                         throw new HttpRequestException($"Failed to retrieve BPMaster count. Status code: {response.StatusCode}. Error: {errorResponse}");
                     }
@@ -115,7 +122,7 @@ namespace CodeLock.Areas.Packaging.Repository
             }
         }
 
-        public async Task<Dictionary<string, object>> FetchBPMasterList(int start, int length, string search)
+        public async Task<Dictionary<string, object>> FetchBPMasterList(string Fetchurl,int start, int length, string search)
         {
             try
             {
@@ -124,16 +131,17 @@ namespace CodeLock.Areas.Packaging.Repository
                 {
                     // Construct the URL with optional search filter
                     //    string myurl = $"https://103.194.8.71:50000/b1s/v1/StockTransfers?$skip={start}&$top={length}";
-                    string myurl = $"https://103.194.8.71:50000/b1s/v1/StockTransfers?$select=Series,CardCode,CardName,FromWarehouse,ToWarehouse,BPLName,DocDate,U_VehicleNo,U_TrnspName,Reference1&$skip={start}&$top={length}";
+                   // string myurl = $"https://103.194.8.71:50000/b1s/v1/StockTransfers?$select=Series,CardCode,CardName,FromWarehouse,ToWarehouse,BPLName,DocDate,U_VehicleNo,U_TrnspName,Reference1&$skip={start}&$top={length}";
 
-                    if (!string.IsNullOrEmpty(search))
-                    {
-                        // myurl += $"&$filter=contains(CardName,'{search}') or contains(CardCode,'{search}') or contains(U_VehicleNo,'{search}'or contains(Reference1,'{search}')";
-                        myurl += $"&$filter=contains(CardName,'{search}') or contains(CardCode,'{search}') or contains(U_VehicleNo,'{search}') or contains(Reference1,'{search}')";
-                    }
+                    //if (!string.IsNullOrEmpty(search))
+                    //{
+                    //    // myurl += $"&$filter=contains(CardName,'{search}') or contains(CardCode,'{search}') or contains(U_VehicleNo,'{search}'or contains(Reference1,'{search}')";
+                    //    Fetchurl += $"&$filter=contains(CardName,'{search}') or contains(CardCode,'{search}') or contains(U_VehicleNo,'{search}') or contains(Reference1,'{search}')";
+                    //}
 
                     // Make the GET request to the SAP endpoint
-                    HttpResponseMessage response = await client.GetAsync(myurl);
+                    HttpResponseMessage response = await client.GetAsync(Fetchurl);
+                  
                     if (response.IsSuccessStatusCode)
                     {
                         // Handle gzip encoding if present
@@ -149,6 +157,7 @@ namespace CodeLock.Areas.Packaging.Repository
                     {
                         // Capture and throw detailed error information
                         string errorResponse = await response.Content.ReadAsStringAsync();
+                        SapSessionManagerController.LogError(response.StatusCode);
                         throw new HttpRequestException($"Failed to retrieve BPMaster list. Status code: {response.StatusCode}. Error: {errorResponse}");
                     }
                 }
@@ -158,15 +167,20 @@ namespace CodeLock.Areas.Packaging.Repository
                 throw new Exception($"Error in FetchBPMasterList: {ex.Message}", ex);
             }
         }
-        // Helper methods
+      
 
-        private async Task<string> GetSessionIdAsync()
+        // Helper methods
+        /// <summary>
+        ///  This Methods GetSessionIdAsync() , CreateHttpClient(),GetDecompressedStreamAsync()  are Common random method for calling any Sap Api 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GetSessionIdAsync()
         {
-            string sessionId = SapSessionManagerController.GetSessionId();
+            string sessionId =await SapSessionManagerController.GenerateToken();
             return string.IsNullOrEmpty(sessionId) ? await SapSessionManagerController.GenerateToken() : sessionId;
         }
 
-        private HttpClient CreateHttpClient(string sessionId)
+        public HttpClient CreateHttpClient(string sessionId)
         {
             var handler = new HttpClientHandler();
             handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
@@ -185,7 +199,7 @@ namespace CodeLock.Areas.Packaging.Repository
             return client;
         }
 
-        private async Task<Stream> GetDecompressedStreamAsync(HttpResponseMessage response)
+        public async Task<Stream> GetDecompressedStreamAsync(HttpResponseMessage response)
         {
             Stream responseStream = await response.Content.ReadAsStreamAsync();
             if (response.Content.Headers.ContentEncoding.Contains("gzip"))
@@ -274,11 +288,11 @@ namespace CodeLock.Areas.Packaging.Repository
             return client;
         }
 
-        public async Task<List<Dictionary<string, object>>> GetTheRgpItemDetails()
+        public async Task<List<Dictionary<string, object>>> GetTheRgpItemDetails(string cardCode,string FromWh)
         {
-            string warehouse = "NAW-WH";
-            string customer = "C0031";
-            string url = $"http://mlpl.reedhamitsolution.com/GetStock.php?warehouse={Uri.EscapeDataString(warehouse)}&customer={Uri.EscapeDataString(customer)}";
+            //string warehouse = "NAW-WH";
+            //string customer = "C0031";
+            string url = $"http://mlpl.reedhamitsolution.com/GetStock.php?warehouse={Uri.EscapeDataString(FromWh)}&customer={Uri.EscapeDataString(cardCode)}";
 
             try
             {
@@ -327,8 +341,6 @@ namespace CodeLock.Areas.Packaging.Repository
             }
         }
     
-
-
         private async Task<string> GetResponseContentAsync(HttpResponseMessage response)
         {
             var contentEncoding = response.Content.Headers.ContentEncoding.FirstOrDefault();
@@ -362,12 +374,6 @@ namespace CodeLock.Areas.Packaging.Repository
                 return await response.Content.ReadAsStringAsync();
             }
         }
-
-
-
-
-
-
         //*********************************old wokring code ************************************
         public async Task<object> GetRGPDataListFromApi(int draw, int start, int length, string search)
         {

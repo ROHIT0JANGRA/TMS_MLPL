@@ -58,7 +58,7 @@
                 @if (Model.StateId > 0)
                 {
                     var StateWiseCityList = ((CustomerController)this.ViewContext.Controller).GetCityStateWise(Model.StateId);
-                    List<SelectListItem> CityList =new List<SelectListItem>();
+                    List<SelectListItem> CityList = new List<SelectListItem>();
                     foreach (var item in StateWiseCityList)
                     {
                         SelectListItem objItem = new SelectListItem();
@@ -72,8 +72,9 @@
                 }
                 else
                 {
-                    @Html.DropDownListFor(model => model.CityId, Enumerable.Empty<SelectListItem>(), "Select City", new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.CityId", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.CityId" })
-
+                  
+                        @Html.DropDownListFor(model => model.CityId, Enumerable.Empty<SelectListItem>(), "Select City", new { @class = "form-control", @name = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.CityId", @id = $"{ViewData.TemplateInfo.HtmlFieldPrefix}.CityId" })
+              
                 }
                 <i></i>
             </div>

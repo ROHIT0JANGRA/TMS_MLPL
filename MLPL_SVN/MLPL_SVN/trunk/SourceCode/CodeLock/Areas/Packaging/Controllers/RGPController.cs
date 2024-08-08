@@ -31,14 +31,15 @@ namespace CodeLock.Areas.Packaging.Controllers
         private readonly ILocationRepository locationRepository;
         private readonly ICompanyRepository companyRepository;
         private readonly IRgpRepository _rgpRepository;
-
-        public RGPController(ICustomerRepository customerRepository, IGeneralRepository generalRepository, ILocationRepository locationRepository, ICompanyRepository companyRepository, IRgpRepository rgpRepository)
+        private readonly IVehicleRepository vehicleRepository;
+        public RGPController(IVehicleRepository vehicleRepository,ICustomerRepository customerRepository, IGeneralRepository generalRepository, ILocationRepository locationRepository, ICompanyRepository companyRepository, IRgpRepository rgpRepository)
         {
             this.customerRepository = customerRepository;
             this.locationRepository = locationRepository;
             this.companyRepository = companyRepository;
             this.generalRepository = generalRepository;
             this._rgpRepository = rgpRepository;
+            this.vehicleRepository = vehicleRepository;
         }
 
         // GET: Packaging/RGP
@@ -48,21 +49,23 @@ namespace CodeLock.Areas.Packaging.Controllers
         }
     
 
-        public ActionResult RgpInsert()
+        public  ActionResult RgpInsert()
         {
             // Set up warehouse data
-            var warehouseData = new List<SelectListItem>{new SelectListItem{Value = SessionUtility.WarehouseId.ToString(),Text =  SessionUtility.WarehouseName.ToString()}};
+            var warehouseData = new List<SelectListItem>{new SelectListItem{Value = SessionUtility.WarehouseName.ToString(), Text =  SessionUtility.WarehouseName.ToString()}};
 
             // Ensure correct creation of SelectListItem
-            IEnumerable<AutoCompleteResult> iEnumerabledocket = this.customerRepository.GetCustomerListUserwise(SessionUtility.LoginUserId);
+           // IEnumerable<AutoCompleteResult> iEnumerabledocket = this.customerRepository.GetCustomerListUserwise(SessionUtility.LoginUserId);
             IEnumerable<AutoCompleteResult> PkgwarehouseList = this.generalRepository.GetAllPkgWarehouseList();
             IEnumerable<AutoCompleteResult> IGetRgpSeriesList = this._rgpRepository.RGP_SeriesList();
             IEnumerable<SelectListItem> items = warehouseData;
-
+            IEnumerable<AutoCompleteResult> vehicleList = this.vehicleRepository.GetVehicleList();
             ((dynamic)base.ViewBag).WarehouseList = items;
             ((dynamic)base.ViewBag).RGPListSeries = IGetRgpSeriesList;
-            ((dynamic)base.ViewBag).CustomerList = iEnumerabledocket;
+           // ((dynamic)base.ViewBag).CustomerList = iEnumerabledocket;
             ((dynamic)base.ViewBag).PkgWarehouseList = PkgwarehouseList;
+            ((dynamic)base.ViewBag).vehicleList = vehicleList;
+
             return View();
         }
 
@@ -132,7 +135,8 @@ namespace CodeLock.Areas.Packaging.Controllers
             }
         };
 
-                IEnumerable<AutoCompleteResult> iEnumerabledocket = this.customerRepository.GetCustomerListUserwise(SessionUtility.LoginUserId);
+
+               //  IEnumerable<AutoCompleteResult> iEnumerabledocket = this.customerRepository.GetCustomerListUserwise(SessionUtility.LoginUserId);
                 IEnumerable<AutoCompleteResult> PkgwarehouseList = this.generalRepository.GetAllPkgWarehouseList();
                 IEnumerable<AutoCompleteResult> IGetRgpSeriesList = this._rgpRepository.RGP_SeriesList();
 
@@ -141,6 +145,8 @@ namespace CodeLock.Areas.Packaging.Controllers
                 if (Reference1.HasValue)
                 {
                     // Fetch the details using the Reference1
+
+
                     var result = await _rgpRepository.FetchRGPDataBySeriesNo(Reference1.Value);
                     if (result.ContainsKey("RgpDataList"))
                     {
@@ -158,7 +164,7 @@ namespace CodeLock.Areas.Packaging.Controllers
                 // Pass the necessary data to ViewBag
                 ViewBag.WarehouseList = warehouseData;
                 ViewBag.RGPListSeries = IGetRgpSeriesList;
-                ViewBag.CustomerList = iEnumerabledocket;
+               // ViewBag.CustomerList = iEnumerabledocket;
                 ViewBag.PkgWarehouseList = PkgwarehouseList;
 
                 // Pass the view model to the view
@@ -208,12 +214,12 @@ namespace CodeLock.Areas.Packaging.Controllers
             }
         }
         // *******************************----- Sap  GetThe Item Details By Customer Code and TO Warehouse code-------------------- ************************************************
-        public async Task<JsonResult> GetTheRgpItemDetailsByIds()
+        public async Task<JsonResult> GetTheRgpItemDetailsByIds(string cardCode , string FromWH )
         {
             try
             {
                 // Await the async call to the repository method
-                var result = await _rgpRepository.GetTheRgpItemDetails();
+                var result = await _rgpRepository.GetTheRgpItemDetails(cardCode,FromWH);
 
                 // Check for errors in the result
                 if (result.Count > 0 && result[0].ContainsKey("error"))
@@ -229,6 +235,7 @@ namespace CodeLock.Areas.Packaging.Controllers
                     ItemCode = item.ContainsKey("ItemCode") ? item["ItemCode"].ToString() : null,
                     ItemDescription = item.ContainsKey("ItemName") ? item["ItemName"].ToString() : null,
                     Quantity = item.ContainsKey("Quantity") ? Convert.ToInt32(item["Quantity"]) : 0,
+
                     // Add other properties as needed
                 }).ToList();
 
@@ -370,6 +377,120 @@ namespace CodeLock.Areas.Packaging.Controllers
                 }
             }
         }
+
+        //********************************--------Get the BP Master Customer List According to SAP  Insert the RGP,RRGP CHALLAN *********************
+        public async Task<JsonResult> GetTheBpMasterCustomerList(string search)
+        {
+            try
+            {
+                string sessionId = await this._rgpRepository.GetSessionIdAsync().ConfigureAwait(false);
+                using (var client = this._rgpRepository.CreateHttpClient(sessionId))
+                {
+                    // Construct the URL with optional search filter
+                    string baseUrl = "https://103.194.8.71:50000/b1s/v1/BusinessPartners?$select=CardCode,CardName,BPAddresses";
+                    string filter = "";
+
+                    // If a search term is provided, add it to the filter cardcode (C0114)
+                    if (!string.IsNullOrWhiteSpace(search))
+                    {
+                        filter = $"&$filter=contains(CardCode, '{search}') or contains(CardName, '{search}')";
+                    }
+
+                    string myurl = baseUrl + filter;
+
+                    // Make the GET request to the SAP endpoint
+                    HttpResponseMessage response = await client.GetAsync(myurl).ConfigureAwait(false);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Handle gzip encoding if present
+                        using (var responseStream = await this._rgpRepository.GetDecompressedStreamAsync(response).ConfigureAwait(false))
+                        using (var streamReader = new StreamReader(responseStream))
+                        {
+                            // Read and deserialize the response
+                            string responseBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+
+                            // Deserialize JSON response to a specific type
+                            var result = JsonConvert.DeserializeObject<BpMasterTableResponse>(responseBody);
+
+                            // Map to a list of BpMasterTable
+                            List<BpMasterTable> bpmasterList = result.Value.Select(bp => new BpMasterTable
+                            {
+                                CardCode = bp.CardCode,
+                                CardName = bp.CardName,
+                                BPAddresses = bp.BPAddresses
+                            }).ToList();
+
+                            // Return the results as JsonResult
+                            return Json(bpmasterList, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {                     
+                        // Capture and throw detailed error information
+                        string errorResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                        throw new HttpRequestException($"Failed to retrieve BPMaster list. Status code: {response.StatusCode}. Error: {errorResponse}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error in FetchBPMasterList: {ex.Message}", ex);
+            }
+        }
+
+        //public async Task<JsonResult> GetTheBpMasterCustomerList(string search)
+        //{
+        //    try
+        //    {
+        //        string sessionId = await this._rgpRepository.GetSessionIdAsync().ConfigureAwait(false);
+        //        using (var client = this._rgpRepository.CreateHttpClient(sessionId))
+        //        {
+        //            // Construct the URL with optional search filter
+        //            // string myurl = "https://103.194.8.71:50000/b1s/v1/BusinessPartners?$select=CardCode,CardName,BPAddresses";
+        //            string myurl = $"https://103.194.8.71:50000/b1s/v1/BusinessPartners?$select=CardCode,CardName,BPAddresses&$filter=contains(CardCode, '{cardCode}') and contains(CardName, '{cardName}')";
+
+        //            // Make the GET request to the SAP endpoint
+        //            HttpResponseMessage response = await client.GetAsync(myurl).ConfigureAwait(false);
+
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                // Handle gzip encoding if present
+        //                using (var responseStream = await this._rgpRepository.GetDecompressedStreamAsync(response).ConfigureAwait(false))
+        //                using (var streamReader = new StreamReader(responseStream))
+        //                {
+        //                    // Read and deserialize the response
+        //                    string responseBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+
+        //                    // Deserialize JSON response to a specific type
+        //                    var result = JsonConvert.DeserializeObject<BpMasterTableResponse>(responseBody);
+
+        //                    // Map to a list of BpMasterTable
+        //                    List<BpMasterTable> bpmasterList = result.Value.Select(bp => new BpMasterTable
+        //                    {
+        //                        CardCode = bp.CardCode,
+        //                        CardName = bp.CardName,
+        //                        BPAddresses = bp.BPAddresses
+        //                    }).ToList();
+
+        //                    // Return the results as JsonResult
+        //                    return Json(bpmasterList, JsonRequestBehavior.AllowGet);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                // Capture and throw detailed error information
+        //                string errorResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        //                throw new HttpRequestException($"Failed to retrieve BPMaster list. Status code: {response.StatusCode}. Error: {errorResponse}");
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception($"Error in FetchBPMasterList: {ex.Message}", ex);
+        //    }
+        //}
 
 
     }

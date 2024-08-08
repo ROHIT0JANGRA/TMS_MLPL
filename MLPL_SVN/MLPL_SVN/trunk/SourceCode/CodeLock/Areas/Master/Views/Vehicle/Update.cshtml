@@ -16,7 +16,7 @@
                 @Html.LabelFor(model => model.VehicleNo, new { @class = "label" })
                 <div class="row">
                     <div class="col-8 col-sm-8 col-md-8 pr-0">
-                        @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "vehicle_no" })
+                        @Html.TextBoxFor(model => model.VehicleNo, new { @class = "form-control", @id = "vehicle_no" ,@disabled="Disabled" })
                     </div>
                     @Html.ValidationMessageFor(model => model.VehicleNo)
                     <div class="col-4 col-sm-4 col-md-4 pl-0">
@@ -642,7 +642,6 @@
                             var rc_hp = $(xmlDoc).find('rc_hp').text();
                             var rc_mandal_desc = $(xmlDoc).find('rc_mandal_desc').text();
                             var rc_taluk_cd = $(xmlDoc).find('rc_taluk_cd').text();
-
 
                             var rc_dealer_contact = $(xmlDoc).find('rc_dealer dealer_contact_no').text();
                             console.log(rc_dealer_contact);

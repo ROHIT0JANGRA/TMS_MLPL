@@ -4157,7 +4157,6 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>12132</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:12131/</IISUrl>
           <IISUrl>http://localhost:12135/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
@@ -4166,7 +4165,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties _UserPromptedForCS6Upgrade="true" content_4bootstrap_1min_1css_1map__JsonSchema="https://json.schemastore.org/stale.json" />
+      <UserProperties content_4bootstrap_1min_1css_1map__JsonSchema="https://json.schemastore.org/stale.json" _UserPromptedForCS6Upgrade="true" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

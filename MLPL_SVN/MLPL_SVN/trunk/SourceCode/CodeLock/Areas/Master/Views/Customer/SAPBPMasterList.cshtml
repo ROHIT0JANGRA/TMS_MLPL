@@ -1,95 +1,109 @@
-﻿
+﻿@model CodeLock.Models.BpMasterTable
 @{
     ViewBag.Title = "SAPBPMasterList";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
-<div id="dvCustomers" class="widget-wrap material-table-widget">
-    
+<div class="uk-grid">
+    <h2>SAP BP Master List</h2>
+    <p class="text-danger">@ViewBag.Error</p>
 </div>
 
-@section scripts {
+<div class="widget-wrap material-table-widget">
+    <span><a href="@Url.Action("Insert", "Customer")" class="btn btn-primary">Insert</a></span>
+    <div class="table-responsive">
+        <table id="dataTable" class="table table-bordered table-responsive">
+            <thead style="background-color: #139c9b;color:white;">
+                <tr>
+                    <th>Card Code</th>
+                    <th>Card Type</th>
+                    <th>Party Name</th>
+                    <th>Create Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Table body will be populated dynamically -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 
     <script>
-        var getAllCustomersUrl = ''
-        $(document).ready(function () {
-            SetPageLoad('Business Masters', 'List', 'filter', 'Customer List', '@Url.Action("Index")', 'Insert', '@Url.Action("Insert")', '','','','');
-            // LoadDataTable('dtCustomer', true, true, true);
-            GetCustomerData();
-        });
-        function GetCustomerData() {
-            var tblCustomersContent = `<table id="dtCustomer" class="display" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>CardCode</th>
-                        <th>CardType</th>
-                        <th>CardName</th>
-                        <th>CreateDate</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Table body will be populated dynamically -->
-                </tbody>
-            </table>`;
-            $("#dvCustomers").html(tblCustomersContent);
-            table = $('#dtCustomer').DataTable({
-                serverSide: true,
-                ajax: {
-                    url: '@Url.Action("BPMasterPagination", "Customer")',
-                    type: 'GET', 
-                    dataType: 'json', 
-                    "data": function (d) {
-                        return { 
-                            draw: d.draw,
-                            start: d.start,
-                            length: d.length,
-                            search: d.search.value
-                        };
-                    },
-                    "dataSrc": function (json) {
-                        json = JSON.parse(json)
-                        console.log(json)
-                        // Check if 'data' property exists in the JSON response
-                        if (json.hasOwnProperty('data')) {
-                            return json.data; // Return the 'data' array directly
-                        } else {
-                            console.error("Error: 'data' property not found in JSON response.");
-                            return []; // Return an empty array if 'data' property is missing or empty
-                        }
-                    }
-                },
-                columns: [
-                    { data: 'CardCode', name: 'CardCode', autowidth: true },
-                    { data: 'CardType', name: 'CardType', autowidth: true },
-                    { data: 'CardName', name: 'CardName', autowidth: true },
-                    { data: 'CreateDate', name: 'CreateDate', autowidth: true },
-                    {
-                        render: function (data, type, row, meta) {
-                            return '<a class="btn btn-default btn-sm m-user-edit" data-ewbno="' + row.CardCode + '">View</a>' +
-                                `<button type="button" class="btn btn-default btn-sm m-user-edit data-toggle="modal" data-target=".bd-example-modal-lg">Edit</button>
-                                <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                      ...
-                                    </div>
-                                  </div>
-                                </div>
-                                `;
-                        },
-                        orderable: false // Make this column not sortable
-                    }
-                ],
-                // Optional: Customize language settings
-                language: {
-                    emptyTable: 'No records found.',
-                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span>'
-                }
-            });
-        }
+    $(document).ready(function () {
+        initializeDataTable();
+    });
 
+    function initializeDataTable() {
+        $('#dataTable').DataTable({
+            serverSide: true,
+            ajax: {
+                url: '@Url.Action("BpMasterPagination", "Customer")',
+                type: 'GET',
+                dataType: 'json',
+                data: function (d) {
+                    console.log('Request Data:', d); // Debugging: log data object to check the request parameters
+                    return {
+                        draw: d.draw,
+                        start: d.start,
+                        length: d.length,
+                        search: d.search.value
+                    };
+                },
+                dataSrc: function (json) {
+                    console.log('AJAX response:', json); // Log JSON response for debugging
+                    if (json.error) {
+                        console.error('Error:', json.error);
+                        alert('An error occurred: ' + json.error); // Alert user to the error
+                        return [];
+                    }
+                    return json.data; // Return the 'data' array directly
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX Error:', error);
+                    alert('An error occurred while fetching data: ' + error); // Alert user to the error
+                }
+            },
+            lengthMenu: [10, 15, 20, 50, 100], // Define fixed length options
+            pageLength: 10, // Default page length
+            columns: [
+                { data: 'CardCode', title: 'Card Code'},
+                { data: 'CardType', title: 'Card Type' },
+                { data: 'CardName', title: 'Party Name' },
+                { data: 'CreateDate', title: 'Create Date' },
+                {
+                    data: null, title: 'Actions', render: function (data, type, row) {
+                        var updateUrl = '@Url.Action("Update", "Customer", new { id = "__id__" })'.replace('__id__', row.Reference1);
+                        var viewUrl = '@Url.Action("View", "Customer", new { Reference1 = "__Reference1__" })'.replace('__Reference1__', row.Reference1);
+                        return '<div class="btn-toolbar" role="toolbar">\
+                                    <div class="btn-group" role="group">\
+                                        <a class="btn btn-default btn-sm m-user-edit" href="' + updateUrl + '"><span class="zmdi zmdi-edit"></span></a>\
+                                        <a class="btn btn-default btn-sm m-user-edit" href="' + viewUrl + '"><span class="fa fa-file"></span></a>\
+                                    </div>\
+                                </div>';
+                    }
+                }
+            ],
+            drawCallback: function (settings) {
+                var api = this.api();
+                var pageInfo = api.page.info();
+                console.log('Current Page:', pageInfo.page); // Current page index
+                console.log('Records on this page:', pageInfo.recordsDisplay); // Total records displayed
+            },
+            language: {
+                emptyTable: 'No records found.',
+                processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span>'
+            }
+        });
+    }
+
+    function viewDetails(Reference1) {
+        window.location.href = '@Url.Action("View", "Customer")' + '?Reference1=' + Reference1;
+    }
     </script>
-}
+

@@ -3,12 +3,10 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-<<<<<<< HEAD
 using System.Web;
 using System.Web.Mvc;
 using System.Configuration;
-=======
->>>>>>> d86a1ed9d78c52e23ccde6115757dfb6af569a68
+
 
 namespace CodeLock.Api_Services
 {
@@ -39,16 +37,7 @@ namespace CodeLock.Api_Services
         private static async Task<string> GenerateBearerTokenAsync()
         {
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
-<<<<<<< HEAD
 
-            //var jsonBody = new
-            //{
-            //    username = "mahalakshmi_usr",
-            //    password = "mahalakshmi@30042024"
-            //};
-            // ULIP API  Live Login 
-=======
->>>>>>> d86a1ed9d78c52e23ccde6115757dfb6af569a68
             var jsonBody = new
             {
                 username = "mahalakshmi_usr",
@@ -62,18 +51,14 @@ namespace CodeLock.Api_Services
                 httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
                 var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-<<<<<<< HEAD
-                // Make the POST request
-                //   var response = await httpClient.PostAsync("https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/user/login", content);
+
 
                 string ulipUrl = ConfigurationManager.AppSettings["UlipUrl"];
 
                 var response = await httpClient.PostAsync($"{ulipUrl}/user/login", content);
 
                 // Check if the request was successful
-=======
-                var response = await httpClient.PostAsync("https://www.ulip.dpiit.gov.in/ulip/v1.0.0/user/login", content);
->>>>>>> d86a1ed9d78c52e23ccde6115757dfb6af569a68
+           //     var response = await httpClient.PostAsync("https://www.ulip.dpiit.gov.in/ulip/v1.0.0/user/login", content);
                 if (response.IsSuccessStatusCode)
                 {
                     var tokenResponse = await response.Content.ReadAsStringAsync();

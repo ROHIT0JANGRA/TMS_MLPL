@@ -13,9 +13,9 @@ namespace CodeLock.Models
             this.MasterCustomerDetail = new MasterCustomerDetail();
             this.MasterCustomerAddressInfo = new Models.MasterCustomerAddressInfo();
             //this.BusinessPartnerDetails = new BusinessPartnerDetails();
-            this.MasterAddressList = new List<MasterAddress>();
+            this.MasterAddressList = new List<MasterAddress>();      
         }
-
+        public int groupCodeSelectedId { get; set; }
         public short CustomerId { get; set; }
 
         [Display(Name = "System Code")]
@@ -30,6 +30,7 @@ namespace CodeLock.Models
         public string GroupName { get; set; }
 
 
+        public string U_Controling_Branch { get; set; } // Corresponds to 'U_Controling_Branch'
 
         [Display(Name = "Customer Code")]
         public string CustomerCode { get; set; }
@@ -62,6 +63,8 @@ namespace CodeLock.Models
 
         public MasterCustomerDetail MasterCustomerDetail { get; set; }
         public MasterCustomerAddressInfo MasterCustomerAddressInfo { get; set; }
+
+
         public int TotalCustomers { get; set; }
         public int FilterCustomers { get; set; }
         public string PhoneNo { get; set; }
@@ -104,7 +107,7 @@ namespace CodeLock.Models
         [Display(Name = "Bank Country Regions")]
         public string BankCountryRegion { get; set; }
         [Display(Name = "Bank Name")]
-
+        public string BPCode { get; set; }
         public string BankName { get; set; }
         [Display(Name = "Bank Code")]
 
@@ -181,10 +184,7 @@ namespace CodeLock.Models
         public string EntryByName { get; set; }
         public string EntryDate { get; set; }
     }
-    //public class BusinessPartnerDetails
-    //{
-       
-    //}
+
 
 }
 

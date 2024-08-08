@@ -126,6 +126,7 @@ namespace CodeLock.Models
         [Display(Name = "Bill Address")]
         public short? CustomerAddressId { get; set; }
         public int CustomerId { get; set; }
+        public string VehicalNo { get; set; }
     }
 
     public class StockTransferLine

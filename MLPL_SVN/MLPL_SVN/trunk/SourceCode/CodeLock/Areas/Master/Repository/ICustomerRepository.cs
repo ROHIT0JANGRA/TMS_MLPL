@@ -7,6 +7,7 @@
 using CodeLock.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CodeLock.Areas.Master.Repository
 {
@@ -119,5 +120,12 @@ namespace CodeLock.Areas.Master.Repository
         IEnumerable<AutoCompleteResult> GetAutoCompletePanNo(
     string panNo, 
     byte paybasId);
+
+        //  Task<Dictionary<string, object>> SaveTheCustomerMasterDataInSap(BPMasterModel masterCustomer);
+
+        Task<BPMasterModel> MapMasterCustomerToBPMaster(MasterCustomer masterCustomer);
+        string GetSateCodeBySateId(short sateId);
+
+        string GetCityNameByCityId(int CityId);
     }
 }

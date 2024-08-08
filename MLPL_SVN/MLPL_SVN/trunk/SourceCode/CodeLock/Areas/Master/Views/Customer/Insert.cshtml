@@ -4,16 +4,61 @@
 @{
     ViewBag.Title = "Customer Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var groupData = new[]
+    {
+            Tuple.Create(103, "customer-packaging"),
+            Tuple.Create(100, "Customers"),
+            Tuple.Create(111, "Vendor-Raw MateriaL(Production)"),
+            Tuple.Create(116, "Sub-Customer"),
+            Tuple.Create(105, "Vendor-LOGISTIC(Logistic)"),
+            Tuple.Create(107, "Vendor-PACKAGING(Packaging)"),
+            Tuple.Create(114, "customer-production")
+    // Continue to add other groups as provided in your list...
+};
+
+    List<Tuple<int, string>> tuplesGroup = new List<Tuple<int, string>>();
+
+    // Add each tuple from groupData to tuplesGroup
+    foreach (var tuple in groupData)
+    {
+        tuplesGroup.Add(tuple);
+    }
 }
 
+<style>
+    #loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000; /* Ensure it's above other content */
+    }
+
+    .spinner-img {
+        width: 250px; /* Adjust size as needed */
+        height: 250px; /* Adjust size as needed */
+    }
+</style>
+<div id="loader" style="display: none;">
+    <img src="~/assets/images/loader.gif" alt="Loading..." class="spinner-img">
+</div>
 <div id="dvWizard">
     <div class="panel-body">
+
         @using (Html.BeginForm("Insert", "Customer", FormMethod.Post, new { @class = "j-forms" }))
         {
 
             <div class="widget-wrap">
                 @Html.AntiModelInjectionFor(m => m.CustomerId)
-             @Html.HiddenFor(m => m.CustomerId, new { @id = "hdnCustomerId" })
+                @Html.HiddenFor(m => m.CustomerId, new { @id = "hdnCustomerId" })
+
+
 
                 <div class="tab-pane">
                     <div class="row">
@@ -43,7 +88,7 @@
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.CustomerName, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control", @id = "customerName" })
                                     </div>
                                     @Html.ValidationMessageFor(model => model.CustomerName)
                                 </div>
@@ -83,7 +128,7 @@
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.MasterCustomerDetail.PanNo, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.PanNo, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.PanNo, new { @class = "form-control", @id = "txtPanNo" })
                                     </div>
                                     @Html.ValidationMessageFor(model => model.MasterCustomerDetail.PanNo)
                                 </div>
@@ -103,7 +148,7 @@
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.MasterCustomerDetail.EmailId, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.EmailId, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.MasterCustomerDetail.EmailId, new { @class = "form-control", @id = "txtEmail" })
                                     </div>
                                     @Html.ValidationMessageFor(model => model.MasterCustomerDetail.EmailId)
                                 </div>
@@ -119,6 +164,13 @@
                                     @Html.TextBoxFor(model => model.PhoneNo, new { @class = "form-control", @id = "txtPhoneNo" })
                                 </div>
                                 @Html.ValidationMessageFor(model => model.PhoneNo)
+                            </div>
+                          
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <select id="groupSelect" name="groupCodeSelectedId" class="form-control">
+                                </select>
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -139,11 +191,11 @@
                         </div>
 
                         @*<div class="col-sm-3">
-                            @Html.LabelFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation, new { @class = "label" })
-                            @Html.HiddenFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation, new { @id = "hdnCustomerDeliveryLocation" })
-                            @Html.DropDownListFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlCustomerDeliveryLocation", @placeholder = "Select Location" })
-                            @Html.ValidationMessageFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation)
-                        </div>*@
+                                @Html.LabelFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation, new { @class = "label" })
+                                @Html.HiddenFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation, new { @id = "hdnCustomerDeliveryLocation" })
+                                @Html.DropDownListFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation, new SelectList(ViewBag.LocationList, "Value", "Name"), new { @class = "form-control select2-multiple", @multiple = "", @id = "ddlCustomerDeliveryLocation", @placeholder = "Select Location" })
+                                @Html.ValidationMessageFor(model => model.MasterCustomerDetail.CustomerDeliveryLocation)
+                            </div>*@
 
                     </div>
                     <div class="row col-12">
@@ -224,7 +276,7 @@
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.MasterCustomerAddressInfo.Address1, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Address1, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Address1, new { @class = "form-control", @id = "billingAddress1" })
                                     </div>
                                     @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.Address1)
                                 </div>
@@ -233,7 +285,7 @@
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.MasterCustomerAddressInfo.Address2, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Address2, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Address2, new { @class = "form-control", @id = "billingAddress2" })
                                     </div>
                                     @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.Address2)
                                 </div>
@@ -275,7 +327,7 @@
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.MasterCustomerAddressInfo.Pincode, new { @class = "label" })
                                     <div class="input-wrapper">
-                                        @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Pincode, new { @class = "form-control Number" })
+                                        @Html.TextBoxFor(model => model.MasterCustomerAddressInfo.Pincode, new { @class = "form-control Number", @id = "billingPostalCode" })
                                     </div>
                                     @Html.ValidationMessageFor(model => model.MasterCustomerAddressInfo.Pincode)
                                 </div>
@@ -591,7 +643,7 @@
                     </div>
                 </div>
                 <div id="secondaryAddressForm" class="address-form" style="display:none;">
-                    <div  class="tab-pane">
+                    <div class="tab-pane">
                         <div class="page-separator">Address (Secondary)</div>
                         <div id="addressRowsContainer">
                             @if (Model.MasterAddressList != null && Model.MasterAddressList.Count > 0)
@@ -604,7 +656,7 @@
 
                             }
                         </div>
-                       
+
                     </div>
                 </div>
 
@@ -616,14 +668,17 @@
             </div>
 
         }
+
     </div>
-
 </div>
-
 
 <script>
     var ruleMasterUrl, ddlState = $("#ddlState");
     $(document).ready(function () {
+        $('form.j-forms').on('submit', function () {
+
+            $('#loader').hide();
+        });
     $('#ddlCountry').change(function () {
         OnCountryChange();
         return false;
@@ -637,7 +692,7 @@
 
     // Add Address
     $('#btnAddRow').click(function () {
-        var addressIndex = $('#addressRowsContainer .address-row').length;
+        var addressIndex = $('#addressRowsContainer.address-row').length;
         $.ajax({
             url: '@Url.Action("GetNewCustomerAddress", "Customer")',
             type: 'POST',
@@ -645,17 +700,17 @@
             success: function (partialView) {
                 var newIndex = addressIndex++; // Increment addressIndex after sending it
                 partialView = partialView.replace(new RegExp(`MasterAddressList\\[\\d+\\]`, 'g'), `MasterAddressList[${newIndex}]`);
-                 $('#addressRowsContainer').append(partialView);                  
+                 $('#addressRowsContainer').append(partialView);
             },
             error: function () {
                 alert('Error fetching new address.');
             }
         });
-       
+
     });
 
     // Delete Address
-    $(document).on('click', '.btnDelete', function () {       
+    $(document).on('click', '.btnDelete', function () {
         var rowToRemove = $(this).closest('.address-row');
         var separatorToRemove = rowToRemove.next('.page-separator');
         if (separatorToRemove.length > 0) {
@@ -838,37 +893,6 @@ function GetCityListSuccess(responseData) {
     BindDropDownList('ddlCity', responseData, 'Value', 'Name', '', 'Select City');
 }
 
-$(document).ready(function () {
-    $.ajax({
-        url: '@Url.Action("PostBPMasterDataWithApi", "Customer")',
-        type: 'POST',
-        dataType: 'json', // Specify the expected data type
-        success: function (data) {
-            parseData = JSON.parse(data);
-            console.log(parseData); // Log the response data to console
-
-            var nextLink = parseData['odata.nextLink'];
-            console.log(nextLink);
-
-
-            value = parseData.value;
-            $('#dataTable').DataTable({
-                data: value, // Assuming 'value' is the array of objects in your JSON
-                columns: [
-                    { data: 'CardCode', title: 'Party Code' },
-                    { data: 'CardType', title: 'Type' },
-                    { data: 'CardName', title: 'Name' },
-                    { data: 'CreateDate', title: 'Create Date' }
-                ]
-            });
-        },
-        error: function (xhr, status, error) {
-            console.error('Error:', error); // Log any errors to console
-        }
-    });
-
-});
-
         function GetGstTypeByStateId(ddlState, lblGstType) {
     if (ddlState.val() != 0 && ddlState.val() != '') {
         var requestData = { stateId: ddlState.val() };
@@ -892,32 +916,6 @@ function InitObjects() {
     txtPanNo = $('#txtPanNo');
     cityMasterUrl = '@Url.Action("", "City", new { Area = "Master" })';
 }
-
-// ******************  FETCH UULIP-API *******************
-$('#btnFetchData').click(function () {
-    $.ajax({
-            url: '@Url.Action("FetchCustomerDetailsFromApi", "Customer")',
-        method: 'POST',
-        success: function (data) {
-            data.forEach(function (address) {
-                var newRow = $('.address-row:first').clone();
-                newRow.find('input[name="AddressCode[]"]').val(address.AddressCode);
-                newRow.find('input[name="Address1[]"]').val(address.Address1);
-                newRow.find('input[name="Address2[]"]').val(address.Address2);
-                newRow.find('input[name="CityId[]"]').val(address.CityId);
-                newRow.find('input[name="CityName[]"]').val(address.CityName);
-                newRow.find('input[name="Pincode[]"]').val(address.Pincode);
-                newRow.find('input[name="MobileNo[]"]').val(address.MobileNo);
-                newRow.find('input[name="EmailId[]"]').val(address.EmailId);
-                newRow.find('input[name="StatisticalChargesCode[]"]').val(address.StatisticalChargesCode);
-                newRow.find('input[name="IsActive[]"]').prop('checked', address.IsActive);
-                newRow.find('input[name="IsMreNoApplicable[]"]').prop('checked', address.IsMreNoApplicable);
-                newRow.append('<button class="btn btn-dark btn-remove" type="button"><i class="fa fa-minus"></i></button>');
-                $('#addressTableBody').append(newRow);
-            });
-        }
-    });
-});
 
     function RegistrationTypeChange() {
         $("#dvgsttinno").showHide($("#ddlRegistrationType").val() != 2)
@@ -974,6 +972,207 @@ function OnChangeStateWiseCity(selectElement) {
         }
     });
 }
+    /// *******************  Fetch the Gst Details From Ulip Api *******************
+$(document).ready(function () {
+    // Handle fetching customer data
+    $('#btnFetchData').click(function () {
+        var gstNo = $('#txtGstTinNo').val();
+        if (gstNo) {
+            $('#loader').show();
+            $.ajax({
+                url: '@Url.Action("FetchCustomerDetailsFromApi", "Customer")',
+                type: 'POST',
+                data: { gstin: gstNo },
+                success: function (data) {
+                    $('#loader').hide();
+                    var parseData = JSON.parse(data);
+                    if (parseData.code === "200") {
+                        var response = parseData.response[0].response;
 
-   
+                        // Fetch and set main customer information
+                        $('#customerName').val(response.legalNameOfBusiness || '');
+                        $('#customerCode').val(response.gstIdentificationNumber || '');
+                        $('#txtMobileNo').val(response.mobileNo || '');
+                        $('#customerEmailId').val(response.emailId || '');
+                        $('#natureOfBusinessActivity').val(response.natureOfBusinessActivity.join(", ") || '');
+                        $('#centerJurisdiction').val(response.centerJurisdiction || '');
+                        $('#constitutionOfBusiness').val(response.constitutionOfBusiness || '');
+                        $('#dateOfRegistration').val(response.dateOfRegistration || '');
+                        $('#gstnStatus').val(response.gstnStatus || '');
+                        $('#stateJurisdictionCode').val(response.stateJurisdictionCode || '');
+                        $('#dateOfCancellation').val(response.dateOfCancellation || '');
+                        $('#lastUpdatedDate').val(response.lastUpdatedDate || '');
+                        $('#tradeName').val(response.tradeName || '');
+                        $('#taxpayerType').val(response.taxpayerType || '');
+                        $('#eInvoiceStatus').val(response.eInvoiceStatus || '');
+                        $('#stateJurisdiction').val(response.stateJurisdiction || '');
+                        $('#centerJurisdictionCode').val(response.centerJurisdictionCode || '');
+
+                        // Fetch and set principal place of business
+                        var principalAddress = response.principalPlaceOfBusinessFields.principalPlaceOfBusinessAddress;
+                        $('#billingAddress1').val(principalAddress.buildingNumber + ' ' + principalAddress.streetName + ' ' + principalAddress.buildingName || '');
+                        $('#billingAddress2').val(principalAddress.floorNumber + ' ' + principalAddress.districtName + ' ' + principalAddress.stateName + ' ' + principalAddress.pincode || '');
+                        $('#ddlCountry').val(1);
+
+                        SetStateAndCity(principalAddress.districtName, principalAddress.stateName);
+                        $('#billingPostalCode').val(principalAddress.pincode || '');
+
+                        // Handle additional places of business
+                        var additionalPlaces = response.additionalPlaceOfBusinessFields;
+                        if (additionalPlaces && additionalPlaces.length > 0) {
+                            $('#addressRowsContainer').empty(); // Clear existing rows
+                            additionalPlaces.forEach(function (place, index) {
+                                var addressData = place.additionalPlaceOfBusinessAddress;
+                                var MasterAddress = {
+                                    CityName: addressData.districtName,
+                                    AddressCode: "",
+                                    Address1: addressData.buildingNumber + ' ' + addressData.streetName + ' ' + addressData.buildingName,
+                                    Address2: addressData.location + ' ' + addressData.districtName + ' ' + addressData.stateName + ' ' + addressData.pincode,
+                                    MobileNo: "",
+                                    StatisticalChargesCode: "",
+                                    IsMreNoApplicable: false,
+                                    EmailId: "",
+                                    CountryId: 1,
+                                    CityId: 0,
+                                    StateId: 0,
+                                    StateName: addressData.stateName,
+                                    ProvisionalId: "",
+                                    GstTinNo: "",
+                                    GstType: "",
+                                    Pincode: addressData.pincode,
+                                    RegistrationType: "",
+                                    RegistrationTypeId: 0,
+                                    IsActive: true
+                                };
+                                var MasterAddressJson = JSON.stringify(MasterAddress);
+
+                                // Fetch the partial view from the server and update the index
+                                $.ajax({
+                                    url: '@Url.Action("GetCustomerAddressForAPI", "Customer")',
+                                    type: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({ MasterAddressJson: MasterAddressJson, Index: index }),
+                                    success: function (partialView) {
+                                        // Ensure each address row has a unique index
+                                        var newIndex = $('#addressRowsContainer.address-row').length;
+
+                                        // Replace index in the partial view HTML
+                                        partialView = partialView.replace(new RegExp(`MasterAddressList\\[\\d+\\]`, 'g'), `MasterAddressList[${newIndex}]`);
+
+                                        // Append the partial view to the container
+                                        $('#addressRowsContainer').append(partialView);
+
+                                        // Populate the new row with address data
+                                        $(`#MasterAddressList_${newIndex}__Address1`).val(addressData.buildingNumber + ' ' + addressData.streetName + ' ' + addressData.buildingName || '');
+                                        $(`#MasterAddressList_${newIndex}__Address2`).val(addressData.location + ' ' + addressData.districtName + ' ' + addressData.stateName + ' ' + addressData.pincode || '');
+                                        $(`#MasterAddressList_${newIndex}__City`).val(addressData.districtName || '');
+                                        $(`#MasterAddressList_${newIndex}__State`).val(addressData.stateName || '');
+                                        $(`#MasterAddressList_${newIndex}__Country`).val('India'); // Assuming 'India' as default
+                                        $(`#MasterAddressList_${newIndex}__PostalCode`).val(addressData.pincode || '');
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error('AJAX request failed:', status, error);
+                                        alert('Error fetching new address.');
+                                    }
+                                });
+                            });
+                        }
+                    } else {
+                        console.warn('No data found for the provided GST number');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX request failed:', status, error);
+                    alert('Failed to fetch customer details. Please try again.');
+                    $('#loader').hide();
+                }
+            });
+        } else {
+            alert('Please enter a GST number');
+        }
+    });
+
+    // Add new address row functionality
+    $('#btnAddRow').click(function () {
+        var addressIndex = $('#addressRowsContainer .address-row').length;
+        $.ajax({
+            url: '@Url.Action("GetNewCustomerAddress", "Customer")',
+            type: 'POST',
+            data: { Index: addressIndex },
+            success: function (partialView) {
+                var newIndex = addressIndex; // Use the current count as new index
+                partialView = partialView.replace(new RegExp(`MasterAddressList\\[\\d+\\]`, 'g'), `MasterAddressList[${newIndex}]`);
+                $('#addressRowsContainer').append(partialView);
+                $("#MasterAddressList[" + newIndex + "].AddressCode").prop('disabled', false); // Removing disabled in this class
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX request failed:', status, error);
+                alert('Error fetching new address.');
+            }
+        });
+    });
+
+    // Remove address row functionality
+    // Remove address row functionality
+    $('#addressRowsContainer').on('click', '.btnDelete', function () {
+        // Remove the closest address row
+        $(this).closest('.address-row').remove();
+
+        // Update indices of remaining rows
+        $('#addressRowsContainer .address-row').each(function (index) {
+            // Update name and id attributes of inputs inside this row
+            $(this).find('input, select, textarea').each(function () {
+                var nameAttr = $(this).attr('name');
+                if (nameAttr) {
+                    var updatedName = nameAttr.replace(/MasterAddressList\[\d+\]/, `MasterAddressList[${index}]`);
+                    $(this).attr('name', updatedName);
+                }
+                var idAttr = $(this).attr('id');
+                if (idAttr) {
+                    var updatedId = idAttr.replace(/MasterAddressList_\d+/, `MasterAddressList_${index}`);
+                    $(this).attr('id', updatedId);
+                }
+            });
+        });
+    });
+});
+
+
+function SetStateAndCity(CityName, StateName) {
+    $.ajax({
+        type: "POST",
+        url: '@Url.Action("GetCustomerAddressInfoForApi", "Customer")',
+        data: { CityName: CityName, StateName: StateName },
+        success: function (result) {
+            console.log(result);
+            $('#ddlState').val(result.StateId);
+            $('#ddlCity').val(result.CityId);
+        }
+    })
+}
+    $(document).ready(function () {
+        var groupData = [
+            {id:1,name :"--Select The Group --"},
+            { id: 103, name: "customer-packaging" },
+            { id: 100, name: "Customers" },
+            { id: 111, name: "Vendor-Raw MateriaL(Production)" },
+            { id: 116, name: "Sub-Customer" },
+            { id: 105, name: "Vendor-LOGISTIC(Logistic)" },
+            { id: 107, name: "Vendor-PACKAGING(Packaging)" },
+            { id: 114, name: "customer-production" },
+            // Continue to add other groups as provided in your list...
+        ];
+
+        var $groupSelect = $('#groupSelect');
+
+        // Populate dropdown
+        $.each(groupData, function (index, group) {
+            $groupSelect.append($('<option>', {
+                value: group.id,
+                text: group.name
+            }));
+        });
+    });
+
+
 </script>

@@ -37,7 +37,6 @@
     </div>
 </div>
 
-@section scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" />
@@ -131,62 +130,3 @@
         window.location.href = '@Url.Action("ViewRGPDetails", "RGP")' + '?Reference1=' + Reference1;
     }
     </script>
-}
-
-
-@*@section scripts {
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
-        <script>
-            var getAllCustomersUrl = '';
-            $(document).ready(function () {
-                // LoadDataTable('dtCustomer', true, true, true);
-                GetCustomerData();
-            });
-            function GetCustomerData() {
-                $.ajax({
-                    url: '@Url.Action("StockTransferPagination", "RGP")',
-                    type: 'GET',
-                    dataType: 'json', // Specify the expected data type
-                    success: function (d) {
-                        $('#dtCustomer').DataTable({
-                            data: d.data,
-                            lengthMenu: [10, 15, 20, 50, 100], // Define fixed length options
-                            pageLength: 10, // Default page length
-                            columns: [
-                                { data: 'DocDate', title: 'Doc Date' },
-                                { data: 'CardCode', title: 'Card Code' },
-                                { data: 'CardName', title: 'Card Name' },
-                                { data: 'FromWarehouse', title: 'From Warehouse' },
-                                { data: 'ToWarehouse', title: 'To Warehouse' },
-                                { data: 'BPLName', title: 'BPL Name' },
-                                { data: 'ShipToCode', title: 'Ship To Code' },
-                                { data: 'U_VehicleNo', title: 'Vehicle No' },
-                                { data: 'U_TrnspID', title: 'Transporter ID' },
-                                { data: 'U_TrnspName', title: 'Transporter Name' },
-                                { data: 'DocEntry', title: 'Doc Entry' },
-                                { data: 'ItemCode', title: 'Item Code' },
-                                { data: 'ItemDescription', title: 'Item Description' },
-                                { data: 'Quantity', title: 'Quantity' },
-                                { data: 'Price', title: 'Price' },
-                                { data: 'WarehouseCode', title: 'Warehouse Code' },
-                                { data: 'FromWarehouseCode', title: 'From Warehouse Code' }
-                            ],
-                            drawCallback: function (settings) {
-                                var api = this.api();
-                                var pageInfo = api.page.info();
-                                console.log('Current Page:', pageInfo.page); // Current page index
-                                console.log('Records on this page:', pageInfo.recordsDisplay); // Total records displayed
-                            }
-                        });
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('AJAX Error:', error);
-                        alert('An error occurred while fetching data.'); // Optional: Alert user to the error
-                    }
-                });
-            }
-        </script>
-    }
-*@

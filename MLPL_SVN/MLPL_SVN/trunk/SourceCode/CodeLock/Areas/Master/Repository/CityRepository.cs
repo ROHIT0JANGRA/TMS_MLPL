@@ -94,8 +94,26 @@ namespace CodeLock.Areas.Master.Repository
       dynamicParameters.Add("@CityName", (object) cityName, new DbType?(DbType.String), new ParameterDirection?(), new int?(), new byte?(), new byte?());
       return DataBaseFactory.QuerySP<AutoCompleteResult>("Usp_MasterCity_GetAutoCompleteCityNameListByStateId", (object) dynamicParameters, "City Master - GetAutoCompleteCityNameListByStateId");
     }
+        public short GetCityIdByStateId(short stateId, string cityName)
+        {
+            // Create and configure DynamicParameters
+            var dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("@StateId", stateId, DbType.Int16);
+            dynamicParameters.Add("@CityName", cityName, DbType.String);
 
-    public AutoCompleteResult GetCityByLocationId(short locationId)
+            // Execute stored procedure and retrieve result
+            var result = DataBaseFactory.QuerySP<AutoCompleteResult>(
+                "Usp_MasterCity_GetAutoCompleteCityNameListByStateId",
+                dynamicParameters,
+                "City Master - GetCityIdByStateId"
+            ).FirstOrDefault();
+
+            // Return city ID or default value if not found
+            return result != null ? Convert.ToInt16(result.Value) : (short)0;
+        }
+
+
+        public AutoCompleteResult GetCityByLocationId(short locationId)
     {
       DynamicParameters dynamicParameters = new DynamicParameters();
       dynamicParameters.Add("@LocationId", (object) locationId, new DbType?(DbType.Int16), new ParameterDirection?(), new int?(), new byte?(), new byte?());

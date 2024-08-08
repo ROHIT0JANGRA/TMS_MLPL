@@ -39,5 +39,6 @@ namespace CodeLock.Areas.Master.Repository
     IEnumerable<AutoCompleteResult> GetCityList();
 
     AutoCompleteResult IsCityNameExist(string cityName);
+        short GetCityIdByStateId(short stateId, string cityName);
   }
 }
